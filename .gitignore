@@ -12,6 +12,17 @@
 
 # testing
 /coverage
+/test-results
+/cypress/screenshots
+/cypress/videos
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# eslint
+.eslintcache
 
 # next.js
 /.next/
