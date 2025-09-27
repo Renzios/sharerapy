@@ -1,16 +1,14 @@
 import { createClient } from '@/lib/supabase/server';
-import { Patient } from '@/lib/types/types';
 
-export async function getPatients(): Promise<Patient[] | null> {
+export async function getPatients() {
     const supabase = await createClient();
 
     const { data, error } = await supabase
         .from('patients')
-        .select('*');
+        .select('*, country:countries(*)');
     
     if (error) {
-        console.error(error);
-        return null;
+        console.error(error)
     }
 
     return data;
