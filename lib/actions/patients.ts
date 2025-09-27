@@ -11,17 +11,20 @@ export async function createPatient(formData: FormData) {
         birthdate: formData.get('birthdate') as string,
         sex: formData.get('sex') as 'Male' | 'Female',
         contact_number: formData.get('contact_number') as string,
-        country_id: formData.get('country_id'),
+        country_id: parseInt(formData.get('country_id') as string),
     };
 
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from('patients')
-        .insert([patientData]);
+        .insert([patientData])
+        .select();
 
     if (error) {
         console.error(error);
         throw error;
     }
+
+    return data;
 }
 
 export async function updatePatient(id: string, formData: FormData) {
@@ -33,10 +36,10 @@ export async function updatePatient(id: string, formData: FormData) {
         birthdate: formData.get('birthdate') as string,
         sex: formData.get('sex') as 'Male' | 'Female',
         contact_number: formData.get('contact_number') as string,
-        country_id: formData.get('country_id'),
+        country_id: parseInt(formData.get('country_id') as string),
     };
 
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from('patients')
         .update(patientData)
         .eq('id', id);
@@ -45,6 +48,8 @@ export async function updatePatient(id: string, formData: FormData) {
         console.error(error);
         throw error;
     }
+
+    return data;
 }
 
 export async function deletePatient(id: string) {
