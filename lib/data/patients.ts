@@ -1,5 +1,11 @@
 import { createClient } from '@/lib/supabase/server';
 
+/**
+ * Fetches all patients from the database along with their associated country.
+ * It calculates the age of each patient in years and months.
+ * @returns A promise that resolves to an array of patients, each with an `age` object and `country` data.
+ * @throws Will throw an error if the database query fails.
+ */
 export async function getPatients() {
     const supabase = await createClient();
 

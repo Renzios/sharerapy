@@ -2,6 +2,13 @@
 
 import { createClient } from '@/lib/supabase/server';
 
+/**
+ * Creates a new patient record in the database.
+ * This is a server action designed to be used with a form.
+ * @param formData - The form data containing the new patient's information.
+ * @returns The newly created patient data.
+ * @throws Will throw an error if the database operation fails.
+ */
 export async function createPatient(formData: FormData) {
     const supabase = await createClient();
     
@@ -27,6 +34,14 @@ export async function createPatient(formData: FormData) {
     return data;
 }
 
+/**
+ * Updates an existing patient record by its ID.
+ * This is a server action designed to be used with a form.
+ * @param id - The UUID of the patient to update.
+ * @param formData - The form data containing the updated patient information.
+ * @returns The updated patient data.
+ * @throws Will throw an error if the database operation fails.
+ */
 export async function updatePatient(id: string, formData: FormData) {
     const supabase = await createClient();
 
@@ -52,6 +67,12 @@ export async function updatePatient(id: string, formData: FormData) {
     return data;
 }
 
+/**
+ * Deletes a patient record by its ID.
+ * This is a server action.
+ * @param id - The UUID of the patient to delete.
+ * @throws Will throw an error if the database operation fails.
+ */
 export async function deletePatient(id: string) {
     const supabase = await createClient();
 
