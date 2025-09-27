@@ -8,8 +8,24 @@ export async function getPatients() {
         .select('*, country:countries(*)');
     
     if (error) {
-        console.error(error)
+        console.error(error);
+        throw error;
     }
 
-    return data;
+    const patients = data.map((patient) => {
+        const today = new Date();
+        const birthdate = new Date(patient.birthdate);
+
+        let years = today.getFullYear() - birthdate.getFullYear();
+        let months = today.getMonth() - birthdate.getMonth();
+
+        if (months < 0 || (months === 0 && today.getDate() < birthdate.getDate())) {
+            years--;
+            months += 12;
+        }
+        
+        return { ...patient, age: { years, months } };
+    });
+
+    return patients;
 }
