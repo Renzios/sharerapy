@@ -165,6 +165,6 @@ jobs:
 
       - name: Build verification
         run: |
-          echo "🔍 Verifying build on main branch..."
+          echo "Verifying build on main branch..."
           npm run build
-          echo "✅ Build successful - Ready for deployment setup"
+          echo "Build successful - Ready for deployment setup"
