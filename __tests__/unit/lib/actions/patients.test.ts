@@ -1,4 +1,4 @@
-import { createPatient, updatePatient, deletePatient } from '../../lib/actions/patients';
+import { createPatient, updatePatient, deletePatient } from '@/lib/actions/patients';
 
 // Mock Supabase with proper chaining to match actual usage
 const mockSelect = jest.fn();
@@ -12,7 +12,7 @@ const mockFrom = jest.fn(() => ({
   delete: mockDelete,
 }));
 
-jest.mock('../../lib/supabase/server', () => ({
+jest.mock('@/lib/supabase/server', () => ({
   createClient: jest.fn(() => ({
     from: mockFrom,
   })),
