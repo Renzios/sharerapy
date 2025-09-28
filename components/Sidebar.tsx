@@ -40,7 +40,7 @@ export default function Sidebar({
         bg-white border-r border-bordergray
         transform transition-transform duration-200 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0 md:static md:block md:w-96
+        lg:translate-x-0 lg:static lg:block lg:w-96
       `}
     >
       <div className="w-full h-full flex flex-col">
@@ -50,7 +50,7 @@ export default function Sidebar({
               hidden items-center
               h-auto px-8 gap-2.5
               border-b border-bordergray
-              md:flex md:h-[5.3125rem]"
+              lg:flex lg:h-[5.3125rem]"
         >
           <Image
             src="/logo.png"
@@ -70,7 +70,7 @@ export default function Sidebar({
               flex flex-col items-center justify-center
               w-full h-[11.875rem] p-2 gap-2
               border-b border-bordergray
-              md:hidden"
+              lg:hidden"
         >
           <Image
             src="/testpfp.jpg"
@@ -91,7 +91,7 @@ export default function Sidebar({
         </div>
 
         {/* Navigation Menu */}
-        <nav className="px-8 py-3 md:py-6">
+        <nav className="px-8 py-3 lg:py-6">
           <h4 className="font-Noto-Sans text-darkgray text-xs font-medium mb-4">
             Navigation
           </h4>
@@ -143,7 +143,7 @@ export default function Sidebar({
             className="
               flex flex-col items-center justify-center
               py-4 gap-2
-              md:hidden
+              lg:hidden
           "
           >
             <Image
@@ -164,7 +164,7 @@ export default function Sidebar({
               hidden relative
               h-[7rem]
               border-t border-bordergray
-              md:block
+              lg:block
           "
           >
             <div
@@ -172,7 +172,7 @@ export default function Sidebar({
               className="
                 flex items-center
                 w-full h-full p-8 gap-3
-                hover:bg-gray-50 transition-colors
+                hover:bg-bordergray/30 transition-colors
               "
             >
               <Image
