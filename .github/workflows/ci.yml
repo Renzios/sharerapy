@@ -3,14 +3,14 @@ name: Sharerapy CI Pipeline
 
 on:
   push:
-    branches: [ main, feature/* ]
+    branches: [ main, feature/*, feat/* ]
   pull_request:
     branches: [ main ]
 
 jobs:
-  # Frontend Unit Tests
-  frontend-tests:
-    name: Frontend Unit Tests
+  # Jest Unit Tests for Backend Server Actions and Data Logic
+  jest-backend-tests:
+    name: Jest Unit Tests (Backend Server Actions & Data Logic)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -23,17 +23,49 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --verbose
 
-      - name: Run frontend unit tests
-        run: npm test
+      - name: Run Jest unit tests for backend server actions and data logic
+        run: npm test -- --verbose
+        env:
+          NODE_ENV: test
+
+      - name: Generate backend test coverage report
+        run: npm test -- --coverage --passWithNoTests --verbose
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-test-coverage-reports
+          path: coverage/
+
+  # ESLint Code Quality Checks for TypeScript/JavaScript Code
+  code-quality:
+    name: ESLint Code Quality (TypeScript/JavaScript)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --verbose
 
       - name: Run linting checks
         run: npm run lint
 
-  # Robot Framework Backend Testing
+      - name: Run type checking
+        run: npx tsc --noEmit --skipLibCheck --listFiles
+
+  # Robot Framework Tests for Backend Logic and APIs
   backend-tests:
-    name: Backend & API Tests (Robot Framework)
+    name: Backend Tests (Robot Framework - APIs)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -44,22 +76,22 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Robot Framework and dependencies
+      - name: Install Robot Framework and API testing dependencies
         run: |
-          pip install robotframework
-          pip install robotframework-requests
-          pip install robotframework-databaselibrary
-          pip install -r requirements-test.txt
+          pip install --verbose robotframework
+          pip install --verbose robotframework-requests
+          pip install --verbose robotframework-databaselibrary
+          pip install --verbose -r requirements-test.txt
 
-      - name: Run Robot Framework tests
+      - name: Run Robot Framework tests for backend logic and APIs
         run: |
           mkdir -p tests/robot
           if [ -f "tests/robot/*.robot" ]; then
-            robot --outputdir test-results tests/robot/
+            robot --loglevel DEBUG --outputdir test-results tests/robot/
           else
-            echo "No Robot Framework tests found, skipping..."
+            echo "No Robot Framework backend/API tests found, skipping..."
             mkdir -p test-results
-            echo "No tests executed" > test-results/output.xml
+            echo "No backend API tests executed" > test-results/output.xml
           fi
 
       - name: Upload Robot Framework results
@@ -69,11 +101,11 @@ jobs:
           name: robot-framework-results
           path: test-results/
 
-  # Cypress E2E Testing (runs on PRs only for now)
+  # Cypress E2E Tests Run Against Vercel Preview Deployments
   e2e-tests:
-    name: End-to-End Tests (Cypress)
+    name: Cypress E2E Tests (Vercel Preview Deployments)
     runs-on: ubuntu-latest
-    needs: [frontend-tests, backend-tests]
+    needs: [jest-backend-tests, backend-tests]
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout code
@@ -86,14 +118,14 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --verbose
 
       - name: Check if Cypress tests exist
         id: cypress-check
         run: |
           if [ -d "cypress/e2e" ] && [ "$(ls -A cypress/e2e 2>/dev/null)" ]; then
             echo "has-tests=true" >> $GITHUB_OUTPUT
-            echo "Found Cypress tests"
+            echo "Found Cypress tests - will run with verbose output"
           else
             echo "has-tests=false" >> $GITHUB_OUTPUT
             echo "No Cypress tests found, skipping E2E testing"
@@ -109,6 +141,8 @@ jobs:
           wait-on-timeout: 120
           browser: chrome
           config: baseUrl=http://localhost:3000
+        env:
+          DEBUG: cypress:*
 
       - name: Skip E2E tests (no test files)
         if: steps.cypress-check.outputs.has-tests == 'false'
@@ -123,11 +157,11 @@ jobs:
           name: cypress-screenshots
           path: cypress/screenshots
 
-  # Main Branch Validation (runs additional checks on main)
+  # Comprehensive Regression Test Suite Before Production Deployment
   main-branch-validation:
-    name: Main Branch Validation
+    name: Regression Test Suite (Production Deployment)
     runs-on: ubuntu-latest
-    needs: [frontend-tests, backend-tests]
+    needs: [jest-backend-tests, backend-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Checkout code
@@ -146,17 +180,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci
-          pip install robotframework
-          pip install robotframework-requests
-          pip install -r requirements-test.txt
+          npm ci --verbose
+          pip install --verbose robotframework
+          pip install --verbose robotframework-requests
+          pip install --verbose -r requirements-test.txt
 
       - name: Run regression test suite
         run: |
           mkdir -p tests/robot
           if [ -f "tests/robot/*.robot" ]; then
-            # Run critical regression tests on main branch
-            robot --include regression --outputdir regression-results tests/robot/
+            # Run critical regression tests on main branch with verbose output
+            robot --loglevel DEBUG --include regression --outputdir regression-results tests/robot/
           else
             echo "No Robot Framework regression tests found, skipping..."
             mkdir -p regression-results
@@ -165,6 +199,6 @@ jobs:
 
       - name: Build verification
         run: |
-          echo "🔍 Verifying build on main branch..."
-          npm run build
-          echo "✅ Build successful - Ready for deployment setup"
+          echo "Verifying build on main branch with verbose output..."
+          npm run build --verbose
+          echo "Build successful - Ready for deployment setup"
