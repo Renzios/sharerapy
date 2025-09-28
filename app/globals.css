@@ -4,6 +4,7 @@
 @theme {
   --color-primary: hsl(217, 78, 35);
   --color-secondary: hsl(217, 78, 80);
+  --color-active: hsl(217, 78, 15);
   --color-background: hsl(0, 0, 98);
   --color-bordergray: hsl(0, 0, 90);
   --color-darkgray: hsl(0, 0, 40);
