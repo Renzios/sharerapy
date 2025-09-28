@@ -46,8 +46,11 @@ export default function Button({
 }: ButtonProps) {
   // Determine variant styles
   const variantStyles = {
-    outline:
-      "bg-transparent border border-primary text-primary hover:bg-primary/10",
+    outline: [
+      "bg-transparent border border-primary text-primary",
+      "hover:bg-primary/5 hover:font-semibold",
+      "active:bg-primary active:text-white",
+    ].join(" "),
     filled: "bg-primary border border-primary text-white hover:bg-primary/90",
   };
 
@@ -80,13 +83,12 @@ export default function Button({
         ${widthStyle}
         ${heightStyle}
         ${fontSizeStyle}
-        font-Noto-Sans
+        font-Noto-Sans font-medium
         px-3 lg:px-4 py-2
         flex items-center justify-center
         min-w-0
         transition-colors duration-200
         disabled:opacity-50 disabled:cursor-not-allowed
-        focus:outline-none focus:ring-2 focus:ring-primary/20
         ${className}
       `}
       style={{
