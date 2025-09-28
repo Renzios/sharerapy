@@ -28,6 +28,7 @@ export async function login(formData: FormData) {
 /**
  * Signs up a new user with an email and password.
  * @param formData - The form data containing the new user's email and password.
+ * @returns The therapists data.
  * @throws Will throw an error if the sign-up process fails.
  */
 export async function signup(formData: FormData) {
