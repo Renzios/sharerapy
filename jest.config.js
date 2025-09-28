@@ -16,8 +16,12 @@ const customJestConfig = {
     '!app/**/*.d.ts',
     '!lib/**/*.d.ts',
   ],
+  testMatch: [
+    '<rootDir>/__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}',
+  ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
+    '^@tests/(.*)$': '<rootDir>/__tests__/$1',
   },
   testPathIgnorePatterns: [
     '<rootDir>/.next/',
@@ -39,7 +43,7 @@ const customJestConfig = {
   // Use separate TypeScript config for tests to avoid conflicts
   globals: {
     'ts-jest': {
-      tsconfig: '_tests_/tsconfig.json'
+      tsconfig: '__tests__/tsconfig.json'
     }
   },
 }
