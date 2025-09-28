@@ -16,13 +16,13 @@ export default function WithSidebarLayout({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex">
+    <div className="h-screen flex overflow-hidden">
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
 
       <div className="flex-1 flex flex-col bg-background">
         <Header onMenuClick={() => setIsOpen(!isOpen)} />
 
-        <main className="flex-1 p-4">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4">{children}</main>
       </div>
 
       {isOpen && (

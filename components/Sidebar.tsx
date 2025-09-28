@@ -8,6 +8,7 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -38,7 +39,7 @@ export default function Sidebar({
     <aside
       className={`
         fixed inset-y-0 left-0 z-40
-        h-screen w-72
+        w-72
         bg-white border-r border-bordergray
         transform transition-transform duration-200 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
@@ -54,7 +55,13 @@ export default function Sidebar({
               border-b border-bordergray
               md:flex md:h-[5.3125rem]"
         >
-          <img src={Logo.src} className="w-[2.5rem] h-[2.5rem]" />
+          <Image
+            src={Logo.src}
+            alt="Sharerapy Logo"
+            width={40}
+            height={40}
+            className="w-[2.5rem] h-[2.5rem]"
+          />
           <h1 className="font-Noto-Sans text-[1.5rem] font-black">
             <span className="text-primary">share</span>rapy.
           </h1>
@@ -68,9 +75,11 @@ export default function Sidebar({
               border-b border-bordergray
               md:hidden"
         >
-          <img
+          <Image
             src={test.src}
-            alt="Logo"
+            alt="Profile Picture"
+            width={70}
+            height={70}
             className="h-[4.375rem] w-[4.375rem] rounded-full"
           />
 
@@ -85,7 +94,7 @@ export default function Sidebar({
         </div>
 
         {/* Navigation Menu */}
-        <nav className="flex-1 px-8 py-6">
+        <nav className="px-8 py-3 md:py-6">
           <h4 className="font-Noto-Sans text-darkgray text-xs font-medium mb-4">
             Navigation
           </h4>
@@ -140,7 +149,13 @@ export default function Sidebar({
               md:hidden
           "
           >
-            <img src={Logo.src} className="w-20 h-20" alt="Logo" />
+            <Image
+              src={Logo.src}
+              alt="Sharerapy Logo"
+              width={80}
+              height={80}
+              className="w-20 h-20"
+            />
             <h1 className="font-Noto-Sans text-md font-black">
               <span className="text-primary">share</span>rapy.
             </h1>
@@ -163,9 +178,11 @@ export default function Sidebar({
                 hover:bg-gray-50 transition-colors
               "
             >
-              <img
+              <Image
                 src={test.src}
-                alt="Profile"
+                alt="Profile Picture"
+                width={60}
+                height={60}
                 className="w-15 h-15 rounded-full"
               />
               <div className="flex-1 text-left">

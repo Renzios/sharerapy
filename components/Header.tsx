@@ -13,6 +13,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
   return (
     <header
       className="
+        sticky top-0 z-30
         flex items-center
         h-[3.75rem] p-4 gap-3 
         border-b border-bordergray bg-white
