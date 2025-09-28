@@ -1,4 +1,4 @@
-import { getPatients } from '../../lib/data/patients';
+import { getPatients } from '@/lib/data/patients';
 
 // Mock Supabase with proper chaining
 const mockSelect = jest.fn();
@@ -6,7 +6,7 @@ const mockFrom = jest.fn(() => ({
   select: mockSelect,
 }));
 
-jest.mock('../../lib/supabase/server', () => ({
+jest.mock('@/lib/supabase/server', () => ({
   createClient: jest.fn(() => ({
     from: mockFrom,
   })),

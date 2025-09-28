@@ -7,7 +7,9 @@
   },
   "include": [
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.spec.tsx"
   ],
   "exclude": [
     "../node_modules",
