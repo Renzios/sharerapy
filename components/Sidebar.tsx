@@ -13,11 +13,18 @@ import { useState } from "react";
 
 const navigationItems = [
   { name: "Search", href: "/search", icon: <SearchIcon /> },
-  { name: "Create Report", href: "/create-report", icon: <CreateIcon /> },
+  { name: "Create Report", href: "/reports/new", icon: <CreateIcon /> },
   { name: "AI Mode", href: "/ai-mode", icon: <AutoAwesomeIcon /> },
-  { name: "Profile", href: "/profile", icon: <AccountBoxIcon /> },
+  { name: "Profile", href: "/profile/me", icon: <AccountBoxIcon /> },
 ];
 
+/**
+ * Renders the main navigation sidebar with responsive behavior and user profile section.
+ * Hidden on mobile by default, toggleable via menu button. Always visible on desktop.
+ *
+ * @param isOpen - Controls visibility of the sidebar on mobile devices
+ * @param setIsOpen - Function to toggle the sidebar visibility state
+ */
 export default function Sidebar({
   isOpen,
   setIsOpen,
@@ -30,20 +37,22 @@ export default function Sidebar({
   return (
     <aside
       className={`
-        fixed inset-y-0 left-0 z-40 h-screen 
-        w-72 md:w-96
+        fixed inset-y-0 left-0 z-40
+        h-screen w-72
         bg-white border-r border-bordergray
         transform transition-transform duration-200 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0 md:static md:block
+        md:translate-x-0 md:static md:block md:w-96
       `}
     >
       <div className="w-full h-full flex flex-col">
         {/* Desktop Logo */}
         <div
           className="
-              hidden md:flex md:h-[5.3125rem] border-b border-bordergray
-              items-center gap-2.5 px-8"
+              hidden items-center
+              h-auto px-8 gap-2.5
+              border-b border-bordergray
+              md:flex md:h-[5.3125rem]"
         >
           <img src={Logo.src} className="w-[2.5rem] h-[2.5rem]" />
           <h1 className="font-Noto-Sans text-[1.5rem] font-black">
@@ -54,9 +63,10 @@ export default function Sidebar({
         {/* Mobile Section 1 */}
         <div
           className="
-              w-full h-[11.875rem] flex md:hidden
-              flex-col items-center justify-center p-2
-              border-b border-bordergray gap-2"
+              flex flex-col items-center justify-center
+              w-full h-[11.875rem] p-2 gap-2
+              border-b border-bordergray
+              md:hidden"
         >
           <img
             src={test.src}
@@ -86,9 +96,11 @@ export default function Sidebar({
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    onClick={() => setIsOpen(false)} // Close mobile sidebar on navigation
+                    onClick={() => setIsOpen(false)}
                     className={`
-                      flex items-center gap-3 px-4 h-10 rounded-md
+                      flex items-center
+                      h-10 px-4 gap-3
+                      rounded-md
                       transition-all duration-200 ease-in-out
                       ${
                         isActive
@@ -121,7 +133,13 @@ export default function Sidebar({
         {/* Bottom Section */}
         <div className="mt-auto">
           {/* Mobile: Logo + Wordmark */}
-          <div className="flex md:hidden flex-col items-center justify-center py-4 gap-2">
+          <div
+            className="
+              flex flex-col items-center justify-center
+              py-4 gap-2
+              md:hidden
+          "
+          >
             <img src={Logo.src} className="w-20 h-20" alt="Logo" />
             <h1 className="font-Noto-Sans text-md font-black">
               <span className="text-primary">share</span>rapy.
@@ -129,10 +147,21 @@ export default function Sidebar({
           </div>
 
           {/* Desktop: Profile Section with Dropdown */}
-          <div className="hidden md:block relative h-[7rem] border-t border-bordergray">
+          <div
+            className="
+              hidden relative
+              h-[7rem]
+              border-t border-bordergray
+              md:block
+          "
+          >
             <div
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="w-full h-full flex items-center gap-3 p-8 hover:bg-gray-50 transition-colors"
+              className="
+                flex items-center
+                w-full h-full p-8 gap-3
+                hover:bg-gray-50 transition-colors
+              "
             >
               <img
                 src={test.src}
@@ -156,13 +185,26 @@ export default function Sidebar({
 
             {/* Dropdown Menu (appears above) */}
             {isDropdownOpen && (
-              <div className="absolute bottom-full left-4 right-4 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg py-2">
+              <div
+                className="
+                absolute bottom-full left-4 right-4
+                mb-1 py-2
+                bg-white border border-gray-200 rounded-lg shadow-lg
+              "
+              >
                 {/* Space reserved for select dropdown */}
                 <div className="px-4 py-3">
                   {/* Select dropdown will go here */}
                 </div>
                 <hr className="my-2 border-bordergray" />
-                <button className="w-full text-left px-4 py-2 hover:bg-gray-50 font-Noto-Sans text-sm text-primary">
+                <button
+                  className="
+                  w-full text-left
+                  px-4 py-2
+                  hover:bg-gray-50
+                  font-Noto-Sans text-sm text-primary
+                "
+                >
                   Sign out
                 </button>
               </div>

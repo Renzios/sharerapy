@@ -4,6 +4,10 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 
+/**
+ * Layout component that wraps all pages the have the sidebar/header.
+ * @param children - The page content to be rendered
+ */
 export default function WithSidebarLayout({
   children,
 }: {

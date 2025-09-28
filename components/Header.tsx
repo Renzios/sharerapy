@@ -4,9 +4,21 @@ interface HeaderProps {
   onMenuClick: () => void;
 }
 
+/**
+ * Renders a header component, acts as a filler on desktop, and contains a menu toggle button on mobile.
+ *
+ * @param onMenuClick - Function to be called when menu button is clicked (mobile only)
+ */
 export default function Header({ onMenuClick }: HeaderProps) {
   return (
-    <header className="p-4 border-b border-bordergray flex items-center gap-3 h-[3.75rem] md:h-[5.3125rem] bg-white">
+    <header
+      className="
+        flex items-center
+        h-[3.75rem] p-4 gap-3 
+        border-b border-bordergray bg-white
+        md:h-[5.3125rem] 
+      "
+    >
       <button
         onClick={onMenuClick}
         className="p-1 hover:bg-gray-100 rounded-md transition-colors md:hidden"
