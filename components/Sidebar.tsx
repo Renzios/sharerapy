@@ -1,6 +1,3 @@
-import test from "../public/testpfp.jpg";
-import Logo from "../public/logo.png";
-
 import SearchIcon from "@mui/icons-material/Search";
 import CreateIcon from "@mui/icons-material/Create";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
@@ -56,7 +53,7 @@ export default function Sidebar({
               md:flex md:h-[5.3125rem]"
         >
           <Image
-            src={Logo.src}
+            src="/logo.png"
             alt="Sharerapy Logo"
             width={40}
             height={40}
@@ -76,7 +73,7 @@ export default function Sidebar({
               md:hidden"
         >
           <Image
-            src={test.src}
+            src="/testpfp.jpg"
             alt="Profile Picture"
             width={70}
             height={70}
@@ -150,7 +147,7 @@ export default function Sidebar({
           "
           >
             <Image
-              src={Logo.src}
+              src="/logo.png"
               alt="Sharerapy Logo"
               width={80}
               height={80}
@@ -179,7 +176,7 @@ export default function Sidebar({
               "
             >
               <Image
-                src={test.src}
+                src="/testpfp.jpg"
                 alt="Profile Picture"
                 width={60}
                 height={60}
