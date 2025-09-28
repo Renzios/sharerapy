@@ -35,17 +35,50 @@ export async function signup(formData: FormData) {
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
-  const data = {
+  const signupData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  const { error } = await supabase.auth.signUp(signupData)
 
   if (error) {
     console.error(error);
     throw error;
   }
+
+  const file = formData.get("picture") as File
+  const filePath = `${crypto.randomUUID()}-${file.name}`
+
+  const { error: uploadError } = await supabase.storage
+    .from("therapist_pictures")
+    .upload(filePath, file)
+  
+  if (uploadError) {
+    console.error(uploadError);
+    throw uploadError;
+  } 
+  
+  const data = {
+    clinic_id: parseInt(formData.get('clinic_id') as string),
+    age: parseInt(formData.get('age') as string),
+    bio: formData.get('bio') as string,
+    last_name: formData.get('last_name') as string,
+    first_name: formData.get('first_name') as string,
+    picture: filePath,
+  }
+
+  const { data: therapist, error: insertError } = await supabase
+    .from("therapists")
+    .insert(data)
+    .select()
+
+  if (insertError) {
+    console.error(insertError);
+    throw insertError;
+  }
+
+  return therapist;
 }
 
 /**
