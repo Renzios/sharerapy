@@ -1,5 +1,5 @@
-import test from "./kiko.jpg";
-import Logo from "../app/favicon.ico";
+import test from "../public/testpfp.jpg";
+import Logo from "../public/logo.png";
 
 import SearchIcon from "@mui/icons-material/Search";
 import CreateIcon from "@mui/icons-material/Create";
