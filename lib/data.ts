@@ -57,7 +57,7 @@ export async function readReports() {
 
     const { data, error } = await supabase
         .from('reports')
-        .select('*, therapist:therapists(*), type:types(*), language:languages(*), patient:patients(*)');
+        .select('*, therapist:therapists(*, clinic:clinics(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))');
     
     if (error) throw error;
 
@@ -69,7 +69,7 @@ export async function readReport(id: string) {
 
     const { data, error } = await supabase
         .from('reports')
-        .select('*, therapist:therapists(*), type:types(*), language:languages(*), patient:patients(*)')
+        .select('*, therapist:therapists(*, clinic:clinics(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))')
         .eq('id', id)
         .single();
     
