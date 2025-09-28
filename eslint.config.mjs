@@ -18,6 +18,10 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      ".venv/**",
+      "test-results/**",
+      "cypress/screenshots/**",
+      "cypress/videos/**",
     ],
   },
 ];
