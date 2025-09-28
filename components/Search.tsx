@@ -74,6 +74,7 @@ export default function Search({
       </button>
 
       <input
+        suppressHydrationWarning={true}
         type="text"
         value={value}
         onChange={handleInputChange}
