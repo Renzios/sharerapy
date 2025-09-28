@@ -1,6 +1,7 @@
 "use client";
 
 import SearchPageHeader from "@/components/SearchPageHeader";
+import PatientCard from "@/components/PatientCard";
 import { useState } from "react";
 
 /**
@@ -64,7 +65,53 @@ export default function SearchPatientsPage() {
         }}
       />
 
-      <div className="mt-6">{/* patients search results will go here */}</div>
+      <div className="mt-6">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:px-5">
+          {Array.from({ length: 20 }, (_, index) => {
+            const patients = [
+              {
+                id: 1,
+                name: "John Doe",
+                contactNumber: "+1234567890",
+                country: "USA",
+                sex: "Male",
+              },
+              {
+                id: 2,
+                name: "Jane Smith",
+                contactNumber: "+0987654321",
+                country: "Canada",
+                sex: "Female",
+              },
+              {
+                id: 3,
+                name: "Mike Wilson",
+                contactNumber: "+1122334455",
+                country: "UK",
+                sex: "Male",
+              },
+              {
+                id: 4,
+                name: "Sarah Davis",
+                contactNumber: "+5566778899",
+                country: "Australia",
+                sex: "Female",
+              },
+            ];
+
+            const patient = patients[index % 4];
+            return (
+              <PatientCard
+                key={`patient-${index}`}
+                patient={{
+                  ...patient,
+                  id: index + 1,
+                }}
+              />
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
