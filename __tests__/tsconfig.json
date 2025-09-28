@@ -3,17 +3,24 @@
   "compilerOptions": {
     "types": ["jest", "@types/jest", "node"],
     "noEmit": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "typeRoots": ["../node_modules/@types", "./"]
   },
   "include": [
+    "jest.d.ts",
     "**/*.test.ts",
-    "**/*.spec.ts",
+    "**/*.spec.ts", 
     "**/*.test.tsx",
-    "**/*.spec.tsx"
+    "**/*.spec.tsx",
+    "fixtures/**/*.ts"
   ],
   "exclude": [
     "../node_modules",
     "../.next",
-    "../cypress"
+    "../cypress",
+    "../cypress.config.ts"
   ]
 }
