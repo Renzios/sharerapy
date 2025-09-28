@@ -75,7 +75,7 @@ export default function SearchPageHeader({
   languageDisabled = false,
 }: SearchPageHeaderProps) {
   const selectStyles = (isDisabled: boolean) => ({
-    control: (base: any) => ({
+    control: (base: object) => ({
       ...base,
       minWidth: "7rem",
       width: "100%",
@@ -95,20 +95,20 @@ export default function SearchPageHeader({
         })`,
       },
     }),
-    valueContainer: (base: any) => ({
+    valueContainer: (base: object) => ({
       ...base,
       padding: "0 8px",
     }),
-    input: (base: any) => ({
+    input: (base: object) => ({
       ...base,
       margin: 0,
       padding: 0,
     }),
-    indicatorsContainer: (base: any) => ({
+    indicatorsContainer: (base: object) => ({
       ...base,
       height: "1.875rem",
     }),
-    menu: (base: any) => ({
+    menu: (base: object) => ({
       ...base,
       zIndex: 9999,
       fontSize: "0.6875rem",
@@ -117,12 +117,15 @@ export default function SearchPageHeader({
       boxShadow:
         "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
     }),
-    menuList: (base: any) => ({
+    menuList: (base: object) => ({
       ...base,
       padding: "4px",
       maxHeight: "200px",
     }),
-    option: (base: any, state: any) => ({
+    option: (
+      base: object,
+      state: { isSelected: boolean; isFocused: boolean }
+    ) => ({
       ...base,
       fontSize: "0.6875rem",
       padding: "8px 12px",
