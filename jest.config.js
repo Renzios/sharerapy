@@ -36,6 +36,12 @@ const customJestConfig = {
   },
   // Increase timeout for CI environments
   testTimeout: 10000,
+  // Use separate TypeScript config for tests to avoid conflicts
+  globals: {
+    'ts-jest': {
+      tsconfig: '_tests_/tsconfig.json'
+    }
+  },
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

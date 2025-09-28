@@ -23,15 +23,15 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --verbose
 
       - name: Run Jest backend unit tests
-        run: npm test
+        run: npm test -- --verbose
         env:
           NODE_ENV: test
 
       - name: Generate test coverage report
-        run: npm test -- --coverage --passWithNoTests
+        run: npm test -- --coverage --passWithNoTests --verbose
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
@@ -55,13 +55,13 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --verbose
 
       - name: Run linting checks
-        run: npm run lint
+        run: npm run lint -- --format=verbose
 
       - name: Run type checking
-        run: npx tsc --noEmit
+        run: npx tsc --noEmit --skipLibCheck --listFiles
 
   # Robot Framework Backend Testing
   backend-tests:
@@ -78,16 +78,16 @@ jobs:
 
       - name: Install Robot Framework and dependencies
         run: |
-          pip install robotframework
-          pip install robotframework-requests
-          pip install robotframework-databaselibrary
-          pip install -r requirements-test.txt
+          pip install --verbose robotframework
+          pip install --verbose robotframework-requests
+          pip install --verbose robotframework-databaselibrary
+          pip install --verbose -r requirements-test.txt
 
       - name: Run Robot Framework tests
         run: |
           mkdir -p tests/robot
           if [ -f "tests/robot/*.robot" ]; then
-            robot --outputdir test-results tests/robot/
+            robot --loglevel DEBUG --outputdir test-results tests/robot/
           else
             echo "No Robot Framework tests found, skipping..."
             mkdir -p test-results
@@ -118,14 +118,14 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --verbose
 
       - name: Check if Cypress tests exist
         id: cypress-check
         run: |
           if [ -d "cypress/e2e" ] && [ "$(ls -A cypress/e2e 2>/dev/null)" ]; then
             echo "has-tests=true" >> $GITHUB_OUTPUT
-            echo "Found Cypress tests"
+            echo "Found Cypress tests - will run with verbose output"
           else
             echo "has-tests=false" >> $GITHUB_OUTPUT
             echo "No Cypress tests found, skipping E2E testing"
@@ -141,6 +141,8 @@ jobs:
           wait-on-timeout: 120
           browser: chrome
           config: baseUrl=http://localhost:3000
+        env:
+          DEBUG: cypress:*
 
       - name: Skip E2E tests (no test files)
         if: steps.cypress-check.outputs.has-tests == 'false'
@@ -178,17 +180,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci
-          pip install robotframework
-          pip install robotframework-requests
-          pip install -r requirements-test.txt
+          npm ci --verbose
+          pip install --verbose robotframework
+          pip install --verbose robotframework-requests
+          pip install --verbose -r requirements-test.txt
 
       - name: Run regression test suite
         run: |
           mkdir -p tests/robot
           if [ -f "tests/robot/*.robot" ]; then
-            # Run critical regression tests on main branch
-            robot --include regression --outputdir regression-results tests/robot/
+            # Run critical regression tests on main branch with verbose output
+            robot --loglevel DEBUG --include regression --outputdir regression-results tests/robot/
           else
             echo "No Robot Framework regression tests found, skipping..."
             mkdir -p regression-results
@@ -197,6 +199,6 @@ jobs:
 
       - name: Build verification
         run: |
-          echo "Verifying build on main branch..."
-          npm run build
+          echo "Verifying build on main branch with verbose output..."
+          npm run build --verbose
           echo "Build successful - Ready for deployment setup"
