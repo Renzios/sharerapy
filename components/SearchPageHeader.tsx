@@ -6,41 +6,72 @@ import Link from "next/link";
 import React from "react";
 import Select, { SingleValue } from "react-select";
 
+/**
+ * Option interface for React Select components
+ */
 interface SelectOption {
+  /** The value of the option (used programmatically) */
   value: string;
+  /** The display label of the option (shown to users) */
   label: string;
 }
 
+/**
+ * Props interface for the SearchPageHeader component
+ */
 interface SearchPageHeaderProps {
   // Search functionality
+  /** Current value of the search input */
   searchValue?: string;
+  /** Callback fired when search input value changes */
   onSearchChange?: (value: string) => void;
+  /** Callback fired when search is executed */
   onSearch?: (value: string) => void;
 
   // Navigation buttons (All, Patients, Reports, Therapist)
+  /** Currently active page/tab for navigation highlighting */
   currentPage?: "all" | "patients" | "reports" | "therapists";
 
   // Mobile advanced filters popup (age, sex, upload date, etc.)
+  /** Callback fired when advanced filters button is clicked (mobile only) */
   onAdvancedFiltersClick?: () => void;
+  /** Whether the advanced filters button is disabled */
   advancedFiltersDisabled?: boolean;
 
   // Mobile settings popup (contains sort/view options)
+  /** Callback fired when mobile settings button is clicked (mobile only) */
   onMobileSettingsClick?: () => void;
+  /** Whether the mobile settings button is disabled */
   mobileSettingsDisabled?: boolean;
 
   // Desktop sort/view selects (visible on desktop, hidden in mobile settings popup)
+  /** Available sort options for the sort dropdown */
   sortOptions?: SelectOption[];
+  /** Currently selected sort option */
   sortValue?: SelectOption;
+  /** Callback fired when sort option changes */
   onSortChange?: (option: SingleValue<SelectOption>) => void;
+  /** Whether the sort dropdown is disabled */
   sortDisabled?: boolean;
 
   // Language select (always present)
+  /** Available language options for the language dropdown */
   languageOptions?: SelectOption[];
+  /** Currently selected language option */
   languageValue?: SelectOption;
+  /** Callback fired when language option changes */
   onLanguageChange?: (option: SingleValue<SelectOption>) => void;
+  /** Whether the language dropdown is disabled */
   languageDisabled?: boolean;
 }
 
+/**
+ * The SearchPageHeader component is the header for the search pages (all, patients, reports, therapists).
+ * It contains the search bar, filter and display options, as well as navigation buttons.
+ * The layout adapts responsively between mobile and desktop views.
+ *
+ * @param props - The search page header props
+ */
 export default function SearchPageHeader({
   searchValue = "",
   onSearchChange,
@@ -74,6 +105,13 @@ export default function SearchPageHeader({
   onLanguageChange,
   languageDisabled = false,
 }: SearchPageHeaderProps) {
+  /**
+   * Custom styling function for React Select components.
+   * Provides consistent design that matches the application's design system.
+   *
+   * @param isDisabled - Whether the select should appear disabled
+   * @returns Styling object for React Select components
+   */
   const selectStyles = (isDisabled: boolean) => ({
     control: (base: object) => ({
       ...base,
@@ -81,6 +119,7 @@ export default function SearchPageHeader({
       width: "100%",
       minHeight: "1.875rem",
       height: "1.875rem",
+      fontFamily: "'Noto Sans', sans-serif",
       fontSize: "0.6875rem",
       backgroundColor: isDisabled ? "#f9fafb" : "white",
       border: `1px solid var(--border-bordergray, ${
@@ -98,11 +137,13 @@ export default function SearchPageHeader({
     valueContainer: (base: object) => ({
       ...base,
       padding: "0 8px",
+      fontFamily: "'Noto Sans', sans-serif",
     }),
     input: (base: object) => ({
       ...base,
       margin: 0,
       padding: 0,
+      fontFamily: "'Noto Sans', sans-serif",
     }),
     indicatorsContainer: (base: object) => ({
       ...base,
@@ -112,6 +153,7 @@ export default function SearchPageHeader({
       ...base,
       zIndex: 9999,
       fontSize: "0.6875rem",
+      fontFamily: "'Noto Sans', sans-serif",
       borderRadius: "0.5rem",
       border: "1px solid var(--border-bordergray, #e5e7eb)",
       boxShadow:
@@ -121,6 +163,7 @@ export default function SearchPageHeader({
       ...base,
       padding: "4px",
       maxHeight: "200px",
+      fontFamily: "'Noto Sans', sans-serif",
     }),
     option: (
       base: object,
@@ -128,6 +171,7 @@ export default function SearchPageHeader({
     ) => ({
       ...base,
       fontSize: "0.6875rem",
+      fontFamily: "'Noto Sans', sans-serif",
       padding: "8px 12px",
       borderRadius: "0.25rem",
       backgroundColor: state.isSelected
