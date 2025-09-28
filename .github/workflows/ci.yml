@@ -8,9 +8,9 @@ on:
     branches: [ main ]
 
 jobs:
-  # Jest Backend Unit Tests
+  # Jest Unit Tests for Backend Server Actions and Data Logic
   jest-backend-tests:
-    name: Jest Backend Unit Tests
+    name: Jest Unit Tests (Backend Server Actions & Data Logic)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -25,24 +25,24 @@ jobs:
       - name: Install dependencies
         run: npm ci --verbose
 
-      - name: Run Jest backend unit tests
+      - name: Run Jest unit tests for backend server actions and data logic
         run: npm test -- --verbose
         env:
           NODE_ENV: test
 
-      - name: Generate test coverage report
+      - name: Generate backend test coverage report
         run: npm test -- --coverage --passWithNoTests --verbose
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: jest-coverage-reports
+          name: backend-test-coverage-reports
           path: coverage/
 
-  # Code Quality & Linting
+  # ESLint Code Quality Checks for TypeScript/JavaScript Code
   code-quality:
-    name: Code Quality & Linting
+    name: ESLint Code Quality (TypeScript/JavaScript)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -58,14 +58,14 @@ jobs:
         run: npm ci --verbose
 
       - name: Run linting checks
-        run: npm run lint -- --format=verbose
+        run: npm run lint
 
       - name: Run type checking
         run: npx tsc --noEmit --skipLibCheck --listFiles
 
-  # Robot Framework Backend Testing
+  # Robot Framework Tests for Backend Logic and APIs
   backend-tests:
-    name: Backend & API Tests (Robot Framework)
+    name: Backend Tests (Robot Framework - APIs)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -76,22 +76,22 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Robot Framework and dependencies
+      - name: Install Robot Framework and API testing dependencies
         run: |
           pip install --verbose robotframework
           pip install --verbose robotframework-requests
           pip install --verbose robotframework-databaselibrary
           pip install --verbose -r requirements-test.txt
 
-      - name: Run Robot Framework tests
+      - name: Run Robot Framework tests for backend logic and APIs
         run: |
           mkdir -p tests/robot
           if [ -f "tests/robot/*.robot" ]; then
             robot --loglevel DEBUG --outputdir test-results tests/robot/
           else
-            echo "No Robot Framework tests found, skipping..."
+            echo "No Robot Framework backend/API tests found, skipping..."
             mkdir -p test-results
-            echo "No tests executed" > test-results/output.xml
+            echo "No backend API tests executed" > test-results/output.xml
           fi
 
       - name: Upload Robot Framework results
@@ -101,9 +101,9 @@ jobs:
           name: robot-framework-results
           path: test-results/
 
-  # Cypress E2E Testing (runs on PRs only for now)
+  # Cypress E2E Tests Run Against Vercel Preview Deployments
   e2e-tests:
-    name: End-to-End Tests (Cypress)
+    name: Cypress E2E Tests (Vercel Preview Deployments)
     runs-on: ubuntu-latest
     needs: [jest-backend-tests, backend-tests]
     if: github.event_name == 'pull_request'
@@ -157,9 +157,9 @@ jobs:
           name: cypress-screenshots
           path: cypress/screenshots
 
-  # Main Branch Validation (runs additional checks on main)
+  # Comprehensive Regression Test Suite Before Production Deployment
   main-branch-validation:
-    name: Main Branch Validation
+    name: Regression Test Suite (Production Deployment)
     runs-on: ubuntu-latest
     needs: [jest-backend-tests, backend-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
