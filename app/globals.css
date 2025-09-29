@@ -1,9 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 
 @theme {
   --color-primary: hsl(217, 78, 35);
   --color-secondary: hsl(217, 78, 80);
+  --color-active: hsl(217, 78, 15);
   --color-background: hsl(0, 0, 98);
   --color-bordergray: hsl(0, 0, 90);
   --color-darkgray: hsl(0, 0, 40);

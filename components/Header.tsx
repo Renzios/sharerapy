@@ -17,12 +17,12 @@ export default function Header({ onMenuClick }: HeaderProps) {
         flex items-center
         h-[3.75rem] p-4 gap-3 
         border-b border-bordergray bg-white
-        md:h-[5.3125rem] 
+        lg:h-[5.3125rem] 
       "
     >
       <button
         onClick={onMenuClick}
-        className="p-1 hover:bg-gray-100 rounded-md transition-colors md:hidden"
+        className="p-1 hover:bg-gray-100 rounded-md transition-colors lg:hidden"
         aria-label="Toggle sidebar"
       >
         <MenuIcon className="text-xl" />

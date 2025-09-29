@@ -14,7 +14,7 @@ describe('Search All Page', () => {
     render(<SearchAll />);
     
     // Check for the main content using text content match
-    const primaryText = screen.getByText((content, element) => {
+    const primaryText = screen.getByText((content) => {
       return content.includes('HELLOO');
     });
     expect(primaryText).toBeInTheDocument();
