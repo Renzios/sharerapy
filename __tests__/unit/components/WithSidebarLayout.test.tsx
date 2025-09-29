@@ -16,7 +16,7 @@ jest.mock('@/components/Header', () => {
 });
 
 jest.mock('@/components/Sidebar', () => {
-  return function MockSidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (val: boolean) => void }) {
+  return function MockSidebar({ setIsOpen }: { isOpen: boolean; setIsOpen: (val: boolean) => void }) {
     return (
       <aside role="complementary">
         <div>Sidebar Content</div>

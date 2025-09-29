@@ -246,7 +246,7 @@ describe('Patient Data Retrieval Functions', () => {
       expect(result).toHaveLength(3);
       
       // Verify all patients have age calculations
-      result.forEach((patient, index) => {
+      result.forEach((patient) => {
         expect(patient.age).toBeDefined();
         expect(typeof patient.age.years).toBe('number');
         expect(typeof patient.age.months).toBe('number');

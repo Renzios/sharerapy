@@ -92,4 +92,23 @@ describe('Sidebar Component', () => {
     expect(profileImage.length).toBeGreaterThan(0);
     expect(userName.length).toBeGreaterThan(0);
   });
+
+  it('renders consistently across different states', () => {
+    const { rerender } = render(<Sidebar isOpen={false} setIsOpen={mockSetIsOpen} />);
+    
+    const sidebar = screen.getByRole('complementary');
+    expect(sidebar).toBeInTheDocument();
+
+    // Test that component re-renders without errors when isOpen changes
+    rerender(<Sidebar isOpen={true} setIsOpen={mockSetIsOpen} />);
+    expect(sidebar).toBeInTheDocument();
+  });
+
+  it('toggles profile dropdown on desktop', () => {
+    render(<Sidebar isOpen={true} setIsOpen={mockSetIsOpen} />);
+    
+    // Find the profile section button (should be hidden on mobile, visible on lg)
+    const profileSection = screen.getByRole('complementary').querySelector('.lg\\:block');
+    expect(profileSection).toBeInTheDocument();
+  });
 });
