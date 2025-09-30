@@ -9,6 +9,5 @@ export async function readTypes() {
         .order('type', { ascending: true });
     
     if (error) throw error;
-
     return data;
 }

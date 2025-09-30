@@ -9,6 +9,5 @@ export async function readLanguages() {
         .order('language', { ascending: true });
     
     if (error) throw error;
-
     return data;
 }

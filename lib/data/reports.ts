@@ -23,21 +23,19 @@ export async function readReports(sortParameters: SortParameters, filterParamete
 
     let query = supabase
         .from('reports')
-        .select('*, therapist:therapists!inner(*, clinic:clinics!inner(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))');
-    
-    if (languageID) query = query.eq('language_id', languageID);
-    if (countryID) query = query.eq('therapist.clinic.country_id', countryID);
-    if (typeIDs?.length) query = query.in('type_id', typeIDs);
-    if (clinicID) query = query.eq('therapist.clinic_id', clinicID);
-    if (startDate) query = query.gte('created_at', startDate);
-    if (endDate) query = query.lte('created_at', endDate);
-    if (therapistID) query = query.eq('therapist_id', therapistID);
+        .select('*, therapist:therapists!inner(*, clinic:clinics!inner(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))')
+        .order(sortBy, { ascending });
 
-    query = query.order(sortBy, { ascending });
+    if (languageID) query.eq('language_id', languageID);
+    if (countryID) query.eq('therapist.clinic.country_id', countryID);
+    if (typeIDs?.length) query.in('type_id', typeIDs);
+    if (clinicID) query.eq('therapist.clinic_id', clinicID);
+    if (startDate) query.gte('created_at', startDate);
+    if (endDate) query.lte('created_at', endDate);
+    if (therapistID) query.eq('therapist_id', therapistID);
 
     const { data, error } = await query
     if (error) throw error;
-
     return data;
 }
 
@@ -46,11 +44,10 @@ export async function readReport(id: string) {
 
     const { data, error } = await supabase
         .from('reports')
-        .select('*, therapist:therapists!inner(*, clinic:clinics!inner(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))')
+        .select('*, therapist:therapists(*, clinic:clinics(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))')
         .eq('id', id)
         .single();
     
     if (error) throw error;
-
     return data;
 }

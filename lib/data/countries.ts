@@ -9,6 +9,5 @@ export async function readCountries() {
         .order('country', { ascending: true });
     
     if (error) throw error;
-
     return data;
 }

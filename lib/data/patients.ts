@@ -5,17 +5,14 @@ export async function readPatients(ascending: boolean, countryID?: number, sex?:
 
     let query = supabase
         .from('patients_view')
-        .select('*, country:countries(*)');
+        .select('*, country:countries(*)')
+        .order('name', { ascending });
     
-    if (countryID) query = query.eq('country_id', countryID);
-    if (sex) query = query.eq('sex', sex);
-
-    query = query.order('name', { ascending });
+    if (countryID) query.eq('country_id', countryID);
+    if (sex) query.eq('sex', sex);
 
     const { data, error } = await query;
-        
     if (error) throw error;
-
     return data;
 }
 
@@ -29,6 +26,5 @@ export async function readPatient(id: string) {
         .single();
 
     if (error) throw error;
-
     return data;
 }

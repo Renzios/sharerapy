@@ -6,14 +6,11 @@ export async function readClinics(countryID?: number) {
     let query = supabase
         .from('clinics')
         .select('*, country:countries(*)')
+        .order('clinic', { ascending: true });
 
-    if (countryID) query = query.eq('country_id', countryID);
-
-    query = query.order('clinic', { ascending: true });
+    if (countryID) query.eq('country_id', countryID);
     
     const { data, error } = await query;
-
     if (error) throw error;
-
     return data;
 }
