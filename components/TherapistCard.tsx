@@ -45,7 +45,7 @@ export default function TherapistCard({ therapist }: TherapistCardProps) {
         <h1 className="font-Noto-Sans font-medium text-md lg:text-xl text-black text-center">
           {therapist.name}
         </h1>
-        <p className="font-Noto-Sans text-[0.6875rem] text-darkgray text-center">
+        <p className="font-Noto-Sans text-[0.6875rem] lg:text-sm text-darkgray text-center">
           {therapist.clinic}
         </p>
       </div>
