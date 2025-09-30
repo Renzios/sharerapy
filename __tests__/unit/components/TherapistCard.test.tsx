@@ -16,6 +16,8 @@ describe("TherapistCard Component", () => {
     name: "Dr. Jane Smith",
     clinic: "Sunrise Clinic",
     pictureUrl: "/testpfp.jpg",
+    email: "jane.smith@example.com",
+    country: "USA",
   };
 
   const mockTherapist2 = {
@@ -23,6 +25,8 @@ describe("TherapistCard Component", () => {
     name: "Dr. John Doe",
     clinic: "Wellness Center",
     pictureUrl: "/testpfp.jpg",
+    email: "john.doe@example.com",
+    country: "Canada",
   };
 
   it("renders without crashing", () => {
@@ -43,6 +47,9 @@ describe("TherapistCard Component", () => {
     render(<TherapistCard therapist={mockTherapist} />);
     const clinic = screen.getByText(mockTherapist.clinic);
     expect(clinic).toBeInTheDocument();
+    // email and country should also be displayed
+    expect(screen.getByText(mockTherapist.email)).toBeInTheDocument();
+    expect(screen.getByText(mockTherapist.country)).toBeInTheDocument();
   });
 
   it("displays therapist profile image", () => {
@@ -50,6 +57,9 @@ describe("TherapistCard Component", () => {
     const img = screen.getByAltText(`${mockTherapist.name} profile`);
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute("src", mockTherapist.pictureUrl);
+    // verify email and country are present with the image
+    expect(screen.getByText(mockTherapist.email)).toBeInTheDocument();
+    expect(screen.getByText(mockTherapist.country)).toBeInTheDocument();
   });
 
   it("renders different therapist data correctly", () => {
@@ -61,6 +71,8 @@ describe("TherapistCard Component", () => {
     expect(
       screen.getByAltText(`${mockTherapist2.name} profile`)
     ).toHaveAttribute("src", mockTherapist2.pictureUrl);
+    expect(screen.getByText(mockTherapist2.email)).toBeInTheDocument();
+    expect(screen.getByText(mockTherapist2.country)).toBeInTheDocument();
   });
 
   it("handles long therapist names correctly", () => {
@@ -84,6 +96,8 @@ describe("TherapistCard Component", () => {
     expect(
       screen.getByAltText(`${mockTherapist.name} profile`)
     ).toBeInTheDocument();
+    expect(screen.getByText(mockTherapist.email)).toBeInTheDocument();
+    expect(screen.getByText(mockTherapist.country)).toBeInTheDocument();
   });
 
   it("has proper layout structure", () => {

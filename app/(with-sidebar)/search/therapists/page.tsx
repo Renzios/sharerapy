@@ -74,24 +74,32 @@ export default function SearchTherapistsPage() {
                 name: "Dr. Jane Smith",
                 clinic: "Sunrise Clinic",
                 pictureUrl: "/testpfp.jpg",
+                email: "jane.smith@sunriseclinic.com",
+                country: "USA",
               },
               {
                 id: 2,
                 name: "Dr. John Doe",
                 clinic: "Wellness Center",
                 pictureUrl: "/testpfp.jpg",
+                email: "john.doe@wellnesscenter.com",
+                country: "Canada",
               },
               {
                 id: 3,
                 name: "Dr. Emily Lee",
                 clinic: "Harmony Health",
                 pictureUrl: "/testpfp.jpg",
+                email: "emily.lee@harmonyhealth.com",
+                country: "UK",
               },
               {
                 id: 4,
                 name: "Dr. Michael Chan",
                 clinic: "Mindful Therapy",
                 pictureUrl: "/testpfp.jpg",
+                email: "michael.chan@mindfultherapy.com",
+                country: "Australia",
               },
             ];
 
