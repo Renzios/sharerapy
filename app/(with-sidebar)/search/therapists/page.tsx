@@ -8,51 +8,6 @@ import { useState } from "react";
  * Search page that displays therapists
  */
 export default function SearchTherapistsPage() {
-  // Temporary mock therapist data
-  const mockTherapists = [
-    {
-      id: 1,
-      name: "Dr. Jane Smith",
-      clinic: "Sunrise Clinic",
-      pictureUrl: "/testpfp.jpg",
-    },
-    {
-      id: 2,
-      name: "Dr. John Doe",
-      clinic: "Wellness Center",
-      pictureUrl: "/testpfp.jpg",
-    },
-    {
-      id: 3,
-      name: "Dr. Emily Lee",
-      clinic: "Harmony Health",
-      pictureUrl: "/testpfp.jpg",
-    },
-    {
-      id: 4,
-      name: "Dr. Michael Chan",
-      clinic: "Mindful Therapy",
-      pictureUrl: "/testpfp.jpg",
-    },
-    {
-      id: 5,
-      name: "Dr. Sarah Kim",
-      clinic: "Peaceful Minds",
-      pictureUrl: "/testpfp.jpg",
-    },
-    {
-      id: 6,
-      name: "Dr. Alex Rivera",
-      clinic: "New Hope Clinic",
-      pictureUrl: "/testpfp.jpg",
-    },
-    {
-      id: 7,
-      name: "Dr. Priya Patel",
-      clinic: "Balance Therapy",
-      pictureUrl: "/testpfp.jpg",
-    },
-  ];
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState({
     value: "name",

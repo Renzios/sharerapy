@@ -2,10 +2,11 @@ import { render, screen } from "@testing-library/react";
 import TherapistCard from "@/components/TherapistCard";
 
 // Mock next/image to render a regular img for testing
+import React from "react";
 jest.mock("next/image", () => ({
   __esModule: true,
-  default: (props: any) => {
-    return <img {...props} />;
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
+    return <img {...props} alt={props.alt ?? ""} />;
   },
 }));
 
