@@ -2,9 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: __dirname,
-  experimental: {
-    // Ensure server components work in tests
-    serverComponentsExternalPackages: ['@supabase/supabase-js'],
+  serverExternalPackages: ["@supabase/supabase-js"],
+  experimental: {},
+  turbopack: {
+    root: __dirname,
+  },
+  devIndicators: {
+    position: "bottom-right",
   },
 };
 
