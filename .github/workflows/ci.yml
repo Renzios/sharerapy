@@ -1,11 +1,17 @@
 # .github/workflows/ci.yml
 name: Sharerapy CI Pipeline
 
+# Workflow Triggers:
+# - Push to main: Full production deployment pipeline with regression tests
+# - Push to develop: Staging validation with E2E tests
+# - Push to feature/*: Basic CI checks (unit tests, linting, backend tests)
+# - Pull Request to main/develop: Full test suite including E2E tests
+
 on:
   push:
-    branches: [ main, feature/*, feat/* ]
+    branches: [ main, develop, feature/*, feat/* ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 jobs:
   # Jest Unit Tests
@@ -25,19 +31,19 @@ jobs:
       - name: Install dependencies
         run: npm ci --verbose
 
-      - name: Run Jest unit tests for backend server actions and data logic
+      - name: Run Jest unit tests
         run: npm test -- --verbose
         env:
           NODE_ENV: test
 
-      - name: Generate backend test coverage report
+      - name: Generate 
         run: npm test -- --coverage --passWithNoTests --verbose
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: backend-test-coverage-reports
+          name: unit-test-coverage-reports
           path: coverage/
 
   # ESLint Code Quality Checks for TypeScript/JavaScript Code
@@ -106,7 +112,7 @@ jobs:
     name: Cypress E2E Tests (Vercel Preview Deployments)
     runs-on: ubuntu-latest
     needs: [jest-backend-tests, backend-tests]
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/develop')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -143,6 +149,9 @@ jobs:
           config: baseUrl=http://localhost:3000
         env:
           DEBUG: cypress:*
+          NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: test-key-for-ci-testing
+          NODE_ENV: test
 
       - name: Skip E2E tests (no test files)
         if: steps.cypress-check.outputs.has-tests == 'false'
@@ -156,6 +165,59 @@ jobs:
         with:
           name: cypress-screenshots
           path: cypress/screenshots
+
+  # Staging Validation for Develop Branch
+  staging-validation:
+    name: Staging Test Suite (Develop Branch)
+    runs-on: ubuntu-latest
+    needs: [jest-backend-tests, backend-tests, e2e-tests]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci --verbose
+          pip install --verbose robotframework
+          pip install --verbose robotframework-requests
+          pip install --verbose -r requirements-test.txt
+
+      - name: Run staging test suite
+        run: |
+          mkdir -p tests/robot
+          if [ -f "tests/robot/*.robot" ]; then
+            # Run staging tests on develop branch
+            robot --loglevel DEBUG --include staging --outputdir staging-results tests/robot/
+          else
+            echo "No Robot Framework staging tests found, skipping..."
+            mkdir -p staging-results
+            echo "No staging tests executed" > staging-results/output.xml
+          fi
+
+      - name: Build verification for staging
+        run: |
+          echo "Verifying build on develop branch (staging)..."
+          npm run build --verbose
+          echo "Staging build successful - Ready for integration testing"
+
+      - name: Upload staging test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: staging-test-results
+          path: staging-results/
 
   # Comprehensive Regression Test Suite Before Production Deployment
   main-branch-validation:
