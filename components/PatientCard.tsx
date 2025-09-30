@@ -31,7 +31,7 @@ export default function PatientCard({ patient }: PatientCardProps) {
         flex flex-col gap-y-2
         bg-white rounded-[0.5rem] p-6
         border border-bordergray
-        hover:bg-bordergray/30 active:bg-black/30 hover:scale-102 active:scale-101
+        hover:bg-bordergray/30 active:bg-black/30 hover:scale-102 active:scale-101 hover:cursor-pointer
         transition-transform duration-200 ease-in-out
  
         "
