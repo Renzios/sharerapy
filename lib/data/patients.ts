@@ -1,6 +1,11 @@
 import { createClient } from '@/lib/supabase/server';
+import { ReadParameters } from '@/lib/types/types';
 
-export async function readPatients(ascending: boolean, countryID?: number, sex?: 'Male' | 'Female') {
+export async function readPatients({
+    ascending = true,
+    countryID,
+    sex
+}: ReadParameters = {}) {
     const supabase = await createClient();
 
     let query = supabase

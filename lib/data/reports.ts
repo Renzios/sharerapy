@@ -1,30 +1,23 @@
 import { createClient } from '@/lib/supabase/server';
+import { ReadParameters } from '@/lib/types/types';
 
-type SortParameters = {
-    sortBy: 'title' | 'created_at';
-    ascending?: boolean;
-}
-
-type FilterParameters = {
-    countryID?: number;
-    languageID?: number;
-    typeIDs?: number[];
-    clinicID?: number;
-    startDate?: string;
-    endDate?: string;
-    therapistID?: string;
-}
-
-export async function readReports(sortParameters: SortParameters, filterParameters: FilterParameters) {
-    const { sortBy, ascending } = sortParameters
-    const { countryID, languageID, typeIDs, clinicID, startDate, endDate, therapistID } = filterParameters
-
+export async function readReports({
+    column = 'title',
+    ascending = true,
+    countryID, 
+    languageID, 
+    typeIDs,
+    clinicID,
+    startDate,
+    endDate,
+    therapistID
+}: ReadParameters = {}) {
     const supabase = await createClient();
 
     let query = supabase
         .from('reports')
         .select('*, therapist:therapists!inner(*, clinic:clinics!inner(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))')
-        .order(sortBy, { ascending });
+        .order(column, { ascending });
 
     if (languageID) query.eq('language_id', languageID);
     if (countryID) query.eq('therapist.clinic.country_id', countryID);
