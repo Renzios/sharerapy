@@ -10,14 +10,17 @@ export async function readReports({
     clinicID,
     startDate,
     endDate,
-    therapistID
+    therapistID,
+    page = 0,
+    pageSize = 10
 }: ReadParameters = {}) {
     const supabase = await createClient();
 
     const query = supabase
         .from('reports')
-        .select('*, therapist:therapists!inner(*, clinic:clinics!inner(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))')
-        .order(column, { ascending });
+        .select('*, therapist:therapists!inner(*, clinic:clinics!inner(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))', { count: 'exact' })
+        .order(column, { ascending })
+        .range(page * pageSize, page * pageSize + pageSize - 1);
 
     if (languageID) query.eq('language_id', languageID);
     if (countryID) query.eq('therapist.clinic.country_id', countryID);
@@ -27,9 +30,9 @@ export async function readReports({
     if (endDate) query.lte('created_at', endDate);
     if (therapistID) query.eq('therapist_id', therapistID);
 
-    const { data, error } = await query
+    const { data, error, count } = await query;
     if (error) throw error;
-    return data;
+    return { data, count };
 }
 
 export async function readReport(id: string) {

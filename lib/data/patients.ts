@@ -4,21 +4,24 @@ import { ReadParameters } from '@/lib/types/types';
 export async function readPatients({
     ascending = true,
     countryID,
-    sex
+    sex,
+    page = 0,
+    pageSize = 10
 }: ReadParameters = {}) {
     const supabase = await createClient();
 
     const query = supabase
         .from('patients_view')
-        .select('*, country:countries(*)')
-        .order('name', { ascending });
+        .select('*, country:countries(*)', { count: 'exact' })
+        .order('name', { ascending })
+        .range(page * pageSize, page * pageSize + pageSize - 1);
     
     if (countryID) query.eq('country_id', countryID);
     if (sex) query.eq('sex', sex);
 
-    const { data, error } = await query;
+    const { data, error, count } = await query;
     if (error) throw error;
-    return data;
+    return { data, count };
 }
 
 export async function readPatient(id: string) {
