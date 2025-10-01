@@ -52,13 +52,15 @@ export default function Sidebar({
               border-b border-bordergray
               lg:flex lg:h-[5.3125rem]"
         >
-          <Image
-            src="/logo.png"
-            alt="Sharerapy Logo"
-            width={40}
-            height={40}
-            className="w-[2.5rem] h-[2.5rem]"
-          />
+          <Link href="/">
+            <Image
+              src="/logo.png"
+              alt="Sharerapy Logo"
+              width={40}
+              height={40}
+              className="w-[2.5rem] h-[2.5rem] hover:cursor-pointer"
+            />
+          </Link>
           <h1 className="font-Noto-Sans text-[1.5rem] font-black">
             <span className="text-primary">share</span>rapy.
           </h1>
