@@ -14,7 +14,7 @@ export async function readReports({
 }: ReadParameters = {}) {
     const supabase = await createClient();
 
-    let query = supabase
+    const query = supabase
         .from('reports')
         .select('*, therapist:therapists!inner(*, clinic:clinics!inner(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))')
         .order(column, { ascending });

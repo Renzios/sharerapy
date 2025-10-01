@@ -6,7 +6,7 @@ export async function readClinics({
 }: ReadParameters = {}) {
     const supabase = await createClient();
 
-    let query = supabase
+    const query = supabase
         .from('clinics')
         .select('*, country:countries(*)')
         .order('clinic', { ascending: true });

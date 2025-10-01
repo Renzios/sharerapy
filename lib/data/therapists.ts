@@ -8,7 +8,7 @@ export async function readTherapists({
 }: ReadParameters = {}) {
     const supabase = await createClient();
 
-    let query = supabase
+    const query = supabase
         .from('therapists_view')
         .select('*, clinic:clinics!inner(*, country:countries(*))')
         .order('name', { ascending });
