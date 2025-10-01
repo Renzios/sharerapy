@@ -121,30 +121,36 @@ export type Database = {
         Row: {
           content: Json
           created_at: string
+          description: string
           id: string
           language_id: number
           patient_id: string
           therapist_id: string
+          title: string
           type_id: number
           updated_at: string
         }
         Insert: {
           content: Json
           created_at?: string
+          description: string
           id?: string
           language_id: number
           patient_id: string
           therapist_id: string
+          title: string
           type_id: number
           updated_at?: string
         }
         Update: {
           content?: Json
           created_at?: string
+          description?: string
           id?: string
           language_id?: number
           patient_id?: string
           therapist_id?: string
+          title?: string
           type_id?: number
           updated_at?: string
         }
@@ -164,10 +170,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "reports_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients_view"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "reports_therapist_id_fkey"
             columns: ["therapist_id"]
             isOneToOne: false
             referencedRelation: "therapists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_therapist_id_fkey"
+            columns: ["therapist_id"]
+            isOneToOne: false
+            referencedRelation: "therapists_view"
             referencedColumns: ["id"]
           },
           {
@@ -240,7 +260,172 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      patients_view: {
+        Row: {
+          age_months: number | null
+          age_years: number | null
+          birthdate: string | null
+          contact_number: string | null
+          country_id: number | null
+          created_at: string | null
+          first_name: string | null
+          id: string | null
+          last_name: string | null
+          name: string | null
+          sex: Database["public"]["Enums"]["sex"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          age_months?: never
+          age_years?: never
+          birthdate?: string | null
+          contact_number?: string | null
+          country_id?: number | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+          name?: never
+          sex?: Database["public"]["Enums"]["sex"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          age_months?: never
+          age_years?: never
+          birthdate?: string | null
+          contact_number?: string | null
+          country_id?: number | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+          name?: never
+          sex?: Database["public"]["Enums"]["sex"] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patients_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports_view: {
+        Row: {
+          clinic_id: number | null
+          content: Json | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          language_id: number | null
+          patient_id: string | null
+          therapist_id: string | null
+          title: string | null
+          type_id: number | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_language_id_fkey"
+            columns: ["language_id"]
+            isOneToOne: false
+            referencedRelation: "languages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_therapist_id_fkey"
+            columns: ["therapist_id"]
+            isOneToOne: false
+            referencedRelation: "therapists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_therapist_id_fkey"
+            columns: ["therapist_id"]
+            isOneToOne: false
+            referencedRelation: "therapists_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_type_id_fkey"
+            columns: ["type_id"]
+            isOneToOne: false
+            referencedRelation: "types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "therapists_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      therapists_view: {
+        Row: {
+          age: number | null
+          bio: string | null
+          clinic_id: number | null
+          created_at: string | null
+          first_name: string | null
+          id: string | null
+          last_name: string | null
+          name: string | null
+          picture: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          age?: number | null
+          bio?: string | null
+          clinic_id?: number | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+          name?: never
+          picture?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          age?: number | null
+          bio?: string | null
+          clinic_id?: number | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+          name?: never
+          picture?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "therapists_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
