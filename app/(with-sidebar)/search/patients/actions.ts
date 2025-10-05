@@ -12,7 +12,6 @@ export async function fetchPatients({
   try {
     const { data, count } = await readPatients({
       page: page - 1,
-      pageSize: 20,
       ascending,
     });
 
