@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { getPublicURL } from "@/lib/utils/storage";
 
 /**
  * Props for the TherapistCard component
@@ -7,17 +8,23 @@ interface TherapistCardProps {
   /** Therapist data object */
   therapist: {
     /** Unique identifier for the therapist */
-    id: number;
+    id: string | null;
     /** Full name of the therapist */
-    name: string;
-    /** Clinic name */
-    clinic: string;
-    /** Profile picture URL */
-    pictureUrl: string;
+    name: string | null;
+    /** Profile picture path */
+    picture: string | null;
     /** Email address */
     email: string;
-    /** Country */
-    country: string;
+    /** Clinic object with nested country */
+    clinic: {
+      id: number;
+      clinic: string;
+      country_id: number;
+      country: {
+        id: number;
+        country: string;
+      };
+    } | null;
   };
 }
 
@@ -28,6 +35,9 @@ interface TherapistCardProps {
  * @param props - The therapist card props
  */
 export default function TherapistCard({ therapist }: TherapistCardProps) {
+  const clinicName = therapist.clinic?.clinic || "N/A";
+  const countryName = therapist.clinic?.country?.country || "N/A";
+
   return (
     <div
       className="
@@ -40,8 +50,8 @@ export default function TherapistCard({ therapist }: TherapistCardProps) {
       "
     >
       <Image
-        src={therapist.pictureUrl}
-        alt={therapist.name + " profile"}
+        src={getPublicURL("therapist_pictures", therapist.picture || "")}
+        alt={therapist.name + "PFP"}
         width={200}
         height={200}
         className="rounded-full w-[3.85rem] h-[3.85rem] lg:w-[6.25rem] lg:h-[6.25rem] mb-2"
@@ -52,7 +62,7 @@ export default function TherapistCard({ therapist }: TherapistCardProps) {
         </h1>
 
         <p className="font-Noto-Sans text-[0.6875rem] lg:text-sm text-darkgray text-center mb-4 break-words whitespace-normal">
-          {therapist.clinic}
+          {clinicName}
         </p>
 
         <p
@@ -64,7 +74,7 @@ export default function TherapistCard({ therapist }: TherapistCardProps) {
         </p>
 
         <p className="font-Noto-Sans text-[0.5rem] lg:text-[0.6875rem] text-darkgray text-center break-words whitespace-normal">
-          {therapist.country}
+          {countryName}
         </p>
       </div>
     </div>
