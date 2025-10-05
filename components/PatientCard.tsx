@@ -10,8 +10,8 @@ interface PatientCardProps {
     name: string;
     /** Patient's contact phone number */
     contactNumber: string;
-    /** Patient's country of residence */
-    country: string;
+    /** Patient's country of residence - object from database join */
+    country: { id: number; country: string } | null;
     /** Patient's biological sex */
     sex: string;
   };
@@ -50,7 +50,7 @@ export default function PatientCard({ patient }: PatientCardProps) {
           Country
         </h2>
         <p className="font-Noto-Sans text-sm text-black font-semibold">
-          {patient.country}
+          {patient.country?.country || "N/A"}
         </p>
       </div>
 
