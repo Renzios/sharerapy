@@ -5,17 +5,10 @@ import { getPublicURL } from "@/lib/utils/storage";
  * Props for the TherapistCard component
  */
 interface TherapistCardProps {
-  /** Therapist data object */
   therapist: {
-    /** Unique identifier for the therapist */
     id: string | null;
-    /** Full name of the therapist */
     name: string | null;
-    /** Profile picture path */
     picture: string | null;
-    /** Email address */
-    email: string;
-    /** Clinic object with nested country */
     clinic: {
       id: number;
       clinic: string;
@@ -63,14 +56,6 @@ export default function TherapistCard({ therapist }: TherapistCardProps) {
 
         <p className="font-Noto-Sans text-[0.6875rem] lg:text-sm text-darkgray text-center mb-4 break-words whitespace-normal">
           {clinicName}
-        </p>
-
-        <p
-          title={therapist.email}
-          aria-label={therapist.email}
-          className="font-Noto-Sans text-[0.5rem] lg:text-[0.6875rem] text-darkgray text-center w-full truncate"
-        >
-          {therapist.email}
         </p>
 
         <p className="font-Noto-Sans text-[0.5rem] lg:text-[0.6875rem] text-darkgray text-center break-words whitespace-normal">

@@ -2,18 +2,12 @@
  * Props for the PatientCard component
  */
 interface PatientCardProps {
-  /** Patient data object */
   patient: {
-    /** Unique identifier for the patient */
-    id: number;
-    /** Full name of the patient */
-    name: string;
-    /** Patient's contact phone number */
-    contactNumber: string;
-    /** Patient's country of residence - object from database join */
+    id: string | null;
+    name: string | null;
+    contact_number: string | null;
     country: { id: number; country: string } | null;
-    /** Patient's biological sex */
-    sex: string;
+    sex: string | null;
   };
 }
 
@@ -41,7 +35,7 @@ export default function PatientCard({ patient }: PatientCardProps) {
           {patient.name}
         </h1>
         <p className="font-Noto-Sans text-[0.6875rem] text-darkgray">
-          {patient.contactNumber}
+          {patient.contact_number || "N/A"}
         </p>
       </div>
 

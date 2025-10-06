@@ -6,8 +6,12 @@ import Pagination from "@/components/Pagination";
 import { useState, useTransition } from "react";
 import { fetchPatients } from "@/app/(with-sidebar)/search/patients/actions";
 
+// Extract the type from what fetchPatients returns
+type PatientsData = Awaited<ReturnType<typeof fetchPatients>>["data"];
+type Patient = NonNullable<PatientsData>[number];
+
 interface SearchPatientsClientProps {
-  initialPatients: any[];
+  initialPatients: Patient[];
   totalPages: number;
 }
 

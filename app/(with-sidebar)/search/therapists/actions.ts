@@ -2,20 +2,30 @@
 
 import { readTherapists } from "@/lib/data/therapists";
 
+// Extract the type from what readTherapists returns
+type TherapistsData = Awaited<ReturnType<typeof readTherapists>>["data"];
+type Therapist = NonNullable<TherapistsData>[number];
+
 export async function fetchTherapists({
   page = 1,
   ascending = true,
 }: {
   page?: number;
   ascending?: boolean;
-}) {
+}): Promise<{
+  data: Therapist[] | null;
+  count: number;
+  totalPages: number;
+  success: boolean;
+  error?: string;
+}> {
   try {
     const { data, count } = await readTherapists({ page: page - 1, ascending });
     const totalPages = count ? Math.ceil(count / 20) : 0;
 
     return {
       data,
-      count,
+      count: count || 0,
       totalPages,
       success: true,
     };
