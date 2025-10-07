@@ -1,22 +1,43 @@
 import Image from "next/image";
-
-interface Report {
-  title: string;
-  description: string;
-  dateUploaded: string; // ISO string or formatted date
-  country: string;
-  language: string;
-  therapyType: string;
-  clinic: string;
-  therapistName: string;
-  therapistPFP?: string | null; // URL or base64, optional
-}
+import { getPublicURL } from "@/lib/utils/storage";
 
 interface ReportCardProps {
-  report: Report;
+  report: {
+    id: string;
+    title: string;
+    description: string;
+    created_at: string; // This is your dateUploaded
+    therapist: {
+      first_name: string;
+      last_name: string;
+      picture: string;
+      clinic: {
+        clinic: string;
+        country: {
+          country: string;
+        };
+      };
+    };
+    type: {
+      type: string; // This is your therapyType
+    };
+    language: {
+      language: string;
+    };
+  };
 }
 
 export default function ReportCard({ report }: ReportCardProps) {
+  // Format the date
+  const dateUploaded = new Date(report.created_at).toLocaleDateString();
+
+  // Construct display values from nested data
+  const therapistName = `${report.therapist.first_name} ${report.therapist.last_name}`;
+  const country = report.therapist.clinic.country.country;
+  const clinic = report.therapist.clinic.clinic;
+  const therapyType = report.type.type;
+  const language = report.language.language;
+
   return (
     <div
       className="
@@ -33,17 +54,22 @@ export default function ReportCard({ report }: ReportCardProps) {
           <h1 className="font-Noto-Sans text-xl text-black font-semibold">
             {report.title}
           </h1>
-          <p className="font-Noto-Sans text-[0.6875rem] font-medium text-darkgray ml-0.5">{`${report.dateUploaded} | ${report.country} | ${report.language} | ${report.therapyType} | ${report.clinic}`}</p>
+          <p className="font-Noto-Sans text-[0.6875rem] font-medium text-darkgray ml-0.5">
+            {`${dateUploaded} | ${country} | ${language} | ${therapyType} | ${clinic}`}
+          </p>
         </div>
         <div className="ml-auto gap-x-2 hidden md:flex">
           <div className="flex items-center pb-3">
             <h2 className="font-Noto-Sans text-sm text-primary text-right hover:underline">
-              {report.therapistName}
+              {therapistName}
             </h2>
           </div>
           <div className="flex">
             <Image
-              src={report.therapistPFP || "/testpfp.jpg"}
+              src={getPublicURL(
+                "therapist_pictures",
+                report.therapist.picture || ""
+              )}
               alt="Therapist Profile Picture"
               width={100}
               height={100}
