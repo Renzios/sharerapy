@@ -22,7 +22,11 @@ export async function fetchReports({
   error?: string;
 }> {
   try {
-    const { data, count } = await readReports({ page: page - 1, ascending });
+    const { data, count } = await readReports({
+      column,
+      page: page - 1,
+      ascending,
+    });
     const totalPages = count ? Math.ceil(count / 10) : 0;
 
     return {
