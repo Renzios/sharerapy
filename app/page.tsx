@@ -58,7 +58,7 @@ export default function LandingPage() {
           />
         </div>
         <div className="mt-6 flex flex-col items-center gap-y-30">
-          <div className="flex items-center space-between space-x-4">
+          <div className="flex items-center space-between space-x-2 md:space-x-4">
             <Link href="/search/patients">
               <Button
                 variant="outline"
@@ -96,7 +96,7 @@ export default function LandingPage() {
               </Button>
             </Link>
           </div>
-          <h2 className="text-lg font-medium font-Noto-Sans text-darkgray">
+          <h2 className="text-sm md:text-lg font-medium font-Noto-Sans text-darkgray">
             Share Knowledge. Share Healing.
           </h2>
         </div>
