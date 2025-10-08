@@ -297,35 +297,39 @@ export default function SearchPageHeader({
         </div>
 
         <div className="hidden lg:flex items-center gap-1 lg:gap-2 min-w-0 flex-shrink ml-auto">
-          <Select
-            instanceId="sort-select"
-            options={sortOptions}
-            value={sortValue}
-            onChange={onSortChange}
-            isDisabled={sortDisabled}
-            className="w-[7rem] lg:w-[8rem] xl:w-[10rem] 2xl:w-[11.875rem] min-w-[7rem] flex-shrink"
-            classNamePrefix="react-select"
-            styles={selectStyles(sortDisabled)}
-            menuPortalTarget={
-              typeof document !== "undefined" ? document.body : null
-            }
-            menuPosition="fixed"
-          />
+          {!sortDisabled && (
+            <Select
+              instanceId="sort-select"
+              options={sortOptions}
+              value={sortValue}
+              onChange={onSortChange}
+              isDisabled={sortDisabled}
+              className="w-[7rem] lg:w-[8rem] xl:w-[10rem] 2xl:w-[11.875rem] min-w-[7rem] flex-shrink"
+              classNamePrefix="react-select"
+              styles={selectStyles(sortDisabled)}
+              menuPortalTarget={
+                typeof document !== "undefined" ? document.body : null
+              }
+              menuPosition="fixed"
+            />
+          )}
 
-          <Select
-            instanceId="language-select"
-            options={languageOptions}
-            value={languageValue}
-            onChange={onLanguageChange}
-            isDisabled={languageDisabled}
-            className="w-[7rem] lg:w-[8rem] xl:w-[10rem] 2xl:w-[11.875rem] min-w-[7rem] flex-shrink"
-            classNamePrefix="react-select"
-            styles={selectStyles(languageDisabled)}
-            menuPortalTarget={
-              typeof document !== "undefined" ? document.body : null
-            }
-            menuPosition="fixed"
-          />
+          {!languageDisabled && (
+            <Select
+              instanceId="language-select"
+              options={languageOptions}
+              value={languageValue}
+              onChange={onLanguageChange}
+              isDisabled={languageDisabled}
+              className="w-[7rem] lg:w-[8rem] xl:w-[10rem] 2xl:w-[11.875rem] min-w-[7rem] flex-shrink"
+              classNamePrefix="react-select"
+              styles={selectStyles(languageDisabled)}
+              menuPortalTarget={
+                typeof document !== "undefined" ? document.body : null
+              }
+              menuPosition="fixed"
+            />
+          )}
         </div>
       </div>
     </div>
