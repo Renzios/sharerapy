@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { ReadParameters } from '@/lib/types/types';
 
 export async function readReports({
+    search,
     column = 'title',
     ascending = true,
     countryID, 
@@ -29,6 +30,8 @@ export async function readReports({
     if (startDate) query.gte('created_at', startDate);
     if (endDate) query.lte('created_at', endDate);
     if (therapistID) query.eq('therapist_id', therapistID);
+
+    if (search) query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
 
     const { data, error, count } = await query;
     if (error) throw error;

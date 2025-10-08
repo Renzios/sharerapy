@@ -82,6 +82,7 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
+          name: string
           sex: Database["public"]["Enums"]["sex"]
           updated_at: string
         }
@@ -93,6 +94,7 @@ export type Database = {
           first_name: string
           id?: string
           last_name: string
+          name?: string | null
           sex: Database["public"]["Enums"]["sex"]
           updated_at?: string
         }
@@ -104,6 +106,7 @@ export type Database = {
           first_name?: string
           id?: string
           last_name?: string
+          name?: string | null
           sex?: Database["public"]["Enums"]["sex"]
           updated_at?: string
         }
@@ -208,6 +211,7 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
+          name: string
           picture: string
           updated_at: string
         }
@@ -219,6 +223,7 @@ export type Database = {
           first_name: string
           id?: string
           last_name: string
+          name?: string
           picture: string
           updated_at?: string
         }
@@ -230,6 +235,7 @@ export type Database = {
           first_name?: string
           id?: string
           last_name?: string
+          name?: string
           picture?: string
           updated_at?: string
         }
