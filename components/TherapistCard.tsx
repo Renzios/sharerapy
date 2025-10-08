@@ -6,9 +6,9 @@ import { getPublicURL } from "@/lib/utils/storage";
  */
 interface TherapistCardProps {
   therapist: {
-    id: string | null;
-    name: string | null;
-    picture: string | null;
+    id: string;
+    name: string;
+    picture: string;
     clinic: {
       id: number;
       clinic: string;
@@ -17,7 +17,7 @@ interface TherapistCardProps {
         id: number;
         country: string;
       };
-    } | null;
+    };
   };
 }
 

@@ -3,11 +3,11 @@
  */
 interface PatientCardProps {
   patient: {
-    id: string | null;
-    name: string | null;
-    contact_number: string | null;
-    country: { id: number; country: string } | null;
-    sex: string | null;
+    id: string;
+    name: string;
+    contact_number: string;
+    country: { id: number; country: string };
+    sex: string;
   };
 }
 
