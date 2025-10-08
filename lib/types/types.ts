@@ -1,6 +1,8 @@
 import { Enums } from '@/lib/types/database.types';
 
 export type ReadParameters = {
+    search?: string,
+    
     column?: string,
     ascending?: boolean,
 
