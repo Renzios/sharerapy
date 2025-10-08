@@ -10,10 +10,12 @@ export async function fetchReports({
   column = "title",
   page = 1,
   ascending = true,
+  search,
 }: {
   column?: string;
   page?: number;
   ascending?: boolean;
+  search?: string;
 }): Promise<{
   data: Report[] | null;
   count: number;
@@ -26,6 +28,7 @@ export async function fetchReports({
       column,
       page: page - 1,
       ascending,
+      search,
     });
     const totalPages = count ? Math.ceil(count / 10) : 0;
 

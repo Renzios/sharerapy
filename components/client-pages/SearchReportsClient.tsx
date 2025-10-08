@@ -1,7 +1,7 @@
 "use client";
 
 import SearchPageHeader from "@/components/SearchPageHeader";
-import ReportCard from "@/components/ReportCard";
+import ReportCard from "@/components/cards/ReportCard";
 import Pagination from "@/components/Pagination";
 import { useState, useTransition } from "react";
 import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
@@ -13,6 +13,7 @@ type Report = NonNullable<ReportsData>[number];
 interface SearchReportsClientProps {
   initialReports: Report[];
   totalPages: number;
+  initialSearchTerm?: string;
 }
 
 /**
@@ -23,8 +24,9 @@ interface SearchReportsClientProps {
 export default function SearchReportsPage({
   initialReports,
   totalPages,
+  initialSearchTerm = "",
 }: SearchReportsClientProps) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [sortOption, setSortOption] = useState({
     value: "titleAscending",
     label: "Sort by: Title (A-Z)",
@@ -66,6 +68,26 @@ export default function SearchReportsPage({
     }
   };
 
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+
+    const { column, ascending } = getSortParams(sortOption.value);
+
+    startTransition(async () => {
+      const result = await fetchReports({
+        column,
+        ascending,
+        page: 1,
+        search: value,
+      });
+      if (result.success && result.data) {
+        setReports(result.data);
+        setCurrentTotalPages(result.totalPages);
+      }
+    });
+  };
+
   const handleSortChange = (
     option: { value: string; label: string } | null
   ) => {
@@ -79,6 +101,7 @@ export default function SearchReportsPage({
         column,
         ascending,
         page: currentPage,
+        search: searchTerm,
       });
       if (result.success && result.data) {
         setReports(result.data);
@@ -96,6 +119,7 @@ export default function SearchReportsPage({
         column,
         ascending,
         page,
+        search: searchTerm,
       });
 
       if (result.success && result.data) {
@@ -112,10 +136,7 @@ export default function SearchReportsPage({
       <SearchPageHeader
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
-        onSearch={(value) => {
-          console.log("Searching reports:", value);
-          // Add your search logic here
-        }}
+        onSearch={handleSearch}
         currentPage="reports"
         // Custom sort options for reports
         sortOptions={reportSortOptions}

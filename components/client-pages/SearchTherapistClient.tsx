@@ -1,7 +1,7 @@
 "use client";
 
 import SearchPageHeader from "@/components/SearchPageHeader";
-import TherapistCard from "@/components/TherapistCard";
+import TherapistCard from "@/components/cards/TherapistCard";
 import Pagination from "@/components/Pagination";
 import { useState, useTransition } from "react";
 import { fetchTherapists } from "@/app/(with-sidebar)/search/therapists/actions";
@@ -13,6 +13,7 @@ type Therapist = NonNullable<TherapistsData>[number];
 interface SearchTherapistClientProps {
   initialTherapists: Therapist[];
   totalPages: number;
+  initialSearchTerm?: string;
 }
 
 /**
@@ -23,12 +24,13 @@ interface SearchTherapistClientProps {
 export default function SearchTherapistsPage({
   initialTherapists,
   totalPages,
+  initialSearchTerm = "",
 }: SearchTherapistClientProps) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
 
   const [sortOption, setSortOption] = useState({
     value: "nameAscending",
-    label: "Sort by: Name (Ascending)",
+    label: "Sort by: Name (A-Z)",
   });
   const [languageOption, setLanguageOption] = useState({
     value: "en",
@@ -44,9 +46,26 @@ export default function SearchTherapistsPage({
     /* Therapist Specific Sort Options */
   }
   const therapistSortOptions = [
-    { value: "nameAscending", label: "Sort by: Name (Ascending)" },
-    { value: "nameDescending", label: "Sort by: Name (Descending)" },
+    { value: "nameAscending", label: "Sort by: Name (A-Z)" },
+    { value: "nameDescending", label: "Sort by: Name (Z-A)" },
   ];
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+
+    startTransition(async () => {
+      const result = await fetchTherapists({
+        search: value,
+        ascending: sortOption.value === "nameAscending",
+        page: 1,
+      });
+      if (result.success && result.data) {
+        setTherapists(result.data);
+        setCurrentTotalPages(result.totalPages);
+      }
+    });
+  };
 
   const handleSortChange = (
     option: { value: string; label: string } | null
@@ -58,6 +77,7 @@ export default function SearchTherapistsPage({
 
     startTransition(async () => {
       const result = await fetchTherapists({
+        search: searchTerm,
         ascending: isAscending,
         page: currentPage,
       });
@@ -73,6 +93,7 @@ export default function SearchTherapistsPage({
 
     startTransition(async () => {
       const result = await fetchTherapists({
+        search: searchTerm,
         ascending: sortOption.value === "nameAscending",
         page,
       });
@@ -91,10 +112,7 @@ export default function SearchTherapistsPage({
       <SearchPageHeader
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
-        onSearch={(value) => {
-          console.log("Searching therapists:", value);
-          // Add your search logic here
-        }}
+        onSearch={handleSearch}
         currentPage="therapists"
         // Custom sort options for therapists
         sortOptions={therapistSortOptions}

@@ -1,7 +1,7 @@
 "use client";
 
 import SearchPageHeader from "@/components/SearchPageHeader";
-import PatientCard from "@/components/PatientCard";
+import PatientCard from "@/components/cards/PatientCard";
 import Pagination from "@/components/Pagination";
 import { useState, useTransition } from "react";
 import { fetchPatients } from "@/app/(with-sidebar)/search/patients/actions";
@@ -13,6 +13,7 @@ type Patient = NonNullable<PatientsData>[number];
 interface SearchPatientsClientProps {
   initialPatients: Patient[];
   totalPages: number;
+  initialSearchTerm?: string;
 }
 
 /**
@@ -23,15 +24,16 @@ interface SearchPatientsClientProps {
 export default function SearchPatientsClient({
   initialPatients,
   totalPages,
+  initialSearchTerm = "",
 }: SearchPatientsClientProps) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
 
   {
     /* Default Values for Sort and Language Select */
   }
   const [sortOption, setSortOption] = useState({
     value: "nameAscending",
-    label: "Sort by: Name (Ascending)",
+    label: "Sort by: Name (A-Z)",
   });
   const [languageOption, setLanguageOption] = useState({
     value: "en",
@@ -47,9 +49,27 @@ export default function SearchPatientsClient({
     /* Patient Specific Sort Options */
   }
   const patientSortOptions = [
-    { value: "nameAscending", label: "Sort by: Name (Ascending)" },
-    { value: "nameDescending", label: "Sort by: Name (Descending)" },
+    { value: "nameAscending", label: "Sort by: Name (A-Z)" },
+    { value: "nameDescending", label: "Sort by: Name (Z-A)" },
   ];
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+
+    startTransition(async () => {
+      const result = await fetchPatients({
+        search: value,
+        ascending: sortOption.value === "nameAscending",
+        page: 1,
+      });
+
+      if (result.success && result.data) {
+        setPatients(result.data);
+        setCurrentTotalPages(result.totalPages);
+      }
+    });
+  };
 
   const handleSortChange = (
     option: { value: string; label: string } | null
@@ -61,6 +81,7 @@ export default function SearchPatientsClient({
 
     startTransition(async () => {
       const result = await fetchPatients({
+        search: searchTerm,
         ascending: isAscending,
         page: currentPage,
       });
@@ -76,6 +97,7 @@ export default function SearchPatientsClient({
 
     startTransition(async () => {
       const result = await fetchPatients({
+        search: searchTerm,
         ascending: sortOption.value === "nameAscending",
         page,
       });
@@ -94,10 +116,7 @@ export default function SearchPatientsClient({
       <SearchPageHeader
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
-        onSearch={(value) => {
-          console.log("Searching patients:", value);
-          // Add your search logic here
-        }}
+        onSearch={handleSearch}
         currentPage="patients"
         sortOptions={patientSortOptions}
         sortValue={sortOption}

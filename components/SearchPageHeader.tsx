@@ -81,19 +81,10 @@ export default function SearchPageHeader({
   advancedFiltersDisabled = false,
   onMobileSettingsClick,
   mobileSettingsDisabled = false,
-
-  // Sort select config
-  sortOptions = [
-    { value: "newest", label: "Sort by: Newest" },
-    { value: "oldest", label: "Sort by: Oldest" },
-    { value: "name", label: "Sort by: Name" },
-    { value: "relevance", label: "Sort by: Relevance" },
-  ],
-  sortValue = { value: "newest", label: "Sort by: Newest" },
+  sortOptions,
+  sortValue,
   onSortChange,
   sortDisabled = false,
-
-  // Language select config
   languageOptions = [
     { value: "en", label: "English" },
     { value: "es", label: "Español" },
@@ -239,7 +230,11 @@ export default function SearchPageHeader({
 
       <div className="h-1/2 w-full flex items-center gap-2 lg:gap-4 lg:px-4 min-w-0 overflow-hidden">
         <div className="flex items-center gap-1 sm:gap-2.5 flex-shrink-0">
-          <Link href="/search">
+          <Link
+            href={`/search${
+              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+            }`}
+          >
             <Button
               variant={currentPage === "all" ? "filled" : "outline"}
               fontSize="text-[0.6875rem]"
@@ -252,7 +247,11 @@ export default function SearchPageHeader({
             </Button>
           </Link>
 
-          <Link href="/search/patients">
+          <Link
+            href={`/search/patients${
+              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+            }`}
+          >
             <Button
               variant={currentPage === "patients" ? "filled" : "outline"}
               fontSize="text-[0.6875rem]"
@@ -265,7 +264,11 @@ export default function SearchPageHeader({
             </Button>
           </Link>
 
-          <Link href="/search/reports">
+          <Link
+            href={`/search/reports${
+              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+            }`}
+          >
             <Button
               variant={currentPage === "reports" ? "filled" : "outline"}
               fontSize="text-[0.6875rem]"
@@ -278,7 +281,11 @@ export default function SearchPageHeader({
             </Button>
           </Link>
 
-          <Link href="/search/therapists">
+          <Link
+            href={`/search/therapists${
+              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+            }`}
+          >
             <Button
               variant={currentPage === "therapists" ? "filled" : "outline"}
               fontSize="text-[0.6875rem]"

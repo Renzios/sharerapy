@@ -47,8 +47,8 @@ export default function Button({
   // Determine variant styles
   const variantStyles = {
     outline: [
-      "bg-transparent border border-primary text-primary",
-      "hover:bg-primary/5 hover:font-semibold hover:cursor-pointer",
+      "bg-transparent border border-primary text-primary font-semibold",
+      "hover:bg-primary/5 hover:cursor-pointer",
       "active:bg-primary active:text-white",
     ].join(" "),
     filled: "bg-primary border border-primary text-white hover:bg-primary/90",

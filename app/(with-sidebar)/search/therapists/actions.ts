@@ -9,9 +9,11 @@ type Therapist = NonNullable<TherapistsData>[number];
 export async function fetchTherapists({
   page = 1,
   ascending = true,
+  search,
 }: {
   page?: number;
   ascending?: boolean;
+  search?: string;
 }): Promise<{
   data: Therapist[] | null;
   count: number;
@@ -20,7 +22,11 @@ export async function fetchTherapists({
   error?: string;
 }> {
   try {
-    const { data, count } = await readTherapists({ page: page - 1, ascending });
+    const { data, count } = await readTherapists({
+      page: page - 1,
+      ascending,
+      search,
+    });
     const totalPages = count ? Math.ceil(count / 20) : 0;
 
     return {
