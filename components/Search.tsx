@@ -70,7 +70,7 @@ export default function Search({
         "
         aria-label="Search"
       >
-        <SearchIcon className="w-5 h-5" />
+        <SearchIcon className="w-5 h-5 hover:cursor-pointer" />
       </button>
 
       <input

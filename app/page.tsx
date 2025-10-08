@@ -4,11 +4,26 @@ import Button from "@/components/Button";
 import Search from "@/components/Search";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 /**
  * Landing page for the app, either the login page or search default page depending on if logged in.
  */
 export default function LandingPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
+
+  const handleSearch = (value: string) => {
+    if (value.trim()) {
+      // Navigate to /search with the search term as a query parameter
+      router.push(`/search?q=${encodeURIComponent(value)}`);
+    } else {
+      // If empty, just go to /search
+      router.push("/search");
+    }
+  };
+
   return (
     <>
       <div className="w-full h-[5.5rem] px-5 lg:px-10 flex items-center">
@@ -34,10 +49,16 @@ export default function LandingPage() {
           <h1 className="text-3xl lg:text-5xl font-Noto-Sans text-black font-black text-center mb-4">
             <span className="text-primary">share</span>rapy.
           </h1>
-          <Search size="50%" className="min-w-2xs" />
+          <Search
+            size="50%"
+            className="min-w-2xs"
+            value={searchTerm}
+            onChange={setSearchTerm}
+            onSearch={handleSearch}
+          />
         </div>
         <div className="mt-6 flex flex-col items-center gap-y-30">
-          <div className="flex items-center space-between space-x-4">
+          <div className="flex items-center space-between space-x-2 md:space-x-4">
             <Link href="/search/patients">
               <Button
                 variant="outline"
@@ -75,7 +96,7 @@ export default function LandingPage() {
               </Button>
             </Link>
           </div>
-          <h2 className="text-lg font-medium font-Noto-Sans text-darkgray">
+          <h2 className="text-sm md:text-lg font-medium font-Noto-Sans text-darkgray">
             Share Knowledge. Share Healing.
           </h2>
         </div>

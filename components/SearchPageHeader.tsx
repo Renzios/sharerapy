@@ -81,25 +81,13 @@ export default function SearchPageHeader({
   advancedFiltersDisabled = false,
   onMobileSettingsClick,
   mobileSettingsDisabled = false,
-
-  // Sort select config
-  sortOptions = [
-    { value: "newest", label: "Sort by: Newest" },
-    { value: "oldest", label: "Sort by: Oldest" },
-    { value: "name", label: "Sort by: Name" },
-    { value: "relevance", label: "Sort by: Relevance" },
-  ],
-  sortValue = { value: "newest", label: "Sort by: Newest" },
+  sortOptions,
+  sortValue,
   onSortChange,
   sortDisabled = false,
-
-  // Language select config
   languageOptions = [
     { value: "en", label: "English" },
-    { value: "es", label: "Español" },
-    { value: "fr", label: "Français" },
-    { value: "de", label: "Deutsch" },
-    { value: "zh", label: "中文" },
+    { value: "fl", label: "Filipino" },
   ],
   languageValue = { value: "en", label: "English" },
   onLanguageChange,
@@ -239,7 +227,11 @@ export default function SearchPageHeader({
 
       <div className="h-1/2 w-full flex items-center gap-2 lg:gap-4 lg:px-4 min-w-0 overflow-hidden">
         <div className="flex items-center gap-1 sm:gap-2.5 flex-shrink-0">
-          <Link href="/search">
+          <Link
+            href={`/search${
+              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+            }`}
+          >
             <Button
               variant={currentPage === "all" ? "filled" : "outline"}
               fontSize="text-[0.6875rem]"
@@ -252,7 +244,11 @@ export default function SearchPageHeader({
             </Button>
           </Link>
 
-          <Link href="/search/patients">
+          <Link
+            href={`/search/patients${
+              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+            }`}
+          >
             <Button
               variant={currentPage === "patients" ? "filled" : "outline"}
               fontSize="text-[0.6875rem]"
@@ -265,7 +261,11 @@ export default function SearchPageHeader({
             </Button>
           </Link>
 
-          <Link href="/search/reports">
+          <Link
+            href={`/search/reports${
+              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+            }`}
+          >
             <Button
               variant={currentPage === "reports" ? "filled" : "outline"}
               fontSize="text-[0.6875rem]"
@@ -278,7 +278,11 @@ export default function SearchPageHeader({
             </Button>
           </Link>
 
-          <Link href="/search/therapists">
+          <Link
+            href={`/search/therapists${
+              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+            }`}
+          >
             <Button
               variant={currentPage === "therapists" ? "filled" : "outline"}
               fontSize="text-[0.6875rem]"
@@ -293,35 +297,39 @@ export default function SearchPageHeader({
         </div>
 
         <div className="hidden lg:flex items-center gap-1 lg:gap-2 min-w-0 flex-shrink ml-auto">
-          <Select
-            instanceId="sort-select"
-            options={sortOptions}
-            value={sortValue}
-            onChange={onSortChange}
-            isDisabled={sortDisabled}
-            className="w-[7rem] lg:w-[8rem] xl:w-[10rem] 2xl:w-[11.875rem] min-w-[7rem] flex-shrink"
-            classNamePrefix="react-select"
-            styles={selectStyles(sortDisabled)}
-            menuPortalTarget={
-              typeof document !== "undefined" ? document.body : null
-            }
-            menuPosition="fixed"
-          />
+          {!sortDisabled && (
+            <Select
+              instanceId="sort-select"
+              options={sortOptions}
+              value={sortValue}
+              onChange={onSortChange}
+              isDisabled={sortDisabled}
+              className="w-[7rem] lg:w-[8rem] xl:w-[10rem] 2xl:w-[11.875rem] min-w-[7rem] flex-shrink"
+              classNamePrefix="react-select"
+              styles={selectStyles(sortDisabled)}
+              menuPortalTarget={
+                typeof document !== "undefined" ? document.body : null
+              }
+              menuPosition="fixed"
+            />
+          )}
 
-          <Select
-            instanceId="language-select"
-            options={languageOptions}
-            value={languageValue}
-            onChange={onLanguageChange}
-            isDisabled={languageDisabled}
-            className="w-[7rem] lg:w-[8rem] xl:w-[10rem] 2xl:w-[11.875rem] min-w-[7rem] flex-shrink"
-            classNamePrefix="react-select"
-            styles={selectStyles(languageDisabled)}
-            menuPortalTarget={
-              typeof document !== "undefined" ? document.body : null
-            }
-            menuPosition="fixed"
-          />
+          {!languageDisabled && (
+            <Select
+              instanceId="language-select"
+              options={languageOptions}
+              value={languageValue}
+              onChange={onLanguageChange}
+              isDisabled={languageDisabled}
+              className="w-[7rem] lg:w-[8rem] xl:w-[10rem] 2xl:w-[11.875rem] min-w-[7rem] flex-shrink"
+              classNamePrefix="react-select"
+              styles={selectStyles(languageDisabled)}
+              menuPortalTarget={
+                typeof document !== "undefined" ? document.body : null
+              }
+              menuPosition="fixed"
+            />
+          )}
         </div>
       </div>
     </div>

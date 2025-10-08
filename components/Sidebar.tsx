@@ -148,13 +148,15 @@ export default function Sidebar({
               lg:hidden
           "
           >
-            <Image
-              src="/logo.png"
-              alt="Sharerapy Logo"
-              width={80}
-              height={80}
-              className="w-20 h-20"
-            />
+            <Link href="/">
+              <Image
+                src="/logo.png"
+                alt="Sharerapy Logo"
+                width={80}
+                height={80}
+                className="w-20 h-20 hover:cursor-pointer"
+              />
+            </Link>
             <h1 className="font-Noto-Sans text-md font-black">
               <span className="text-primary">share</span>rapy.
             </h1>
