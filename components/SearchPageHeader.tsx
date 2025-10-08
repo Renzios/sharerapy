@@ -87,10 +87,7 @@ export default function SearchPageHeader({
   sortDisabled = false,
   languageOptions = [
     { value: "en", label: "English" },
-    { value: "es", label: "Español" },
-    { value: "fr", label: "Français" },
-    { value: "de", label: "Deutsch" },
-    { value: "zh", label: "中文" },
+    { value: "fl", label: "Filipino" },
   ],
   languageValue = { value: "en", label: "English" },
   onLanguageChange,
