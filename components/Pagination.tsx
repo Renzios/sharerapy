@@ -15,19 +15,29 @@ export default function Pagination({
   isPending = false,
 }: PaginationProps) {
   const getPageNumbers = () => {
-    const pages: number[] = [];
-
-    if (currentPage < 3 && totalPages >= 5) {
-      return [1, 2, 3, 4, 5];
+    // If total pages is less than 5, show all pages
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
 
-    for (let i = currentPage - 2; i <= currentPage + 2; i++) {
-      if (i >= 1 && i <= totalPages) {
-        pages.push(i);
-      }
+    // Total pages >= 5, always show 5 pages
+    let start = currentPage - 2;
+    let end = currentPage + 2;
+
+    // Adjust if too close to the beginning
+    if (start < 1) {
+      start = 1;
+      end = 5;
     }
 
-    return pages;
+    // Adjust if too close to the end
+    if (end > totalPages) {
+      end = totalPages;
+      start = totalPages - 4;
+    }
+
+    // Generate array of page numbers from start to end
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
   return (
