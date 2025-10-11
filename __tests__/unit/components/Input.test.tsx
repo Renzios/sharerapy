@@ -1,10 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import Input from '@/components/Input';
-
-// Utility function to test
-const satisfiesCharacterLimit = (limit: number, inputValue: string): boolean => {
-  return inputValue.length <= limit;
-};
+import satisfiesCharacterLimit from '@/components/Input';
 
 describe('satisfiesCharacterLimit function', () => {
   it('returns true when input length is less than the limit', () => {
