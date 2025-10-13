@@ -118,11 +118,27 @@ jobs:
 
       - name: Start Next.js server
         run: |
+          echo "Starting Next.js server for TDD testing..."
+          
           npm start &
           SERVER_PID=$!
           echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
-          # Wait for server to be ready
-          timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 2; done' || echo "Server not ready, continuing anyway"
+          
+          # Wait for server to be ready (expect some startup errors due to missing Supabase config in TDD)
+          sleep 10
+          
+          # Check if server is responding (may return 500 due to Supabase config, but server should be running)
+          for i in {1..12}; do
+            if curl -s http://localhost:3000 > /dev/null 2>&1; then
+              echo "Server is responding"
+              break
+            elif [ $i -eq 12 ]; then
+              echo "Server may not be fully ready, but continuing with TDD tests..."
+            else
+              echo "Waiting for server... attempt $i/12"
+              sleep 5
+            fi
+          done
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
@@ -199,8 +215,8 @@ jobs:
           config: baseUrl=http://localhost:3000
         env:
           DEBUG: cypress:*
-          NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: test-key-for-ci-testing
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
           NODE_ENV: test
 
       - name: Skip E2E tests (no test files)
