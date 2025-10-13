@@ -147,9 +147,9 @@ jobs:
         run: |
           mkdir -p test-results
           if [ -d "tests/robot/patients" ] && [ -d "tests/robot/therapists" ] && [ -d "tests/robot/reports" ]; then
-            # Run TDD tests - failures expected for unimplemented endpoints (this drives development)
-            robot --loglevel DEBUG --include tdd --continueonfailure --outputdir test-results tests/robot/patients/ tests/robot/therapists/ tests/robot/reports/ || true
-            echo "Robot Framework TDD tests completed - failures expected for unimplemented endpoints (this is normal in TDD)"
+            # Run TDD tests - failures will fail the pipeline until endpoints are implemented
+            robot --loglevel DEBUG --include tdd --outputdir test-results tests/robot/patients/ tests/robot/therapists/ tests/robot/reports/
+            echo "All TDD tests passed - endpoints are properly implemented"
           else
             echo "Robot Framework test directories not found, skipping..."
             echo "Expected: tests/robot/patients/, tests/robot/therapists/, tests/robot/reports/"
