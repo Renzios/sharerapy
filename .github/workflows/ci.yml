@@ -90,31 +90,81 @@ jobs:
   backend-tests:
     name: Backend Tests (Robot Framework - APIs)
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main' || github.base_ref == 'develop' || github.base_ref == 'main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
 
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Install Robot Framework and API testing dependencies
+      - name: Install dependencies
         run: |
+          npm ci --verbose
           pip install --verbose robotframework
           pip install --verbose robotframework-requests
           pip install --verbose robotframework-databaselibrary
           pip install --verbose -r requirements-test.txt
 
-      - name: Run Robot Framework tests for backend logic and APIs
+      - name: Build Next.js application
+        run: npm run build
+
+      - name: Start Next.js server
         run: |
-          mkdir -p tests/robot
-          if [ -f "tests/robot/*.robot" ]; then
-            robot --loglevel DEBUG --outputdir test-results tests/robot/
+          echo "Starting Next.js server for TDD testing..."
+          
+          npm start &
+          SERVER_PID=$!
+          echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
+          
+          # Wait for server to be ready (expect some startup errors due to missing Supabase config in TDD)
+          sleep 10
+          
+          # Check if server is responding (may return 500 due to Supabase config, but server should be running)
+          for i in {1..12}; do
+            if curl -s http://localhost:3000 > /dev/null 2>&1; then
+              echo "Server is responding"
+              break
+            elif [ $i -eq 12 ]; then
+              echo "Server may not be fully ready, but continuing with TDD tests..."
+            else
+              echo "Waiting for server... attempt $i/12"
+              sleep 5
+            fi
+          done
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Run Robot Framework TDD tests for all entities
+        run: |
+          mkdir -p test-results
+          if [ -d "tests/robot/patients" ] && [ -d "tests/robot/therapists" ] && [ -d "tests/robot/reports" ]; then
+            # Run TDD tests - failures will fail the pipeline until endpoints are implemented
+            robot --loglevel DEBUG --include tdd --outputdir test-results tests/robot/patients/ tests/robot/therapists/ tests/robot/reports/
+            echo "All TDD tests passed - endpoints are properly implemented"
           else
-            echo "No Robot Framework backend/API tests found, skipping..."
-            mkdir -p test-results
-            echo "No backend API tests executed" > test-results/output.xml
+            echo "Robot Framework test directories not found, skipping..."
+            echo "Expected: tests/robot/patients/, tests/robot/therapists/, tests/robot/reports/"
+            echo "No TDD API tests executed" > test-results/output.xml
+          fi
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Stop Next.js server
+        if: always()
+        run: |
+          if [ ! -z "$SERVER_PID" ]; then
+            kill $SERVER_PID 2>/dev/null || true
           fi
 
       - name: Upload Robot Framework results
@@ -166,8 +216,8 @@ jobs:
           config: baseUrl=http://localhost:3000
         env:
           DEBUG: cypress:*
-          NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: test-key-for-ci-testing
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
           NODE_ENV: test
 
       - name: Skip E2E tests (no test files)
