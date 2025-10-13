@@ -90,6 +90,7 @@ jobs:
   backend-tests:
     name: Backend Tests (Robot Framework - APIs)
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main' || github.base_ref == 'develop' || github.base_ref == 'main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
