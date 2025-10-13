@@ -131,9 +131,9 @@ jobs:
         run: |
           mkdir -p test-results
           if [ -d "tests/robot/patients" ] && [ -d "tests/robot/therapists" ] && [ -d "tests/robot/reports" ]; then
-            # Run TDD test structure with continue-on-failure for CI resilience (expects 404s)
+            # Run TDD tests - failures expected for unimplemented endpoints (this drives development)
             robot --loglevel DEBUG --include tdd --continueonfailure --outputdir test-results tests/robot/patients/ tests/robot/therapists/ tests/robot/reports/ || true
-            echo "Robot Framework TDD tests completed - 404s expected for unimplemented endpoints"
+            echo "Robot Framework TDD tests completed - failures expected for unimplemented endpoints (this is normal in TDD)"
           else
             echo "Robot Framework test directories not found, skipping..."
             echo "Expected: tests/robot/patients/, tests/robot/therapists/, tests/robot/reports/"
