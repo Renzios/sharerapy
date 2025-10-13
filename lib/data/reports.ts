@@ -12,6 +12,7 @@ export async function readReports({
     startDate,
     endDate,
     therapistID,
+    patientID,
     page = 0,
     pageSize = 10
 }: ReadParameters = {}) {
@@ -30,6 +31,7 @@ export async function readReports({
     if (startDate) query.gte('created_at', startDate);
     if (endDate) query.lte('created_at', endDate);
     if (therapistID) query.eq('therapist_id', therapistID);
+    if (patientID) query.eq('patient_id', patientID);
 
     if (search) query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
 
