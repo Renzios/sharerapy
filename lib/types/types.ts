@@ -15,6 +15,7 @@ export type ReadParameters = {
     startDate?: string,
     endDate?: string,
     therapistID?: string,
+    patientID?: string,
 
     page?: number,
     pageSize?: number
