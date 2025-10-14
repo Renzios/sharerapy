@@ -4,7 +4,7 @@ name: Sharerapy CI/CD Pipeline
 # FEATURE DEVELOPMENT (feature/*, feat/*):
 # - Jest Unit Tests + React Testing Library (component validation)
 # - ESLint Code Quality + TypeScript checks (code standards)
-# - Robot Framework Backend/API Tests (functional validation)
+# - Robot Framework Backend (functional validation)
 #
 # PULL REQUEST TO DEVELOP:
 # - All feature development tests PLUS
@@ -86,9 +86,9 @@ jobs:
       - name: Run type checking
         run: npx tsc --noEmit --skipLibCheck --listFiles
 
-  # Robot Framework Tests for Backend Logic and APIs
+  # Robot Framework Tests for Backend Logic
   backend-tests:
-    name: Backend Tests (Robot Framework - APIs)
+    name: Backend Tests (Robot Framework)
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main' || github.base_ref == 'develop' || github.base_ref == 'main'
     steps:

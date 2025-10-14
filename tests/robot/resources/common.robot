@@ -1,6 +1,5 @@
 *** Settings ***
-Documentation    Common resources for Sharerapy TDD API tests
-Library          RequestsLibrary
+Documentation    Common resources for Sharerapy TDD tests
 Library          Collections
 
 *** Variables ***
@@ -9,11 +8,11 @@ ${BASE_URL}              http://localhost:3000
 *** Keywords ***
 Setup Test Environment
     [Documentation]    Initialize test environment for TDD
-    Create Session    api    ${BASE_URL}    verify=${False}
+    Log    Setting up test environment for direct function calls    INFO
 
 Cleanup Test Environment
     [Documentation]    Clean up test environment
-    Delete All Sessions
+    Log    Cleaning up test environment    INFO
 
 Generate Random UUID
     [Documentation]    Generate a random UUID for testing
