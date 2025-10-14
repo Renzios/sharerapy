@@ -1,38 +1,49 @@
-"use client";
-
-import FileUpload from "@/components/FileUpload";
-import PatientDetails from "@/components/PatientDetails";
-import ReportDetails from "@/components/ReportDetails";
-import { Editor } from "@/components/blocknote/DynamicEditor";
-import Button from "@/components/Button";
-
+import { readPatients } from "@/lib/data/patients";
+import { readCountries } from "@/lib/data/countries";
+import { readLanguages } from "@/lib/data/languages";
+import { readTypes } from "@/lib/data/types";
+import CreateNewReportClient from "@/components/client-pages/CreateNewReportClient";
 /**
  * Create new report page
  */
-export default function CreateNewReportPage() {
-  const handleFileUpload = (file: File) => {
-    // Handle the uploaded file
-  };
+export default async function CreateNewReportPage() {
+  // Fetch all the options from the database
+  const [patients, countries, languages, types] = await Promise.all([
+    readPatients({ pageSize: 1000 }), // Get all patients
+    readCountries(),
+    readLanguages(),
+    readTypes(),
+  ]);
+
+  // Transform data to Select options format
+  const patientOptions =
+    patients.data?.map((patient) => ({
+      value: patient.id,
+      label: `${patient.first_name} ${patient.last_name}`,
+    })) || [];
+
+  const countryOptions = countries.map((country) => ({
+    value: country.id.toString(),
+    label: country.country,
+  }));
+
+  const languageOptions = languages.map((language) => ({
+    value: language.id.toString(),
+    label: language.language,
+  }));
+
+  const typeOptions = types.map((type) => ({
+    value: type.id.toString(),
+    label: type.type,
+  }));
 
   return (
-    <div className="flex flex-col gap-y-8 mb-30">
-      <div className="flex flex-col gap-y-4">
-        <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
-          Upload
-        </h1>
-        <FileUpload onFileUpload={handleFileUpload} />
-      </div>
-      <PatientDetails />
-      <ReportDetails />
-      <Editor />
-      <div className="flex gap-x-4 justify-end">
-        <Button variant="outline" className="w-30">
-          Clear Form
-        </Button>
-        <Button variant="filled" className="w-30">
-          Submit
-        </Button>
-      </div>
-    </div>
+    <CreateNewReportClient
+      patients={patients.data || []}
+      patientOptions={patientOptions}
+      countryOptions={countryOptions}
+      languageOptions={languageOptions}
+      typeOptions={typeOptions}
+    />
   );
 }
