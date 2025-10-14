@@ -1,4 +1,4 @@
-"use client"; // marks this as a React client component
+"use client";
 
 import {
   BlockNoteSchema,
@@ -11,8 +11,8 @@ import "@blocknote/core/fonts/inter.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
+import { useEffect } from "react";
 
-// 1️⃣ Choose only the blocks you want
 const customBlockSpecs = {
   paragraph: defaultBlockSpecs.paragraph,
   heading: defaultBlockSpecs.heading,
@@ -23,23 +23,45 @@ const customBlockSpecs = {
   divider: defaultBlockSpecs.divider,
 };
 
-// 2️⃣ Create your custom schema
 const customSchema = BlockNoteSchema.create({
   blockSpecs: customBlockSpecs,
   inlineContentSpecs: defaultInlineContentSpecs,
   styleSpecs: defaultStyleSpecs,
 });
 
-// 3️⃣ Editor component
-export default function Editor() {
+interface EditorProps {
+  onChange?: (content: string) => void;
+  value?: string; // Add value prop to control the editor content
+}
+
+export default function Editor({ onChange, value }: EditorProps) {
   const editor = useCreateBlockNote({
     schema: customSchema,
     slashMenuItems: [],
   });
 
+  // Reset editor content when value becomes empty
+  useEffect(() => {
+    if (value === "" && editor) {
+      // Replace editor content with a single empty paragraph
+      editor.replaceBlocks(editor.document, [
+        {
+          type: "paragraph",
+          content: "",
+        },
+      ]);
+    }
+  }, [value, editor]);
+
+  const handleChange = () => {
+    const content = JSON.stringify(editor.document);
+    onChange?.(content);
+  };
+
   return (
     <BlockNoteView
       editor={editor}
+      onChange={handleChange}
       theme="light"
       className="h-96 w-full overflow-y-auto bg-white border border-bordergray rounded-lg pt-3 font-Noto-Sans
                  [&_.bn-editor]:min-h-full [&_.bn-editor]:h-auto
