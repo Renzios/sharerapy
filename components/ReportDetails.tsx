@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Input from "@/components/Input";
 import TextArea from "@/components/TextArea";
 import Select from "@/components/Select";
@@ -10,28 +10,32 @@ interface SelectOption {
   label: string;
 }
 
-export default function ReportDetails() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState<SelectOption | null>(
-    null
-  );
-  const [selectedTherapyType, setSelectedTherapyType] =
-    useState<SelectOption | null>(null);
+interface ReportDetailsProps {
+  languageOptions: SelectOption[];
+  typeOptions: SelectOption[];
+  // Controlled state props
+  title: string;
+  setTitle: (value: string) => void;
+  description: string;
+  setDescription: (value: string) => void;
+  selectedLanguage: SelectOption | null;
+  setSelectedLanguage: (value: SelectOption | null) => void;
+  selectedTherapyType: SelectOption | null;
+  setSelectedTherapyType: (value: SelectOption | null) => void;
+}
 
-  // Sample options - replace with actual data
-  const languageOptions: SelectOption[] = [
-    { value: "en", label: "English" },
-    { value: "fl", label: "Filipino" },
-    { value: "es", label: "Spanish" },
-  ];
-
-  const therapyTypeOptions: SelectOption[] = [
-    { value: "physical", label: "Physical Therapy" },
-    { value: "occupational", label: "Occupational Therapy" },
-    { value: "speech", label: "Speech Therapy" },
-  ];
-
+export default function ReportDetails({
+  languageOptions,
+  typeOptions,
+  title,
+  setTitle,
+  description,
+  setDescription,
+  selectedLanguage,
+  setSelectedLanguage,
+  selectedTherapyType,
+  setSelectedTherapyType,
+}: ReportDetailsProps) {
   return (
     <div className="flex flex-col gap-y-4">
       <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
@@ -77,17 +81,17 @@ export default function ReportDetails() {
             onChange={(option) => setSelectedLanguage(option)}
             placeholder="Select language..."
             required={true}
-            name="language"
+            name="language_id"
           />
           <Select
             label="Therapy Type"
             instanceId="report-therapy-type"
-            options={therapyTypeOptions}
+            options={typeOptions}
             value={selectedTherapyType}
             onChange={(option) => setSelectedTherapyType(option)}
             placeholder="Select therapy type..."
             required={true}
-            name="therapyType"
+            name="type_id"
           />
         </div>
       </div>
