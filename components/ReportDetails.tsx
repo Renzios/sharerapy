@@ -42,7 +42,7 @@ export default function ReportDetails({
         Report Details
       </h1>
 
-      <div className="flex flex-col gap-y-8">
+      <div className="flex flex-col gap-y-4">
         {/* Row 1: Title (spans entire width) */}
         <div>
           <Input
