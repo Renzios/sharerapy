@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom'
+import { TextEncoder, TextDecoder } from 'util'
 
 // Basic polyfills for Node.js globals in jsdom environment
 if (typeof global.TextEncoder === 'undefined') {
-  const { TextEncoder, TextDecoder } = require('util')
   global.TextEncoder = TextEncoder
   global.TextDecoder = TextDecoder
 }
