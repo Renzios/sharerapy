@@ -3,8 +3,10 @@
 import SearchPageHeader from "@/components/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
 import Pagination from "@/components/Pagination";
-import { useState, useTransition } from "react";
+import Toast from "@/components/Toast";
+import { useState, useTransition, useEffect } from "react";
 import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
+import { useRouter } from "next/navigation";
 
 // Extract the type from fetchReports
 type ReportsData = Awaited<ReturnType<typeof fetchReports>>["data"];
@@ -14,6 +16,7 @@ interface SearchReportsClientProps {
   initialReports: Report[];
   totalPages: number;
   initialSearchTerm?: string;
+  showSuccessToast?: boolean;
 }
 
 /**
@@ -25,7 +28,10 @@ export default function SearchReportsPage({
   initialReports,
   totalPages,
   initialSearchTerm = "",
+  showSuccessToast = false,
 }: SearchReportsClientProps) {
+  const router = useRouter();
+
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [sortOption, setSortOption] = useState({
     value: "titleAscending",
@@ -40,6 +46,25 @@ export default function SearchReportsPage({
   const [currentPage, setCurrentPage] = useState(1); // Start at Page 1 (note: server uses 0-indexing)
   const [currentTotalPages, setCurrentTotalPages] = useState(totalPages);
   const [isPending, startTransition] = useTransition();
+
+  // Toast State
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error" | "info">(
+    "info"
+  );
+
+  // Show success toast on mount if needed, then clean URL
+  useEffect(() => {
+    if (showSuccessToast) {
+      setToastMessage("Report created successfully!");
+      setToastType("success");
+      setToastVisible(true);
+
+      // Clean the URL to remove the success parameter
+      router.replace("/search/reports", { scroll: false });
+    }
+  }, [showSuccessToast, router]);
 
   {
     /* Report Specific Sort Options */
@@ -183,6 +208,13 @@ export default function SearchReportsPage({
           />
         )}
       </div>
+
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+      />
     </div>
   );
 }
