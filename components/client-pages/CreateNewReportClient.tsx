@@ -161,17 +161,31 @@ export default function CreateNewReportClient({
 
     // Check if editor content is just empty blocks
     try {
-      const parsedContent = JSON.parse(editorContent);
+      const parsedContent = JSON.parse(editorContent) as Array<{
+        content?:
+          | Array<{ text?: string; [key: string]: unknown }>
+          | string
+          | unknown;
+        [key: string]: unknown;
+      }>;
+
       if (Array.isArray(parsedContent)) {
         // Check if all blocks are empty
-        const hasContent = parsedContent.some((block: any) => {
+        const hasContent = parsedContent.some((block) => {
           // Check if block has text content
           if (block.content) {
             // If content is an array, check if any item has text
             if (Array.isArray(block.content)) {
-              return block.content.some(
-                (item: any) => item.text && item.text.trim().length > 0
-              );
+              return block.content.some((item) => {
+                // Check if item has text property and it's not empty
+                return (
+                  typeof item === "object" &&
+                  item !== null &&
+                  "text" in item &&
+                  typeof item.text === "string" &&
+                  item.text.trim().length > 0
+                );
+              });
             }
             // If content is a string, check if it's not empty
             if (typeof block.content === "string") {
