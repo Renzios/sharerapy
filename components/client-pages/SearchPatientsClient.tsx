@@ -1,8 +1,8 @@
 "use client";
 
-import SearchPageHeader from "@/components/SearchPageHeader";
+import SearchPageHeader from "@/components/layout/SearchPageHeader";
 import PatientCard from "@/components/cards/PatientCard";
-import Pagination from "@/components/Pagination";
+import Pagination from "@/components/general/Pagination";
 import { useState, useTransition } from "react";
 import { fetchPatients } from "@/app/(with-sidebar)/search/patients/actions";
 

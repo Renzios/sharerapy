@@ -51,7 +51,8 @@ export default function Button({
       "hover:bg-primary/5 hover:cursor-pointer",
       "active:bg-primary active:text-white",
     ].join(" "),
-    filled: "bg-primary border border-primary text-white hover:bg-primary/90",
+    filled:
+      "bg-primary text-white hover:bg-active/80 hover:cursor-pointer active:bg-active",
   };
 
   // Determine shape styles

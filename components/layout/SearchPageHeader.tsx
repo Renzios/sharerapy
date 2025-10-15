@@ -1,5 +1,5 @@
-import Search from "@/components/Search";
-import Button from "@/components/Button";
+import Search from "@/components/general/Search";
+import Button from "@/components/general/Button";
 import Filter from "@mui/icons-material/Tune";
 import Settings from "@mui/icons-material/Settings";
 import Link from "next/link";
