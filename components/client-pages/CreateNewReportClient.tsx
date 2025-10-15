@@ -78,8 +78,121 @@ export default function CreateNewReportClient({
     console.log("File uploaded:", file);
   };
 
+  const validateForm = (): boolean => {
+    // Patient Details Validation (only if creating new patient)
+    const isNewPatient = !selectedPatient || selectedPatient.value === "new";
+
+    if (isNewPatient) {
+      // Validate in page order: Country → First Name → Last Name → Birthday → Sex → Contact Number
+      if (!selectedCountry) {
+        showToast("Please select patient's country", "error");
+        return false;
+      }
+      if (!firstName.trim()) {
+        showToast("Please enter patient's first name", "error");
+        return false;
+      }
+      if (!lastName.trim()) {
+        showToast("Please enter patient's last name", "error");
+        return false;
+      }
+      if (!birthday) {
+        showToast("Please select patient's birthday", "error");
+        return false;
+      }
+
+      // Validate birthday is in the past
+      const birthdayDate = new Date(birthday);
+      if (birthdayDate > new Date()) {
+        showToast("Birthday cannot be in the future", "error");
+        return false;
+      }
+
+      if (!selectedSex) {
+        showToast("Please select patient's sex", "error");
+        return false;
+      }
+      if (!contactNumber.trim()) {
+        showToast("Please enter patient's contact number", "error");
+        return false;
+      }
+    }
+
+    // Report Details Validation - validate in page order: Title → Description → Language → Therapy Type
+    if (!title.trim()) {
+      showToast("Please enter report title", "error");
+      return false;
+    }
+
+    if (!description.trim()) {
+      showToast("Please enter report description", "error");
+      return false;
+    }
+
+    if (!selectedLanguage) {
+      showToast("Please select report language", "error");
+      return false;
+    }
+
+    if (!selectedTherapyType) {
+      showToast("Please select therapy type", "error");
+      return false;
+    }
+
+    // Report Content Validation
+    if (
+      !editorContent ||
+      editorContent.trim() === "" ||
+      editorContent === "[]"
+    ) {
+      showToast("Please enter report content", "error");
+      return false;
+    }
+
+    // Check if editor content is just empty blocks
+    try {
+      const parsedContent = JSON.parse(editorContent);
+      if (Array.isArray(parsedContent)) {
+        // Check if all blocks are empty
+        const hasContent = parsedContent.some((block: any) => {
+          // Check if block has text content
+          if (block.content) {
+            // If content is an array, check if any item has text
+            if (Array.isArray(block.content)) {
+              return block.content.some(
+                (item: any) => item.text && item.text.trim().length > 0
+              );
+            }
+            // If content is a string, check if it's not empty
+            if (typeof block.content === "string") {
+              return block.content.trim().length > 0;
+            }
+          }
+          return false;
+        });
+
+        if (!hasContent) {
+          showToast("Please enter report content", "error");
+          return false;
+        }
+      }
+    } catch (e) {
+      // If we can't parse, assume it's invalid
+      showToast("Please enter report content", "error");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Validate form before submitting
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
@@ -202,7 +315,7 @@ export default function CreateNewReportClient({
         <FileUpload onFileUpload={handleFileUpload} />
       </div>
 
-      <form ref={formRef} onSubmit={handleSubmit}>
+      <form ref={formRef} onSubmit={handleSubmit} noValidate>
         <div className="flex flex-col gap-y-8">
           <PatientDetails
             patients={patients}
@@ -239,6 +352,7 @@ export default function CreateNewReportClient({
           <div className="flex flex-col gap-y-4">
             <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
               Report Content
+              <span className="text-red-500 ml-1">*</span>
             </h1>
             <Editor onChange={setEditorContent} value={editorContent} />
           </div>
