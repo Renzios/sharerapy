@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useRef } from "react";
-import FileUpload from "@/components/FileUpload";
-import PatientDetails from "@/components/PatientDetails";
-import ReportDetails from "@/components/ReportDetails";
+import FileUpload from "@/components/forms/FileUpload";
+import PatientDetails from "@/components/forms/PatientDetails";
+import ReportDetails from "@/components/forms/ReportDetails";
 import { Editor } from "@/components/blocknote/DynamicEditor";
-import Button from "@/components/Button";
-import Toast from "@/components/Toast";
+import Button from "@/components/general/Button";
+import Toast from "@/components/general/Toast";
 import { createReport } from "@/lib/actions/reports";
 import { createPatient } from "@/lib/actions/patients";
 import { Tables } from "@/lib/types/database.types";
@@ -24,6 +24,11 @@ interface CreateNewReportClientProps {
   typeOptions: SelectOption[];
 }
 
+/**
+ * This is the client component for the Create New Report page.
+ * It has four main sections: File Upload, Patient Details, Report Details, and Report Content (Blocknote RTE).
+ * @param props - The initial data from the server component
+ */
 export default function CreateNewReportClient({
   patients,
   patientOptions,
@@ -31,7 +36,8 @@ export default function CreateNewReportClient({
   languageOptions,
   typeOptions,
 }: CreateNewReportClientProps) {
-  // Patient Details State
+  // States related to patientDetails
+
   const [selectedPatient, setSelectedPatient] = useState<SelectOption | null>(
     null
   );
@@ -44,7 +50,7 @@ export default function CreateNewReportClient({
   const [selectedSex, setSelectedSex] = useState<SelectOption | null>(null);
   const [contactNumber, setContactNumber] = useState("");
 
-  // Report Details State
+  // States related to ReportDetails
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState<SelectOption | null>(
@@ -53,12 +59,12 @@ export default function CreateNewReportClient({
   const [selectedTherapyType, setSelectedTherapyType] =
     useState<SelectOption | null>(null);
 
-  // Other State
+  // Other states
   const [editorContent, setEditorContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Toast State
+  // States related to Toast
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error" | "info">(
@@ -74,16 +80,20 @@ export default function CreateNewReportClient({
     setToastVisible(true);
   };
 
+  // Empty for now, will be implemented in sprint 3.
   const handleFileUpload = (file: File) => {
     console.log("File uploaded:", file);
   };
 
+  /**
+   * Function to validate the entire form before submission. (client-side)
+   * @returns boolean - true if valid, false otherwise
+   */
   const validateForm = (): boolean => {
     // Patient Details Validation (only if creating new patient)
     const isNewPatient = !selectedPatient || selectedPatient.value === "new";
 
     if (isNewPatient) {
-      // Validate in page order: Country → First Name → Last Name → Birthday → Sex → Contact Number
       if (!selectedCountry) {
         showToast("Please select patient's country", "error");
         return false;
@@ -118,7 +128,7 @@ export default function CreateNewReportClient({
       }
     }
 
-    // Report Details Validation - validate in page order: Title → Description → Language → Therapy Type
+    // Report Details Validation
     if (!title.trim()) {
       showToast("Please enter report title", "error");
       return false;
@@ -242,16 +252,10 @@ export default function CreateNewReportClient({
       );
       reportFormData.append("type_id", formData.get("type_id") as string);
 
-      // Handle editor content - use empty array if no content
-      let contentJson;
-      try {
-        contentJson = editorContent ? JSON.parse(editorContent) : [];
-      } catch (e) {
-        console.error("Error parsing editor content:", e);
-        contentJson = [];
-      }
-      reportFormData.append("content", JSON.stringify(contentJson));
+      // Editor content is guaranteed to be valid by client-side validation
+      reportFormData.append("content", editorContent);
 
+      // Hardcoded for now, will change once auth is implemented and can use context files.
       reportFormData.append(
         "therapist_id",
         "5646f7f9-cf5b-48ff-a961-d8fabeab8f7b"

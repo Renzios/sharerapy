@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import Input from "@/components/Input";
-import TextArea from "@/components/TextArea";
-import Select from "@/components/Select";
+import Input from "@/components/general/Input";
+import TextArea from "@/components/general/TextArea";
+import Select from "@/components/general/Select";
 
 interface SelectOption {
   value: string;
@@ -24,6 +24,12 @@ interface ReportDetailsProps {
   setSelectedTherapyType: (value: SelectOption | null) => void;
 }
 
+/**
+ * The Report Details component is the form for creating a new Report.
+ * All fields are required.
+ *
+ * @param props - The report details props
+ */
 export default function ReportDetails({
   languageOptions,
   typeOptions,

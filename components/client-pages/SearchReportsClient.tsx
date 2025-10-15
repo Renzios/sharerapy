@@ -1,9 +1,9 @@
 "use client";
 
-import SearchPageHeader from "@/components/SearchPageHeader";
+import SearchPageHeader from "@/components/layout/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
-import Pagination from "@/components/Pagination";
-import Toast from "@/components/Toast";
+import Pagination from "@/components/general/Pagination";
+import Toast from "@/components/general/Toast";
 import { useState, useTransition, useEffect } from "react";
 import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
 import { useRouter } from "next/navigation";

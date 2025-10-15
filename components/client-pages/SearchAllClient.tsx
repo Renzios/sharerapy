@@ -1,6 +1,6 @@
 "use client";
 
-import SearchPageHeader from "@/components/SearchPageHeader";
+import SearchPageHeader from "@/components/layout/SearchPageHeader";
 import PatientCard from "@/components/cards/PatientCard";
 import ReportCard from "@/components/cards/ReportCard";
 import TherapistCard from "@/components/cards/TherapistCard";

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Input from "@/components/Input";
-import Select from "@/components/Select";
+import Input from "@/components/general/Input";
+import Select from "@/components/general/Select";
 import { Tables } from "@/lib/types/database.types";
 
 interface SelectOption {
@@ -31,6 +31,14 @@ interface PatientDetailsProps {
   setContactNumber: (value: string) => void;
 }
 
+/**
+ * The Patient Details component is the form for creating a new Patient.
+ * It has two behaviors, it autofills information if an existing patient is chosen.
+ * Otherwise, it allows the user to input new patient information.
+ * All fields are required except the choose patient field.
+ *
+ * @param props - The patient details props
+ */
 export default function PatientDetails({
   patients,
   patientOptions,

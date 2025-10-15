@@ -37,3 +37,29 @@
     opacity: 0;
   }
 }
+
+/* Scrollbar Styling */
+/* For Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(0, 0, 96%);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(217, 78%, 35%); /* Your primary color */
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(217, 78%, 25%); /* Darker on hover */
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(217, 78%, 35%) hsl(0, 0, 96%);
+}

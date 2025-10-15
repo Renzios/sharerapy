@@ -34,7 +34,7 @@ export async function updateReport(id: string, formData: FormData) {
     type_id: parseInt(formData.get("type_id") as string),
     language_id: parseInt(formData.get("language_id") as string),
     patient_id: formData.get("patient_id") as string,
-    content: formData.get("content") as Json,
+    content: JSON.parse(formData.get("content") as string) as Json,
     title: formData.get("title") as string,
     description: formData.get("description") as string,
   };

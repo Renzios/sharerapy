@@ -4,18 +4,19 @@ import { readLanguages } from "@/lib/data/languages";
 import { readTypes } from "@/lib/data/types";
 import CreateNewReportClient from "@/components/client-pages/CreateNewReportClient";
 /**
- * Create new report page
+ * This is the server component for the Create New Report page.
+ * It fetches all the necessary options (Existing Patients, Countries, Languages, Types (Therapy)) and passed it into the client component.
  */
 export default async function CreateNewReportPage() {
-  // Fetch all the options from the database
   const [patients, countries, languages, types] = await Promise.all([
-    readPatients({ pageSize: 1000 }), // Get all patients
+    readPatients({ pageSize: 1000 }), // Hardcoded rn, don't know if theres a better way than a large arbitrary number right now
     readCountries(),
     readLanguages(),
     readTypes(),
   ]);
 
-  // Transform data to Select options format
+  // Transform data into options for Select components
+
   const patientOptions =
     patients.data?.map((patient) => ({
       value: patient.id,

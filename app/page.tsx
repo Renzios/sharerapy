@@ -1,7 +1,7 @@
 "use client";
 
-import Button from "@/components/Button";
-import Search from "@/components/Search";
+import Button from "@/components/general/Button";
+import Search from "@/components/general/Search";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";

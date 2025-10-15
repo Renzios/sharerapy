@@ -34,6 +34,12 @@ interface EditorProps {
   value?: string; // Add value prop to control the editor content
 }
 
+/**
+ * The Editor component is a rich text editor using BlockNote (external library)
+ * It only consists of specific blocks as defined in customBlockSpecs.
+ *
+ * @param props - The editor props
+ */
 export default function Editor({ onChange, value }: EditorProps) {
   const editor = useCreateBlockNote({
     schema: customSchema,
