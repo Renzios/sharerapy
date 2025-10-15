@@ -48,7 +48,7 @@ export default function Select({
       height: "2.8125rem",
       fontFamily: "'Noto Sans', sans-serif",
       fontSize: "0.875rem",
-      backgroundColor: disabled ? "#f9fafb" : "white",
+      backgroundColor: disabled ? "#f3f4f6" : "white",
       border: "1px solid #e5e7eb",
       borderRadius: "0.5rem",
       boxShadow: "none",
@@ -68,6 +68,14 @@ export default function Select({
       padding: 0,
       fontFamily: "'Noto Sans', sans-serif",
     }),
+    placeholder: (base: object) => ({
+      ...base,
+      color: disabled ? "#9ca3af" : "#6b7280",
+    }),
+    singleValue: (base: object) => ({
+      ...base,
+      color: disabled ? "#9ca3af" : "#030712",
+    }),
     menu: (base: object) => ({
       ...base,
       zIndex: 9999,
@@ -79,7 +87,10 @@ export default function Select({
   };
 
   return (
-    <div className={`flex flex-col gap-y-1 ${width || "w-full"} ${className}`}>
+    <div
+      className={`flex flex-col gap-y-1 ${width || "w-full"} ${className}`}
+      style={{ cursor: disabled ? "not-allowed" : "default" }}
+    >
       {label && (
         <label className="font-Noto-Sans text-[0.6875rem] text-black font-semibold">
           {label}
