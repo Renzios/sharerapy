@@ -373,7 +373,7 @@ export default function CreateNewReportClient({
               className="w-30"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting..." : "Submit"}
+              Submit
             </Button>
           </div>
         </div>
