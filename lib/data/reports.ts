@@ -20,7 +20,7 @@ export async function readReports({
 
     const query = supabase
         .from('reports')
-        .select('*, therapist:therapists!inner(*, clinic:clinics!inner(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))', { count: 'exact' })
+        .select('*, therapist:therapists(*, clinic:clinics(*, country:countries(*))), type:types(*), language:languages(*), patient:patients(*, country:countries(*))', { count: 'exact' })
         .order(column, { ascending })
         .range(page * pageSize, page * pageSize + pageSize - 1);
 
@@ -45,7 +45,7 @@ export async function readReport(id: string) {
 
     const { data, error } = await supabase
         .from('reports')
-        .select('*, therapist:therapists(*, clinic:clinics(*, country:countries(*))), type:types(*), language:languages(*), patient:patients_view(*, country:countries(*))')
+        .select('*, therapist:therapists(*, clinic:clinics(*, country:countries(*))), type:types(*), language:languages(*), patient:patients(*, country:countries(*))')
         .eq('id', id)
         .single();
     
