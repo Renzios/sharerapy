@@ -162,6 +162,7 @@ export default function CreateNewReportClient({
     // Check if editor content is just empty blocks
     try {
       const parsedContent = JSON.parse(editorContent) as Array<{
+        type?: string;
         content?:
           | Array<{ text?: string; [key: string]: unknown }>
           | string
@@ -172,11 +173,26 @@ export default function CreateNewReportClient({
       if (Array.isArray(parsedContent)) {
         // Check if all blocks are empty
         const hasContent = parsedContent.some((block) => {
+          // Tables, dividers, and other non-text blocks are considered content
+          if (block.type === "table" || block.type === "divider") {
+            return true;
+          }
+
           // Check if block has text content
           if (block.content) {
             // If content is an array, check if any item has text
             if (Array.isArray(block.content)) {
               return block.content.some((item) => {
+                // Links are considered content
+                if (
+                  typeof item === "object" &&
+                  item !== null &&
+                  "type" in item &&
+                  item.type === "link"
+                ) {
+                  return true;
+                }
+
                 // Check if item has text property and it's not empty
                 return (
                   typeof item === "object" &&
