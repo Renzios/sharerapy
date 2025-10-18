@@ -16,8 +16,9 @@ type ReportWithRelations = Tables<"reports"> & {
   };
   type: Tables<"types">;
   language: Tables<"languages">;
-  patient: Tables<"patients_view"> & {
+  patient: Tables<"patients"> & {
     country: Tables<"countries"> | null;
+    age?: string;
   };
 };
 
@@ -120,7 +121,7 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
               {report.patient.name}
             </p>
             <p className="font-Noto-Sans text-sm text-darkgray">
-              {report.patient.sex} • {report.patient.age_years} Years Old
+              {report.patient.sex} • {report.patient.age} old
             </p>
           </div>
         </div>
