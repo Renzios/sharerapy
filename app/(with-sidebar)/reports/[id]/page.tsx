@@ -8,9 +8,10 @@ import { readReport } from "@/lib/data/reports";
 export default async function ViewIndividualReportPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  // Await the params Promise first
+  const { id } = await params;
   const report = await readReport(id);
 
   return (
