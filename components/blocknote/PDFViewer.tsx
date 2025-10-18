@@ -281,7 +281,7 @@ export default function PDFViewer({
 
       {/* Success state: render the PDF with interactive toolbar (zoom, download, print) */}
       {pdfDocument && !isLoading && !error && (
-        <div className="w-full h-[600px] md:h-screen bg-background rounded-lg border border-bordergray">
+        <div className="w-full h-[350px] md:h-screen bg-background rounded-lg border border-bordergray">
           <ReactPDFViewer
             width="100%"
             height="100%"
