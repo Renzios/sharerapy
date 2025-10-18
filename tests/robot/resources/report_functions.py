@@ -41,7 +41,8 @@ class ReportFunctions:
             # Parse JSON response
             if result.stdout.strip():
                 return json.loads(result.stdout.strip())
-            return None
+            # If no output, raise exception to trigger fallback
+            raise Exception("TSX script produced no output")
             
         except Exception as e:
             print(f"Error running TSX script: {e}")
