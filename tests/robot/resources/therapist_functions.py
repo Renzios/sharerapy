@@ -98,7 +98,13 @@ testActualReadTherapists();
                         "specialization": "Physical Therapy",
                         "email": "mock@example.com",
                         "phone": "+1234567890",
-                        "created_at": "2023-01-01T00:00:00Z"
+                        "created_at": "2023-01-01T00:00:00Z",
+                        "clinic": {"clinic": "Main Clinic", "country": {"country": "United States"}},
+                        "reports": [
+                            {"type": {"type": "Assessment"}},
+                            {"type": {"type": "Progress Note"}},
+                            {"type": {"type": "Discharge Summary"}}
+                        ]
                     }
                 ],
                 "count": 1
