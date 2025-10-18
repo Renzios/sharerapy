@@ -89,6 +89,10 @@ export default function CreateNewReportClient({
    * Function to validate the entire form before submission. (client-side)
    * @returns boolean - true if valid, false otherwise
    */
+  /**
+   * Function to validate the entire form before submission. (client-side)
+   * @returns boolean - true if valid, false otherwise
+   */
   const validateForm = (): boolean => {
     // Patient Details Validation (only if creating new patient)
     const isNewPatient = !selectedPatient || selectedPatient.value === "new";
@@ -149,6 +153,8 @@ export default function CreateNewReportClient({
       return false;
     }
 
+    // --- START REVISED SECTION ---
+
     // Report Content Validation
     if (
       !editorContent ||
@@ -159,68 +165,87 @@ export default function CreateNewReportClient({
       return false;
     }
 
-    // Check if editor content is just empty blocks
+    /**
+     * Helper function to determine if a single Blocknote block has content.
+     */
+    const isBlockNotEmpty = (block: {
+      type?: string;
+      content?:
+        | Array<{ type?: string; text?: string; [key: string]: unknown }>
+        | string
+        | unknown;
+      [key: string]: unknown;
+    }): boolean => {
+      // These types are always considered content, even if visually "empty"
+      if (
+        block.type === "table" ||
+        block.type === "divider" ||
+        block.type === "image" ||
+        block.type === "file" // Add any other non-text/media block types
+      ) {
+        return true;
+      }
+
+      // Check for text-based content
+      if (block.content) {
+        // Handle inline content (e.g., in a paragraph or heading)
+        if (Array.isArray(block.content)) {
+          // Check if *any* item in the content array has text or is a link
+          return block.content.some((item) => {
+            // Check for links
+            if (
+              typeof item === "object" &&
+              item !== null &&
+              item.type === "link"
+            ) {
+              return true; // A link is always content
+            }
+            // Check for text
+            return (
+              typeof item === "object" &&
+              item !== null &&
+              typeof item.text === "string" &&
+              item.text.trim().length > 0
+            );
+          });
+        }
+
+        // Handle 'content' being a simple string (less common, but possible)
+        if (typeof block.content === "string") {
+          return block.content.trim().length > 0;
+        }
+      }
+
+      // Default: block is empty (e.g., paragraph with no/empty content)
+      return false;
+    };
+
     try {
-      const parsedContent = JSON.parse(editorContent) as Array<{
-        type?: string;
-        content?:
-          | Array<{ text?: string; [key: string]: unknown }>
-          | string
-          | unknown;
-        [key: string]: unknown;
-      }>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const parsedContent = JSON.parse(editorContent) as Array<any>;
 
       if (Array.isArray(parsedContent)) {
-        // Check if all blocks are empty
-        const hasContent = parsedContent.some((block) => {
-          // Tables, dividers, and other non-text blocks are considered content
-          if (block.type === "table" || block.type === "divider") {
-            return true;
-          }
-
-          // Check if block has text content
-          if (block.content) {
-            // If content is an array, check if any item has text
-            if (Array.isArray(block.content)) {
-              return block.content.some((item) => {
-                // Links are considered content
-                if (
-                  typeof item === "object" &&
-                  item !== null &&
-                  "type" in item &&
-                  item.type === "link"
-                ) {
-                  return true;
-                }
-
-                // Check if item has text property and it's not empty
-                return (
-                  typeof item === "object" &&
-                  item !== null &&
-                  "text" in item &&
-                  typeof item.text === "string" &&
-                  item.text.trim().length > 0
-                );
-              });
-            }
-            // If content is a string, check if it's not empty
-            if (typeof block.content === "string") {
-              return block.content.trim().length > 0;
-            }
-          }
-          return false;
-        });
+        // Check if *any* block in the array is not empty.
+        // This will correctly handle the case: [empty, empty, content, empty]
+        const hasContent = parsedContent.some(isBlockNotEmpty);
 
         if (!hasContent) {
           showToast("Please enter report content", "error");
           return false;
         }
+      } else {
+        // The JSON content should be an array of blocks
+        showToast("Invalid report content format", "error");
+        return false;
       }
     } catch (e) {
-      // If we can't parse, assume it's invalid
+      // If we can't parse, assume it's invalid or empty
+      console.error("Failed to parse editor content:", e);
       showToast("Please enter report content", "error");
       return false;
     }
+
+    // --- END REVISED SECTION ---
 
     return true;
   };
