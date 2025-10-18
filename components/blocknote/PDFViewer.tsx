@@ -214,7 +214,7 @@ export default function PDFViewer({
         // Build PDF header with ShareRapy branding and report title
         const header = (
           <View style={styles.header}>
-            <Image src="/branding.png" style={{ width: 220, height: 45 }} />
+            <Image src="/logowordmark.png" style={{ width: 220, height: 45 }} />
             <Text style={styles.reportTitle}>{title || "Therapy Report"}</Text>
           </View>
         );
