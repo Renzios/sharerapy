@@ -60,12 +60,12 @@ describe("TextArea Component", () => {
             const textareaElement = getByLabelText(labelText) as HTMLTextAreaElement;
             expect(textareaElement.value).toBe(testValue);
         });
-                it("shows a character counter when maxLength is provided", () => {
-                        const { getByText } = render(
-                            <TextArea {...defaultProps} value={"Hello"} maxLength={10} />
-                        );
-                        expect(getByText("5/10")).toBeInTheDocument();
-                });
+        it("shows a character counter when maxLength is provided", () => {
+            const { getByText } = render(
+                <TextArea {...defaultProps} value={"Hello"} maxLength={10} />
+            );
+            expect(getByText("5/10")).toBeInTheDocument();
+        });
         it("calls onChange handler when text is entered", async () => {
             const user = userEvent.setup();
             const { getByLabelText } = render(<TextArea {...defaultProps} />);
