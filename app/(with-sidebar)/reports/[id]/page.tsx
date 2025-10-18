@@ -10,7 +10,8 @@ export default async function ViewIndividualReportPage({
 }: {
   params: { id: string };
 }) {
-  const report = await readReport(params.id);
+  const { id } = await params;
+  const report = await readReport(id);
 
   return (
     <div>
