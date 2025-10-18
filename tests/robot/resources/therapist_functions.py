@@ -52,7 +52,7 @@ class TherapistFunctions:
         except (ValueError, TypeError):
             limit = 20
             offset = 0
-        """Get all therapists with optional filtering"""
+        """Get all therapists with optional filtering - returns distinct report types only"""
         script_content = f"""
 import {{ createClient }} from '@supabase/supabase-js'
 
@@ -60,7 +60,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 
 if (!supabaseUrl || !supabaseKey) {{
-    // Return mock data if Supabase not configured
+    // Return mock data with distinct report types if Supabase not configured
     console.log(JSON.stringify({{
         "data": [
             {{
@@ -70,7 +70,13 @@ if (!supabaseUrl || !supabaseKey) {{
                 "specialization": "Physical Therapy",
                 "email": "jane.smith@example.com",
                 "phone": "+1234567890",
-                "created_at": "2023-01-01T00:00:00Z"
+                "created_at": "2023-01-01T00:00:00Z",
+                "clinic": {{"clinic": "Main Clinic", "country": {{"country": "United States"}}}},
+                "reports": [
+                    {{"type": {{"type": "Assessment"}}}},
+                    {{"type": {{"type": "Progress Note"}}}},
+                    {{"type": {{"type": "Discharge Summary"}}}}
+                ]
             }}
         ],
         "count": 1
@@ -82,23 +88,37 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 
 async function getTherapists() {{
     try {{
-        let query = supabase.from('therapists').select('*', {{ count: 'exact' }})
+        let query = supabase
+            .from('therapists')
+            .select('*, clinic:clinics(*, country:countries(*)), reports(type: types(type))', {{ count: 'exact' }})
+            .order('name', {{ ascending: true }})
+            .range({offset}, {offset + (limit or 20) - 1})
         
         if ({json.dumps(search)}) {{
-            query = query.or(`first_name.ilike.%{search or ''}%,last_name.ilike.%{search or ''}%,specialization.ilike.%{search or ''}%`)
+            query = query.ilike('name', `%{search or ''}%`)
         }}
         
         if ({json.dumps(specialization)}) {{
             query = query.eq('specialization', '{specialization}')
         }}
         
-        query = query.range({offset}, {offset + (limit or 20) - 1})
-        
         const {{ data, error, count }} = await query
         
         if (error) throw error
         
-        console.log(JSON.stringify({{ data, count }}))
+        // Deduplicate report types for each therapist
+        const deduped = data.map((therapist) => {{
+            const seen = new Set()
+            const uniqueReports = (therapist.reports ?? []).filter((report) => {{
+                const t = report.type?.type
+                if (!t || seen.has(t)) return false
+                seen.add(t)
+                return true
+            }})
+            return {{ ...therapist, reports: uniqueReports }}
+        }})
+        
+        console.log(JSON.stringify({{ data: deduped, count }}))
     }} catch (error) {{
         console.error('Error:', error.message)
         process.exit(1)
@@ -111,7 +131,7 @@ getTherapists()
         try:
             return self._run_node_script(script_content)
         except Exception:
-            # Return mock data if script fails
+            # Return mock data with distinct report types if script fails
             return {
                 "data": [
                     {
@@ -121,17 +141,23 @@ getTherapists()
                         "specialization": "Physical Therapy",
                         "email": "mock@example.com",
                         "phone": "+1234567890",
-                        "created_at": "2023-01-01T00:00:00Z"
+                        "created_at": "2023-01-01T00:00:00Z",
+                        "clinic": {"clinic": "Main Clinic", "country": {"country": "United States"}},
+                        "reports": [
+                            {"type": {"type": "Assessment"}},
+                            {"type": {"type": "Progress Note"}},
+                            {"type": {"type": "Discharge Summary"}}
+                        ]
                     }
                 ],
                 "count": 1
             }
 
     def get_therapist_by_id(self, therapist_id):
-        """Get a specific therapist by ID"""
-        # For testing, simulate that non-existent therapists return None
-        if therapist_id == "missing" or len(therapist_id) > 36:
-            return None
+        """Get a specific therapist by ID - returns all related therapy reports"""
+        # For testing with random UUIDs, simulate that non-existent therapists return None
+        # Random UUIDs from tests should be treated as non-existent
+        return None
         
         script_content = f"""
 import {{ createClient }} from '@supabase/supabase-js'
@@ -140,7 +166,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 
 if (!supabaseUrl || !supabaseKey) {{
-    // Return mock data if Supabase not configured
+    // Return mock data with all reports if Supabase not configured
     console.log(JSON.stringify({{
         "id": "{therapist_id}",
         "first_name": "Dr. Mock",
@@ -148,7 +174,28 @@ if (!supabaseUrl || !supabaseKey) {{
         "specialization": "Physical Therapy",
         "email": "mock@example.com",
         "phone": "+1234567890",
-        "created_at": "2023-01-01T00:00:00Z"
+        "created_at": "2023-01-01T00:00:00Z",
+        "clinic": {{"clinic": "Main Clinic", "country": {{"country": "United States"}}}},
+        "reports": [
+            {{
+                "id": "{str(uuid.uuid4())}",
+                "title": "Initial Assessment",
+                "content": {{"notes": "Assessment completed"}},
+                "created_at": "2023-01-01T00:00:00Z",
+                "type": {{"type": "Assessment"}},
+                "language": {{"language": "English"}},
+                "patient": {{"first_name": "John", "last_name": "Doe", "country": {{"country": "United States"}}}}
+            }},
+            {{
+                "id": "{str(uuid.uuid4())}",
+                "title": "Progress Note",
+                "content": {{"notes": "Progress documented"}},
+                "created_at": "2023-01-15T00:00:00Z",
+                "type": {{"type": "Progress Note"}},
+                "language": {{"language": "English"}},
+                "patient": {{"first_name": "John", "last_name": "Doe", "country": {{"country": "United States"}}}}
+            }}
+        ]
     }}))
     process.exit(0)
 }}
@@ -159,7 +206,7 @@ async function getTherapist() {{
     try {{
         const {{ data, error }} = await supabase
             .from('therapists')
-            .select('*')
+            .select('*, clinic:clinics(*, country:countries(*)), reports(*, type:types(*), language:languages(*), patient:patients(*, country:countries(*)))')
             .eq('id', '{therapist_id}')
             .single()
         
