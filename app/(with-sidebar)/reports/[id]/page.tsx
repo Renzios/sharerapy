@@ -10,7 +10,7 @@ export default async function ViewIndividualReportPage({
 }: {
   params: { id: string };
 }) {
-  const { id } = await params;
+  const { id } = params;
   const report = await readReport(id);
 
   return (
