@@ -1,11 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { useEffect, useState } from "react";
+// 1. IMPORT PDFDownloadLink
+import {
+  PDFDownloadLink,
+  PDFViewer as ReactPDFViewer,
+} from "@react-pdf/renderer";
+
 import {
   PDFExporter,
   pdfDefaultSchemaMappings,
 } from "@blocknote/xl-pdf-exporter";
-import { PDFViewer as ReactPDFViewer } from "@react-pdf/renderer";
 import { BlockNoteSchema, defaultBlockSpecs } from "@blocknote/core";
 import type { Block } from "@blocknote/core";
 import type { Json } from "@/lib/types/database.types";
@@ -40,12 +47,6 @@ const styles = StyleSheet.create({
     fontFamily: "Helvetica",
   },
 });
-
-interface PDFViewerProps {
-  content: Json;
-  title?: string;
-  therapistName?: string;
-}
 
 /**
  * Sanitizes BlockNote content by converting RGB colors to standard values.
@@ -134,6 +135,34 @@ function sanitizeContentForPDF(blocks: Block[]): any[] {
   });
 }
 
+// 2. CREATE A SIMPLE useMediaQuery HOOK
+// This hook safely checks the screen size on the client
+// It defaults to `false` (desktop) to prevent hydration mismatches
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(false); // Default to desktop
+
+  useEffect(() => {
+    // This code only runs on the client, after hydration
+    const media = window.matchMedia(query);
+    if (media.matches !== matches) {
+      setMatches(media.matches);
+    }
+    const listener = () => {
+      setMatches(media.matches);
+    };
+    media.addEventListener("change", listener);
+    return () => media.removeEventListener("change", listener);
+  }, [matches, query]);
+
+  return matches;
+}
+
+interface PDFViewerProps {
+  content: Json;
+  title?: string;
+  therapistName?: string;
+}
+
 /**
  * PDF Viewer component that converts BlockNote JSON content to a PDF preview.
  * Uses @blocknote/xl-pdf-exporter to convert blocks and @react-pdf/renderer to display.
@@ -151,6 +180,10 @@ export default function PDFViewer({
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // 3. USE THE HOOK
+  // We check for `max-width: 768px` (Tailwind's `md` breakpoint)
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     async function generatePDF() {
@@ -273,24 +306,64 @@ export default function PDFViewer({
               No Content Available
             </h2>
             <p className="font-Noto-Sans text-sm text-darkgray">
-              This report doesn't have any content to display yet.
+              This report doesn&apos;t have any content to display yet.
             </p>
           </div>
         </div>
       )}
 
-      {/* Success state: render the PDF with interactive toolbar (zoom, download, print) */}
+      {/* 4. MODIFY THE SUCCESS STATE (This is the key change) */}
       {pdfDocument && !isLoading && !error && (
-        <div className="w-full h-[350px] md:h-screen bg-background rounded-lg border border-bordergray">
-          <ReactPDFViewer
-            width="100%"
-            height="100%"
-            showToolbar={true}
-            className="rounded-lg"
-          >
-            {pdfDocument as any}
-          </ReactPDFViewer>
-        </div>
+        <>
+          {isMobile ? (
+            // --- ON MOBILE: Show a download button ---
+            <div
+              className="
+                flex flex-col items-center justify-center 
+                bg-white rounded-[0.5rem] p-12 
+                border border-bordergray
+                min-h-[350px]
+              "
+            >
+              <div className="flex flex-col gap-y-2 text-center mb-6">
+                <h2 className="font-Noto-Sans font-semibold text-lg text-black">
+                  Report is Ready
+                </h2>
+                <p className="font-Noto-Sans text-sm text-darkgray">
+                  Please download the report to view.
+                </p>
+              </div>
+              <PDFDownloadLink
+                document={pdfDocument as any}
+                fileName={`${title || "therapy-report"}.pdf`}
+                className="
+                  px-5 py-3 
+                  bg-primary text-white 
+                  font-Noto-Sans font-semibold 
+                  rounded-lg shadow-sm 
+                  hover:bg-primary/90 
+                  transition-colors
+                "
+              >
+                {({ loading }) =>
+                  loading ? "Generating PDF..." : "Download Report"
+                }
+              </PDFDownloadLink>
+            </div>
+          ) : (
+            // --- ON DESKTOP: Show the embedded viewer ---
+            <div className="w-full h-screen bg-background rounded-lg border border-bordergray">
+              <ReactPDFViewer
+                width="100%"
+                height="100%"
+                showToolbar={true}
+                className="rounded-lg"
+              >
+                {pdfDocument as any}
+              </ReactPDFViewer>
+            </div>
+          )}
+        </>
       )}
     </>
   );
