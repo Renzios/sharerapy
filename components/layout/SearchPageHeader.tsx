@@ -31,6 +31,11 @@ interface SearchPageHeaderProps {
   // Navigation buttons (All, Patients, Reports, Therapist)
   /** Currently active page/tab for navigation highlighting */
   currentPage?: "all" | "patients" | "reports" | "therapists";
+  /**
+   * Whether to show the navigation buttons (All, Patients, etc.)
+   * @default true
+   */
+  showNavButtons?: boolean;
 
   // Mobile advanced filters popup (age, sex, upload date, etc.)
   /** Callback fired when advanced filters button is clicked (mobile only) */
@@ -77,6 +82,7 @@ export default function SearchPageHeader({
   onSearchChange,
   onSearch,
   currentPage = "all",
+  showNavButtons = true, // <-- Default value is set here
   onAdvancedFiltersClick,
   advancedFiltersDisabled = false,
   onMobileSettingsClick,
@@ -179,7 +185,7 @@ export default function SearchPageHeader({
 
   return (
     <div className="flex flex-col items-center gap-y-3">
-      <div className="h-1/3 w-full flex gap-2 lg:px-4">
+      <div className="h-1/3 w-full flex gap-2">
         <div className="flex-1 min-w-1 lg:w-full">
           <Search
             value={searchValue}
@@ -225,76 +231,79 @@ export default function SearchPageHeader({
         </button>
       </div>
 
-      <div className="h-1/2 w-full flex items-center gap-2 lg:gap-4 lg:px-4 min-w-0 overflow-hidden">
-        <div className="flex items-center gap-1 sm:gap-2.5 flex-shrink-0">
-          <Link
-            href={`/search${
-              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
-            }`}
-          >
-            <Button
-              variant={currentPage === "all" ? "filled" : "outline"}
-              fontSize="text-[0.6875rem]"
-              shape="pill"
-              width="auto"
-              height="1.875rem"
-              className="flex-shrink min-w-0 whitespace-nowrap"
+      <div className="h-1/2 w-full flex items-center gap-2 lg:gap-4 min-w-0 overflow-hidden">
+        {/* --- Conditional Rendering Wrapper --- */}
+        {showNavButtons && (
+          <div className="flex items-center gap-1 sm:gap-2.5 flex-shrink-0">
+            <Link
+              href={`/search${
+                searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+              }`}
             >
-              All
-            </Button>
-          </Link>
+              <Button
+                variant={currentPage === "all" ? "filled" : "outline"}
+                fontSize="text-[0.6875rem]"
+                shape="pill"
+                width="auto"
+                height="1.875rem"
+                className="flex-shrink min-w-0 whitespace-nowrap"
+              >
+                All
+              </Button>
+            </Link>
 
-          <Link
-            href={`/search/patients${
-              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
-            }`}
-          >
-            <Button
-              variant={currentPage === "patients" ? "filled" : "outline"}
-              fontSize="text-[0.6875rem]"
-              shape="pill"
-              width="auto"
-              height="1.875rem"
-              className="flex-shrink min-w-0 whitespace-nowrap"
+            <Link
+              href={`/search/patients${
+                searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+              }`}
             >
-              Patients
-            </Button>
-          </Link>
+              <Button
+                variant={currentPage === "patients" ? "filled" : "outline"}
+                fontSize="text-[0.6875rem]"
+                shape="pill"
+                width="auto"
+                height="1.875rem"
+                className="flex-shrink min-w-0 whitespace-nowrap"
+              >
+                Patients
+              </Button>
+            </Link>
 
-          <Link
-            href={`/search/reports${
-              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
-            }`}
-          >
-            <Button
-              variant={currentPage === "reports" ? "filled" : "outline"}
-              fontSize="text-[0.6875rem]"
-              shape="pill"
-              width="auto"
-              height="1.875rem"
-              className="flex-shrink min-w-0 whitespace-nowrap"
+            <Link
+              href={`/search/reports${
+                searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+              }`}
             >
-              Reports
-            </Button>
-          </Link>
+              <Button
+                variant={currentPage === "reports" ? "filled" : "outline"}
+                fontSize="text-[0.6875rem]"
+                shape="pill"
+                width="auto"
+                height="1.875rem"
+                className="flex-shrink min-w-0 whitespace-nowrap"
+              >
+                Reports
+              </Button>
+            </Link>
 
-          <Link
-            href={`/search/therapists${
-              searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
-            }`}
-          >
-            <Button
-              variant={currentPage === "therapists" ? "filled" : "outline"}
-              fontSize="text-[0.6875rem]"
-              shape="pill"
-              width="auto"
-              height="1.875rem"
-              className="flex-shrink min-w-0 whitespace-nowrap"
+            <Link
+              href={`/search/therapists${
+                searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
+              }`}
             >
-              Therapist
-            </Button>
-          </Link>
-        </div>
+              <Button
+                variant={currentPage === "therapists" ? "filled" : "outline"}
+                fontSize="text-[0.6875rem]"
+                shape="pill"
+                width="auto"
+                height="1.875rem"
+                className="flex-shrink min-w-0 whitespace-nowrap"
+              >
+                Therapist
+              </Button>
+            </Link>
+          </div>
+        )}
 
         <div className="hidden lg:flex items-center gap-1 lg:gap-2 min-w-0 flex-shrink ml-auto">
           {!sortDisabled && (

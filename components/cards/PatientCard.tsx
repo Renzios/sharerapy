@@ -1,3 +1,7 @@
+"use client";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 /**
  * Props for the PatientCard component
  */
@@ -20,15 +24,15 @@ interface PatientCardProps {
  */
 export default function PatientCard({ patient }: PatientCardProps) {
   return (
-    <div
+    <Link
+      href={`/profile/patient/${patient.id}`}
       className="
         flex flex-col gap-y-2
         bg-white rounded-[0.5rem] p-6
         border border-bordergray
         hover:bg-bordergray/30 hover:cursor-pointer
         transition-transform duration-200 ease-in-out
- 
-        "
+      "
     >
       <div className="flex flex-col gap-y-1 mb-0 lg:mb-2">
         <h1 className="font-Noto-Sans font-medium text-xl text-black">
@@ -56,6 +60,6 @@ export default function PatientCard({ patient }: PatientCardProps) {
           {patient.sex}
         </p>
       </div>
-    </div>
+    </Link>
   );
 }

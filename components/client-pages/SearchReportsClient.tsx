@@ -187,7 +187,7 @@ export default function SearchReportsPage({
       />
 
       <div className="mt-6">
-        <div className="grid grid-cols-1 gap-4 lg:px-5">
+        <div className="grid grid-cols-1 gap-4">
           {reports.map((report) => (
             <ReportCard key={report.id} report={report} />
           ))}

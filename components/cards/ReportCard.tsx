@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { getPublicURL } from "@/lib/utils/storage";
 
 interface ReportCardProps {
@@ -31,8 +31,6 @@ interface ReportCardProps {
 }
 
 export default function ReportCard({ report }: ReportCardProps) {
-  const router = useRouter();
-
   // Format the date
   const dateUploaded = new Date(report.created_at).toLocaleDateString();
 
@@ -43,13 +41,9 @@ export default function ReportCard({ report }: ReportCardProps) {
   const therapyType = report.type.type;
   const language = report.language.language;
 
-  const handleClick = () => {
-    router.push(`/reports/${report.id}`);
-  };
-
   return (
-    <div
-      onClick={handleClick}
+    <Link
+      href={`/reports/${report.id}`}
       className="
         flex flex-col gap-y-2
         bg-white rounded-[0.5rem] p-6
@@ -94,6 +88,6 @@ export default function ReportCard({ report }: ReportCardProps) {
           {report.description}
         </p>
       </div>
-    </div>
+    </Link>
   );
 }
