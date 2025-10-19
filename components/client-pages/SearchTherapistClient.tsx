@@ -138,7 +138,7 @@ export default function SearchTherapistsPage({
       />
 
       <div className="mt-6">
-        <div className="grid grid-cols-2 gap-3 lg:gap-6 lg:grid-cols-5 lg:px-5">
+        <div className="grid grid-cols-2 gap-3 lg:gap-6 lg:grid-cols-5">
           {therapists.map((therapist) => (
             <TherapistCard key={therapist.id} therapist={therapist} />
           ))}

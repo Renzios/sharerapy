@@ -138,7 +138,7 @@ export default function SearchPatientsClient({
       />
 
       <div className="mt-6">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:px-5">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
           {patients.map((patient) => (
             <PatientCard key={patient.id} patient={patient} />
           ))}

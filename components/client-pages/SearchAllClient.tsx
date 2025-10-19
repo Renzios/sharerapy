@@ -108,10 +108,10 @@ export default function SearchAllClient({
 
       <div className="mt-6 flex flex-col gap-4">
         {/* Patients Section */}
-        <h2 className="text-lg font-medium font-Noto-Sans text-darkgray px-5">
+        <h2 className="text-lg font-medium font-Noto-Sans text-darkgray">
           Patients
         </h2>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:px-5">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
           {patients.map((patient) => (
             <PatientCard key={patient.id} patient={patient} />
           ))}
@@ -124,10 +124,10 @@ export default function SearchAllClient({
         )}
 
         {/* Reports Section */}
-        <h2 className="text-lg font-medium font-Noto-Sans text-darkgray px-5">
+        <h2 className="text-lg font-medium font-Noto-Sans text-darkgray">
           Reports
         </h2>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:px-5">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {reports.map((report) => (
             <ReportCard key={report.id} report={report} />
           ))}
@@ -140,10 +140,10 @@ export default function SearchAllClient({
         )}
 
         {/* Therapists Section */}
-        <h2 className="text-lg font-medium font-Noto-Sans text-darkgray px-5">
+        <h2 className="text-lg font-medium font-Noto-Sans text-darkgray">
           Therapists
         </h2>
-        <div className="grid grid-cols-2 gap-3 lg:gap-6 lg:grid-cols-5 lg:px-5">
+        <div className="grid grid-cols-2 gap-3 lg:gap-6 lg:grid-cols-5">
           {therapists.map((therapist, index) =>
             index === 4 ? (
               <div
