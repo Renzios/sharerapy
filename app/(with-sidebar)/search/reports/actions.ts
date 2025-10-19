@@ -2,7 +2,6 @@
 
 import { readReports } from "@/lib/data/reports";
 
-// Extract the type from what readReports returns
 type ReportsData = Awaited<ReturnType<typeof readReports>>["data"];
 type Report = NonNullable<ReportsData>[number];
 
@@ -11,11 +10,13 @@ export async function fetchReports({
   page = 1,
   ascending = true,
   search,
+  patientID,
 }: {
   column?: string;
   page?: number;
   ascending?: boolean;
   search?: string;
+  patientID?: string;
 }): Promise<{
   data: Report[] | null;
   count: number;
@@ -29,6 +30,7 @@ export async function fetchReports({
       page: page - 1,
       ascending,
       search,
+      patientID,
     });
     const totalPages = count ? Math.ceil(count / 10) : 0;
 
@@ -39,7 +41,7 @@ export async function fetchReports({
       success: true,
     };
   } catch (error) {
-    console.log("Error fetching therapists:", error);
+    console.log("Error fetching reports:", error);
     return {
       data: null,
       count: 0,
