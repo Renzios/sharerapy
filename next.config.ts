@@ -1,11 +1,18 @@
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// --- Your existing config file ---
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  outputFileTracingRoot: __dirname,
+  outputFileTracingRoot: __dirname, // This will now work
   serverExternalPackages: ["@supabase/supabase-js"],
   experimental: {},
   turbopack: {
-    root: __dirname,
+    root: __dirname, // This will now work
   },
   devIndicators: {
     position: "bottom-right",
