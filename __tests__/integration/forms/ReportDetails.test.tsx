@@ -5,10 +5,43 @@ import ReportDetails from "@/components/forms/ReportDetails";
 
 type SelectOption = { value: string; label: string };
 
+type InputProps = {
+  label?: string;
+  name?: string;
+  value?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  maxLength?: number;
+  type?: string;
+  placeholder?: string;
+};
+
+type TextAreaProps = {
+  label?: string;
+  name?: string;
+  value?: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  required?: boolean;
+  maxLength?: number;
+  rows?: number;
+  placeholder?: string;
+};
+
+type SelectProps = {
+  label?: string;
+  instanceId?: string;
+  options?: SelectOption[];
+  value?: SelectOption | null;
+  onChange: (value: SelectOption | null) => void;
+  placeholder?: string;
+  name?: string;
+  required?: boolean;
+};
+
 // Mock Input as a standard input with accessible label
 jest.mock("@/components/general/Input", () => ({
   __esModule: true,
-  default: (props: any) => {
+  default: (props: InputProps) => {
     const {
       label,
       name,
@@ -45,7 +78,7 @@ jest.mock("@/components/general/Input", () => ({
 // Mock TextArea as a standard textarea with accessible label
 jest.mock("@/components/general/TextArea", () => ({
   __esModule: true,
-  default: (props: any) => {
+  default: (props: TextAreaProps) => {
     const {
       label,
       name,
@@ -82,7 +115,7 @@ jest.mock("@/components/general/TextArea", () => ({
 // Mock Select as a native select for easy interaction
 jest.mock("@/components/general/Select", () => ({
   __esModule: true,
-  default: (props: any) => {
+  default: (props: SelectProps) => {
     const {
       label,
       instanceId,
@@ -125,7 +158,7 @@ jest.mock("@/components/general/Select", () => ({
         </select>
       </div>
     );
-  },
+  }
 }));
 
 function Wrapper() {
