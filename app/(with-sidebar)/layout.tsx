@@ -22,7 +22,7 @@ export default function WithSidebarLayout({
       <div className="flex-1 flex flex-col bg-background">
         <Header onMenuClick={() => setIsOpen(!isOpen)} />
 
-        <main className="flex-1 overflow-y-auto py-9 px-5 lg:px-2 xl:px-9">
+        <main className="flex-1 overflow-y-scroll py-9 px-5 lg:px-2 xl:px-9">
           {children}
         </main>
       </div>
