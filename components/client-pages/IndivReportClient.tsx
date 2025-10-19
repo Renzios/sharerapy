@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Button from "@/components/general/Button";
 import Select from "@/components/general/Select";
 import { Tables } from "@/lib/types/database.types";
@@ -59,7 +60,15 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
 
   const handleBackClick = () => {
     setIsNavigating(true);
-    router.push("/search/reports");
+
+    if (
+      document.referrer &&
+      document.referrer.startsWith(window.location.origin)
+    ) {
+      router.back();
+    } else {
+      router.push("/search/reports");
+    }
   };
 
   return (
@@ -98,7 +107,10 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
 
       {/* Therapist and Patient Info Cards */}
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-        <div className="flex-1 bg-white rounded-[0.5rem] border border-bordergray p-4 hover:bg-bordergray/30 hover:cursor-pointer transition-transform duration-200 ease-in-out">
+        <Link
+          href={`/profile/therapist/${report.therapist.id}`}
+          className="flex-1 bg-white rounded-[0.5rem] border border-bordergray p-4 hover:bg-bordergray/30 hover:cursor-pointer transition-transform duration-200 ease-in-out"
+        >
           <div className="flex flex-col gap-1">
             <h2 className="font-Noto-Sans text-xs font-medium text-darkgray uppercase tracking-wide">
               Therapist
@@ -110,9 +122,12 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
               {report.therapist.clinic.clinic}
             </p>
           </div>
-        </div>
+        </Link>
 
-        <div className="flex-1 bg-white rounded-[0.5rem] border border-bordergray p-4 hover:bg-bordergray/30 hover:cursor-pointer transition-transform duration-200 ease-in-out">
+        <Link
+          href={`/profile/patient/${report.patient.id}`}
+          className="flex-1 bg-white rounded-[0.5rem] border border-bordergray p-4 hover:bg-bordergray/30 hover:cursor-pointer transition-transform duration-200 ease-in-out"
+        >
           <div className="flex flex-col gap-1">
             <h2 className="font-Noto-Sans text-xs font-medium text-darkgray uppercase tracking-wide">
               Patient
@@ -124,7 +139,7 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
               {report.patient.sex} • {report.patient.age} old
             </p>
           </div>
-        </div>
+        </Link>
       </div>
 
       <div className="flex flex-col gap-y-2">
