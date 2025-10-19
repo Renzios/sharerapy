@@ -1,3 +1,6 @@
+"use client";
+import { useRouter } from "next/navigation";
+
 /**
  * Props for the PatientCard component
  */
@@ -19,6 +22,8 @@ interface PatientCardProps {
  * @param props - The patient card props
  */
 export default function PatientCard({ patient }: PatientCardProps) {
+  const router = useRouter();
+
   return (
     <div
       className="
@@ -27,8 +32,8 @@ export default function PatientCard({ patient }: PatientCardProps) {
         border border-bordergray
         hover:bg-bordergray/30 hover:cursor-pointer
         transition-transform duration-200 ease-in-out
- 
-        "
+      "
+      onClick={() => router.push(`/profile/patient/${patient.id}`)}
     >
       <div className="flex flex-col gap-y-1 mb-0 lg:mb-2">
         <h1 className="font-Noto-Sans font-medium text-xl text-black">
