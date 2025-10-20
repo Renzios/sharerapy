@@ -7,6 +7,7 @@ import Button from "@/components/general/Button";
 import Select from "@/components/general/Select";
 import { Tables } from "@/lib/types/database.types";
 import PDFViewer from "@/components/blocknote/PDFViewer";
+import { useBackNavigation } from "@/app/hooks/useBackNavigation";
 
 // Type for the report with nested relationships based on readReport query
 type ReportWithRelations = Tables<"reports"> & {
@@ -38,6 +39,12 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
 
   // Navigation state to disable button during transition
   const [isNavigating, setIsNavigating] = useState(false);
+  const { handleBackClick } = useBackNavigation("/search/reports");
+
+  const enhancedHandleBackClick = () => {
+    setIsNavigating(true);
+    handleBackClick();
+  };
 
   // Language selection state (placeholder for future translation feature)
   const [selectedLanguage, setSelectedLanguage] = useState<{
@@ -58,19 +65,6 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
     });
   };
 
-  const handleBackClick = () => {
-    setIsNavigating(true);
-
-    if (
-      document.referrer &&
-      document.referrer.startsWith(window.location.origin)
-    ) {
-      router.back();
-    } else {
-      router.push("/search/reports");
-    }
-  };
-
   return (
     <div className="flex flex-col gap-y-8">
       <div className="flex flex-col gap-y-1">
@@ -81,7 +75,7 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
           <Button
             variant="filled"
             className="ml-auto w-auto text-xs md:text-base md:w-24"
-            onClick={handleBackClick}
+            onClick={enhancedHandleBackClick}
             disabled={isNavigating}
           >
             Back
