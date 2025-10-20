@@ -11,12 +11,14 @@ export async function fetchReports({
   ascending = true,
   search,
   patientID,
+  therapistID,
 }: {
   column?: string;
   page?: number;
   ascending?: boolean;
   search?: string;
   patientID?: string;
+  therapistID?: string;
 }): Promise<{
   data: Report[] | null;
   count: number;
@@ -31,6 +33,7 @@ export async function fetchReports({
       ascending,
       search,
       patientID,
+      therapistID,
     });
     const totalPages = count ? Math.ceil(count / 10) : 0;
 
