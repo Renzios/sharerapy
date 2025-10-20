@@ -34,11 +34,11 @@ export default function PatientCard({ patient }: PatientCardProps) {
       "
     >
       <div className="flex flex-col gap-y-1 mb-0 lg:mb-2">
-        <h1 className="font-Noto-Sans font-medium text-xl text-black">
+        <h1 className="font-Noto-Sans font-semibold text-xl text-black">
           {patient.name}
         </h1>
         <p className="font-Noto-Sans text-[0.6875rem] text-darkgray">
-          {patient.contact_number || "N/A"}
+          +{patient.contact_number || "N/A"}
         </p>
       </div>
 

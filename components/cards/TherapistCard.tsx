@@ -53,7 +53,7 @@ export default function TherapistCard({ therapist }: TherapistCardProps) {
         className="rounded-full w-[3.85rem] h-[3.85rem] lg:w-[6.25rem] lg:h-[6.25rem] mb-2"
       />
       <div className="flex flex-col items-center w-full min-w-0 px-2">
-        <h1 className="font-Noto-Sans font-medium text-md lg:text-xl text-black text-center break-words whitespace-normal">
+        <h1 className="font-Noto-Sans font-semibold text-md lg:text-xl text-black text-center break-words whitespace-normal">
           {therapist.name}
         </h1>
 
