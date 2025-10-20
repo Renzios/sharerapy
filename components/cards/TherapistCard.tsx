@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { getPublicURL } from "@/lib/utils/storage";
+import Link from "next/link";
 
 /**
  * Props for the TherapistCard component
@@ -32,7 +35,8 @@ export default function TherapistCard({ therapist }: TherapistCardProps) {
   const countryName = therapist.clinic?.country?.country || "N/A";
 
   return (
-    <div
+    <Link
+      href={`/profile/therapist/${therapist.id}`}
       className="
         flex flex-col items-center gap-y-2
         bg-white rounded-[0.5rem] p-3 lg:p-6
@@ -61,6 +65,6 @@ export default function TherapistCard({ therapist }: TherapistCardProps) {
           {countryName}
         </p>
       </div>
-    </div>
+    </Link>
   );
 }
