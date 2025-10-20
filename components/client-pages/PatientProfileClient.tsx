@@ -68,7 +68,7 @@ export default function PatientProfileClient({
   const searchParams = useSearchParams();
 
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-  const [sortOption, setSortOption] = useState(reportSortOptions[3]); // newest first default
+  const [sortOption, setSortOption] = useState(reportSortOptions[3]);
   const [languageOption, setLanguageOption] = useState({
     value: "en",
     label: "English",
