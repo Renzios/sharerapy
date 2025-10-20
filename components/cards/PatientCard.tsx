@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Tag from "@/components/general/Tag";
 
 /**
  * Props for the PatientCard component
@@ -11,6 +12,12 @@ interface PatientCardProps {
     contact_number: string;
     country: { id: number; country: string };
     sex: string;
+    // 2. Add the reports array to the type
+    reports: Array<{
+      type: {
+        type: string | null;
+      } | null;
+    }>;
   };
 }
 
@@ -58,6 +65,24 @@ export default function PatientCard({ patient }: PatientCardProps) {
         <p className="font-Noto-Sans text-sm text-black font-semibold">
           {patient.sex}
         </p>
+      </div>
+
+      <div className="flex flex-col gap-y-1 lg:gap-y-2 mt-2">
+        <div className="flex flex-wrap gap-1 justify-end">
+          {patient.reports && patient.reports.length > 0 ? (
+            patient.reports.map((report) =>
+              report.type?.type ? (
+                <Tag
+                  key={report.type.type}
+                  text={report.type.type}
+                  fontSize="text-xs"
+                />
+              ) : null
+            )
+          ) : (
+            <Tag text="N/A" fontSize="text-xs"></Tag>
+          )}
+        </div>
       </div>
     </Link>
   );
