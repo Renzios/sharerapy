@@ -6,7 +6,9 @@ import Pagination from "@/components/general/Pagination";
 import Toast from "@/components/general/Toast";
 import { useState, useTransition, useEffect } from "react";
 import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
-import { useRouter } from "next/navigation";
+// 1. Import navigation hooks
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { SingleValue } from "react-select"; // Import this for handleSortChange
 
 // Extract the type from fetchReports
 type ReportsData = Awaited<ReturnType<typeof fetchReports>>["data"];
@@ -19,31 +21,60 @@ interface SearchReportsClientProps {
   showSuccessToast?: boolean;
 }
 
-/**
- * This is the client component for the Reports search page.
- * This is where the user interactivity happens (searching, sorting, pagination).
- * @param props - The initial reports and total pages from the server component
- */
+const reportSortOptions = [
+  { value: "titleAscending", label: "Sort by: Title (A-Z)" },
+  { value: "titleDescending", label: "Sort by: Title (Z-A)" },
+  { value: "dateAscending", label: "Sort by: Date (Oldest First)" },
+  { value: "dateDescending", label: "Sort by: Date (Newest First)" },
+];
+
+const getSortParams = (
+  optionValue: string
+): { column: "title" | "created_at"; ascending: boolean } => {
+  switch (optionValue) {
+    case "titleAscending":
+      return { column: "title", ascending: true };
+    case "titleDescending":
+      return { column: "title", ascending: false };
+    case "dateAscending":
+      return { column: "created_at", ascending: true };
+    case "dateDescending":
+      return { column: "created_at", ascending: false };
+    default:
+      return { column: "created_at", ascending: false };
+  }
+};
+
 export default function SearchReportsPage({
   initialReports,
   totalPages,
   initialSearchTerm = "",
   showSuccessToast = false,
 }: SearchReportsClientProps) {
+  // 2. Setup navigation hooks
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
+  // 3. Initialize state from URL Search Params
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-  const [sortOption, setSortOption] = useState({
-    value: "titleAscending",
-    label: "Sort by: Title (A-Z)",
+  const [sortOption, setSortOption] = useState(() => {
+    const sortParam = searchParams.get("sort");
+    return (
+      reportSortOptions.find((o) => o.value === sortParam) ||
+      reportSortOptions[3]
+    );
   });
+  const [currentPage, setCurrentPage] = useState(() => {
+    return Number(searchParams.get("p")) || 1;
+  });
+
   const [languageOption, setLanguageOption] = useState({
     value: "en",
     label: "English",
   });
 
   const [reports, setReports] = useState(initialReports);
-  const [currentPage, setCurrentPage] = useState(1); // Start at Page 1 (note: server uses 0-indexing)
   const [currentTotalPages, setCurrentTotalPages] = useState(totalPages);
   const [isPending, startTransition] = useTransition();
 
@@ -60,42 +91,26 @@ export default function SearchReportsPage({
       setToastMessage("Report created successfully!");
       setToastType("success");
       setToastVisible(true);
-
       // Clean the URL to remove the success parameter
-      router.replace("/search/reports", { scroll: false });
+      router.replace(pathname, { scroll: false }); // Use pathname
     }
-  }, [showSuccessToast, router]);
+  }, [showSuccessToast, router, pathname]);
 
-  {
-    /* Report Specific Sort Options */
-  }
-  const reportSortOptions = [
-    { value: "titleAscending", label: "Sort by: Title (A-Z)" },
-    { value: "titleDescending", label: "Sort by: Title (Z-A)" },
-    { value: "dateAscending", label: "Sort by: Date (Oldest First)" },
-    { value: "dateDescending", label: "Sort by: Date (Newest First)" },
-  ];
-
-  const getSortParams = (
-    optionValue: string
-  ): { column: "title" | "created_at"; ascending: boolean } => {
-    switch (optionValue) {
-      case "titleAscending":
-        return { column: "title", ascending: true };
-      case "titleDescending":
-        return { column: "title", ascending: false };
-      case "dateAscending":
-        return { column: "created_at", ascending: true };
-      case "dateDescending":
-        return { column: "created_at", ascending: false };
-      default:
-        return { column: "title", ascending: true };
-    }
+  // 4. Add function to update URL
+  const updateURLParams = (params: { [key: string]: string | number }) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    Object.entries(params).forEach(([key, value]) => {
+      newParams.set(key, String(value));
+    });
+    // We use router.push to add to history, so "back" works
+    router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
   };
 
+  // 5. Update event handlers
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);
+    updateURLParams({ q: value, p: 1 }); // Update URL
 
     const { column, ascending } = getSortParams(sortOption.value);
 
@@ -114,18 +129,22 @@ export default function SearchReportsPage({
   };
 
   const handleSortChange = (
-    option: { value: string; label: string } | null
+    option: SingleValue<{ value: string; label: string }>
   ) => {
     if (!option) return;
 
     setSortOption(option);
+    // Reset to page 1 when sort changes
+    setCurrentPage(1);
+    updateURLParams({ sort: option.value, p: 1 }); // Update URL
+
     const { column, ascending } = getSortParams(option.value);
 
     startTransition(async () => {
       const result = await fetchReports({
         column,
         ascending,
-        page: currentPage,
+        page: 1, // Fetch page 1
         search: searchTerm,
       });
       if (result.success && result.data) {
@@ -137,6 +156,7 @@ export default function SearchReportsPage({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    updateURLParams({ p: page }); // Update URL
     const { column, ascending } = getSortParams(sortOption.value);
 
     startTransition(async () => {
@@ -163,11 +183,9 @@ export default function SearchReportsPage({
         onSearchChange={setSearchTerm}
         onSearch={handleSearch}
         currentPage="reports"
-        // Custom sort options for reports
         sortOptions={reportSortOptions}
         sortValue={sortOption}
         onSortChange={handleSortChange}
-        // Language selector (uses component defaults)
         languageValue={languageOption}
         onLanguageChange={(option) => {
           if (option) {
@@ -175,14 +193,10 @@ export default function SearchReportsPage({
           }
         }}
         onAdvancedFiltersClick={() => {
-          console.log(
-            "Open advanced report filters popup (age, sex, insurance, etc.)"
-          );
-          // This will open a popup with report-specific filters
+          console.log("Open advanced report filters");
         }}
         onMobileSettingsClick={() => {
-          console.log("Open mobile settings popup (sort & language options)");
-          // This will open a popup with the sort/language options (same as desktop selects)
+          console.log("Open mobile settings popup");
         }}
       />
 

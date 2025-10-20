@@ -5,6 +5,8 @@ import PatientCard from "@/components/cards/PatientCard";
 import Pagination from "@/components/general/Pagination";
 import { useState, useTransition } from "react";
 import { fetchPatients } from "@/app/(with-sidebar)/search/patients/actions";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { SingleValue } from "react-select";
 
 // Extract the type from what fetchPatients returns
 type PatientsData = Awaited<ReturnType<typeof fetchPatients>>["data"];
@@ -16,46 +18,53 @@ interface SearchPatientsClientProps {
   initialSearchTerm?: string;
 }
 
-/**
- * This is the client component for the Patients search page.
- * This is where the user interactivity happens (searching, sorting, pagination).
- * @param props - The initial patients and total pages from the server component
- */
+const patientSortOptions = [
+  { value: "nameAscending", label: "Sort by: Name (A-Z)" },
+  { value: "nameDescending", label: "Sort by: Name (Z-A)" },
+];
+
 export default function SearchPatientsClient({
   initialPatients,
   totalPages,
   initialSearchTerm = "",
 }: SearchPatientsClientProps) {
-  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  {
-    /* Default Values for Sort and Language Select */
-  }
-  const [sortOption, setSortOption] = useState({
-    value: "nameAscending",
-    label: "Sort by: Name (A-Z)",
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const [sortOption, setSortOption] = useState(() => {
+    const sortParam = searchParams.get("sort");
+    return (
+      patientSortOptions.find((o) => o.value === sortParam) ||
+      patientSortOptions[0]
+    );
   });
+  const [currentPage, setCurrentPage] = useState(() => {
+    return Number(searchParams.get("p")) || 1;
+  });
+
   const [languageOption, setLanguageOption] = useState({
     value: "en",
     label: "English",
   });
 
   const [patients, setPatients] = useState(initialPatients);
-  const [currentPage, setCurrentPage] = useState(1); // Start at Page 1 (note: server uses 0-indexing)
   const [currentTotalPages, setCurrentTotalPages] = useState(totalPages);
   const [isPending, startTransition] = useTransition();
 
-  {
-    /* Patient Specific Sort Options */
-  }
-  const patientSortOptions = [
-    { value: "nameAscending", label: "Sort by: Name (A-Z)" },
-    { value: "nameDescending", label: "Sort by: Name (Z-A)" },
-  ];
+  const updateURLParams = (params: { [key: string]: string | number }) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    Object.entries(params).forEach(([key, value]) => {
+      newParams.set(key, String(value));
+    });
+    router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
+  };
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);
+    updateURLParams({ q: value, p: 1 });
 
     startTransition(async () => {
       const result = await fetchPatients({
@@ -72,18 +81,21 @@ export default function SearchPatientsClient({
   };
 
   const handleSortChange = (
-    option: { value: string; label: string } | null
+    option: SingleValue<{ value: string; label: string }>
   ) => {
     if (!option) return;
 
     setSortOption(option);
+    setCurrentPage(1); // Reset to page 1
+    updateURLParams({ sort: option.value, p: 1 });
+
     const isAscending = option.value === "nameAscending";
 
     startTransition(async () => {
       const result = await fetchPatients({
         search: searchTerm,
         ascending: isAscending,
-        page: currentPage,
+        page: 1, // Fetch page 1
       });
       if (result.success && result.data) {
         setPatients(result.data);
@@ -94,6 +106,7 @@ export default function SearchPatientsClient({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    updateURLParams({ p: page });
 
     startTransition(async () => {
       const result = await fetchPatients({
@@ -128,12 +141,10 @@ export default function SearchPatientsClient({
           }
         }}
         onAdvancedFiltersClick={() => {
-          console.log(
-            "Open advanced patient filters popup (age, sex, insurance, etc.)"
-          );
+          console.log("Open advanced patient filters popup");
         }}
         onMobileSettingsClick={() => {
-          console.log("Open mobile settings popup (sort & language options)");
+          console.log("Open mobile settings popup");
         }}
       />
 
