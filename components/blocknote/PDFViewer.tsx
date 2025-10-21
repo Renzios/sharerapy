@@ -55,28 +55,43 @@ const styles = StyleSheet.create({
  * but pasted content may contain RGB values like "rgb(0, 29, 53)".
  */
 function sanitizeContentForPDF(blocks: Block[]): any[] {
-  // Convert RGB colors (e.g., "rgb(0, 29, 53)") to "default" (black)
-  // PDF exporter doesn't support custom RGB values
+  // Define the allowed colors that the PDF exporter supports
+  const allowedColors = new Set([
+    "default",
+    "gray",
+    "brown",
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple",
+    "pink",
+    "white",
+    "black",
+  ]);
+
   const normalizeColor = (color: string | undefined): string => {
-    if (!color || color === "default") return "default";
-    if (color.startsWith("rgb(")) return "default";
-    return color; // Keep standard color names like "red", "blue", etc.
+    if (!color || !allowedColors.has(color)) {
+      return "default";
+    }
+    return color;
   };
 
-  // Remove RGB colors from text/background color styles
   const sanitizeStyles = (styles: any): any => {
     if (!styles || typeof styles !== "object") return styles;
 
     const sanitizedStyles: any = { ...styles };
 
+    // Handle textColor
     if (sanitizedStyles.textColor) {
       sanitizedStyles.textColor = normalizeColor(sanitizedStyles.textColor);
-      // Remove default colors to reduce clutter in PDF JSON
       if (sanitizedStyles.textColor === "default") {
         delete sanitizedStyles.textColor;
       }
     }
 
+    // Handle backgroundColor
     if (sanitizedStyles.backgroundColor) {
       sanitizedStyles.backgroundColor = normalizeColor(
         sanitizedStyles.backgroundColor
@@ -89,10 +104,8 @@ function sanitizeContentForPDF(blocks: Block[]): any[] {
     return sanitizedStyles;
   };
 
-  // Process inline content (text, links) and sanitize their styles
   const sanitizeInlineContent = (content: any[]): any[] => {
     return content.map((item: any) => {
-      // Handle plain text with styles
       if (item.type === "text" && item.styles) {
         return {
           ...item,
@@ -100,8 +113,6 @@ function sanitizeContentForPDF(blocks: Block[]): any[] {
         };
       }
 
-      // Recursively sanitize link content since links contain text nodes
-      // that may also have custom colors
       if (item.type === "link" && item.content && Array.isArray(item.content)) {
         return {
           ...item,
@@ -115,27 +126,27 @@ function sanitizeContentForPDF(blocks: Block[]): any[] {
 
   // Process each block and its content/children
   return blocks.map((block: any) => {
+    const sanitizedBlock = { ...block };
+
     // Handle blocks with inline content (paragraphs, headings)
-    if (block.content && Array.isArray(block.content)) {
-      return {
-        ...block,
-        content: sanitizeInlineContent(block.content),
-      };
+    if (sanitizedBlock.content && Array.isArray(sanitizedBlock.content)) {
+      sanitizedBlock.content = sanitizeInlineContent(sanitizedBlock.content);
+    }
+
+    // Handle block-level styles
+    if (sanitizedBlock.props) {
+      sanitizedBlock.props = sanitizeStyles(sanitizedBlock.props);
     }
 
     // Recursively process nested blocks (lists, nested structures)
-    if (block.children && Array.isArray(block.children)) {
-      return {
-        ...block,
-        children: sanitizeContentForPDF(block.children),
-      };
+    if (sanitizedBlock.children && Array.isArray(sanitizedBlock.children)) {
+      sanitizedBlock.children = sanitizeContentForPDF(sanitizedBlock.children);
     }
 
-    return block;
+    return sanitizedBlock;
   });
 }
 
-// 2. CREATE A SIMPLE useMediaQuery HOOK
 // This hook safely checks the screen size on the client
 // It defaults to `false` (desktop) to prevent hydration mismatches
 function useMediaQuery(query: string) {
