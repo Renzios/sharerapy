@@ -149,16 +149,6 @@ describe("Pagination Component", () => {
         
         expect(mockOnPageChange).toHaveBeenCalledWith(4);
       });
-
-      it("calls onPageChange with correct page number when page button clicked", async () => {
-        const user = userEvent.setup();
-        render(<Pagination currentPage={1} totalPages={5} onPageChange={mockOnPageChange} />);
-        
-        const page4Button = screen.getByText("4");
-        await user.click(page4Button);
-        
-        expect(mockOnPageChange).toHaveBeenCalledWith(4);
-      });
     });
 
     describe("Page Number Buttons Click", () => {
