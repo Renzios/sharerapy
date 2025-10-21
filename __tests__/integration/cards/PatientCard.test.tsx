@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import PatientCard from "@/components/cards/PatientCard";
 
@@ -38,8 +38,8 @@ describe("PatientCard - Rendering", () => {
 
     expect(screen.getByRole("heading", { level: 1, name: "John Doe" })).toBeInTheDocument();
 
-    // Contact number (falls back to N/A if empty)
-    expect(screen.getByText("123-456")).toBeInTheDocument();
+    // Contact number with '+' prefix (falls back to +N/A if empty)
+    expect(screen.getByText("+123-456")).toBeInTheDocument();
 
     // Country section
     expect(screen.getByRole("heading", { level: 2, name: "Country" })).toBeInTheDocument();
@@ -50,9 +50,9 @@ describe("PatientCard - Rendering", () => {
     expect(screen.getByText("Male")).toBeInTheDocument();
   });
 
-  it('shows "N/A" when contact number is empty', () => {
+  it('shows "+N/A" when contact number is empty', () => {
     render(<PatientCard patient={makePatient({ contact_number: "" })} />);
-    expect(screen.getByText("N/A")).toBeInTheDocument();
+    expect(screen.getByText("+N/A")).toBeInTheDocument();
   });
 
   it('shows "N/A" when country is missing', () => {
@@ -61,7 +61,11 @@ describe("PatientCard - Rendering", () => {
       country: null as unknown as { id: number; country: string },
     });
     render(<PatientCard patient={patient} />);
-    expect(screen.getByText("N/A")).toBeInTheDocument();
+
+    // Scope the assertion to the Country section to avoid matching the Tag "N/A"
+    const countryHeading = screen.getByRole("heading", { level: 2, name: "Country" });
+    const countrySection = countryHeading.parentElement as HTMLElement;
+    expect(within(countrySection).getByText("N/A")).toBeInTheDocument();
   });
 });
 
@@ -103,7 +107,7 @@ describe("Props Handling", () => {
     const { rerender } = render(<PatientCard patient={makePatient()} />);
 
     expect(screen.getByRole("heading", { level: 1, name: "John Doe" })).toBeInTheDocument();
-    expect(screen.getByText("123-456")).toBeInTheDocument();
+    expect(screen.getByText("+123-456")).toBeInTheDocument();
     expect(screen.getByText("Philippines")).toBeInTheDocument();
     expect(screen.getByText("Male")).toBeInTheDocument();
 
@@ -122,8 +126,8 @@ describe("Props Handling", () => {
 
     // New values are displayed
     expect(screen.getByRole("heading", { level: 1, name: "Jane Smith" })).toBeInTheDocument();
-    expect(screen.getByText("999-999")).toBeInTheDocument();
-    expect(screen.queryByText("123-456")).toBeNull();
+    expect(screen.getByText("+999-999")).toBeInTheDocument();
+    expect(screen.queryByText("+123-456")).toBeNull();
     expect(screen.getByText("South Korea")).toBeInTheDocument();
     expect(screen.getByText("Female")).toBeInTheDocument();
 
