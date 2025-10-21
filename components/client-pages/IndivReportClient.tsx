@@ -54,7 +54,7 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
 
   const languageOptions = [
     { value: "english", label: "English" },
-    { value: "tagalog", label: "Tagalog" },
+    { value: "filipino", label: "Filipino" },
   ];
 
   const formatDate = (dateString: string) => {
