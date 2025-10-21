@@ -1,24 +1,48 @@
 "use client";
 
-import SearchPageHeader from "@/components/layout/SearchPageHeader";
+import { useState, useTransition } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { SingleValue } from "react-select";
+import { Tables } from "@/lib/types/database.types";
+import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
+import TherapistProfile from "../layout/TherapistProfile";
+import SearchPageHeader from "../layout/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
 import Pagination from "@/components/general/Pagination";
-import Toast from "@/components/general/Toast";
-import { useState, useTransition, useEffect } from "react";
-import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
-// 1. Import navigation hooks
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { SingleValue } from "react-select"; // Import this for handleSortChange
 
-// Extract the type from fetchReports
-type ReportsData = Awaited<ReturnType<typeof fetchReports>>["data"];
-type Report = NonNullable<ReportsData>[number];
+type TherapistRelation = Tables<"therapists"> & {
+  clinic: Tables<"clinics"> & {
+    country: Tables<"countries">;
+  };
+};
 
-interface SearchReportsClientProps {
-  initialReports: Report[];
+type PatientWithCountry = Tables<"patients"> & {
+  age?: string;
+  country: Tables<"countries">;
+};
+
+type ReportWithRelations = Tables<"reports"> & {
+  therapist: Tables<"therapists"> & {
+    clinic: Tables<"clinics"> & {
+      country: Tables<"countries">;
+    };
+  };
+  type: Tables<"types">;
+  language: Tables<"languages">;
+  patient: PatientWithCountry;
+};
+
+type BasicReport = Omit<ReportWithRelations, "therapist">;
+
+export type TherapistProfile = TherapistRelation & {
+  reports: BasicReport[];
+};
+
+interface TherapistProfileClientProps {
+  therapist: TherapistProfile;
+  initialReports: ReportWithRelations[];
   totalPages: number;
   initialSearchTerm?: string;
-  showSuccessToast?: boolean;
 }
 
 const reportSortOptions = [
@@ -45,84 +69,55 @@ const getSortParams = (
   }
 };
 
-export default function SearchReportsPage({
+export default function TherapistProfileClient({
+  therapist,
   initialReports,
   totalPages,
-  initialSearchTerm = "",
-  showSuccessToast = false,
-}: SearchReportsClientProps) {
-  // 2. Setup navigation hooks
+  initialSearchTerm,
+}: TherapistProfileClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // 3. Initialize state from URL Search Params
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-  const [sortOption, setSortOption] = useState(() => {
-    const sortParam = searchParams.get("sort");
-    return (
-      reportSortOptions.find((o) => o.value === sortParam) ||
-      reportSortOptions[3]
-    );
-  });
-  const [currentPage, setCurrentPage] = useState(() => {
-    return Number(searchParams.get("p")) || 1;
-  });
-
+  const [sortOption, setSortOption] = useState(reportSortOptions[3]);
   const [languageOption, setLanguageOption] = useState({
     value: "en",
     label: "English",
   });
 
   const [reports, setReports] = useState(initialReports);
+  const [currentPage, setCurrentPage] = useState(() => {
+    const pageParam = searchParams.get("p");
+    return pageParam ? Number(pageParam) : 1;
+  });
   const [currentTotalPages, setCurrentTotalPages] = useState(totalPages);
   const [isPending, startTransition] = useTransition();
 
-  // Toast State
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastType, setToastType] = useState<"success" | "error" | "info">(
-    "info"
-  );
-
-  // Show success toast on mount if needed, then clean URL
-  useEffect(() => {
-    if (showSuccessToast) {
-      setToastMessage("Report created successfully!");
-      setToastType("success");
-      setToastVisible(true);
-      // Clean the URL to remove the success parameter
-      router.replace(pathname, { scroll: false }); // Use pathname
-    }
-  }, [showSuccessToast, router, pathname]);
-
-  // 4. Add function to update URL
   const updateURLParams = (params: { [key: string]: string | number }) => {
     const newParams = new URLSearchParams(searchParams.toString());
     Object.entries(params).forEach(([key, value]) => {
       newParams.set(key, String(value));
     });
-    // We use router.push to add to history, so "back" works
     router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
   };
 
-  // 5. Update event handlers
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);
-    updateURLParams({ q: value, p: 1 }); // Update URL
-
     const { column, ascending } = getSortParams(sortOption.value);
+    updateURLParams({ q: value, p: 1 });
 
     startTransition(async () => {
       const result = await fetchReports({
+        therapistID: therapist.id,
         column,
         ascending,
         page: 1,
         search: value,
       });
       if (result.success && result.data) {
-        setReports(result.data);
+        setReports(result.data as ReportWithRelations[]);
         setCurrentTotalPages(result.totalPages);
       }
     });
@@ -134,21 +129,18 @@ export default function SearchReportsPage({
     if (!option) return;
 
     setSortOption(option);
-    // Reset to page 1 when sort changes
-    setCurrentPage(1);
-    updateURLParams({ sort: option.value, p: 1 }); // Update URL
-
     const { column, ascending } = getSortParams(option.value);
 
     startTransition(async () => {
       const result = await fetchReports({
+        therapistID: therapist.id,
         column,
         ascending,
-        page: 1, // Fetch page 1
+        page: currentPage,
         search: searchTerm,
       });
       if (result.success && result.data) {
-        setReports(result.data);
+        setReports(result.data as ReportWithRelations[]);
         setCurrentTotalPages(result.totalPages);
       }
     });
@@ -156,11 +148,12 @@ export default function SearchReportsPage({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    updateURLParams({ p: page }); // Update URL
     const { column, ascending } = getSortParams(sortOption.value);
+    updateURLParams({ p: page });
 
     startTransition(async () => {
       const result = await fetchReports({
+        therapistID: therapist.id,
         column,
         ascending,
         page,
@@ -168,67 +161,55 @@ export default function SearchReportsPage({
       });
 
       if (result.success && result.data) {
-        setReports(result.data);
+        setReports(result.data as ReportWithRelations[]);
         setCurrentTotalPages(result.totalPages);
       }
     });
-
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-y-8">
+      <TherapistProfile therapist={therapist} />
       <SearchPageHeader
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
         onSearch={handleSearch}
         currentPage="reports"
+        showNavButtons={false}
         sortOptions={reportSortOptions}
         sortValue={sortOption}
         onSortChange={handleSortChange}
         languageValue={languageOption}
         onLanguageChange={(option) => {
-          if (option) {
-            setLanguageOption(option);
-          }
-        }}
-        onAdvancedFiltersClick={() => {
-          console.log("Open advanced report filters");
-        }}
-        onMobileSettingsClick={() => {
-          console.log("Open mobile settings popup");
+          if (option) setLanguageOption(option);
         }}
       />
 
-      <div className="mt-6">
-        <div className="grid grid-cols-1 gap-4">
-          {reports.map((report) => (
+      <div
+        className={`flex flex-col gap-4 ${
+          isPending ? "opacity-60 transition-opacity" : ""
+        }`}
+      >
+        {reports.length > 0 ? (
+          reports.map((report) => (
             <ReportCard key={report.id} report={report} />
-          ))}
-        </div>
-
-        {reports.length === 0 && (
+          ))
+        ) : (
           <div className="text-center py-8">
             <p className="text-darkgray">No reports found</p>
           </div>
         )}
-
-        {reports.length > 0 && currentTotalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={currentTotalPages}
-            onPageChange={handlePageChange}
-            isPending={isPending}
-          />
-        )}
       </div>
 
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        isVisible={toastVisible}
-        onClose={() => setToastVisible(false)}
-      />
+      {reports.length > 0 && currentTotalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={currentTotalPages}
+          onPageChange={handlePageChange}
+          isPending={isPending}
+        />
+      )}
     </div>
   );
 }

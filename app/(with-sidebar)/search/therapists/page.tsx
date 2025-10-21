@@ -1,6 +1,8 @@
 import { readTherapists } from "@/lib/data/therapists";
 import SearchTherapistsClient from "@/components/client-pages/SearchTherapistClient";
 
+const THERAPISTS_PER_PAGE = 20;
+
 /**
  * This is the server component for the Therapists search page.
  * It fetches the initial therapist data and passes it to the client component for rendering.
@@ -8,14 +10,23 @@ import SearchTherapistsClient from "@/components/client-pages/SearchTherapistCli
 export default async function SearchTherapistsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; p?: string; sort?: string }>;
 }) {
   const params = await searchParams;
   const searchQuery = params.q || "";
+  const currentPage = Number(params.p) || 1;
+  const sortQuery = params.sort || "nameAscending"; // Default sort
 
-  const { data, count } = await readTherapists({ search: searchQuery });
+  const isAscending = sortQuery === "nameAscending";
 
-  const totalPages = Math.ceil((count || 0) / 20); // A page shows 20 therapists, both for mobile and desktop.
+  const { data, count } = await readTherapists({
+    search: searchQuery,
+    page: currentPage - 1,
+    pageSize: THERAPISTS_PER_PAGE,
+    ascending: isAscending,
+  });
+
+  const totalPages = Math.ceil((count || 0) / THERAPISTS_PER_PAGE);
 
   return (
     <SearchTherapistsClient

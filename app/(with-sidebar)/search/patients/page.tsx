@@ -1,21 +1,28 @@
 import { readPatients } from "@/lib/data/patients";
 import SearchPatientsClient from "@/components/client-pages/SearchPatientsClient";
 
-/**
- * This is the server component for the Patients search page.
- * It fetches the initial patient data and passes it to the client component for rendering.
- */
+const PATIENTS_PER_PAGE = 20;
+
 export default async function SearchPatientsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; p?: string; sort?: string }>;
 }) {
   const params = await searchParams;
   const searchQuery = params.q || "";
+  const currentPage = Number(params.p) || 1;
+  const sortQuery = params.sort || "nameAscending"; // Default sort
 
-  const { data, count } = await readPatients({ search: searchQuery });
+  const isAscending = sortQuery === "nameAscending";
 
-  const totalPages = Math.ceil((count || 0) / 20); // A page shows 20 patients, both for mobile and desktop.
+  const { data, count } = await readPatients({
+    search: searchQuery,
+    page: currentPage - 1,
+    pageSize: PATIENTS_PER_PAGE,
+    ascending: isAscending,
+  });
+
+  const totalPages = Math.ceil((count || 0) / PATIENTS_PER_PAGE);
 
   return (
     <SearchPatientsClient

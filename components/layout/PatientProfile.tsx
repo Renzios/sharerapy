@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useBackNavigation } from "@/app/hooks/useBackNavigation";
 
 import { Tables } from "@/lib/types/database.types";
 import Button from "@/components/general/Button";
@@ -27,6 +28,12 @@ interface PatientProfileProps {
 export default function PatientProfile({ patient }: PatientProfileProps) {
   const router = useRouter();
   const [isNavigating, setIsNavigating] = useState(false);
+  const { handleBackClick } = useBackNavigation("/search/patients");
+
+  const enhancedHandleBackClick = () => {
+    setIsNavigating(true);
+    handleBackClick();
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -34,19 +41,6 @@ export default function PatientProfile({ patient }: PatientProfileProps) {
       month: "long",
       day: "numeric",
     });
-  };
-
-  const handleBackClick = () => {
-    setIsNavigating(true);
-
-    if (
-      document.referrer &&
-      document.referrer.startsWith(window.location.origin)
-    ) {
-      router.back();
-    } else {
-      router.push("/search/patients");
-    }
   };
 
   return (
@@ -61,7 +55,7 @@ export default function PatientProfile({ patient }: PatientProfileProps) {
               <Button
                 variant="filled"
                 className="ml-auto w-auto text-xs md:text-base md:w-24"
-                onClick={handleBackClick}
+                onClick={enhancedHandleBackClick}
               >
                 Back
               </Button>

@@ -5,6 +5,8 @@ import TherapistCard from "@/components/cards/TherapistCard";
 import Pagination from "@/components/general/Pagination";
 import { useState, useTransition } from "react";
 import { fetchTherapists } from "@/app/(with-sidebar)/search/therapists/actions";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { SingleValue } from "react-select";
 
 // Extract the type from fetchTherapists
 type TherapistsData = Awaited<ReturnType<typeof fetchTherapists>>["data"];
@@ -16,43 +18,53 @@ interface SearchTherapistClientProps {
   initialSearchTerm?: string;
 }
 
-/**
- * This is the client component for the Therapists search page.
- * This is where the user interactivity happens (searching, sorting, pagination).
- * @param props - The initial therapists and total pages from the server component
- */
+const therapistSortOptions = [
+  { value: "nameAscending", label: "Sort by: Name (A-Z)" },
+  { value: "nameDescending", label: "Sort by: Name (Z-A)" },
+];
+
 export default function SearchTherapistsPage({
   initialTherapists,
   totalPages,
   initialSearchTerm = "",
 }: SearchTherapistClientProps) {
-  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const [sortOption, setSortOption] = useState({
-    value: "nameAscending",
-    label: "Sort by: Name (A-Z)",
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const [sortOption, setSortOption] = useState(() => {
+    const sortParam = searchParams.get("sort");
+    return (
+      therapistSortOptions.find((o) => o.value === sortParam) ||
+      therapistSortOptions[0]
+    );
   });
+  const [currentPage, setCurrentPage] = useState(() => {
+    return Number(searchParams.get("p")) || 1;
+  });
+
   const [languageOption, setLanguageOption] = useState({
     value: "en",
     label: "English",
   });
 
   const [therapists, setTherapists] = useState(initialTherapists);
-  const [currentPage, setCurrentPage] = useState(1); // Start at Page 1 (note: server uses 0-indexing)
   const [currentTotalPages, setCurrentTotalPages] = useState(totalPages);
   const [isPending, startTransition] = useTransition();
 
-  {
-    /* Therapist Specific Sort Options */
-  }
-  const therapistSortOptions = [
-    { value: "nameAscending", label: "Sort by: Name (A-Z)" },
-    { value: "nameDescending", label: "Sort by: Name (Z-A)" },
-  ];
+  const updateURLParams = (params: { [key: string]: string | number }) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    Object.entries(params).forEach(([key, value]) => {
+      newParams.set(key, String(value));
+    });
+    router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
+  };
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);
+    updateURLParams({ q: value, p: 1 });
 
     startTransition(async () => {
       const result = await fetchTherapists({
@@ -68,18 +80,21 @@ export default function SearchTherapistsPage({
   };
 
   const handleSortChange = (
-    option: { value: string; label: string } | null
+    option: SingleValue<{ value: string; label: string }>
   ) => {
     if (!option) return;
 
     setSortOption(option);
+    setCurrentPage(1); // Reset to page 1
+    updateURLParams({ sort: option.value, p: 1 });
+
     const isAscending = option.value === "nameAscending";
 
     startTransition(async () => {
       const result = await fetchTherapists({
         search: searchTerm,
         ascending: isAscending,
-        page: currentPage,
+        page: 1, // Fetch page 1
       });
       if (result.success && result.data) {
         setTherapists(result.data);
@@ -90,6 +105,7 @@ export default function SearchTherapistsPage({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    updateURLParams({ p: page });
 
     startTransition(async () => {
       const result = await fetchTherapists({
@@ -114,11 +130,9 @@ export default function SearchTherapistsPage({
         onSearchChange={setSearchTerm}
         onSearch={handleSearch}
         currentPage="therapists"
-        // Custom sort options for therapists
         sortOptions={therapistSortOptions}
         sortValue={sortOption}
         onSortChange={handleSortChange}
-        // Language selector (uses component defaults)
         languageValue={languageOption}
         onLanguageChange={(option) => {
           if (option) {
@@ -126,14 +140,10 @@ export default function SearchTherapistsPage({
           }
         }}
         onAdvancedFiltersClick={() => {
-          console.log(
-            "Open advanced therapist filters popup (age, sex, insurance, etc.)"
-          );
-          // This will open a popup with therapist-specific filters
+          console.log("Open advanced therapist filters popup");
         }}
         onMobileSettingsClick={() => {
-          console.log("Open mobile settings popup (sort & language options)");
-          // This will open a popup with the sort/language options (same as desktop selects)
+          console.log("Open mobile settings popup");
         }}
       />
 
