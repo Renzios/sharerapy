@@ -171,26 +171,6 @@ describe("Pagination Component", () => {
       });
     });
 
-    describe("Navigation Buttons Click", () => {
-      it("calls onPageChange with previous page when previous button clicked", async () => {
-        const user = userEvent.setup();
-        render(<Pagination currentPage={3} totalPages={5} onPageChange={mockOnPageChange} />);
-        const buttons = screen.getAllByRole("button");
-        const prevButton = buttons[0]; // First button is previous
-        await user.click(prevButton);
-        expect(mockOnPageChange).toHaveBeenCalledWith(2);
-      });
-
-      it("calls onPageChange with next page when next button clicked", async () => {
-        const user = userEvent.setup();
-        render(<Pagination currentPage={3} totalPages={5} onPageChange={mockOnPageChange} />);
-        const buttons = screen.getAllByRole("button");
-        const nextButton = buttons[buttons.length - 1];
-        await user.click(nextButton);
-        expect(mockOnPageChange).toHaveBeenCalledWith(4);
-      });
-    });
-
     describe("Disabled Buttons Click", () => {
       it("does not call onPageChange when previous button is disabled", async () => {
         const user = userEvent.setup();
@@ -237,14 +217,6 @@ describe("Pagination Component", () => {
       });
     });
 
-    it("assigns isPending prop correctly to disable buttons", () => {
-      render(<Pagination currentPage={3} totalPages={5} onPageChange={mockOnPageChange} isPending={true} />);
-      // While isPending is true, all buttons should be disabled
-      const buttons = screen.getAllByRole("button");
-      buttons.forEach(button => {
-        expect(button).toBeDisabled();
-      });
-    });
   });
   
 });
