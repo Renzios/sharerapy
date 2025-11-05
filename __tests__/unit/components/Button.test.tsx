@@ -1,12 +1,22 @@
 import "@testing-library/jest-dom";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Button from "../../../components/general/Button";
 
 describe("Button Component", () => {
   describe("Rendering", () => {
-    it("renders with text children", () => {
+    it("renders button label", () => {
       render(<Button>Click Me</Button>);
       expect(screen.getByRole("button", { name: "Click Me" })).toBeInTheDocument();
+    });
+
+    it("supports foreign characters", () => {
+      render(<Button>点击我</Button>);
+      expect(screen.getByRole("button", { name: "点击我" })).toBeInTheDocument();
+
+      render(<Button>Тимэх</Button>);
+      expect(screen.getByRole("button", { name: "Тимэх" })).toBeInTheDocument();
+
     });
 
     it("applies custom width/height inline styles", () => {
@@ -45,28 +55,31 @@ describe("Button Component", () => {
   });
 
   describe("User Interaction", () => {
-    it("calls onClick when clicked", () => {
+    it("calls onClick when clicked", async () => {
+      const user = userEvent.setup();
       const onClick = jest.fn();
       render(<Button onClick={onClick}>Click</Button>);
-      fireEvent.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button"));
       expect(onClick).toHaveBeenCalledTimes(1);
     });
 
-    it("does not call onClick when disabled", () => {
+    it("does not call onClick when disabled", async () => {
+      const user = userEvent.setup();
       const onClick = jest.fn();
       render(
         <Button disabled onClick={onClick}>
           Disabled Click
         </Button>
       );
-      fireEvent.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button"));
       expect(onClick).not.toHaveBeenCalled();
     });
 
-    it("is focusable", () => {
+    it("is focusable", async () => {
+      const user = userEvent.setup();
       render(<Button>Focusable</Button>);
       const btn = screen.getByRole("button");
-      btn.focus();
+      await user.tab();
       expect(btn).toHaveFocus();
     });
   });

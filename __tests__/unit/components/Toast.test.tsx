@@ -60,6 +60,19 @@ describe('Toast Component', () => {
         expect(screen.getByText(message)).toBeInTheDocument();
       });
 
+      it("handles non-latin characters in the message", () => {
+        const message = 'Тестовое сообщение с особыми символами: 你好，こんにちは';
+        render(
+          <Toast 
+            message={message} 
+            isVisible={true} 
+            onClose={mockOnClose} 
+          />
+        );
+
+        expect(screen.getByText(message)).toBeInTheDocument();
+      });
+
       describe('Edge Cases', () => {
         it('handles empty message', () => {
           render(

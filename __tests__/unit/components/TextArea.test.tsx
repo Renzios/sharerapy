@@ -60,13 +60,6 @@ describe("TextArea Component", () => {
       const textareaElement = screen.getByLabelText(labelText) as HTMLTextAreaElement;
       expect(textareaElement.disabled).toBe(true);
     });
-
-    it("limits the maximum length of input when maxLength prop is set", () => {
-      const maxLength = 10;
-      render(<TextArea {...defaultProps} maxLength={maxLength} />);
-      const textareaElement = screen.getByLabelText(labelText) as HTMLTextAreaElement;
-      expect(textareaElement.maxLength).toBe(maxLength);
-    });
   });
 
   describe("User Interaction", () => {
@@ -108,7 +101,23 @@ describe("TextArea Component", () => {
       // userEvent.type will skip disabled elements and won't type anything
       await user.type(textarea, "Attempted input");
       expect(textarea.value).toBe(""); // Value stays empty because disabled prevents input
-
     });  
+
+    it("enforces maxLength on user input", async () => {
+      const user = userEvent.setup();
+      render(<TextArea {...defaultProps} maxLength={5} />);
+      const textarea = screen.getByLabelText(labelText) as HTMLTextAreaElement;
+      await user.type(textarea, "ExceedingLength");
+      expect(textarea.value.length).toBe(5);
+      expect(textarea.value).toBe("Excee");
+    });
+
+    it("supports foreign characters", async () => {
+      const user = userEvent.setup();
+      render(<TextArea {...defaultProps} />);
+      const textarea = screen.getByLabelText(labelText) as HTMLTextAreaElement;
+      await user.type(textarea, "输入Киирии");
+      expect(textarea.value).toBe("输入Киирии");
+    });
   });    
 });   

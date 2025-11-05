@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Search from "@/components/general/Search";
 
 // Mock MUI Search Icon
@@ -16,86 +17,121 @@ describe("Search Component", () => {
     jest.clearAllMocks();
   });
 
-  it("renders without crashing", () => {
-    render(<Search />);
+  describe("Rendering", () => {
+    it("renders without crashing", () => {
+      render(<Search />);
 
-    const input = screen.getByRole("textbox");
-    expect(input).toBeInTheDocument();
-    expect(input).toHaveAttribute("placeholder", "Search");
+      const input = screen.getByRole("textbox");
+      expect(input).toBeInTheDocument();
+      expect(input).toHaveAttribute("placeholder", "Search");
+    });
+
+    it("displays the search icon", () => {
+      render(<Search />);
+
+      const searchIcon = screen.getByTestId("search-icon");
+      expect(searchIcon).toBeInTheDocument();
+    });
+
+    it("renders with default container", () => {
+      render(<Search />);
+
+      const input = screen.getByRole("textbox");
+      expect(input.parentElement).toBeInTheDocument();
+    });
+
+    it("applies custom width when size prop is provided", () => {
+      render(<Search size="20rem" />);
+
+      const container = screen.getByRole("textbox").parentElement;
+      expect(container).toHaveStyle({ width: "20rem" });
+    });
+
+    it("applies full width when size is 'full'", () => {
+      render(<Search size="full" />);
+
+      const container = screen.getByRole("textbox").parentElement;
+      expect(container).toHaveClass("w-full");
+    });
+
+    it("applies custom className to container", () => {
+      render(<Search className="custom-class" />);
+
+      const container = screen.getByRole("textbox").parentElement;
+      expect(container).toHaveClass("custom-class");
+    });
   });
 
-  it("displays the search icon", () => {
-    render(<Search />);
+  describe("User Interaction", () => {
+    it("handles input value changes", async () => {
+        const user = userEvent.setup();
+    render(<Search value="" onChange={mockOnChange} />);
 
-    const searchIcon = screen.getByTestId("search-icon");
-    expect(searchIcon).toBeInTheDocument();
-  });
+    const input = screen.getByRole("textbox") as HTMLInputElement;
 
-  it("has accessible search button", () => {
-    render(<Search />);
+    await user.type(input, "test");
 
-    const searchButton = screen.getByRole("button", { name: /search/i });
-    expect(searchButton).toBeInTheDocument();
-  });
+    expect(mockOnChange).toHaveBeenCalledTimes(4);
+    expect(mockOnChange).toHaveBeenLastCalledWith("t");
+    });
 
-  it("handles input value changes", () => {
-    render(<Search value="test" onChange={mockOnChange} />);
+    it("calls onSearch when Enter key is pressed", async () => {
+      const user = userEvent.setup();
+      render(<Search value="search term" onSearch={mockOnSearch} />);
 
-    const input = screen.getByRole("textbox");
-    expect(input).toHaveValue("test");
+      const input = screen.getByRole("textbox");
+      await user.type(input, "{Enter}");
 
-    fireEvent.change(input, { target: { value: "new value" } });
-    expect(mockOnChange).toHaveBeenCalledWith("new value");
-  });
+      expect(mockOnSearch).toHaveBeenCalledWith("search term");
+    });
 
-  it("calls onSearch when Enter key is pressed", () => {
-    render(<Search value="search term" onSearch={mockOnSearch} />);
+    it("calls onSearch when search icon is clicked", async () => {
+      const user = userEvent.setup();
+      render(<Search value="search term" onSearch={mockOnSearch} />);
 
-    const input = screen.getByRole("textbox");
-    fireEvent.keyDown(input, { key: "Enter" });
+      const searchButton = screen.getByRole("button", { name: /search/i });
+      await user.click(searchButton);
 
-    expect(mockOnSearch).toHaveBeenCalledWith("search term");
-  });
+      expect(mockOnSearch).toHaveBeenCalledWith("search term");
+    });
 
-  it("calls onSearch when search icon is clicked", () => {
-    render(<Search value="search term" onSearch={mockOnSearch} />);
+    it("handles empty value in onSearch callbacks", async () => {
+      const user = userEvent.setup();
+      render(<Search onSearch={mockOnSearch} />);
 
-    const searchButton = screen.getByRole("button", { name: /search/i });
-    fireEvent.click(searchButton);
+      const input = screen.getByRole("textbox");
+      await user.type(input, "{Enter}");
 
-    expect(mockOnSearch).toHaveBeenCalledWith("search term");
-  });
+      expect(mockOnSearch).toHaveBeenCalledWith("");
+    });
 
-  it("handles empty value in onSearch callbacks", () => {
-    render(<Search onSearch={mockOnSearch} />);
+    it("ignores other key presses", async () => {
+      const user = userEvent.setup();
+      render(<Search value="test" onSearch={mockOnSearch} />);
 
-    const input = screen.getByRole("textbox");
-    fireEvent.keyDown(input, { key: "Enter" });
+      const input = screen.getByRole("textbox");
+      await user.type(input, "{Escape}{Tab}");
 
-    expect(mockOnSearch).toHaveBeenCalledWith("");
-  });
+      expect(mockOnSearch).not.toHaveBeenCalled();
+    });
 
-  it("renders with default container", () => {
-    render(<Search />);
+    it("handles foreign character input", async () => {
+      const user = userEvent.setup();
+      render(<Search value="" onChange={mockOnChange} />);
+      const input = screen.getByRole("textbox");
 
-    const input = screen.getByRole("textbox");
-    expect(input.parentElement).toBeInTheDocument();
-  });
+      await user.type(input, "搜索Тест");
+      expect(mockOnChange).toHaveBeenCalled();
+    });
 
-  it("applies custom width when size prop is provided", () => {
-    render(<Search size="20rem" />);
+    it("accepts paste events", async () => {
+      const user = userEvent.setup();
+      render(<Search value="" onChange={mockOnChange} />);
+      const input = screen.getByRole("textbox");
 
-    const container = screen.getByRole("textbox").parentElement;
-    expect(container).toHaveStyle({ width: "20rem" });
-  });
-
-  it("ignores other key presses", () => {
-    render(<Search value="test" onSearch={mockOnSearch} />);
-
-    const input = screen.getByRole("textbox");
-    fireEvent.keyDown(input, { key: "Escape" });
-    fireEvent.keyDown(input, { key: "Tab" });
-
-    expect(mockOnSearch).not.toHaveBeenCalled();
+      await user.click(input);
+      await user.paste("PastedText");
+      expect(mockOnChange).toHaveBeenCalledWith("PastedText");
+    });
   });
 });

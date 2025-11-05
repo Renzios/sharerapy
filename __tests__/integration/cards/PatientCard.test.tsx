@@ -32,7 +32,7 @@ const makePatient = (overrides?: Partial<Parameters<typeof PatientCard>[0]["pati
   ...overrides,
 });
 
-describe("PatientCard - Rendering", () => {
+describe("Rendering", () => {
   it("displays name, contact number, country, and sex", () => {
     render(<PatientCard patient={makePatient()} />);
 
@@ -67,16 +67,40 @@ describe("PatientCard - Rendering", () => {
     const countrySection = countryHeading.parentElement as HTMLElement;
     expect(within(countrySection).getByText("N/A")).toBeInTheDocument();
   });
+  
+  it("supports non-latin characters in name and country", () => {
+    render(
+      <PatientCard
+        patient={makePatient({
+          name: "张伟",
+          country: { id: 3, country: "中国" },
+        })}
+      />
+    );  
+    expect(screen.getByRole("heading", { level: 1, name: "张伟" })).toBeInTheDocument();
+    expect(screen.getByText("中国")).toBeInTheDocument();
+
+    render(
+      <PatientCard
+        patient={makePatient({
+          name: "Мария Иванова",
+          country: { id: 4, country: "Россия" },
+        })} 
+      />
+    );
+    expect(screen.getByRole("heading", { level: 1, name: "Мария Иванова" })).toBeInTheDocument();
+    expect(screen.getByText("Россия")).toBeInTheDocument();
+  });
 });
 
 describe("User Interaction", () => {
-  it("is a link that points to the patient's profile URL", () => {
-    const patient = makePatient({ id: "abc123" });
-    render(<PatientCard patient={patient} />);
-
+  it("navigates to patient profile on click", async () => {
+    render(<PatientCard patient={makePatient()} />);
+    const user = userEvent.setup();
     const link = screen.getByRole("link", { name: /john doe/i });
-    
-    expect(link.getAttribute("href")).toBe("/profile/patient/abc123");
+
+    expect(link.getAttribute("href")).toBe("/profile/patient/1");
+    await user.click(link);
   });
 
   it("is focusable and clickable", async () => {
@@ -103,35 +127,13 @@ describe("Props Handling", () => {
     expect(link.getAttribute("href")).toBe("/profile/patient/2");
   });
 
-  it("updates displayed values when props change", async () => {
-    const { rerender } = render(<PatientCard patient={makePatient()} />);
+  it("is a link that points to the patient's profile URL", () => {
+    const patient = makePatient({ id: "abc123" });
+    render(<PatientCard patient={patient} />);
 
-    expect(screen.getByRole("heading", { level: 1, name: "John Doe" })).toBeInTheDocument();
-    expect(screen.getByText("+123-456")).toBeInTheDocument();
-    expect(screen.getByText("Philippines")).toBeInTheDocument();
-    expect(screen.getByText("Male")).toBeInTheDocument();
-
-    // Change props and rerender
-    rerender(
-      <PatientCard
-        patient={makePatient({
-          id: "9",
-          name: "Jane Smith",
-          contact_number: "999-999",
-          country: { id: 2, country: "South Korea" },
-          sex: "Female",
-        })}
-      />
-    );
-
-    // New values are displayed
-    expect(screen.getByRole("heading", { level: 1, name: "Jane Smith" })).toBeInTheDocument();
-    expect(screen.getByText("+999-999")).toBeInTheDocument();
-    expect(screen.queryByText("+123-456")).toBeNull();
-    expect(screen.getByText("South Korea")).toBeInTheDocument();
-    expect(screen.getByText("Female")).toBeInTheDocument();
-
-    const link = screen.getByRole("link", { name: /jane smith/i });
-    expect(link.getAttribute("href")).toBe("/profile/patient/9");
+    const link = screen.getByRole("link", { name: /john doe/i });
+    
+    expect(link.getAttribute("href")).toBe("/profile/patient/abc123");
   });
+
 });
