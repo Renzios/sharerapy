@@ -3,6 +3,9 @@ import { readPatient } from "@/lib/data/patients";
 import { readReports } from "@/lib/data/reports";
 import { notFound } from "next/navigation";
 
+// Opt out of static generation - this page needs runtime data from Supabase
+export const dynamic = "force-dynamic";
+
 const REPORTS_PER_PAGE = 10;
 
 /**

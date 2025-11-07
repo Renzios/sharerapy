@@ -1,6 +1,9 @@
 import { readPatients } from "@/lib/data/patients";
 import SearchPatientsClient from "@/components/client-pages/SearchPatientsClient";
 
+// Opt out of static generation - this page needs runtime data from Supabase
+export const dynamic = "force-dynamic";
+
 const PATIENTS_PER_PAGE = 20;
 
 export default async function SearchPatientsPage({

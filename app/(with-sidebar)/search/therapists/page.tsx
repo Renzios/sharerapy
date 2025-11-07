@@ -1,6 +1,9 @@
 import { readTherapists } from "@/lib/data/therapists";
 import SearchTherapistsClient from "@/components/client-pages/SearchTherapistClient";
 
+// Opt out of static generation - this page needs runtime data from Supabase
+export const dynamic = "force-dynamic";
+
 const THERAPISTS_PER_PAGE = 20;
 
 /**

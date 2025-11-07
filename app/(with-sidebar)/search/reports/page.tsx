@@ -1,6 +1,9 @@
 import { readReports } from "@/lib/data/reports";
 import SearchReportsClient from "@/components/client-pages/SearchReportsClient";
 
+// Opt out of static generation - this page needs runtime data from Supabase
+export const dynamic = "force-dynamic";
+
 const REPORTS_PER_PAGE = 10; // Define page size
 
 // --- ADDED THESE ---
