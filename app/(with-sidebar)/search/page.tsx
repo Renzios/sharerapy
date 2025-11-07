@@ -3,9 +3,6 @@ import { readReports } from "@/lib/data/reports";
 import { readTherapists } from "@/lib/data/therapists";
 import SearchAllClient from "@/components/client-pages/SearchAllClient";
 
-// Opt out of static generation - this page needs runtime data from Supabase
-export const dynamic = "force-dynamic";
-
 /**
  * This is the server component for the main Search page.
  * It fetches a fixed number of patients (4), reports (2), and therapists (5)

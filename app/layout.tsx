@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: "",
 };
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Root layout component that wraps all pages. This is empty.
  * @param children - The page content to be rendered

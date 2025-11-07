@@ -1,9 +1,6 @@
 import IndivReportClient from "@/components/client-pages/IndivReportClient";
 import { readReport } from "@/lib/data/reports";
 
-// Opt out of static generation - this page needs runtime data from Supabase
-export const dynamic = "force-dynamic";
-
 /**
  * This is the server component for viewing an individual report.
  * It fetches the report data by ID and passes it to the client component for rendering.

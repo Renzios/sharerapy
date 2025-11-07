@@ -4,9 +4,6 @@ import { readLanguages } from "@/lib/data/languages";
 import { readTypes } from "@/lib/data/types";
 import CreateNewReportClient from "@/components/client-pages/CreateNewReportClient";
 
-// Opt out of static generation - this page needs runtime data from Supabase
-export const dynamic = "force-dynamic";
-
 /**
  * This is the server component for the Create New Report page.
  * It fetches all the necessary options (Existing Patients, Countries, Languages, Types (Therapy)) and passed it into the client component.
