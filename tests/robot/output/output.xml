@@ -1,0 +1,1342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.1.1 (Python 3.13.3 on win32)" generated="2025-11-07T23:11:05.617470" rpa="false" schemaversion="5">
+<suite id="s1" name="Robot" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot">
+<suite id="s1-s1" name="Patients" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\patients">
+<suite id="s1-s1-s1" name="Patient Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\patients\patient_tests.robot">
+<kw name="Setup Test Environment" owner="common" type="SETUP">
+<kw name="Log" owner="BuiltIn">
+<arg>Setting up test environment for direct function calls</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.672056" elapsed="0.000111"/>
+</kw>
+<doc>Initialize test environment for TDD</doc>
+<status status="PASS" start="2025-11-07T23:11:05.671622" elapsed="0.000622"/>
+</kw>
+<test id="s1-s1-s1-t1" name="Get Patient By ID - TDD (non-existent)" line="37">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.672938" elapsed="0.000052"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-07T23:11:05.673041" elapsed="0.000018"/>
+</return>
+<var>${patient_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-07T23:11:05.672783" elapsed="0.000312"/>
+</kw>
+<kw name="Get Patient By Id" owner="patient_functions">
+<var>${patient}</var>
+<arg>${patient_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.673442" elapsed="0.000050"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${patient}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.673776" elapsed="0.000204"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>SUCCESS: Get Patient By ID correctly returned None for non-existent patient</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.674181" elapsed="0.000102"/>
+</kw>
+<doc>TDD: Get patient by random/non-existent ID (expect None)</doc>
+<tag>get</tag>
+<tag>patients</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.672313" elapsed="0.002244"/>
+</test>
+<test id="s1-s1-s1-t2" name="Test Get All Patients - TDD" line="47">
+<try>
+<branch type="TRY">
+<kw name="Get All Patients" owner="patient_functions">
+<var>${result}</var>
+<status status="NOT RUN" start="2025-11-07T23:11:05.675625" elapsed="0.000033"/>
+</kw>
+<kw name="Validate Patients List Response">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${patients}</var>
+<arg>${result}[data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.675943" elapsed="0.000036"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<arg>${patients}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.676056" elapsed="0.002458"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Patient list retrieval working correctly - returned ${result}[count] patients</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.678629" elapsed="0.000068"/>
+</kw>
+<arg>${result}</arg>
+<doc>Validate successful patients list response</doc>
+<status status="PASS" start="2025-11-07T23:11:05.675795" elapsed="0.002945"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.675547" elapsed="0.003217"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>Get All Patients failed: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.678887" elapsed="0.000045"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.678818" elapsed="0.000139"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.675505" elapsed="0.003478"/>
+</try>
+<doc>TDD: Test get all patients using direct function calls</doc>
+<tag>get</tag>
+<tag>patients</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.675148" elapsed="0.004007"/>
+</test>
+<test id="s1-s1-s1-t3" name="Test Get Patients with ReadParameters - TDD" line="58">
+<try>
+<branch type="TRY">
+<kw name="Get All Patients" owner="patient_functions">
+<var>${result}</var>
+<arg>search=TestPatient</arg>
+<arg>page=0</arg>
+<arg>page_size=10</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.681650" elapsed="0.000228"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>SUCCESS: Get patients with parameters working - returned ${result}[count] patients</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.682089" elapsed="0.000219"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${result}[count] &gt;= 0</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.682617" elapsed="0.000215"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.681528" elapsed="0.001351"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>Get All Patients with parameters failed: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.683039" elapsed="0.000079"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.682928" elapsed="0.000229"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.681468" elapsed="0.001718"/>
+</try>
+<doc>TDD: Test get patients with search/filter parameters using direct function calls</doc>
+<tag>get</tag>
+<tag>parameters</tag>
+<tag>patients</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.680910" elapsed="0.002500"/>
+</test>
+<test id="s1-s1-s1-t4" name="Update Patient - TDD (non-existent)" line="70">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.685075" elapsed="0.000052"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-07T23:11:05.685206" elapsed="0.000022"/>
+</return>
+<var>${patient_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-07T23:11:05.684886" elapsed="0.000381"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${patient_data}</var>
+<arg>&amp;{PATIENT_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.686101" elapsed="0.000066"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${patient_data}</arg>
+<arg>first_name=Updated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.686464" elapsed="0.000059"/>
+</kw>
+<kw name="Update Patient" owner="patient_functions">
+<var>${updated_patient}</var>
+<arg>${patient_id}</arg>
+<arg>${patient_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.686803" elapsed="0.000069"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${updated_patient}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.687028" elapsed="0.000061"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>SUCCESS: Update Patient correctly returned None for non-existent patient</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.687224" elapsed="0.000055"/>
+</kw>
+<doc>TDD: Update patient with random/non-existent ID (expect None)</doc>
+<tag>patients</tag>
+<tag>put</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.684011" elapsed="0.004266"/>
+</test>
+<test id="s1-s1-s1-t5" name="Delete Patient - TDD (non-existent)" line="83">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.690986" elapsed="0.000079"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-07T23:11:05.691149" elapsed="0.000026"/>
+</return>
+<var>${patient_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-07T23:11:05.690712" elapsed="0.000515"/>
+</kw>
+<kw name="Delete Patient" owner="patient_functions">
+<var>${result}</var>
+<arg>${patient_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.691999" elapsed="0.000089"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${result}</arg>
+<arg>${False}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.692631" elapsed="0.000113"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>SUCCESS: Delete Patient correctly returned False for non-existent patient</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.693019" elapsed="0.000092"/>
+</kw>
+<doc>TDD: Delete patient with random/non-existent ID (expect False)</doc>
+<tag>delete</tag>
+<tag>patients</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.689926" elapsed="0.003574"/>
+</test>
+<test id="s1-s1-s1-t6" name="Read Patient - TDD (created id)" line="93">
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${patient_data}</var>
+<arg>&amp;{PATIENT_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.694881" elapsed="0.000087"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${patient_data}</arg>
+<arg>first_name=UnitRead</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.695107" elapsed="0.000051"/>
+</kw>
+<kw name="Create Patient" owner="patient_functions">
+<var>${created}</var>
+<arg>${patient_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.695454" elapsed="0.000079"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${patient_id}</var>
+<arg>${created}[id]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.695781" elapsed="0.000040"/>
+</kw>
+<kw name="Get Patient By Id" owner="patient_functions">
+<var>${read}</var>
+<arg>${patient_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.695932" elapsed="0.000031"/>
+</kw>
+<kw name="Should Not Be Equal" owner="BuiltIn">
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are equal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.696063" elapsed="0.000068"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}[first_name]</arg>
+<arg>${patient_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.696364" elapsed="0.000083"/>
+</kw>
+<doc>TDD: Read patient using ID created in this test (happy path)</doc>
+<tag>patients</tag>
+<tag>read</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.694333" elapsed="0.002675"/>
+</test>
+<test id="s1-s1-s1-t7" name="Test Patient Lifecycle - TDD (happy path)" line="106">
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${patient_data}</var>
+<arg>&amp;{PATIENT_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.697925" elapsed="0.000072"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${patient_data}</arg>
+<arg>first_name=HappyPathTest</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.698179" elapsed="0.000063"/>
+</kw>
+<kw name="Create Patient" owner="patient_functions">
+<var>${created}</var>
+<arg>${patient_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.698400" elapsed="0.000042"/>
+</kw>
+<kw name="Validate Created Patient Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${patient_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.698814" elapsed="0.000051"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${patient_result}[first_name]</arg>
+<arg>${expected_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.698938" elapsed="0.000048"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${patient_result}[last_name]</arg>
+<arg>${expected_data}[last_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.699051" elapsed="0.000045"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Patient creation working correctly - created patient with ID ${patient_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.699160" elapsed="0.000052"/>
+</kw>
+<arg>${created}</arg>
+<arg>${patient_data}</arg>
+<doc>Validate successful patient creation response</doc>
+<status status="PASS" start="2025-11-07T23:11:05.698645" elapsed="0.000602"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${patient_id}</var>
+<arg>${created}[id]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.699370" elapsed="0.000032"/>
+</kw>
+<kw name="Get Patient By Id" owner="patient_functions">
+<var>${read}</var>
+<arg>${patient_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.699514" elapsed="0.000030"/>
+</kw>
+<kw name="Should Not Be Equal" owner="BuiltIn">
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are equal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.699655" elapsed="0.000044"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}[first_name]</arg>
+<arg>${patient_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.699814" elapsed="0.000050"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${patient_data}</arg>
+<arg>first_name=HappyPathUpdated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.699981" elapsed="0.000041"/>
+</kw>
+<kw name="Update Patient" owner="patient_functions">
+<var>${updated}</var>
+<arg>${patient_id}</arg>
+<arg>${patient_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.700204" elapsed="0.000033"/>
+</kw>
+<kw name="Validate Patient Update Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${patient_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.700525" elapsed="0.000045"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${patient_result}[first_name]</arg>
+<arg>${expected_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.700634" elapsed="0.000046"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Patient update working correctly - updated patient</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.700851" elapsed="0.000052"/>
+</kw>
+<arg>${updated}</arg>
+<arg>${patient_data}</arg>
+<doc>Validate successful patient update response</doc>
+<status status="PASS" start="2025-11-07T23:11:05.700387" elapsed="0.000553"/>
+</kw>
+<kw name="Delete Patient" owner="patient_functions">
+<var>${deleted}</var>
+<arg>${patient_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.701102" elapsed="0.000032"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${deleted}</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.701248" elapsed="0.000040"/>
+</kw>
+<doc>TDD: Create, Read, Update, Delete patient lifecycle (happy path)</doc>
+<tag>lifecycle</tag>
+<tag>patients</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.697498" elapsed="0.003918"/>
+</test>
+<kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
+<kw name="Log" owner="BuiltIn">
+<arg>Cleaning up test environment</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.702042" elapsed="0.000048"/>
+</kw>
+<doc>Clean up test environment</doc>
+<status status="PASS" start="2025-11-07T23:11:05.701942" elapsed="0.000183"/>
+</kw>
+<doc>Patient API TDD tests - Direct function calls using Supabase</doc>
+<status status="PASS" start="2025-11-07T23:11:05.654618" elapsed="0.047529"/>
+</suite>
+<status status="PASS" start="2025-11-07T23:11:05.652972" elapsed="0.049981"/>
+</suite>
+<suite id="s1-s2" name="Reports" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\reports">
+<suite id="s1-s2-s1" name="Report Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\reports\report_tests.robot">
+<kw name="Setup Test Environment" owner="common" type="SETUP">
+<kw name="Log" owner="BuiltIn">
+<arg>Setting up test environment for direct function calls</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.711585" elapsed="0.000079"/>
+</kw>
+<doc>Initialize test environment for TDD</doc>
+<status status="PASS" start="2025-11-07T23:11:05.711403" elapsed="0.000382"/>
+</kw>
+<test id="s1-s2-s1-t1" name="Get Report By ID - TDD (non-existent)" line="29">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.712879" elapsed="0.000074"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-07T23:11:05.713030" elapsed="0.000022"/>
+</return>
+<var>${report_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-07T23:11:05.712619" elapsed="0.000481"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Get Report By Id" owner="report_functions">
+<var>${report}</var>
+<arg>${report_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.713496" elapsed="0.000069"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.713653" elapsed="0.000057"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>SUCCESS: Get Report By ID correctly returned None for non-existent report</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.713782" elapsed="0.000047"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.713373" elapsed="0.000482"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>TDD FAIL: GET reports by ID not implemented - implement to make test pass: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.713947" elapsed="0.000040"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.713888" elapsed="0.000125"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.713323" elapsed="0.000711"/>
+</try>
+<doc>TDD: Get report by random/non-existent ID (expect None)</doc>
+<tag>get</tag>
+<tag>reports</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.711901" elapsed="0.002330"/>
+</test>
+<test id="s1-s2-s1-t2" name="Test Get All Reports - TDD" line="43">
+<try>
+<branch type="TRY">
+<kw name="Get All Reports" owner="report_functions">
+<var>${result}</var>
+<status status="NOT RUN" start="2025-11-07T23:11:05.714849" elapsed="0.000031"/>
+</kw>
+<kw name="Validate Reports List Response">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${reports}</var>
+<arg>${result}[data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.715133" elapsed="0.000033"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<arg>${reports}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.715233" elapsed="0.000038"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Report list retrieval working correctly - returned ${result}[count] reports</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.715335" elapsed="0.000052"/>
+</kw>
+<arg>${result}</arg>
+<doc>Validate successful reports list response</doc>
+<status status="PASS" start="2025-11-07T23:11:05.714993" elapsed="0.000432"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.714779" elapsed="0.000670"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>TDD FAIL: GET reports not implemented - implement this endpoint to make test pass: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.715539" elapsed="0.000042"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.715480" elapsed="0.000127"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.714756" elapsed="0.000871"/>
+</try>
+<doc>TDD: Test get all reports using direct function calls</doc>
+<tag>get</tag>
+<tag>reports</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.714529" elapsed="0.001229"/>
+</test>
+<test id="s1-s2-s1-t3" name="Create Report - TDD (happy path)" line="55">
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${report_data}</var>
+<arg>&amp;{REPORT_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.716394" elapsed="0.000058"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${report_data}</arg>
+<arg>title=TDD Test Report</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.716698" elapsed="0.000064"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Create Report" owner="report_functions">
+<var>${created_report}</var>
+<arg>${report_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.717022" elapsed="0.000042"/>
+</kw>
+<kw name="Validate Created Report Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${report_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.717318" elapsed="0.000050"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[title]</arg>
+<arg>${expected_data}[title]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.717437" elapsed="0.000047"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[description]</arg>
+<arg>${expected_data}[description]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.717604" elapsed="0.000048"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID ${report_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.717721" elapsed="0.000050"/>
+</kw>
+<arg>${created_report}</arg>
+<arg>${report_data}</arg>
+<doc>Validate successful report creation response</doc>
+<status status="PASS" start="2025-11-07T23:11:05.717174" elapsed="0.000632"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.716951" elapsed="0.000880"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>TDD FAIL: POST reports not implemented - implement this endpoint to make test pass: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.717921" elapsed="0.000041"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.717861" elapsed="0.000126"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.716923" elapsed="0.001085"/>
+</try>
+<doc>TDD: Create report (happy path) using direct function calls</doc>
+<tag>post</tag>
+<tag>reports</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.716022" elapsed="0.002176"/>
+</test>
+<test id="s1-s2-s1-t4" name="Update Report - TDD (non-existent)" line="70">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.720182" elapsed="0.000077"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-07T23:11:05.720338" elapsed="0.000020"/>
+</return>
+<var>${report_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-07T23:11:05.719917" elapsed="0.000490"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${update_data}</var>
+<arg>&amp;{REPORT_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.720934" elapsed="0.000086"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${update_data}</arg>
+<arg>title=Updated Report Title</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.721277" elapsed="0.000078"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Update Report" owner="report_functions">
+<var>${updated_report}</var>
+<arg>${report_id}</arg>
+<arg>${update_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.721719" elapsed="0.000058"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${updated_report}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.721882" elapsed="0.000054"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>SUCCESS: Update Report correctly returned None for non-existent report</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.722005" elapsed="0.000049"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.721626" elapsed="0.000457"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>TDD FAIL: PUT reports not implemented - implement this endpoint to make test pass: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.722182" elapsed="0.000040"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.722119" elapsed="0.000129"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.721587" elapsed="0.000683"/>
+</try>
+<doc>TDD: Update report with random/non-existent ID (expect None)</doc>
+<tag>put</tag>
+<tag>reports</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.719107" elapsed="0.003476"/>
+</test>
+<test id="s1-s2-s1-t5" name="Delete Report - TDD (non-existent)" line="87">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.723518" elapsed="0.000049"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-07T23:11:05.723642" elapsed="0.000016"/>
+</return>
+<var>${report_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-07T23:11:05.723334" elapsed="0.000384"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Delete Report" owner="report_functions">
+<var>${result}</var>
+<arg>${report_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.724064" elapsed="0.000042"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${result}</arg>
+<arg>${False}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.724181" elapsed="0.000048"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>SUCCESS: Delete Report correctly returned False for non-existent report</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.724296" elapsed="0.000046"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.723978" elapsed="0.000390"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>TDD FAIL: DELETE reports not implemented - implement this endpoint to make test pass: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.724528" elapsed="0.000100"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.724421" elapsed="0.000253"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.723921" elapsed="0.000780"/>
+</try>
+<doc>TDD: Delete report with random/non-existent ID (expect False)</doc>
+<tag>delete</tag>
+<tag>reports</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.722908" elapsed="0.005128"/>
+</test>
+<test id="s1-s2-s1-t6" name="Test Get Reports with Parameters - TDD" line="102">
+<try>
+<branch type="TRY">
+<kw name="Get All Reports" owner="report_functions">
+<var>${result}</var>
+<arg>search=assessment</arg>
+<arg>type_id=1</arg>
+<arg>limit=10</arg>
+<arg>offset=0</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.728963" elapsed="0.000058"/>
+</kw>
+<kw name="Validate Reports List Response">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${reports}</var>
+<arg>${result}[data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.729317" elapsed="0.000036"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<arg>${reports}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.729422" elapsed="0.000040"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Report list retrieval working correctly - returned ${result}[count] reports</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.729535" elapsed="0.000054"/>
+</kw>
+<arg>${result}</arg>
+<doc>Validate successful reports list response</doc>
+<status status="PASS" start="2025-11-07T23:11:05.729152" elapsed="0.000474"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.728889" elapsed="0.000761"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>TDD FAIL: GET reports with parameters not implemented - implement this to make test pass: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.729945" elapsed="0.000063"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.729840" elapsed="0.000206"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.728856" elapsed="0.001215"/>
+</try>
+<doc>TDD: Test get reports with parameters using direct function calls</doc>
+<tag>get</tag>
+<tag>parameters</tag>
+<tag>reports</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.728572" elapsed="0.001663"/>
+</test>
+<test id="s1-s2-s1-t7" name="Test Report Lifecycle - TDD (happy path)" line="113">
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${report_data}</var>
+<arg>&amp;{REPORT_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.731397" elapsed="0.000073"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${report_data}</arg>
+<arg>title=HappyPathReport</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.731667" elapsed="0.000060"/>
+</kw>
+<kw name="Create Report" owner="report_functions">
+<var>${created}</var>
+<arg>${report_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.731872" elapsed="0.000039"/>
+</kw>
+<kw name="Validate Created Report Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${report_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.732250" elapsed="0.000051"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[title]</arg>
+<arg>${expected_data}[title]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.732372" elapsed="0.000049"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[description]</arg>
+<arg>${expected_data}[description]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.732490" elapsed="0.000049"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID ${report_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.732607" elapsed="0.000053"/>
+</kw>
+<arg>${created}</arg>
+<arg>${report_data}</arg>
+<doc>Validate successful report creation response</doc>
+<status status="PASS" start="2025-11-07T23:11:05.732089" elapsed="0.000606"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${report_id}</var>
+<arg>${created}[id]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.732865" elapsed="0.000034"/>
+</kw>
+<kw name="Get Report By Id" owner="report_functions">
+<var>${read}</var>
+<arg>${report_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.733017" elapsed="0.000033"/>
+</kw>
+<kw name="Should Not Be Equal" owner="BuiltIn">
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are equal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.733164" elapsed="0.000047"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}[title]</arg>
+<arg>${report_data}[title]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.733329" elapsed="0.000048"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${report_data}</arg>
+<arg>title=HappyPathReportUpdated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.733490" elapsed="0.000039"/>
+</kw>
+<kw name="Update Report" owner="report_functions">
+<var>${updated}</var>
+<arg>${report_id}</arg>
+<arg>${report_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.733708" elapsed="0.000034"/>
+</kw>
+<kw name="Validate Created Report Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${report_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.734033" elapsed="0.000048"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[title]</arg>
+<arg>${expected_data}[title]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.734154" elapsed="0.000045"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[description]</arg>
+<arg>${expected_data}[description]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.734261" elapsed="0.000042"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID ${report_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.734364" elapsed="0.000048"/>
+</kw>
+<arg>${updated}</arg>
+<arg>${report_data}</arg>
+<doc>Validate successful report creation response</doc>
+<status status="PASS" start="2025-11-07T23:11:05.733891" elapsed="0.000553"/>
+</kw>
+<kw name="Delete Report" owner="report_functions">
+<var>${deleted}</var>
+<arg>${report_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.734592" elapsed="0.000031"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${deleted}</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.735053" elapsed="0.000041"/>
+</kw>
+<doc>TDD: Create, Read, Update, Delete report lifecycle (happy path)</doc>
+<tag>lifecycle</tag>
+<tag>reports</tag>
+<tag>tdd</tag>
+<status status="PASS" start="2025-11-07T23:11:05.730931" elapsed="0.004493"/>
+</test>
+<kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
+<kw name="Log" owner="BuiltIn">
+<arg>Cleaning up test environment</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.736228" elapsed="0.000078"/>
+</kw>
+<doc>Clean up test environment</doc>
+<status status="PASS" start="2025-11-07T23:11:05.736101" elapsed="0.000252"/>
+</kw>
+<doc>Report API TDD tests - Direct function calls using Supabase</doc>
+<status status="PASS" start="2025-11-07T23:11:05.706208" elapsed="0.030171"/>
+</suite>
+<status status="PASS" start="2025-11-07T23:11:05.704299" elapsed="0.033171"/>
+</suite>
+<suite id="s1-s3" name="Therapists" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\therapists">
+<suite id="s1-s3-s1" name="Therapist Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\therapists\therapist_tests.robot">
+<kw name="Setup Test Environment" owner="common" type="SETUP">
+<kw name="Log" owner="BuiltIn">
+<arg>Setting up test environment for direct function calls</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.748612" elapsed="0.000194"/>
+</kw>
+<doc>Initialize test environment for TDD</doc>
+<status status="PASS" start="2025-11-07T23:11:05.748404" elapsed="0.000533"/>
+</kw>
+<test id="s1-s3-s1-t1" name="Test Get All Therapists - TDD" line="26">
+<try>
+<branch type="TRY">
+<kw name="Get All Therapists" owner="therapist_functions">
+<var>${result}</var>
+<status status="NOT RUN" start="2025-11-07T23:11:05.749479" elapsed="0.000038"/>
+</kw>
+<kw name="Validate Therapists List Response">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${therapists}</var>
+<arg>${result}[data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.749797" elapsed="0.000036"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<arg>${therapists}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.749987" elapsed="0.000047"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Therapist list retrieval working correctly - returned ${result}[count] therapists</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.750101" elapsed="0.000056"/>
+</kw>
+<arg>${result}</arg>
+<status status="PASS" start="2025-11-07T23:11:05.749641" elapsed="0.000554"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.749398" elapsed="0.000820"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>TDD FAIL: GET therapists not implemented - implement this to make test pass: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.750321" elapsed="0.000045"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.750256" elapsed="0.000138"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.749363" elapsed="0.001056"/>
+</try>
+<doc>TDD: Get all therapists (list retrieval)</doc>
+<tag>get</tag>
+<tag>tdd</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-07T23:11:05.749017" elapsed="0.001585"/>
+</test>
+<test id="s1-s3-s1-t2" name="Test Create Therapist - TDD" line="38">
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${therapist_data}</var>
+<arg>&amp;{THERAPIST_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.751760" elapsed="0.000064"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${therapist_data}</arg>
+<arg>first_name=TDDTest</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.751989" elapsed="0.000052"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Create Therapist" owner="therapist_functions">
+<var>${created_therapist}</var>
+<arg>${therapist_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.752237" elapsed="0.000035"/>
+</kw>
+<kw name="Validate Created Therapist Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${therapist_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.752522" elapsed="0.000050"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist_result}[first_name]</arg>
+<arg>${expected_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.752644" elapsed="0.000052"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist_result}[specialization]</arg>
+<arg>${expected_data}[specialization]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.752764" elapsed="0.000051"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID ${therapist_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.752887" elapsed="0.000050"/>
+</kw>
+<arg>${created_therapist}</arg>
+<arg>${therapist_data}</arg>
+<status status="PASS" start="2025-11-07T23:11:05.752378" elapsed="0.000688"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.752176" elapsed="0.000974"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>TDD FAIL: POST therapists not implemented - implement this to make test pass: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.753299" elapsed="0.000060"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.753207" elapsed="0.000183"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.752151" elapsed="0.001263"/>
+</try>
+<doc>TDD: Create therapist (happy path) using direct function calls</doc>
+<tag>post</tag>
+<tag>tdd</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-07T23:11:05.751261" elapsed="0.002291"/>
+</test>
+<test id="s1-s3-s1-t3" name="Test Update Therapist - TDD" line="53">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.754872" elapsed="0.000057"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-07T23:11:05.754988" elapsed="0.000020"/>
+</return>
+<var>${therapist_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-07T23:11:05.754676" elapsed="0.000367"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${therapist_data}</var>
+<arg>&amp;{THERAPIST_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.755308" elapsed="0.000068"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${therapist_data}</arg>
+<arg>first_name=Updated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.755539" elapsed="0.000053"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Update Therapist" owner="therapist_functions">
+<var>${updated_therapist}</var>
+<arg>${therapist_id}</arg>
+<arg>${therapist_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.755779" elapsed="0.000040"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${updated_therapist}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.755897" elapsed="0.000054"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>SUCCESS: Update Therapist correctly returned None for non-existent therapist</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.756023" elapsed="0.000049"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.755714" elapsed="0.000386"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>TDD FAIL: PUT therapists not implemented - implement this to make test pass: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.756198" elapsed="0.000044"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.756133" elapsed="0.000137"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.755688" elapsed="0.000603"/>
+</try>
+<doc>TDD: Update therapist with random/non-existent ID (expect None)</doc>
+<tag>put</tag>
+<tag>tdd</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-07T23:11:05.754261" elapsed="0.002189"/>
+</test>
+<test id="s1-s3-s1-t4" name="Test Delete Therapist - TDD" line="70">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.757210" elapsed="0.000041"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-07T23:11:05.757291" elapsed="0.000012"/>
+</return>
+<var>${therapist_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-07T23:11:05.757074" elapsed="0.000256"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Delete Therapist" owner="therapist_functions">
+<var>${result}</var>
+<arg>${therapist_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.757634" elapsed="0.000041"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${result}</arg>
+<arg>${False}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.757753" elapsed="0.000050"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>SUCCESS: Delete Therapist correctly returned False for non-existent therapist</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.757871" elapsed="0.000045"/>
+</kw>
+<status status="PASS" start="2025-11-07T23:11:05.757564" elapsed="0.000378"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>TDD FAIL: DELETE therapists not implemented - implement this to make test pass: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.758028" elapsed="0.000039"/>
+</kw>
+<status status="NOT RUN" start="2025-11-07T23:11:05.757972" elapsed="0.000121"/>
+</branch>
+<status status="PASS" start="2025-11-07T23:11:05.757537" elapsed="0.000575"/>
+</try>
+<doc>TDD: Delete therapist with random/non-existent ID (expect False)</doc>
+<tag>delete</tag>
+<tag>tdd</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-07T23:11:05.756742" elapsed="0.001539"/>
+</test>
+<test id="s1-s3-s1-t5" name="Test Therapist Lifecycle - TDD (happy path)" line="83">
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${therapist_data}</var>
+<arg>&amp;{THERAPIST_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.759059" elapsed="0.000114"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${therapist_data}</arg>
+<arg>first_name=HappyPathTherapist</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.759449" elapsed="0.000109"/>
+</kw>
+<kw name="Create Therapist" owner="therapist_functions">
+<var>${created}</var>
+<arg>${therapist_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.759757" elapsed="0.000047"/>
+</kw>
+<kw name="Validate Created Therapist Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${therapist_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.760218" elapsed="0.000057"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist_result}[first_name]</arg>
+<arg>${expected_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.760358" elapsed="0.000054"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist_result}[specialization]</arg>
+<arg>${expected_data}[specialization]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.760486" elapsed="0.000051"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID ${therapist_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.760608" elapsed="0.000057"/>
+</kw>
+<arg>${created}</arg>
+<arg>${therapist_data}</arg>
+<status status="PASS" start="2025-11-07T23:11:05.760039" elapsed="0.000666"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${therapist_id}</var>
+<arg>${created}[id]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.760918" elapsed="0.000053"/>
+</kw>
+<kw name="Get Therapist By Id" owner="therapist_functions">
+<var>${read}</var>
+<arg>${therapist_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.761161" elapsed="0.000047"/>
+</kw>
+<kw name="Should Not Be Equal" owner="BuiltIn">
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are equal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.761359" elapsed="0.000058"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}[first_name]</arg>
+<arg>${therapist_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.761549" elapsed="0.000054"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${therapist_data}</arg>
+<arg>first_name=HappyPathUpdated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.761732" elapsed="0.000047"/>
+</kw>
+<kw name="Update Therapist" owner="therapist_functions">
+<var>${updated}</var>
+<arg>${therapist_id}</arg>
+<arg>${therapist_data}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.762014" elapsed="0.000038"/>
+</kw>
+<kw name="Validate Created Therapist Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${therapist_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.762382" elapsed="0.000048"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist_result}[first_name]</arg>
+<arg>${expected_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.762500" elapsed="0.000048"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist_result}[specialization]</arg>
+<arg>${expected_data}[specialization]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.762614" elapsed="0.000046"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID ${therapist_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.762727" elapsed="0.000054"/>
+</kw>
+<arg>${updated}</arg>
+<arg>${therapist_data}</arg>
+<status status="PASS" start="2025-11-07T23:11:05.762216" elapsed="0.000599"/>
+</kw>
+<kw name="Delete Therapist" owner="therapist_functions">
+<var>${deleted}</var>
+<arg>${therapist_id}</arg>
+<status status="NOT RUN" start="2025-11-07T23:11:05.762961" elapsed="0.000033"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${deleted}</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.763104" elapsed="0.000039"/>
+</kw>
+<doc>TDD: Create, Read, Update, Delete therapist lifecycle (happy path)</doc>
+<tag>lifecycle</tag>
+<tag>tdd</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-07T23:11:05.758563" elapsed="0.004706"/>
+</test>
+<kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
+<kw name="Log" owner="BuiltIn">
+<arg>Cleaning up test environment</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-07T23:11:05.763804" elapsed="0.000053"/>
+</kw>
+<doc>Clean up test environment</doc>
+<status status="PASS" start="2025-11-07T23:11:05.763698" elapsed="0.000197"/>
+</kw>
+<doc>Therapist API TDD tests - Direct function calls using Supabase</doc>
+<status status="PASS" start="2025-11-07T23:11:05.741350" elapsed="0.022567"/>
+</suite>
+<status status="PASS" start="2025-11-07T23:11:05.738632" elapsed="0.025953"/>
+</suite>
+<status status="PASS" start="2025-11-07T23:11:05.618920" elapsed="0.146326"/>
+</suite>
+<statistics>
+<total>
+<stat pass="19" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="3" fail="0" skip="0">delete</stat>
+<stat pass="7" fail="0" skip="0">get</stat>
+<stat pass="3" fail="0" skip="0">lifecycle</stat>
+<stat pass="2" fail="0" skip="0">parameters</stat>
+<stat pass="7" fail="0" skip="0">patients</stat>
+<stat pass="2" fail="0" skip="0">post</stat>
+<stat pass="3" fail="0" skip="0">put</stat>
+<stat pass="1" fail="0" skip="0">read</stat>
+<stat pass="7" fail="0" skip="0">reports</stat>
+<stat pass="19" fail="0" skip="0">tdd</stat>
+<stat pass="5" fail="0" skip="0">therapists</stat>
+</tag>
+<suite>
+<stat pass="19" fail="0" skip="0" id="s1" name="Robot">Robot</stat>
+<stat pass="7" fail="0" skip="0" id="s1-s1" name="Patients">Robot.Patients</stat>
+<stat pass="7" fail="0" skip="0" id="s1-s1-s1" name="Patient Tests">Robot.Patients.Patient Tests</stat>
+<stat pass="7" fail="0" skip="0" id="s1-s2" name="Reports">Robot.Reports</stat>
+<stat pass="7" fail="0" skip="0" id="s1-s2-s1" name="Report Tests">Robot.Reports.Report Tests</stat>
+<stat pass="5" fail="0" skip="0" id="s1-s3" name="Therapists">Robot.Therapists</stat>
+<stat pass="5" fail="0" skip="0" id="s1-s3-s1" name="Therapist Tests">Robot.Therapists.Therapist Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
