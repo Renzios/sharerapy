@@ -4,12 +4,6 @@ import Input from "@/components/general/Input";
 
 describe("Input Component", () => {
   describe("Rendering", () => {
-    it("renders correctly", () => {
-      render(<Input label="Test Label" />);
-      const input = screen.getByRole("textbox");
-      expect(input).toBeInTheDocument();
-    });
-
     describe("Label Rendering", () => {
       it("displays the correct label", () => {
         render(<Input label="Username" />);
@@ -67,6 +61,17 @@ describe("Input Component", () => {
       expect(handleChange).toHaveBeenCalledTimes(5); // Only first 5 characters accepted
       expect(input).toHaveValue("Jonat");
     });
+
+    it("allow users to input foreign characters", async () => {
+      const user = userEvent.setup();
+      const handleChange = jest.fn();
+      render(<Input label="Name" onChange={handleChange} />);
+      const input = screen.getByRole("textbox");
+      await user.type(input, "输入Киирии");
+      expect(handleChange).toHaveBeenCalledTimes(8); 
+      expect(input).toHaveValue("输入Киирии");
+    });
+
   });
 
   describe("Props Handling", () => {

@@ -400,7 +400,22 @@ describe("PatientDetails form", () => {
         expect(choose.value).toBe("1");
         await user.selectOptions(choose, "2");
         expect(choose.value).toBe("2");
-      });
+    });
+
+    it("supports non-latin characters in text inputs", async () => {
+      render(<Wrapper />);
+      const user = userEvent.setup();
+      const first = screen.getByLabelText("First Name") as HTMLInputElement;
+
+      const nonLatinName = "张伟";
+      await user.type(first, nonLatinName);
+      expect(first.value).toBe(nonLatinName);
+      
+      const last = screen.getByLabelText("Last Name") as HTMLInputElement;
+      const nonLatinLastName = "Олександрович";
+      await user.type(last, nonLatinLastName);
+      expect(last.value).toBe(nonLatinLastName);
+    });
   });
 
   describe("Props Handling", () => {

@@ -319,6 +319,22 @@ describe("ReportDetails form", () => {
       expect(therapy.value).toBe("psycho");
       expect(therapy.options[therapy.selectedIndex].text).toBe("Psychodynamic");
     });
+
+    it("supports non-latin characters in title and description", async () => {
+      render(<Wrapper />);
+      const user = userEvent.setup();
+      const titleInput = screen.getByLabelText("Title") as HTMLInputElement;
+      const desc = screen.getByLabelText("Description") as HTMLTextAreaElement;
+
+      const nonLatinTitle = "レポートタイトル";
+      const nonLatinDesc = "これは説明です。";
+
+      await user.type(titleInput, nonLatinTitle);
+      expect(titleInput.value).toBe(nonLatinTitle);
+      
+      await user.type(desc, nonLatinDesc);
+      expect(desc.value).toBe(nonLatinDesc);
+    });
     
     describe("Edge Cases", () => {
       it("allows selecting the same language option multiple times without error", async () => {
