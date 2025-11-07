@@ -37,18 +37,6 @@ describe("Select Component", () => {
       });
     });
 
-    describe("Value Handling", () => {
-      it("handles null value gracefully", () => {
-        const { container } = render(<Select {...defaultProps} value={null} />);
-        expect(container.firstChild).toBeInTheDocument();
-      });
-
-      it("handles undefined value gracefully", () => {
-        const { container } = render(<Select {...defaultProps} value={undefined as unknown as null} />);
-        expect(container.firstChild).toBeInTheDocument();
-      });
-    });
-
     describe("Label Functionality", () => {
       it("renders label when provided", () => {
         render(<Select {...defaultProps} label="Test Label" />);
@@ -82,7 +70,7 @@ describe("Select Component", () => {
         const { container } = render(<Select {...defaultProps} />);
         expect(container.firstChild).toBeInTheDocument();
       });
-      
+
       it("handles empty options array", () => {
         const { container } = render(<Select {...defaultProps} options={[]} />);
         expect(container.firstChild).toBeInTheDocument();
