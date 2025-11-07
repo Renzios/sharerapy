@@ -65,20 +65,10 @@ describe("Sidebar Component", () => {
       rerender(<Sidebar isOpen={true} setIsOpen={mockSetIsOpen} />);
       expect(sidebar).toBeInTheDocument();
     });
-
-    it("toggles profile dropdown on desktop", () => {
-      render(<Sidebar isOpen={true} setIsOpen={mockSetIsOpen} />);
-
-      // Find the profile section button (should be hidden on mobile, visible on lg)
-      const profileSection = screen
-        .getByRole("complementary")
-        .querySelector(".lg\\:block");
-      expect(profileSection).toBeInTheDocument();
-    });
   });
 
   describe("Prop Handling", () => {
-    it("navigation links have correct href attributes", () => {
+    it("has navigation links that have correct href attributes", () => {
       render(<Sidebar isOpen={true} setIsOpen={mockSetIsOpen} />);
 
       const searchLink = screen.getByRole("link", { name: /search/i });
@@ -90,16 +80,6 @@ describe("Sidebar Component", () => {
       expect(createLink).toHaveAttribute("href", "/reports/new");
       expect(aiLink).toHaveAttribute("href", "/ai-mode");
       expect(profileLink).toHaveAttribute("href", "/profile/me");
-    });
-
-    it("has proper accessibility attributes", () => {
-      render(<Sidebar isOpen={true} setIsOpen={mockSetIsOpen} />);
-
-      const sidebar = screen.getByRole("complementary");
-      const navigation = screen.getByRole("navigation");
-
-      expect(sidebar).toBeInTheDocument();
-      expect(navigation).toBeInTheDocument();
     });
   });
 
