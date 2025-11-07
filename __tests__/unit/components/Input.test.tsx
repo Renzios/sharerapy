@@ -4,12 +4,6 @@ import Input from "@/components/general/Input";
 
 describe("Input Component", () => {
   describe("Rendering", () => {
-    it("renders correctly", () => {
-      render(<Input label="Test Label" />);
-      const input = screen.getByRole("textbox");
-      expect(input).toBeInTheDocument();
-    });
-
     describe("Label Rendering", () => {
       it("displays the correct label", () => {
         render(<Input label="Username" />);

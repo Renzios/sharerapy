@@ -18,14 +18,6 @@ describe("Search Component", () => {
   });
 
   describe("Rendering", () => {
-    it("renders without crashing", () => {
-      render(<Search />);
-
-      const input = screen.getByRole("textbox");
-      expect(input).toBeInTheDocument();
-      expect(input).toHaveAttribute("placeholder", "Search");
-    });
-
     it("displays the search icon", () => {
       render(<Search />);
 

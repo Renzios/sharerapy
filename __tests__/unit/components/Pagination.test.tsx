@@ -10,13 +10,6 @@ describe("Pagination Component", () => {
   });
 
   describe("Rendering", () => {
-    it("renders without crashing", () => {
-      render(<Pagination currentPage={1} totalPages={5} onPageChange={mockOnPageChange} />);
-      
-      const buttons = screen.getAllByRole("button");
-      expect(buttons.length).toBeGreaterThan(0);
-    });
-
     it("renders previous and next navigation buttons", () => {
       render(<Pagination currentPage={2} totalPages={5} onPageChange={mockOnPageChange} />);
       

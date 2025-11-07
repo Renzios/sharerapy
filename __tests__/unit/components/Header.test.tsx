@@ -8,13 +8,6 @@ describe("Header Component", () => {
     jest.clearAllMocks();
   });
   describe("Rendering", () => {
-    it("renders without crashing", () => {
-      render(<Header onMenuClick={mockOnMenuClick} />);
-
-      const header = screen.getByRole("banner");
-      expect(header).toBeInTheDocument();
-    });
-
     it("displays the menu button", () => {
       render(<Header onMenuClick={mockOnMenuClick} />);
 

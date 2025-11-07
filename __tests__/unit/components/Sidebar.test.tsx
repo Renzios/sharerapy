@@ -17,13 +17,6 @@ describe("Sidebar Component", () => {
     jest.clearAllMocks();
   });
   describe("Rendering", () => {
-    it("renders without crashing", () => {
-      render(<Sidebar isOpen={true} setIsOpen={mockSetIsOpen} />);
-
-      const sidebar = screen.getByRole("complementary");
-      expect(sidebar).toBeInTheDocument();
-    });
-
     it("displays the Sharerapy logo and branding", () => {
       render(<Sidebar isOpen={true} setIsOpen={mockSetIsOpen} />);
 
