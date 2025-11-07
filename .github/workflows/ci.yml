@@ -26,12 +26,12 @@ name: Sharerapy CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop, feature/*, feat/* ]
+    branches: [main, develop, feature/*, feat/*]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
-  # CI - Run Tests (Feature): Jest Unit Tests and React Testing Library 
+  # CI - Run Tests (Feature): Jest Unit Tests and React Testing Library
   jest-backend-tests:
     name: Jest Unit Tests and React Testing Library
     runs-on: ubuntu-latest
@@ -43,7 +43,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --verbose
@@ -53,7 +53,7 @@ jobs:
         env:
           NODE_ENV: test
 
-      - name: Generate 
+      - name: Generate
         run: npm test -- --coverage --passWithNoTests --verbose
 
       - name: Upload coverage reports
@@ -75,7 +75,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --verbose
@@ -99,12 +99,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: "npm"
 
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -116,18 +116,21 @@ jobs:
 
       - name: Build Next.js application
         run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Start Next.js server
         run: |
           echo "Starting Next.js server for TDD testing..."
-          
+
           npm start &
           SERVER_PID=$!
           echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
-          
+
           # Wait for server to be ready (expect some startup errors due to missing Supabase config in TDD)
           sleep 10
-          
+
           # Check if server is responding (may return 500 due to Supabase config, but server should be running)
           for i in {1..12}; do
             if curl -s http://localhost:3000 > /dev/null 2>&1; then
@@ -188,7 +191,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --verbose
@@ -210,7 +213,7 @@ jobs:
         with:
           build: npm run build
           start: npm start
-          wait-on: 'http://localhost:3000'
+          wait-on: "http://localhost:3000"
           wait-on-timeout: 120
           browser: chrome
           config: baseUrl=http://localhost:3000
@@ -246,13 +249,13 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: |
@@ -295,13 +298,13 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: |
@@ -348,13 +351,13 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: |
@@ -436,7 +439,7 @@ jobs:
           # Basic connectivity test
           curl -f -s -o /dev/null -w "%{http_code}" https://sharerapy.vercel.app/ || exit 1
           echo "Production site is accessible"
-          
+
           # Check if the site returns 200 OK
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://sharerapy.vercel.app/)
           if [ "$RESPONSE" -eq 200 ]; then
