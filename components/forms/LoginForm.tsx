@@ -68,36 +68,28 @@ export default function LoginForm() {
 
       <div className="bg-background h-screen w-full grid grid-cols-1 lg:grid-cols-2">
         <div className="h-full w-full flex flex-col">
-          <div
-            className="
-              hidden items-center
-              h-auto px-8 gap-2.5
-              lg:flex lg:h-[5.3125rem]"
-          >
+          <div className="flex items-center h-auto px-5 lg:px-8 py-4 lg:h-[5.3125rem]">
             <Image
               src="/logo.png"
               alt="Sharerapy Logo"
               width={40}
               height={40}
-              className="w-[2.5rem] h-[2.5rem] hover:cursor-pointer"
+              className="w-10 h-10 lg:w-[2.5rem] lg:h-[2.5rem] hover:cursor-pointer"
             />
-            <h1 className="font-Noto-Sans text-[1.5rem] font-black">
+            <h1 className="hidden lg:block font-Noto-Sans text-[1.5rem] font-black ml-2.5">
               <span className="text-primary">share</span>rapy.
             </h1>
           </div>
 
-          <div className="flex flex-col flex-1 justify-center items-center gap-16 mb-8">
+          <div className="flex flex-col flex-1 justify-center items-center gap-14 mb-8">
             <div className="flex flex-col gap-5 items-center justify-center">
               <h1
-                className={`font-Noto-Sans text-5xl text-black font-bold transition-opacity duration-300 ${
+                className={`font-Noto-Sans text-3xl lg:text-5xl text-black font-bold transition-opacity duration-300 ${
                   isVisible ? "opacity-100" : "opacity-0"
                 }`}
               >
                 {greetings[currentGreeting]}
               </h1>
-              <p className="font-Noto-Sans text-sm text-darkgray font-medium">
-                Enter your email and password to access your account.
-              </p>
             </div>
             <form
               onSubmit={handleSubmit}
