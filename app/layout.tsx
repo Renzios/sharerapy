@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { AuthProvider } from "@/app/contexts/AuthContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "sharerapy.",
   description: "",
 };
+
+export const dynamic = 'force-dynamic';
 
 /**
  * Root layout component that wraps all pages. This is empty.
@@ -17,7 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }
