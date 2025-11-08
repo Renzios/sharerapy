@@ -24,7 +24,7 @@ Validate Therapists List Response
 
 *** Test Cases ***
 Test Get All Therapists - TDD
-    [Documentation]    TDD: Test get all therapists using direct function calls
+    [Documentation]    TDD: Get all therapists (list retrieval)
     [Tags]    tdd    therapists    get
     
     TRY
@@ -36,7 +36,7 @@ Test Get All Therapists - TDD
 
 
 Test Create Therapist - TDD
-    [Documentation]    TDD: Test create therapist using direct function calls
+    [Documentation]    TDD: Create therapist (happy path) using direct function calls
     [Tags]    tdd    therapists    post
     
     ${therapist_data}=    Create Dictionary    &{THERAPIST_TEMPLATE}
@@ -51,7 +51,7 @@ Test Create Therapist - TDD
 
 
 Test Update Therapist - TDD
-    [Documentation]    TDD: Test update therapist using direct function calls
+    [Documentation]    TDD: Update therapist with random/non-existent ID (expect None)
     [Tags]    tdd    therapists    put
     
     ${therapist_id}=    Generate Random UUID
@@ -68,7 +68,7 @@ Test Update Therapist - TDD
 
 
 Test Delete Therapist - TDD
-    [Documentation]    TDD: Test delete therapist using direct function calls
+    [Documentation]    TDD: Delete therapist with random/non-existent ID (expect False)
     [Tags]    tdd    therapists    delete
     
     ${therapist_id}=    Generate Random UUID
@@ -80,3 +80,28 @@ Test Delete Therapist - TDD
     EXCEPT    *    AS    ${error}
         Fail    TDD FAIL: DELETE therapists not implemented - implement this to make test pass: ${error}
     END
+Test Therapist Lifecycle - TDD (happy path)
+    [Documentation]    TDD: Create, Read, Update, Delete therapist lifecycle (happy path)
+    [Tags]    tdd    therapists    lifecycle
+
+    ${therapist_data}=    Create Dictionary    &{THERAPIST_TEMPLATE}
+    Set To Dictionary    ${therapist_data}    first_name=HappyPathTherapist
+
+    # Create
+    ${created}=    Create Therapist    ${therapist_data}
+    Validate Created Therapist Response    ${created}    ${therapist_data}
+    ${therapist_id}=    Set Variable    ${created}[id]
+
+    # Read
+    ${read}=    Get Therapist By ID    ${therapist_id}
+    Should Not Be Equal    ${read}    ${None}
+    Should Be Equal    ${read}[first_name]    ${therapist_data}[first_name]
+
+    # Update
+    Set To Dictionary    ${therapist_data}    first_name=HappyPathUpdated
+    ${updated}=    Update Therapist    ${therapist_id}    ${therapist_data}
+    Validate Created Therapist Response    ${updated}    ${therapist_data}
+
+    # Delete
+    ${deleted}=    Delete Therapist    ${therapist_id}
+    Should Be True    ${deleted}

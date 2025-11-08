@@ -26,8 +26,8 @@ Validate Reports List Response
 
 
 *** Test Cases ***
-Test Get Report By ID - TDD
-    [Documentation]    TDD: Test get report by ID using direct function calls
+Get Report By ID - TDD (non-existent)
+    [Documentation]    TDD: Get report by random/non-existent ID (expect None)
     [Tags]    tdd    reports    get
     ${report_id}=    Generate Random UUID
     
@@ -52,8 +52,8 @@ Test Get All Reports - TDD
     END
 
 
-Test Create Report - TDD
-    [Documentation]    TDD: Test create report using direct function calls
+Create Report - TDD (happy path)
+    [Documentation]    TDD: Create report (happy path) using direct function calls
     [Tags]    tdd    reports    post
     
     ${report_data}=    Create Dictionary    &{REPORT_TEMPLATE}
@@ -67,8 +67,8 @@ Test Create Report - TDD
     END
 
 
-Test Update Report - TDD
-    [Documentation]    TDD: Test update report using direct function calls
+Update Report - TDD (non-existent)
+    [Documentation]    TDD: Update report with random/non-existent ID (expect None)
     [Tags]    tdd    reports    put
     
     ${report_id}=    Generate Random UUID
@@ -84,8 +84,8 @@ Test Update Report - TDD
     END
 
 
-Test Delete Report - TDD
-    [Documentation]    TDD: Test delete report using direct function calls
+Delete Report - TDD (non-existent)
+    [Documentation]    TDD: Delete report with random/non-existent ID (expect False)
     [Tags]    tdd    reports    delete
     
     ${report_id}=    Generate Random UUID
@@ -109,3 +109,29 @@ Test Get Reports with Parameters - TDD
     EXCEPT    *    AS    ${error}
         Fail    TDD FAIL: GET reports with parameters not implemented - implement this to make test pass: ${error}
     END
+
+Test Report Lifecycle - TDD (happy path)
+    [Documentation]    TDD: Create, Read, Update, Delete report lifecycle (happy path)
+    [Tags]    tdd    reports    lifecycle
+
+    ${report_data}=    Create Dictionary    &{REPORT_TEMPLATE}
+    Set To Dictionary    ${report_data}    title=HappyPathReport
+
+    # Create
+    ${created}=    Create Report    ${report_data}
+    Validate Created Report Response    ${created}    ${report_data}
+    ${report_id}=    Set Variable    ${created}[id]
+
+    # Read
+    ${read}=    Get Report By ID    ${report_id}
+    Should Not Be Equal    ${read}    ${None}
+    Should Be Equal    ${read}[title]    ${report_data}[title]
+
+    # Update
+    Set To Dictionary    ${report_data}    title=HappyPathReportUpdated
+    ${updated}=    Update Report    ${report_id}    ${report_data}
+    Validate Created Report Response    ${updated}    ${report_data}
+
+    # Delete
+    ${deleted}=    Delete Report    ${report_id}
+    Should Be True    ${deleted}

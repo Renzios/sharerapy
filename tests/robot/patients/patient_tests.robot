@@ -34,8 +34,8 @@ Validate Patient Update Response
     Log    IMPLEMENTATION SUCCESS: Patient update working correctly - updated patient    INFO
 
 *** Test Cases ***
-Test Get Patient By ID - TDD
-    [Documentation]    TDD: Test get patient by ID using direct function calls
+Get Patient By ID - TDD (non-existent)
+    [Documentation]    TDD: Get patient by random/non-existent ID (expect None)
     [Tags]    tdd    patients    get
     
     ${patient_id}=    Generate Random UUID
@@ -67,22 +67,8 @@ Test Get Patients with ReadParameters - TDD
         Fail    Get All Patients with parameters failed: ${error}
     END
 
-Test Create Patient - TDD
-    [Documentation]    TDD: Test create patient using direct function calls
-    [Tags]    tdd    patients    post
-    
-    ${patient_data}=    Create Dictionary    &{PATIENT_TEMPLATE}
-    Set To Dictionary    ${patient_data}    first_name=TDDTest
-    
-    TRY
-        ${created_patient}=    Create Patient    ${patient_data}
-        Validate Created Patient Response    ${created_patient}    ${patient_data}
-    EXCEPT    *    AS    ${error}
-        Fail    Create Patient failed: ${error}
-    END
-
-Test Update Patient - TDD
-    [Documentation]    TDD: Test update patient using direct function calls
+Update Patient - TDD (non-existent)
+    [Documentation]    TDD: Update patient with random/non-existent ID (expect None)
     [Tags]    tdd    patients    put
     
     ${patient_id}=    Generate Random UUID
@@ -94,8 +80,8 @@ Test Update Patient - TDD
     Should Be Equal    ${updated_patient}    ${None}
     Log    SUCCESS: Update Patient correctly returned None for non-existent patient    INFO
 
-Test Delete Patient - TDD
-    [Documentation]    TDD: Test delete patient using direct function calls
+Delete Patient - TDD (non-existent)
+    [Documentation]    TDD: Delete patient with random/non-existent ID (expect False)
     [Tags]    tdd    patients    delete
     
     ${patient_id}=    Generate Random UUID
@@ -103,3 +89,42 @@ Test Delete Patient - TDD
     
     Should Be Equal    ${result}    ${False}
     Log    SUCCESS: Delete Patient correctly returned False for non-existent patient    INFO
+
+Read Patient - TDD (created id)
+    [Documentation]    TDD: Read patient using ID created in this test (happy path)
+    [Tags]    tdd    patients    read
+
+    ${patient_data}=    Create Dictionary    &{PATIENT_TEMPLATE}
+    Set To Dictionary    ${patient_data}    first_name=UnitRead
+    ${created}=    Create Patient    ${patient_data}
+    ${patient_id}=    Set Variable    ${created}[id]
+
+    ${read}=    Get Patient By ID    ${patient_id}
+    Should Not Be Equal    ${read}    ${None}
+    Should Be Equal    ${read}[first_name]    ${patient_data}[first_name]
+
+Test Patient Lifecycle - TDD (happy path)
+    [Documentation]    TDD: Create, Read, Update, Delete patient lifecycle (happy path)
+    [Tags]    tdd    patients    lifecycle
+
+    ${patient_data}=    Create Dictionary    &{PATIENT_TEMPLATE}
+    Set To Dictionary    ${patient_data}    first_name=HappyPathTest
+
+    # Create
+    ${created}=    Create Patient    ${patient_data}
+    Validate Created Patient Response    ${created}    ${patient_data}
+    ${patient_id}=    Set Variable    ${created}[id]
+
+    # Read
+    ${read}=    Get Patient By ID    ${patient_id}
+    Should Not Be Equal    ${read}    ${None}
+    Should Be Equal    ${read}[first_name]    ${patient_data}[first_name]
+
+    # Update
+    Set To Dictionary    ${patient_data}    first_name=HappyPathUpdated
+    ${updated}=    Update Patient    ${patient_id}    ${patient_data}
+    Validate Patient Update Response    ${updated}    ${patient_data}
+
+    # Delete
+    ${deleted}=    Delete Patient    ${patient_id}
+    Should Be True    ${deleted}
