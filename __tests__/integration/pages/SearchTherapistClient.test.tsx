@@ -20,7 +20,13 @@ jest.mock("@/app/(with-sidebar)/search/therapists/actions", () => ({
 
 // Mock layout and child components to make unit deterministic
 jest.mock("@/components/layout/SearchPageHeader", () => {
-  const Component = (props: any) => (
+  const Component = (props: {
+    searchValue?: string;
+    onSearch?: (v: string) => void;
+    onSearchChange?: (v: string) => void;
+    onSortChange?: (opt: { value: string; label: string }) => void;
+    onLanguageChange?: (opt: { value: string; label: string }) => void;
+  }) => (
     <div data-testid="search-page-header">
       <input
         data-testid="search-input"
@@ -74,7 +80,7 @@ jest.mock("@/components/cards/TherapistCard", () => {
 });
 
 jest.mock("@/components/general/Pagination", () => {
-  const Component = (props: any) => {
+  const Component = (props: { totalPages?: number; currentPage?: number; onPageChange?: (p: number) => void }) => {
     const pages = Array.from({ length: props.totalPages || 1 }).map((_, i) => i + 1);
     return (
       <div data-testid="pagination">
@@ -107,10 +113,48 @@ describe("SearchTherapistClient integration", () => {
     name?: string;
     clinic?: { id: string };
   }
-
-  const initialTherapists: TherapistMinimal[] = [
-    { id: "ther-1", name: "Alice" },
-    { id: "ther-2", name: "Bob" },
+  const initialTherapists: Array<{
+    id: string;
+    name: string;
+    picture: string;
+    age: number;
+    bio: string;
+    clinic_id: number;
+    created_at: string;
+    first_name: string;
+    last_name: string;
+    updated_at: string;
+    clinic: { id: number; clinic: string; country_id: number; country: { id: number; country: string } };
+    reports: Array<{ type: { type: string } }>;
+  }> = [
+    {
+      id: "ther-1",
+      name: "Alice",
+      picture: "p1.jpg",
+      age: 30,
+      bio: "Bio",
+      clinic_id: 1,
+      created_at: new Date().toISOString(),
+      first_name: "Alice",
+      last_name: "A",
+      updated_at: new Date().toISOString(),
+      clinic: { id: 1, clinic: "Clinic A", country_id: 1, country: { id: 1, country: "Country1" } },
+      reports: [{ type: { type: "Assessment" } }],
+    },
+    {
+      id: "ther-2",
+      name: "Bob",
+      picture: "p2.jpg",
+      age: 28,
+      bio: "Bio",
+      clinic_id: 1,
+      created_at: new Date().toISOString(),
+      first_name: "Bob",
+      last_name: "B",
+      updated_at: new Date().toISOString(),
+      clinic: { id: 1, clinic: "Clinic B", country_id: 1, country: { id: 1, country: "Country1" } },
+      reports: [{ type: { type: "Progress" } }],
+    },
   ];
 
   beforeEach(() => {
@@ -132,13 +176,7 @@ describe("SearchTherapistClient integration", () => {
   });
 
   it("renders initial therapists and pagination", () => {
-    render(
-      <SearchTherapistsClient
-        initialTherapists={initialTherapists as any}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
-    );
+    render(<SearchTherapistsClient initialTherapists={initialTherapists} totalPages={2} initialSearchTerm="initial" />);
 
     expect(screen.getByTestId("therapist-ther-1")).toBeInTheDocument();
     expect(screen.getByTestId("therapist-ther-2")).toBeInTheDocument();
@@ -153,13 +191,7 @@ describe("SearchTherapistClient integration", () => {
       totalPages: 1,
     });
 
-    render(
-      <SearchTherapistsClient
-        initialTherapists={initialTherapists as any}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
-    );
+    render(<SearchTherapistsClient initialTherapists={initialTherapists} totalPages={2} initialSearchTerm="initial" />);
 
     fireEvent.click(screen.getByTestId("search-btn"));
 
@@ -171,13 +203,7 @@ describe("SearchTherapistClient integration", () => {
   it("changes sort and page: triggers fetch and updates list", async () => {
     const sorted = [...initialTherapists].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
-    render(
-      <SearchTherapistsClient
-        initialTherapists={initialTherapists as any}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
-    );
+    render(<SearchTherapistsClient initialTherapists={initialTherapists} totalPages={2} initialSearchTerm="initial" />);
 
     (mockFetchTherapists as jest.Mock).mockResolvedValueOnce({
       success: true,
@@ -206,13 +232,7 @@ describe("SearchTherapistClient integration", () => {
     const langTher = [{ ...initialTherapists[0], id: "ther-lang" }];
     (mockFetchTherapists as jest.Mock).mockResolvedValueOnce({ success: true, data: langTher, totalPages: 1 });
 
-    render(
-      <SearchTherapistsClient
-        initialTherapists={initialTherapists as any}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
-    );
+    render(<SearchTherapistsClient initialTherapists={initialTherapists} totalPages={2} initialSearchTerm="initial" />);
 
     fireEvent.change(screen.getByTestId("mock-language-select"), { target: { value: "es" } });
 
@@ -231,9 +251,7 @@ describe("SearchTherapistClient integration", () => {
     for (const [value, expected] of Object.entries(cases)) {
       (mockFetchTherapists as jest.Mock).mockResolvedValueOnce({ success: true, data: initialTherapists, totalPages: 2 });
 
-      const { unmount } = render(
-        <SearchTherapistsClient initialTherapists={initialTherapists as any} totalPages={2} initialSearchTerm="initial" />
-      );
+      const { unmount } = render(<SearchTherapistsClient initialTherapists={initialTherapists} totalPages={2} initialSearchTerm="initial" />);
 
       fireEvent.change(screen.getByTestId("mock-sort-select"), { target: { value } });
 

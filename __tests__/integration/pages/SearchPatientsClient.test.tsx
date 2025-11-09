@@ -1,4 +1,5 @@
 import React from "react";
+import type { Tables } from "@/lib/types/database.types";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import SearchPatientsClient from "@/components/client-pages/SearchPatientsClient";
 import { fetchPatients as mockFetchPatients } from "@/app/(with-sidebar)/search/patients/actions";
@@ -20,7 +21,13 @@ jest.mock("@/app/(with-sidebar)/search/patients/actions", () => ({
 
 // Mock layout and child components to make unit deterministic
 jest.mock("@/components/layout/SearchPageHeader", () => {
-  const Component = (props: any) => (
+  const Component = (props: {
+    searchValue?: string;
+    onSearch?: (v: string) => void;
+    onSearchChange?: (v: string) => void;
+    onSortChange?: (opt: { value: string; label: string }) => void;
+    onLanguageChange?: (opt: { value: string; label: string }) => void;
+  }) => (
     <div data-testid="search-page-header">
       <input
         data-testid="search-input"
@@ -74,7 +81,7 @@ jest.mock("@/components/cards/PatientCard", () => {
 });
 
 jest.mock("@/components/general/Pagination", () => {
-  const Component = (props: any) => {
+  const Component = (props: { totalPages?: number; currentPage?: number; onPageChange?: (p: number) => void }) => {
     const pages = Array.from({ length: props.totalPages || 1 }).map((_, i) => i + 1);
     return (
       <div data-testid="pagination">
@@ -102,16 +109,55 @@ describe("SearchPatientsClient integration", () => {
   const pathname = "/search/patients";
   const searchParams = new URLSearchParams("p=2&q=initial");
 
-  interface PatientMinimal {
-    id: string;
-    name?: string;
-    country?: { id: string };
-  }
+    interface PatientMinimal {
+      id: string;
+      name?: string;
+      country?: { id: string };
+    }
 
-  const initialPatients: PatientMinimal[] = [
-    { id: "pat-1", name: "Alice" },
-    { id: "pat-2", name: "Bob" },
-  ];
+    const initialPatients: Array<{
+      id: string;
+      first_name: string;
+      last_name: string;
+      name: string;
+      birthdate: string;
+      contact_number: string;
+      country_id: number;
+      created_at: string;
+      updated_at: string;
+      sex: "Male" | "Female";
+      country: { id: number; country: string };
+      reports: Array<{ type: { type: string } }>;
+    }> = [
+      {
+        id: "pat-1",
+        first_name: "Alice",
+        last_name: "A",
+        name: "Alice",
+        birthdate: "1990-01-01",
+        contact_number: "09170000001",
+        country_id: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        sex: "Female",
+        country: { id: 1, country: "Country1" },
+        reports: [{ type: { type: "Assessment" } }],
+      },
+      {
+        id: "pat-2",
+        first_name: "Bob",
+        last_name: "B",
+        name: "Bob",
+        birthdate: "1991-01-01",
+        contact_number: "09170000002",
+        country_id: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        sex: "Male",
+        country: { id: 1, country: "Country1" },
+        reports: [{ type: { type: "Progress" } }],
+      },
+    ];
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -132,13 +178,7 @@ describe("SearchPatientsClient integration", () => {
   });
 
   it("renders initial patients and pagination", () => {
-    render(
-      <SearchPatientsClient
-        initialPatients={initialPatients as any}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
-    );
+    render(<SearchPatientsClient initialPatients={initialPatients} totalPages={2} initialSearchTerm="initial" />);
 
     expect(screen.getByTestId("patient-pat-1")).toBeInTheDocument();
     expect(screen.getByTestId("patient-pat-2")).toBeInTheDocument();
@@ -153,13 +193,7 @@ describe("SearchPatientsClient integration", () => {
       totalPages: 1,
     });
 
-    render(
-      <SearchPatientsClient
-        initialPatients={initialPatients as any}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
-    );
+      render(<SearchPatientsClient initialPatients={initialPatients} totalPages={2} initialSearchTerm="initial" />);
 
     fireEvent.click(screen.getByTestId("search-btn"));
 
@@ -171,13 +205,7 @@ describe("SearchPatientsClient integration", () => {
   it("changes sort and page: triggers fetch and updates list", async () => {
     const sorted = [...initialPatients].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
-    render(
-      <SearchPatientsClient
-        initialPatients={initialPatients as any}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
-    );
+      render(<SearchPatientsClient initialPatients={initialPatients} totalPages={2} initialSearchTerm="initial" />);
 
     (mockFetchPatients as jest.Mock).mockResolvedValueOnce({
       success: true,
@@ -206,13 +234,7 @@ describe("SearchPatientsClient integration", () => {
     const langPatients = [{ ...initialPatients[0], id: "pat-lang" }];
     (mockFetchPatients as jest.Mock).mockResolvedValueOnce({ success: true, data: langPatients, totalPages: 1 });
 
-    render(
-      <SearchPatientsClient
-        initialPatients={initialPatients as any}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
-    );
+      render(<SearchPatientsClient initialPatients={initialPatients} totalPages={2} initialSearchTerm="initial" />);
 
     fireEvent.change(screen.getByTestId("mock-language-select"), { target: { value: "es" } });
 
@@ -229,10 +251,10 @@ describe("SearchPatientsClient integration", () => {
     };
 
     for (const [value, expected] of Object.entries(cases)) {
-      (mockFetchPatients as jest.Mock).mockResolvedValueOnce({ success: true, data: initialPatients, totalPages: 2 });
+        (mockFetchPatients as jest.Mock).mockResolvedValueOnce({ success: true, data: initialPatients, totalPages: 2 });
 
       const { unmount } = render(
-        <SearchPatientsClient initialPatients={initialPatients as any} totalPages={2} initialSearchTerm="initial" />
+          <SearchPatientsClient initialPatients={initialPatients} totalPages={2} initialSearchTerm="initial" />
       );
 
       fireEvent.change(screen.getByTestId("mock-sort-select"), { target: { value } });

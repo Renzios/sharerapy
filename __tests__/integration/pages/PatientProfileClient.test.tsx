@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import PatientProfileClient from "@/components/client-pages/PatientProfileClient";
+import type { Tables } from "@/lib/types/database.types";
 import { fetchReports as mockFetchReports } from "@/app/(with-sidebar)/search/reports/actions";
 import * as nextNav from "next/navigation";
 
@@ -124,50 +125,56 @@ describe("PatientProfileClient integration", () => {
 	const pathname = "/patients/1";
 	const searchParams = new URLSearchParams("p=2&q=initial");
 
-	interface PatientMinimal {
-		id: string;
-		name?: string;
-		country: { id: string; name: string };
-		reports: unknown[];
-	}
-
-	interface ReportMinimal {
-		id: string;
-		title: string;
-		created_at: string;
-		therapist: { id: string };
-		type: { id: string; name: string };
-		language: { id: string; name: string };
-		patient: { id: string; country: { id: string; name: string } } | PatientMinimal;
-	}
-
-	const patient: PatientMinimal = {
+	// Derive the component props type so tests stay in-sync with the component
+	type TestProps = Parameters<typeof PatientProfileClient>[0];
+	const patient: TestProps["patient"] = {
 		id: "pat-1",
+		first_name: "Patient",
+		last_name: "One",
 		name: "Patient One",
-		country: { id: "country1", name: "Country" },
+		birthdate: "1990-01-01",
+		contact_number: "09170000000",
+		country_id: 1,
+		created_at: new Date().toISOString(),
+		updated_at: new Date().toISOString(),
+		sex: "Male",
+		age: "35 years 0 months",
+		country: { id: 1, country: "Country" },
 		reports: [],
-	};
+	} as TestProps["patient"];
 
-	const initialReports: ReportMinimal[] = [
+	const initialReports: TestProps["initialReports"] = [
 		{
 			id: "r-alpha",
 			title: "Alpha report",
 			created_at: "2022-01-01",
-			therapist: { id: "ther-1" },
-			type: { id: "t1", name: "Assessment" },
-			language: { id: "en", name: "English" },
-			patient,
+			therapist: { id: "ther-1", first_name: "T", last_name: "1", name: "T1", age: 40, bio: "", clinic_id: 1, picture: "", created_at: new Date().toISOString(), updated_at: new Date().toISOString(), clinic: { id: 1, clinic: "Clinic", country_id: 1, country: { id: 1, country: "Country" } } },
+			type: { id: 1, type: "Assessment" },
+			language: { id: 1, language: "English", code: "en" },
+			content: [],
+			description: "",
+			language_id: 1,
+			patient_id: patient.id,
+			therapist_id: "ther-1",
+			type_id: 1,
+			updated_at: new Date().toISOString(),
 		},
 		{
 			id: "r-zulu",
 			title: "Zulu report",
 			created_at: "2020-05-01",
-			therapist: { id: "ther-2" },
-			type: { id: "t2", name: "Progress" },
-			language: { id: "en", name: "English" },
-			patient,
+			therapist: { id: "ther-2", first_name: "T", last_name: "2", name: "T2", age: 40, bio: "", clinic_id: 1, picture: "", created_at: new Date().toISOString(), updated_at: new Date().toISOString(), clinic: { id: 1, clinic: "Clinic", country_id: 1, country: { id: 1, country: "Country" } } },
+			type: { id: 2, type: "Progress" },
+			language: { id: 1, language: "English", code: "en" },
+			content: [],
+			description: "",
+			language_id: 1,
+			patient_id: patient.id,
+			therapist_id: "ther-2",
+			type_id: 2,
+			updated_at: new Date().toISOString(),
 		},
-	];
+	] as TestProps["initialReports"];
 
 	beforeEach(() => {
 		jest.clearAllMocks();
@@ -190,8 +197,8 @@ describe("PatientProfileClient integration", () => {
 	it("renders patient and initial report cards and pagination", () => {
 		render(
 			<PatientProfileClient
-				patient={patient as any}
-				initialReports={initialReports as any}
+				patient={patient}
+				initialReports={initialReports}
 				totalPages={2}
 				initialSearchTerm="initial"
 			/>
@@ -206,15 +213,21 @@ describe("PatientProfileClient integration", () => {
 	});
 
 	it("performs a search: updates reports via fetchReports and updates URL via router.push", async () => {
-		const newReports = [
+		const newReports: TestProps["initialReports"] = [
 			{
 				id: "r-new",
 				title: "New Report",
 				created_at: "2022-01-01",
-				therapist: { id: "ther-1" },
-				type: { id: "t1", name: "Type" },
-				language: { id: "en", name: "English" },
-				patient,
+				therapist: { id: "ther-1", first_name: "T", last_name: "1", name: "T1", age: 40, bio: "", clinic_id: 1, picture: "", created_at: new Date().toISOString(), updated_at: new Date().toISOString(), clinic: { id: 1, clinic: "Clinic", country_id: 1, country: { id: 1, country: "Country" } } },
+				type: { id: 1, type: "Assessment" },
+				language: { id: 1, language: "English", code: "en" },
+				content: [],
+				description: "",
+				language_id: 1,
+				patient_id: patient.id,
+				therapist_id: "ther-1",
+				type_id: 1,
+				updated_at: new Date().toISOString(),
 			},
 		];
 
@@ -226,8 +239,8 @@ describe("PatientProfileClient integration", () => {
 
 		render(
 			<PatientProfileClient
-				patient={patient as any}
-				initialReports={initialReports as any}
+				patient={patient}
+				initialReports={initialReports}
 				totalPages={2}
 				initialSearchTerm="initial"
 			/>
@@ -252,8 +265,8 @@ describe("PatientProfileClient integration", () => {
 
 		render(
 			<PatientProfileClient
-				patient={patient as any}
-				initialReports={initialReports as any}
+				patient={patient}
+				initialReports={initialReports}
 				totalPages={2}
 				initialSearchTerm="initial"
 			/>
@@ -294,8 +307,8 @@ describe("PatientProfileClient integration", () => {
 
 		render(
 			<PatientProfileClient
-				patient={patient as any}
-				initialReports={initialReports as any}
+				patient={patient}
+				initialReports={initialReports}
 				totalPages={2}
 				initialSearchTerm="initial"
 			/>
@@ -330,8 +343,8 @@ describe("PatientProfileClient integration", () => {
 
 			const { unmount } = render(
 				<PatientProfileClient
-					patient={patient as any}
-					initialReports={initialReports as any}
+					patient={patient}
+					initialReports={initialReports}
 					totalPages={2}
 					initialSearchTerm="initial"
 				/>
@@ -358,8 +371,8 @@ describe("PatientProfileClient integration", () => {
 
 		const { unmount: u2 } = render(
 			<PatientProfileClient
-				patient={patient as any}
-				initialReports={initialReports as any}
+				patient={patient}
+				initialReports={initialReports}
 				totalPages={2}
 				initialSearchTerm="initial"
 			/>
@@ -381,14 +394,14 @@ describe("PatientProfileClient integration", () => {
             data: initialReports,
             totalPages: 2,
         });
-        render(
-            <PatientProfileClient
-                patient={patient as any}
-                initialReports={initialReports as any}
-                totalPages={2}
-                initialSearchTerm=""
-            />
-        );
+		render(
+			<PatientProfileClient
+				patient={patient}
+				initialReports={initialReports}
+				totalPages={2}
+				initialSearchTerm=""
+			/>
+		);
         // check if initial search term is set to ""
         expect(screen.getByTestId("search-input")).toHaveValue("");
     });
