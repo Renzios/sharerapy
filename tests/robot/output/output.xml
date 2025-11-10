@@ -1,1340 +1,1466 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 7.1.1 (Python 3.13.3 on win32)" generated="2025-11-07T23:11:05.617470" rpa="false" schemaversion="5">
+<robot generator="Robot 7.1.1 (Python 3.13.3 on win32)" generated="2025-11-10T17:18:14.863360" rpa="false" schemaversion="5">
 <suite id="s1" name="Robot" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot">
 <suite id="s1-s1" name="Patients" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\patients">
 <suite id="s1-s1-s1" name="Patient Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\patients\patient_tests.robot">
 <kw name="Setup Test Environment" owner="common" type="SETUP">
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:14.911369" level="INFO">Setting up test environment for direct function calls</msg>
 <arg>Setting up test environment for direct function calls</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.672056" elapsed="0.000111"/>
+<status status="PASS" start="2025-11-10T17:18:14.911208" elapsed="0.000218"/>
 </kw>
-<doc>Initialize test environment for TDD</doc>
-<status status="PASS" start="2025-11-07T23:11:05.671622" elapsed="0.000622"/>
+<doc>Initialize test environment</doc>
+<status status="PASS" start="2025-11-10T17:18:14.910811" elapsed="0.000695"/>
 </kw>
-<test id="s1-s1-s1-t1" name="Get Patient By ID - TDD (non-existent)" line="37">
+<test id="s1-s1-s1-t1" name="Get Patient By ID (non-existent)" line="43">
 <kw name="Generate Random UUID" owner="common">
 <kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-10T17:18:14.912865" level="INFO">${uuid} = 7518cf0b-0f38-4994-97c7-7e7b0ff2897f</msg>
 <var>${uuid}</var>
 <arg>str(__import__('uuid').uuid4())</arg>
 <doc>Evaluates the given expression in Python and returns the result.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.672938" elapsed="0.000052"/>
+<status status="PASS" start="2025-11-10T17:18:14.912438" elapsed="0.000474"/>
 </kw>
 <return>
 <value>${uuid}</value>
-<status status="PASS" start="2025-11-07T23:11:05.673041" elapsed="0.000018"/>
+<status status="PASS" start="2025-11-10T17:18:14.912981" elapsed="0.000047"/>
 </return>
+<msg time="2025-11-10T17:18:14.913197" level="INFO">${patient_id} = 7518cf0b-0f38-4994-97c7-7e7b0ff2897f</msg>
 <var>${patient_id}</var>
 <doc>Generate a random UUID for testing</doc>
-<status status="PASS" start="2025-11-07T23:11:05.672783" elapsed="0.000312"/>
+<status status="PASS" start="2025-11-10T17:18:14.912101" elapsed="0.001118"/>
 </kw>
 <kw name="Get Patient By Id" owner="patient_functions">
+<msg time="2025-11-10T17:18:18.464178" level="INFO">Error running TSX script: TSX script failed: Error calling actual readPatient function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context</msg>
+<msg time="2025-11-10T17:18:18.464317" level="INFO">${patient} = None</msg>
 <var>${patient}</var>
 <arg>${patient_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.673442" elapsed="0.000050"/>
+<status status="PASS" start="2025-11-10T17:18:14.913569" elapsed="3.550772"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${patient}</arg>
 <arg>${None}</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.673776" elapsed="0.000204"/>
+<status status="PASS" start="2025-11-10T17:18:18.464749" elapsed="0.000257"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:18.465371" level="INFO">SUCCESS: Get Patient By ID correctly returned None for non-existent patient</msg>
 <arg>SUCCESS: Get Patient By ID correctly returned None for non-existent patient</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.674181" elapsed="0.000102"/>
+<status status="PASS" start="2025-11-10T17:18:18.465251" elapsed="0.000156"/>
 </kw>
-<doc>TDD: Get patient by random/non-existent ID (expect None)</doc>
+<doc>Get patient by random/non-existent ID (expect None)</doc>
 <tag>get</tag>
 <tag>patients</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.672313" elapsed="0.002244"/>
+<status status="PASS" start="2025-11-10T17:18:14.911570" elapsed="3.554184"/>
 </test>
-<test id="s1-s1-s1-t2" name="Test Get All Patients - TDD" line="47">
+<test id="s1-s1-s1-t2" name="Get All Patients" line="53">
 <try>
 <branch type="TRY">
 <kw name="Get All Patients" owner="patient_functions">
+<msg time="2025-11-10T17:18:22.123662" level="INFO">Error running TSX script: TSX script failed: Error calling actual readPatients function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+
+Failed to call actual readPatients function: TSX script failed: Error calling actual readPatients function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+, using mock/local data</msg>
+<msg time="2025-11-10T17:18:22.123795" level="INFO">${result} = {'data': [{'id': 'b61bbfae-92fe-4cd2-a841-d6592410e901', 'first_name': 'John', 'last_name': 'Doe', 'birthdate': '1990-01-01', 'sex': 'Male', 'contact_number': '+1234567890', 'country_id': 1}], 'count'...</msg>
 <var>${result}</var>
-<status status="NOT RUN" start="2025-11-07T23:11:05.675625" elapsed="0.000033"/>
+<status status="PASS" start="2025-11-10T17:18:18.467266" elapsed="3.656552"/>
 </kw>
 <kw name="Validate Patients List Response">
 <kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-10T17:18:22.124437" level="INFO">${patients} = [{'id': 'b61bbfae-92fe-4cd2-a841-d6592410e901', 'first_name': 'John', 'last_name': 'Doe', 'birthdate': '1990-01-01', 'sex': 'Male', 'contact_number': '+1234567890', 'country_id': 1}]</msg>
 <var>${patients}</var>
 <arg>${result}[data]</arg>
 <doc>Returns the given values which can then be assigned to a variables.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.675943" elapsed="0.000036"/>
+<status status="PASS" start="2025-11-10T17:18:22.124293" elapsed="0.000166"/>
 </kw>
 <kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-11-10T17:18:22.124631" level="INFO">Length is 1.</msg>
 <arg>${patients}</arg>
 <doc>Verifies that the given item is not empty.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.676056" elapsed="0.002458"/>
+<status status="PASS" start="2025-11-10T17:18:22.124541" elapsed="0.000120"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:22.124871" level="INFO">IMPLEMENTATION SUCCESS: Patient list retrieval working correctly - returned 1 patients</msg>
 <arg>IMPLEMENTATION SUCCESS: Patient list retrieval working correctly - returned ${result}[count] patients</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.678629" elapsed="0.000068"/>
+<status status="PASS" start="2025-11-10T17:18:22.124738" elapsed="0.000168"/>
 </kw>
 <arg>${result}</arg>
 <doc>Validate successful patients list response</doc>
-<status status="PASS" start="2025-11-07T23:11:05.675795" elapsed="0.002945"/>
+<status status="PASS" start="2025-11-10T17:18:22.124025" elapsed="0.000933"/>
 </kw>
-<status status="PASS" start="2025-11-07T23:11:05.675547" elapsed="0.003217"/>
+<status status="PASS" start="2025-11-10T17:18:18.467112" elapsed="3.657872"/>
 </branch>
 <branch type="EXCEPT" assign="${error}">
 <pattern>*</pattern>
 <kw name="Fail" owner="BuiltIn">
-<arg>Get All Patients failed: ${error}</arg>
+<arg>FAIL: Get All Patients failed: ${error}</arg>
 <doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.678887" elapsed="0.000045"/>
+<status status="NOT RUN" start="2025-11-10T17:18:22.125121" elapsed="0.000015"/>
 </kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.678818" elapsed="0.000139"/>
+<status status="NOT RUN" start="2025-11-10T17:18:22.125038" elapsed="0.000122"/>
 </branch>
-<status status="PASS" start="2025-11-07T23:11:05.675505" elapsed="0.003478"/>
+<status status="PASS" start="2025-11-10T17:18:18.467024" elapsed="3.658165"/>
 </try>
-<doc>TDD: Test get all patients using direct function calls</doc>
+<doc>Test get all patients using direct function calls</doc>
 <tag>get</tag>
 <tag>patients</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.675148" elapsed="0.004007"/>
+<status status="PASS" start="2025-11-10T17:18:18.466408" elapsed="3.659135"/>
 </test>
-<test id="s1-s1-s1-t3" name="Test Get Patients with ReadParameters - TDD" line="58">
+<test id="s1-s1-s1-t3" name="Get Patients with ReadParameters" line="64">
 <try>
 <branch type="TRY">
 <kw name="Get All Patients" owner="patient_functions">
+<msg time="2025-11-10T17:18:25.145791" level="INFO">Error running TSX script: TSX script failed: Error calling actual readPatients function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+
+Failed to call actual readPatients function: TSX script failed: Error calling actual readPatients function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+, using mock/local data</msg>
+<msg time="2025-11-10T17:18:25.146025" level="INFO">${result} = {'data': [{'id': '67804a05-b5e7-4fac-89bf-2a70be74bdd1', 'first_name': 'John', 'last_name': 'Doe', 'birthdate': '1990-01-01', 'sex': 'Male', 'contact_number': '+1234567890', 'country_id': 1}], 'count'...</msg>
 <var>${result}</var>
 <arg>search=TestPatient</arg>
 <arg>page=0</arg>
 <arg>page_size=10</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.681650" elapsed="0.000228"/>
+<status status="PASS" start="2025-11-10T17:18:22.126694" elapsed="3.019373"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:25.146734" level="INFO">SUCCESS: Get patients with parameters working - returned 1 patients</msg>
 <arg>SUCCESS: Get patients with parameters working - returned ${result}[count] patients</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.682089" elapsed="0.000219"/>
+<status status="PASS" start="2025-11-10T17:18:25.146319" elapsed="0.000526"/>
 </kw>
 <kw name="Should Be True" owner="BuiltIn">
 <arg>${result}[count] &gt;= 0</arg>
 <doc>Fails if the given condition is not true.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.682617" elapsed="0.000215"/>
+<status status="PASS" start="2025-11-10T17:18:25.147311" elapsed="0.000467"/>
 </kw>
-<status status="PASS" start="2025-11-07T23:11:05.681528" elapsed="0.001351"/>
+<status status="PASS" start="2025-11-10T17:18:22.126603" elapsed="3.021246"/>
 </branch>
 <branch type="EXCEPT" assign="${error}">
 <pattern>*</pattern>
 <kw name="Fail" owner="BuiltIn">
-<arg>Get All Patients with parameters failed: ${error}</arg>
+<arg>FAIL: Get All Patients with parameters failed: ${error}</arg>
 <doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.683039" elapsed="0.000079"/>
+<status status="NOT RUN" start="2025-11-10T17:18:25.148077" elapsed="0.000027"/>
 </kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.682928" elapsed="0.000229"/>
+<status status="NOT RUN" start="2025-11-10T17:18:25.147931" elapsed="0.000219"/>
 </branch>
-<status status="PASS" start="2025-11-07T23:11:05.681468" elapsed="0.001718"/>
+<status status="PASS" start="2025-11-10T17:18:22.126565" elapsed="3.021628"/>
 </try>
-<doc>TDD: Test get patients with search/filter parameters using direct function calls</doc>
+<doc>Test get patients with search/filter parameters using direct function calls</doc>
 <tag>get</tag>
 <tag>parameters</tag>
 <tag>patients</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.680910" elapsed="0.002500"/>
+<status status="PASS" start="2025-11-10T17:18:22.126106" elapsed="3.022650"/>
 </test>
-<test id="s1-s1-s1-t4" name="Update Patient - TDD (non-existent)" line="70">
+<test id="s1-s1-s1-t4" name="Update Patient (non-existent)" line="76">
 <kw name="Generate Random UUID" owner="common">
 <kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-10T17:18:25.150959" level="INFO">${uuid} = 386278f0-f3c4-4823-930f-197a00d2aa1f</msg>
 <var>${uuid}</var>
 <arg>str(__import__('uuid').uuid4())</arg>
 <doc>Evaluates the given expression in Python and returns the result.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.685075" elapsed="0.000052"/>
+<status status="PASS" start="2025-11-10T17:18:25.150701" elapsed="0.000291"/>
 </kw>
 <return>
 <value>${uuid}</value>
-<status status="PASS" start="2025-11-07T23:11:05.685206" elapsed="0.000022"/>
+<status status="PASS" start="2025-11-10T17:18:25.151095" elapsed="0.000049"/>
 </return>
+<msg time="2025-11-10T17:18:25.151312" level="INFO">${patient_id} = 386278f0-f3c4-4823-930f-197a00d2aa1f</msg>
 <var>${patient_id}</var>
 <doc>Generate a random UUID for testing</doc>
-<status status="PASS" start="2025-11-07T23:11:05.684886" elapsed="0.000381"/>
+<status status="PASS" start="2025-11-10T17:18:25.150417" elapsed="0.000924"/>
 </kw>
 <kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-10T17:18:25.152078" level="INFO">${patient_data} = {'first_name': 'TestPatient', 'last_name': 'TDD', 'birthdate': '1990-01-01', 'sex': 'male', 'contact_number': '+1234567890', 'country_id': '1'}</msg>
 <var>${patient_data}</var>
 <arg>&amp;{PATIENT_TEMPLATE}</arg>
 <doc>Creates and returns a dictionary based on the given ``items``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.686101" elapsed="0.000066"/>
+<status status="PASS" start="2025-11-10T17:18:25.151774" elapsed="0.000337"/>
 </kw>
 <kw name="Set To Dictionary" owner="Collections">
 <arg>${patient_data}</arg>
 <arg>first_name=Updated</arg>
 <doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.686464" elapsed="0.000059"/>
+<status status="PASS" start="2025-11-10T17:18:25.152452" elapsed="0.000247"/>
 </kw>
 <kw name="Update Patient" owner="patient_functions">
+<msg time="2025-11-10T17:18:27.972740" level="INFO">Error running TSX script: TSX script failed: 
+node:internal/modules/run_main:122
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\temp_patient_test.ts' imported from C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\
+    at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+    at moduleResolve (node:internal/modules/esm/resolve:932:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1056:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolveBase (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/esm/index.mjs?1762766307792:2:3744)
+    at async resolveDirectory (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/esm/index.mjs?1762766307792:2:4237)
+    at async resolve (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/esm/index.mjs?1762766307792:2:5355)
+    at async nextResolve (node:internal/modules/esm/hooks:748:22)
+    at async Hooks.resolve (node:internal/modules/esm/hooks:240:24)
+    at async handleMessage (node:internal/modules/esm/worker:199:18) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///C:/Users/marie/OneDrive/Documents/GitHub/sharerapy/temp_patient_test.ts'
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-10T17:18:27.973008" level="INFO">${updated_patient} = None</msg>
 <var>${updated_patient}</var>
 <arg>${patient_id}</arg>
 <arg>${patient_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.686803" elapsed="0.000069"/>
+<status status="PASS" start="2025-11-10T17:18:25.153046" elapsed="2.820001"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${updated_patient}</arg>
 <arg>${None}</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.687028" elapsed="0.000061"/>
+<status status="PASS" start="2025-11-10T17:18:27.973554" elapsed="0.000526"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:27.974692" level="INFO">SUCCESS: Update Patient correctly returned None for non-existent patient</msg>
 <arg>SUCCESS: Update Patient correctly returned None for non-existent patient</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.687224" elapsed="0.000055"/>
+<status status="PASS" start="2025-11-10T17:18:27.974505" elapsed="0.000234"/>
 </kw>
-<doc>TDD: Update patient with random/non-existent ID (expect None)</doc>
+<doc>Update patient with random/non-existent ID (expect None)</doc>
 <tag>patients</tag>
 <tag>put</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.684011" elapsed="0.004266"/>
+<status status="PASS" start="2025-11-10T17:18:25.149668" elapsed="2.825377"/>
 </test>
-<test id="s1-s1-s1-t5" name="Delete Patient - TDD (non-existent)" line="83">
+<test id="s1-s1-s1-t5" name="Delete Patient (non-existent)" line="89">
 <kw name="Generate Random UUID" owner="common">
 <kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-10T17:18:27.976780" level="INFO">${uuid} = 6669dcbc-1da3-443f-a529-7243af0f9aee</msg>
 <var>${uuid}</var>
 <arg>str(__import__('uuid').uuid4())</arg>
 <doc>Evaluates the given expression in Python and returns the result.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.690986" elapsed="0.000079"/>
+<status status="PASS" start="2025-11-10T17:18:27.976476" elapsed="0.000342"/>
 </kw>
 <return>
 <value>${uuid}</value>
-<status status="PASS" start="2025-11-07T23:11:05.691149" elapsed="0.000026"/>
+<status status="PASS" start="2025-11-10T17:18:27.976951" elapsed="0.000057"/>
 </return>
+<msg time="2025-11-10T17:18:27.977207" level="INFO">${patient_id} = 6669dcbc-1da3-443f-a529-7243af0f9aee</msg>
 <var>${patient_id}</var>
 <doc>Generate a random UUID for testing</doc>
-<status status="PASS" start="2025-11-07T23:11:05.690712" elapsed="0.000515"/>
+<status status="PASS" start="2025-11-10T17:18:27.976164" elapsed="0.001072"/>
 </kw>
 <kw name="Delete Patient" owner="patient_functions">
+<msg time="2025-11-10T17:18:31.483961" level="INFO">${result} = False</msg>
 <var>${result}</var>
 <arg>${patient_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.691999" elapsed="0.000089"/>
+<status status="PASS" start="2025-11-10T17:18:27.977648" elapsed="3.506378"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${result}</arg>
 <arg>${False}</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.692631" elapsed="0.000113"/>
+<status status="PASS" start="2025-11-10T17:18:31.484388" elapsed="0.000281"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:31.485156" level="INFO">SUCCESS: Delete Patient correctly returned False for non-existent patient</msg>
 <arg>SUCCESS: Delete Patient correctly returned False for non-existent patient</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.693019" elapsed="0.000092"/>
+<status status="PASS" start="2025-11-10T17:18:31.484978" elapsed="0.000236"/>
 </kw>
-<doc>TDD: Delete patient with random/non-existent ID (expect False)</doc>
+<doc>Delete patient with random/non-existent ID (expect False)</doc>
 <tag>delete</tag>
 <tag>patients</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.689926" elapsed="0.003574"/>
+<status status="PASS" start="2025-11-10T17:18:27.975532" elapsed="3.510052"/>
 </test>
-<test id="s1-s1-s1-t6" name="Read Patient - TDD (created id)" line="93">
+<test id="s1-s1-s1-t6" name="Test Patient Lifecycle (happy path)" line="99">
 <kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-10T17:18:31.487186" level="INFO">${patient_data} = {'first_name': 'TestPatient', 'last_name': 'TDD', 'birthdate': '1990-01-01', 'sex': 'male', 'contact_number': '+1234567890', 'country_id': '1'}</msg>
 <var>${patient_data}</var>
 <arg>&amp;{PATIENT_TEMPLATE}</arg>
 <doc>Creates and returns a dictionary based on the given ``items``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.694881" elapsed="0.000087"/>
-</kw>
-<kw name="Set To Dictionary" owner="Collections">
-<arg>${patient_data}</arg>
-<arg>first_name=UnitRead</arg>
-<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.695107" elapsed="0.000051"/>
-</kw>
-<kw name="Create Patient" owner="patient_functions">
-<var>${created}</var>
-<arg>${patient_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.695454" elapsed="0.000079"/>
-</kw>
-<kw name="Set Variable" owner="BuiltIn">
-<var>${patient_id}</var>
-<arg>${created}[id]</arg>
-<doc>Returns the given values which can then be assigned to a variables.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.695781" elapsed="0.000040"/>
-</kw>
-<kw name="Get Patient By Id" owner="patient_functions">
-<var>${read}</var>
-<arg>${patient_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.695932" elapsed="0.000031"/>
-</kw>
-<kw name="Should Not Be Equal" owner="BuiltIn">
-<arg>${read}</arg>
-<arg>${None}</arg>
-<doc>Fails if the given objects are equal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.696063" elapsed="0.000068"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${read}[first_name]</arg>
-<arg>${patient_data}[first_name]</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.696364" elapsed="0.000083"/>
-</kw>
-<doc>TDD: Read patient using ID created in this test (happy path)</doc>
-<tag>patients</tag>
-<tag>read</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.694333" elapsed="0.002675"/>
-</test>
-<test id="s1-s1-s1-t7" name="Test Patient Lifecycle - TDD (happy path)" line="106">
-<kw name="Create Dictionary" owner="BuiltIn">
-<var>${patient_data}</var>
-<arg>&amp;{PATIENT_TEMPLATE}</arg>
-<doc>Creates and returns a dictionary based on the given ``items``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.697925" elapsed="0.000072"/>
+<status status="PASS" start="2025-11-10T17:18:31.486886" elapsed="0.000335"/>
 </kw>
 <kw name="Set To Dictionary" owner="Collections">
 <arg>${patient_data}</arg>
 <arg>first_name=HappyPathTest</arg>
 <doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.698179" elapsed="0.000063"/>
+<status status="PASS" start="2025-11-10T17:18:31.487696" elapsed="0.000199"/>
 </kw>
 <kw name="Create Patient" owner="patient_functions">
+<msg time="2025-11-10T17:18:34.790002" level="INFO">Error running TSX script: TSX script failed: Error calling actual createPatient function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+
+Failed to call actual createPatient function: TSX script failed: Error calling actual createPatient function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+, using mock/local data</msg>
+<msg time="2025-11-10T17:18:34.790160" level="INFO">${created} = {'first_name': 'HappyPathTest', 'last_name': 'TDD', 'birthdate': '1990-01-01', 'sex': 'male', 'contact_number': '+1234567890', 'country_id': '1', 'id': '212ea8ac-bb01-4b78-8430-6f782d210904', 'created...</msg>
 <var>${created}</var>
 <arg>${patient_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.698400" elapsed="0.000042"/>
+<status status="PASS" start="2025-11-10T17:18:31.488142" elapsed="3.302047"/>
 </kw>
 <kw name="Validate Created Patient Response">
 <kw name="Should Contain" owner="BuiltIn">
 <arg>${patient_result}</arg>
 <arg>id</arg>
 <doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.698814" elapsed="0.000051"/>
+<status status="PASS" start="2025-11-10T17:18:34.791033" elapsed="0.000161"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${patient_result}[first_name]</arg>
 <arg>${expected_data}[first_name]</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.698938" elapsed="0.000048"/>
+<status status="PASS" start="2025-11-10T17:18:34.791306" elapsed="0.000208"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${patient_result}[last_name]</arg>
 <arg>${expected_data}[last_name]</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.699051" elapsed="0.000045"/>
+<status status="PASS" start="2025-11-10T17:18:34.791610" elapsed="0.000154"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:34.791973" level="INFO">IMPLEMENTATION SUCCESS: Patient creation working correctly - created patient with ID 212ea8ac-bb01-4b78-8430-6f782d210904</msg>
 <arg>IMPLEMENTATION SUCCESS: Patient creation working correctly - created patient with ID ${patient_result}[id]</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.699160" elapsed="0.000052"/>
+<status status="PASS" start="2025-11-10T17:18:34.791856" elapsed="0.000154"/>
 </kw>
 <arg>${created}</arg>
 <arg>${patient_data}</arg>
 <doc>Validate successful patient creation response</doc>
-<status status="PASS" start="2025-11-07T23:11:05.698645" elapsed="0.000602"/>
+<status status="PASS" start="2025-11-10T17:18:34.790657" elapsed="0.001406"/>
 </kw>
 <kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-10T17:18:34.792643" level="INFO">${patient_id} = 212ea8ac-bb01-4b78-8430-6f782d210904</msg>
 <var>${patient_id}</var>
 <arg>${created}[id]</arg>
 <doc>Returns the given values which can then be assigned to a variables.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.699370" elapsed="0.000032"/>
+<status status="PASS" start="2025-11-10T17:18:34.792437" elapsed="0.000230"/>
 </kw>
 <kw name="Get Patient By Id" owner="patient_functions">
+<msg time="2025-11-10T17:18:34.793086" level="INFO">${read} = {'first_name': 'HappyPathTest', 'last_name': 'TDD', 'birthdate': '1990-01-01', 'sex': 'male', 'contact_number': '+1234567890', 'country_id': '1', 'id': '212ea8ac-bb01-4b78-8430-6f782d210904', 'created...</msg>
 <var>${read}</var>
 <arg>${patient_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.699514" elapsed="0.000030"/>
+<status status="PASS" start="2025-11-10T17:18:34.792937" elapsed="0.000169"/>
 </kw>
 <kw name="Should Not Be Equal" owner="BuiltIn">
+<msg time="2025-11-10T17:18:34.793508" level="INFO">Argument types are:
+&lt;class 'dict'&gt;
+&lt;class 'NoneType'&gt;</msg>
 <arg>${read}</arg>
 <arg>${None}</arg>
 <doc>Fails if the given objects are equal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.699655" elapsed="0.000044"/>
+<status status="PASS" start="2025-11-10T17:18:34.793369" elapsed="0.000185"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${read}[first_name]</arg>
 <arg>${patient_data}[first_name]</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.699814" elapsed="0.000050"/>
+<status status="PASS" start="2025-11-10T17:18:34.793815" elapsed="0.000161"/>
 </kw>
 <kw name="Set To Dictionary" owner="Collections">
 <arg>${patient_data}</arg>
 <arg>first_name=HappyPathUpdated</arg>
 <doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.699981" elapsed="0.000041"/>
+<status status="PASS" start="2025-11-10T17:18:34.794230" elapsed="0.000118"/>
 </kw>
 <kw name="Update Patient" owner="patient_functions">
+<msg time="2025-11-10T17:18:37.783962" level="INFO">Error running TSX script: TSX script failed: Error calling actual updatePatient function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context</msg>
+<msg time="2025-11-10T17:18:37.784122" level="INFO">${updated} = {'first_name': 'HappyPathUpdated', 'last_name': 'TDD', 'birthdate': '1990-01-01', 'sex': 'male', 'contact_number': '+1234567890', 'country_id': '1', 'id': '212ea8ac-bb01-4b78-8430-6f782d210904', 'crea...</msg>
 <var>${updated}</var>
 <arg>${patient_id}</arg>
 <arg>${patient_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.700204" elapsed="0.000033"/>
+<status status="PASS" start="2025-11-10T17:18:34.794827" elapsed="2.989321"/>
 </kw>
 <kw name="Validate Patient Update Response">
 <kw name="Should Contain" owner="BuiltIn">
 <arg>${patient_result}</arg>
 <arg>id</arg>
 <doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.700525" elapsed="0.000045"/>
+<status status="PASS" start="2025-11-10T17:18:37.784845" elapsed="0.000118"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${patient_result}[first_name]</arg>
 <arg>${expected_data}[first_name]</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.700634" elapsed="0.000046"/>
+<status status="PASS" start="2025-11-10T17:18:37.785046" elapsed="0.000145"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:37.785350" level="INFO">IMPLEMENTATION SUCCESS: Patient update working correctly - updated patient</msg>
 <arg>IMPLEMENTATION SUCCESS: Patient update working correctly - updated patient</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.700851" elapsed="0.000052"/>
+<status status="PASS" start="2025-11-10T17:18:37.785275" elapsed="0.000105"/>
 </kw>
 <arg>${updated}</arg>
 <arg>${patient_data}</arg>
 <doc>Validate successful patient update response</doc>
-<status status="PASS" start="2025-11-07T23:11:05.700387" elapsed="0.000553"/>
+<status status="PASS" start="2025-11-10T17:18:37.784499" elapsed="0.000924"/>
 </kw>
 <kw name="Delete Patient" owner="patient_functions">
+<msg time="2025-11-10T17:18:41.073543" level="INFO">${deleted} = True</msg>
 <var>${deleted}</var>
 <arg>${patient_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.701102" elapsed="0.000032"/>
+<status status="PASS" start="2025-11-10T17:18:37.785596" elapsed="3.287983"/>
 </kw>
-<kw name="Should Be True" owner="BuiltIn">
-<arg>${deleted}</arg>
-<doc>Fails if the given condition is not true.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.701248" elapsed="0.000040"/>
+<kw name="Wait Until Keyword Succeeds" owner="BuiltIn">
+<kw name="Get Patient By ID Should Be None">
+<kw name="Get Patient By Id" owner="patient_functions">
+<msg time="2025-11-10T17:18:43.806140" level="INFO">Error running TSX script: TSX script failed: Error calling actual readPatient function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context</msg>
+<msg time="2025-11-10T17:18:43.806268" level="INFO">${read} = None</msg>
+<var>${read}</var>
+<arg>${patient_id}</arg>
+<status status="PASS" start="2025-11-10T17:18:41.074312" elapsed="2.731977"/>
 </kw>
-<doc>TDD: Create, Read, Update, Delete patient lifecycle (happy path)</doc>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-10T17:18:43.806430" elapsed="0.000186"/>
+</kw>
+<arg>${patient_id}</arg>
+<doc>Fail if Get Patient By ID returns a value (used for retries after delete)</doc>
+<status status="PASS" start="2025-11-10T17:18:41.074088" elapsed="2.732585"/>
+</kw>
+<arg>5 times</arg>
+<arg>1s</arg>
+<arg>Get Patient By ID Should Be None</arg>
+<arg>${patient_id}</arg>
+<doc>Runs the specified keyword and retries if it fails.</doc>
+<status status="PASS" start="2025-11-10T17:18:41.073829" elapsed="2.732876"/>
+</kw>
+<doc>Create, Read, Update, Delete patient lifecycle (happy path)</doc>
 <tag>lifecycle</tag>
 <tag>patients</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.697498" elapsed="0.003918"/>
+<status status="PASS" start="2025-11-10T17:18:31.486390" elapsed="12.320503"/>
 </test>
 <kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:43.807942" level="INFO">Cleaning up test environment</msg>
 <arg>Cleaning up test environment</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.702042" elapsed="0.000048"/>
+<status status="PASS" start="2025-11-10T17:18:43.807850" elapsed="0.000129"/>
 </kw>
 <doc>Clean up test environment</doc>
-<status status="PASS" start="2025-11-07T23:11:05.701942" elapsed="0.000183"/>
+<status status="PASS" start="2025-11-10T17:18:43.807685" elapsed="0.000396"/>
 </kw>
-<doc>Patient API TDD tests - Direct function calls using Supabase</doc>
-<status status="PASS" start="2025-11-07T23:11:05.654618" elapsed="0.047529"/>
+<doc>Patient tests - Direct function calls using Supabase</doc>
+<status status="PASS" start="2025-11-10T17:18:14.896780" elapsed="28.911325"/>
 </suite>
-<status status="PASS" start="2025-11-07T23:11:05.652972" elapsed="0.049981"/>
+<status status="PASS" start="2025-11-10T17:18:14.895283" elapsed="28.913728"/>
 </suite>
 <suite id="s1-s2" name="Reports" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\reports">
 <suite id="s1-s2-s1" name="Report Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\reports\report_tests.robot">
 <kw name="Setup Test Environment" owner="common" type="SETUP">
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:43.815845" level="INFO">Setting up test environment for direct function calls</msg>
 <arg>Setting up test environment for direct function calls</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.711585" elapsed="0.000079"/>
+<status status="PASS" start="2025-11-10T17:18:43.815756" elapsed="0.000126"/>
 </kw>
-<doc>Initialize test environment for TDD</doc>
-<status status="PASS" start="2025-11-07T23:11:05.711403" elapsed="0.000382"/>
+<doc>Initialize test environment</doc>
+<status status="PASS" start="2025-11-10T17:18:43.815585" elapsed="0.000366"/>
 </kw>
-<test id="s1-s2-s1-t1" name="Get Report By ID - TDD (non-existent)" line="29">
+<test id="s1-s2-s1-t1" name="Get Report By ID (non-existent)" line="35">
 <kw name="Generate Random UUID" owner="common">
 <kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-10T17:18:43.816944" level="INFO">${uuid} = dabb4064-0ea1-4590-9990-ed52f0eb4614</msg>
 <var>${uuid}</var>
 <arg>str(__import__('uuid').uuid4())</arg>
 <doc>Evaluates the given expression in Python and returns the result.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.712879" elapsed="0.000074"/>
+<status status="PASS" start="2025-11-10T17:18:43.816615" elapsed="0.000353"/>
 </kw>
 <return>
 <value>${uuid}</value>
-<status status="PASS" start="2025-11-07T23:11:05.713030" elapsed="0.000022"/>
+<status status="PASS" start="2025-11-10T17:18:43.817015" elapsed="0.000031"/>
 </return>
+<msg time="2025-11-10T17:18:43.817150" level="INFO">${report_id} = dabb4064-0ea1-4590-9990-ed52f0eb4614</msg>
 <var>${report_id}</var>
 <doc>Generate a random UUID for testing</doc>
-<status status="PASS" start="2025-11-07T23:11:05.712619" elapsed="0.000481"/>
+<status status="PASS" start="2025-11-10T17:18:43.816376" elapsed="0.000791"/>
 </kw>
 <try>
 <branch type="TRY">
 <kw name="Get Report By Id" owner="report_functions">
+<msg time="2025-11-10T17:18:46.582602" level="INFO">${report} = None</msg>
 <var>${report}</var>
 <arg>${report_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.713496" elapsed="0.000069"/>
+<status status="PASS" start="2025-11-10T17:18:43.817507" elapsed="2.765131"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${report}</arg>
 <arg>${None}</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.713653" elapsed="0.000057"/>
+<status status="PASS" start="2025-11-10T17:18:46.582777" elapsed="0.000186"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:46.583137" level="INFO">SUCCESS: Get Report By ID correctly returned None for non-existent report</msg>
 <arg>SUCCESS: Get Report By ID correctly returned None for non-existent report</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.713782" elapsed="0.000047"/>
+<status status="PASS" start="2025-11-10T17:18:46.583057" elapsed="0.000110"/>
 </kw>
-<status status="PASS" start="2025-11-07T23:11:05.713373" elapsed="0.000482"/>
+<status status="PASS" start="2025-11-10T17:18:43.817430" elapsed="2.765768"/>
 </branch>
 <branch type="EXCEPT" assign="${error}">
 <pattern>*</pattern>
 <kw name="Fail" owner="BuiltIn">
-<arg>TDD FAIL: GET reports by ID not implemented - implement to make test pass: ${error}</arg>
+<arg>FAIL: GET reports: ${error}</arg>
 <doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.713947" elapsed="0.000040"/>
+<status status="NOT RUN" start="2025-11-10T17:18:46.583310" elapsed="0.000012"/>
 </kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.713888" elapsed="0.000125"/>
+<status status="NOT RUN" start="2025-11-10T17:18:46.583240" elapsed="0.000106"/>
 </branch>
-<status status="PASS" start="2025-11-07T23:11:05.713323" elapsed="0.000711"/>
+<status status="PASS" start="2025-11-10T17:18:43.817392" elapsed="2.765977"/>
 </try>
-<doc>TDD: Get report by random/non-existent ID (expect None)</doc>
+<doc>Get report by random/non-existent ID (expect None)</doc>
 <tag>get</tag>
 <tag>reports</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.711901" elapsed="0.002330"/>
+<status status="PASS" start="2025-11-10T17:18:43.815996" elapsed="2.767635"/>
 </test>
-<test id="s1-s2-s1-t2" name="Test Get All Reports - TDD" line="43">
+<test id="s1-s2-s1-t2" name="Get All Reports" line="49">
 <try>
 <branch type="TRY">
 <kw name="Get All Reports" owner="report_functions">
+<msg time="2025-11-10T17:18:49.232375" level="INFO">Error running TSX script: TSX script failed: Error calling actual readReports function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+
+Failed to call actual readReports function: TSX script failed: Error calling actual readReports function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+, using mock/local data</msg>
+<msg time="2025-11-10T17:18:49.232510" level="INFO">${result} = {'data': [{'id': '5f6a9404-6d43-4430-b209-0e2dc88073a9', 'title': 'Mock Report', 'description': 'Mock report for testing', 'type_id': 1, 'report_id': '95971579-4601-449a-857e-c37b2b7861f0', 'therapist...</msg>
 <var>${result}</var>
-<status status="NOT RUN" start="2025-11-07T23:11:05.714849" elapsed="0.000031"/>
+<status status="PASS" start="2025-11-10T17:18:46.584403" elapsed="2.648131"/>
 </kw>
 <kw name="Validate Reports List Response">
 <kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-10T17:18:49.233151" level="INFO">${reports} = [{'id': '5f6a9404-6d43-4430-b209-0e2dc88073a9', 'title': 'Mock Report', 'description': 'Mock report for testing', 'type_id': 1, 'report_id': '95971579-4601-449a-857e-c37b2b7861f0', 'therapist_id': '50...</msg>
 <var>${reports}</var>
 <arg>${result}[data]</arg>
 <doc>Returns the given values which can then be assigned to a variables.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.715133" elapsed="0.000033"/>
+<status status="PASS" start="2025-11-10T17:18:49.233008" elapsed="0.000167"/>
 </kw>
 <kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-11-10T17:18:49.233353" level="INFO">Length is 1.</msg>
 <arg>${reports}</arg>
 <doc>Verifies that the given item is not empty.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.715233" elapsed="0.000038"/>
+<status status="PASS" start="2025-11-10T17:18:49.233262" elapsed="0.000123"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:49.233568" level="INFO">IMPLEMENTATION SUCCESS: Report list retrieval working correctly - returned 1 reports</msg>
 <arg>IMPLEMENTATION SUCCESS: Report list retrieval working correctly - returned ${result}[count] reports</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.715335" elapsed="0.000052"/>
+<status status="PASS" start="2025-11-10T17:18:49.233461" elapsed="0.000155"/>
 </kw>
 <arg>${result}</arg>
 <doc>Validate successful reports list response</doc>
-<status status="PASS" start="2025-11-07T23:11:05.714993" elapsed="0.000432"/>
+<status status="PASS" start="2025-11-10T17:18:49.232726" elapsed="0.000941"/>
 </kw>
-<status status="PASS" start="2025-11-07T23:11:05.714779" elapsed="0.000670"/>
+<status status="PASS" start="2025-11-10T17:18:46.584332" elapsed="2.649360"/>
 </branch>
 <branch type="EXCEPT" assign="${error}">
 <pattern>*</pattern>
 <kw name="Fail" owner="BuiltIn">
-<arg>TDD FAIL: GET reports not implemented - implement this endpoint to make test pass: ${error}</arg>
+<arg>FAIL: GET reports: ${error}</arg>
 <doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.715539" elapsed="0.000042"/>
+<status status="NOT RUN" start="2025-11-10T17:18:49.233804" elapsed="0.000013"/>
 </kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.715480" elapsed="0.000127"/>
+<status status="NOT RUN" start="2025-11-10T17:18:49.233733" elapsed="0.000109"/>
 </branch>
-<status status="PASS" start="2025-11-07T23:11:05.714756" elapsed="0.000871"/>
+<status status="PASS" start="2025-11-10T17:18:46.584304" elapsed="2.649559"/>
 </try>
-<doc>TDD: Test get all reports using direct function calls</doc>
+<doc>Test get all reports using direct function calls</doc>
 <tag>get</tag>
 <tag>reports</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.714529" elapsed="0.001229"/>
+<status status="PASS" start="2025-11-10T17:18:46.584060" elapsed="2.649999"/>
 </test>
-<test id="s1-s2-s1-t3" name="Create Report - TDD (happy path)" line="55">
-<kw name="Create Dictionary" owner="BuiltIn">
-<var>${report_data}</var>
-<arg>&amp;{REPORT_TEMPLATE}</arg>
-<doc>Creates and returns a dictionary based on the given ``items``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.716394" elapsed="0.000058"/>
-</kw>
-<kw name="Set To Dictionary" owner="Collections">
-<arg>${report_data}</arg>
-<arg>title=TDD Test Report</arg>
-<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.716698" elapsed="0.000064"/>
-</kw>
-<try>
-<branch type="TRY">
-<kw name="Create Report" owner="report_functions">
-<var>${created_report}</var>
-<arg>${report_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.717022" elapsed="0.000042"/>
-</kw>
-<kw name="Validate Created Report Response">
-<kw name="Should Contain" owner="BuiltIn">
-<arg>${report_result}</arg>
-<arg>id</arg>
-<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.717318" elapsed="0.000050"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${report_result}[title]</arg>
-<arg>${expected_data}[title]</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.717437" elapsed="0.000047"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${report_result}[description]</arg>
-<arg>${expected_data}[description]</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.717604" elapsed="0.000048"/>
-</kw>
-<kw name="Log" owner="BuiltIn">
-<arg>IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID ${report_result}[id]</arg>
-<arg>INFO</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.717721" elapsed="0.000050"/>
-</kw>
-<arg>${created_report}</arg>
-<arg>${report_data}</arg>
-<doc>Validate successful report creation response</doc>
-<status status="PASS" start="2025-11-07T23:11:05.717174" elapsed="0.000632"/>
-</kw>
-<status status="PASS" start="2025-11-07T23:11:05.716951" elapsed="0.000880"/>
-</branch>
-<branch type="EXCEPT" assign="${error}">
-<pattern>*</pattern>
-<kw name="Fail" owner="BuiltIn">
-<arg>TDD FAIL: POST reports not implemented - implement this endpoint to make test pass: ${error}</arg>
-<doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.717921" elapsed="0.000041"/>
-</kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.717861" elapsed="0.000126"/>
-</branch>
-<status status="PASS" start="2025-11-07T23:11:05.716923" elapsed="0.001085"/>
-</try>
-<doc>TDD: Create report (happy path) using direct function calls</doc>
-<tag>post</tag>
-<tag>reports</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.716022" elapsed="0.002176"/>
-</test>
-<test id="s1-s2-s1-t4" name="Update Report - TDD (non-existent)" line="70">
-<kw name="Generate Random UUID" owner="common">
-<kw name="Evaluate" owner="BuiltIn">
-<var>${uuid}</var>
-<arg>str(__import__('uuid').uuid4())</arg>
-<doc>Evaluates the given expression in Python and returns the result.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.720182" elapsed="0.000077"/>
-</kw>
-<return>
-<value>${uuid}</value>
-<status status="PASS" start="2025-11-07T23:11:05.720338" elapsed="0.000020"/>
-</return>
-<var>${report_id}</var>
-<doc>Generate a random UUID for testing</doc>
-<status status="PASS" start="2025-11-07T23:11:05.719917" elapsed="0.000490"/>
-</kw>
-<kw name="Create Dictionary" owner="BuiltIn">
-<var>${update_data}</var>
-<arg>&amp;{REPORT_TEMPLATE}</arg>
-<doc>Creates and returns a dictionary based on the given ``items``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.720934" elapsed="0.000086"/>
-</kw>
-<kw name="Set To Dictionary" owner="Collections">
-<arg>${update_data}</arg>
-<arg>title=Updated Report Title</arg>
-<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.721277" elapsed="0.000078"/>
-</kw>
-<try>
-<branch type="TRY">
-<kw name="Update Report" owner="report_functions">
-<var>${updated_report}</var>
-<arg>${report_id}</arg>
-<arg>${update_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.721719" elapsed="0.000058"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${updated_report}</arg>
-<arg>${None}</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.721882" elapsed="0.000054"/>
-</kw>
-<kw name="Log" owner="BuiltIn">
-<arg>SUCCESS: Update Report correctly returned None for non-existent report</arg>
-<arg>INFO</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.722005" elapsed="0.000049"/>
-</kw>
-<status status="PASS" start="2025-11-07T23:11:05.721626" elapsed="0.000457"/>
-</branch>
-<branch type="EXCEPT" assign="${error}">
-<pattern>*</pattern>
-<kw name="Fail" owner="BuiltIn">
-<arg>TDD FAIL: PUT reports not implemented - implement this endpoint to make test pass: ${error}</arg>
-<doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.722182" elapsed="0.000040"/>
-</kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.722119" elapsed="0.000129"/>
-</branch>
-<status status="PASS" start="2025-11-07T23:11:05.721587" elapsed="0.000683"/>
-</try>
-<doc>TDD: Update report with random/non-existent ID (expect None)</doc>
-<tag>put</tag>
-<tag>reports</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.719107" elapsed="0.003476"/>
-</test>
-<test id="s1-s2-s1-t5" name="Delete Report - TDD (non-existent)" line="87">
-<kw name="Generate Random UUID" owner="common">
-<kw name="Evaluate" owner="BuiltIn">
-<var>${uuid}</var>
-<arg>str(__import__('uuid').uuid4())</arg>
-<doc>Evaluates the given expression in Python and returns the result.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.723518" elapsed="0.000049"/>
-</kw>
-<return>
-<value>${uuid}</value>
-<status status="PASS" start="2025-11-07T23:11:05.723642" elapsed="0.000016"/>
-</return>
-<var>${report_id}</var>
-<doc>Generate a random UUID for testing</doc>
-<status status="PASS" start="2025-11-07T23:11:05.723334" elapsed="0.000384"/>
-</kw>
-<try>
-<branch type="TRY">
-<kw name="Delete Report" owner="report_functions">
-<var>${result}</var>
-<arg>${report_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.724064" elapsed="0.000042"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${result}</arg>
-<arg>${False}</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.724181" elapsed="0.000048"/>
-</kw>
-<kw name="Log" owner="BuiltIn">
-<arg>SUCCESS: Delete Report correctly returned False for non-existent report</arg>
-<arg>INFO</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.724296" elapsed="0.000046"/>
-</kw>
-<status status="PASS" start="2025-11-07T23:11:05.723978" elapsed="0.000390"/>
-</branch>
-<branch type="EXCEPT" assign="${error}">
-<pattern>*</pattern>
-<kw name="Fail" owner="BuiltIn">
-<arg>TDD FAIL: DELETE reports not implemented - implement this endpoint to make test pass: ${error}</arg>
-<doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.724528" elapsed="0.000100"/>
-</kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.724421" elapsed="0.000253"/>
-</branch>
-<status status="PASS" start="2025-11-07T23:11:05.723921" elapsed="0.000780"/>
-</try>
-<doc>TDD: Delete report with random/non-existent ID (expect False)</doc>
-<tag>delete</tag>
-<tag>reports</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.722908" elapsed="0.005128"/>
-</test>
-<test id="s1-s2-s1-t6" name="Test Get Reports with Parameters - TDD" line="102">
+<test id="s1-s2-s1-t3" name="Get Reports with Parameters" line="61">
 <try>
 <branch type="TRY">
 <kw name="Get All Reports" owner="report_functions">
+<msg time="2025-11-10T17:18:51.958279" level="INFO">Error running TSX script: TSX script failed: Error calling actual readReports function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+
+Failed to call actual readReports function: TSX script failed: Error calling actual readReports function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+, using mock/local data</msg>
+<msg time="2025-11-10T17:18:51.958425" level="INFO">${result} = {'data': [{'id': '6608b381-cd61-40e5-8b7b-f2df9c7d3549', 'title': 'Mock Report', 'description': 'Mock report for testing', 'type_id': 1, 'report_id': '4513a825-ee74-4626-a211-90f5197d6094', 'therapist...</msg>
 <var>${result}</var>
 <arg>search=assessment</arg>
 <arg>type_id=1</arg>
 <arg>limit=10</arg>
 <arg>offset=0</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.728963" elapsed="0.000058"/>
+<status status="PASS" start="2025-11-10T17:18:49.234932" elapsed="2.723516"/>
 </kw>
 <kw name="Validate Reports List Response">
 <kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-10T17:18:51.959142" level="INFO">${reports} = [{'id': '6608b381-cd61-40e5-8b7b-f2df9c7d3549', 'title': 'Mock Report', 'description': 'Mock report for testing', 'type_id': 1, 'report_id': '4513a825-ee74-4626-a211-90f5197d6094', 'therapist_id': '95...</msg>
 <var>${reports}</var>
 <arg>${result}[data]</arg>
 <doc>Returns the given values which can then be assigned to a variables.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.729317" elapsed="0.000036"/>
+<status status="PASS" start="2025-11-10T17:18:51.959006" elapsed="0.000159"/>
 </kw>
 <kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-11-10T17:18:51.959332" level="INFO">Length is 1.</msg>
 <arg>${reports}</arg>
 <doc>Verifies that the given item is not empty.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.729422" elapsed="0.000040"/>
+<status status="PASS" start="2025-11-10T17:18:51.959245" elapsed="0.000141"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:18:51.959823" level="INFO">IMPLEMENTATION SUCCESS: Report list retrieval working correctly - returned 1 reports</msg>
 <arg>IMPLEMENTATION SUCCESS: Report list retrieval working correctly - returned ${result}[count] reports</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.729535" elapsed="0.000054"/>
+<status status="PASS" start="2025-11-10T17:18:51.959585" elapsed="0.000302"/>
 </kw>
 <arg>${result}</arg>
 <doc>Validate successful reports list response</doc>
-<status status="PASS" start="2025-11-07T23:11:05.729152" elapsed="0.000474"/>
+<status status="PASS" start="2025-11-10T17:18:51.958741" elapsed="0.001247"/>
 </kw>
-<status status="PASS" start="2025-11-07T23:11:05.728889" elapsed="0.000761"/>
+<status status="PASS" start="2025-11-10T17:18:49.234849" elapsed="2.725192"/>
 </branch>
 <branch type="EXCEPT" assign="${error}">
 <pattern>*</pattern>
 <kw name="Fail" owner="BuiltIn">
-<arg>TDD FAIL: GET reports with parameters not implemented - implement this to make test pass: ${error}</arg>
+<arg>FAIL: GET reports with parameters not implemented - implement this to make test pass: ${error}</arg>
 <doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.729945" elapsed="0.000063"/>
+<status status="NOT RUN" start="2025-11-10T17:18:51.960264" elapsed="0.000015"/>
 </kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.729840" elapsed="0.000206"/>
+<status status="NOT RUN" start="2025-11-10T17:18:51.960124" elapsed="0.000179"/>
 </branch>
-<status status="PASS" start="2025-11-07T23:11:05.728856" elapsed="0.001215"/>
+<status status="PASS" start="2025-11-10T17:18:49.234815" elapsed="2.725509"/>
 </try>
-<doc>TDD: Test get reports with parameters using direct function calls</doc>
+<doc>Test get reports with parameters using direct function calls</doc>
 <tag>get</tag>
 <tag>parameters</tag>
 <tag>reports</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.728572" elapsed="0.001663"/>
+<status status="PASS" start="2025-11-10T17:18:49.234514" elapsed="2.726070"/>
 </test>
-<test id="s1-s2-s1-t7" name="Test Report Lifecycle - TDD (happy path)" line="113">
+<test id="s1-s2-s1-t4" name="Update Report (non-existent)" line="72">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-10T17:18:51.961981" level="INFO">${uuid} = a6af3d70-de56-4d65-9e34-d39ea75ed023</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-10T17:18:51.961790" elapsed="0.000213"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-10T17:18:51.962050" elapsed="0.000031"/>
+</return>
+<msg time="2025-11-10T17:18:51.962172" level="INFO">${report_id} = a6af3d70-de56-4d65-9e34-d39ea75ed023</msg>
+<var>${report_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-10T17:18:51.961610" elapsed="0.000580"/>
+</kw>
 <kw name="Create Dictionary" owner="BuiltIn">
-<var>${report_data}</var>
+<msg time="2025-11-10T17:18:51.962622" level="INFO">${update_data} = {'title': 'TDD Test Report', 'description': 'Test report for TDD implementation', 'type_id': '1', 'language_id': '1', 'patient_id': '', 'therapist_id': '', 'content': '{"diagnosis": "TDD test", "treat...</msg>
+<var>${update_data}</var>
 <arg>&amp;{REPORT_TEMPLATE}</arg>
 <doc>Creates and returns a dictionary based on the given ``items``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.731397" elapsed="0.000073"/>
+<status status="PASS" start="2025-11-10T17:18:51.962443" elapsed="0.000198"/>
 </kw>
 <kw name="Set To Dictionary" owner="Collections">
-<arg>${report_data}</arg>
-<arg>title=HappyPathReport</arg>
+<arg>${update_data}</arg>
+<arg>title=Updated Report Title</arg>
 <doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.731667" elapsed="0.000060"/>
+<status status="PASS" start="2025-11-10T17:18:51.962884" elapsed="0.000107"/>
 </kw>
-<kw name="Create Report" owner="report_functions">
-<var>${created}</var>
-<arg>${report_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.731872" elapsed="0.000039"/>
-</kw>
-<kw name="Validate Created Report Response">
-<kw name="Should Contain" owner="BuiltIn">
-<arg>${report_result}</arg>
-<arg>id</arg>
-<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.732250" elapsed="0.000051"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${report_result}[title]</arg>
-<arg>${expected_data}[title]</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.732372" elapsed="0.000049"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${report_result}[description]</arg>
-<arg>${expected_data}[description]</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.732490" elapsed="0.000049"/>
-</kw>
-<kw name="Log" owner="BuiltIn">
-<arg>IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID ${report_result}[id]</arg>
-<arg>INFO</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.732607" elapsed="0.000053"/>
-</kw>
-<arg>${created}</arg>
-<arg>${report_data}</arg>
-<doc>Validate successful report creation response</doc>
-<status status="PASS" start="2025-11-07T23:11:05.732089" elapsed="0.000606"/>
-</kw>
-<kw name="Set Variable" owner="BuiltIn">
-<var>${report_id}</var>
-<arg>${created}[id]</arg>
-<doc>Returns the given values which can then be assigned to a variables.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.732865" elapsed="0.000034"/>
-</kw>
-<kw name="Get Report By Id" owner="report_functions">
-<var>${read}</var>
-<arg>${report_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.733017" elapsed="0.000033"/>
-</kw>
-<kw name="Should Not Be Equal" owner="BuiltIn">
-<arg>${read}</arg>
-<arg>${None}</arg>
-<doc>Fails if the given objects are equal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.733164" elapsed="0.000047"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${read}[title]</arg>
-<arg>${report_data}[title]</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.733329" elapsed="0.000048"/>
-</kw>
-<kw name="Set To Dictionary" owner="Collections">
-<arg>${report_data}</arg>
-<arg>title=HappyPathReportUpdated</arg>
-<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.733490" elapsed="0.000039"/>
-</kw>
+<try>
+<branch type="TRY">
 <kw name="Update Report" owner="report_functions">
-<var>${updated}</var>
+<msg time="2025-11-10T17:18:55.215614" level="INFO">Error running TSX script: TSX script failed: Error calling actual updateReport function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context</msg>
+<msg time="2025-11-10T17:18:55.215745" level="INFO">${updated_report} = None</msg>
+<var>${updated_report}</var>
 <arg>${report_id}</arg>
-<arg>${report_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.733708" elapsed="0.000034"/>
-</kw>
-<kw name="Validate Created Report Response">
-<kw name="Should Contain" owner="BuiltIn">
-<arg>${report_result}</arg>
-<arg>id</arg>
-<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.734033" elapsed="0.000048"/>
+<arg>${update_data}</arg>
+<status status="PASS" start="2025-11-10T17:18:51.963219" elapsed="3.252548"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
-<arg>${report_result}[title]</arg>
-<arg>${expected_data}[title]</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.734154" elapsed="0.000045"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${report_result}[description]</arg>
-<arg>${expected_data}[description]</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.734261" elapsed="0.000042"/>
-</kw>
-<kw name="Log" owner="BuiltIn">
-<arg>IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID ${report_result}[id]</arg>
-<arg>INFO</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.734364" elapsed="0.000048"/>
-</kw>
-<arg>${updated}</arg>
-<arg>${report_data}</arg>
-<doc>Validate successful report creation response</doc>
-<status status="PASS" start="2025-11-07T23:11:05.733891" elapsed="0.000553"/>
-</kw>
-<kw name="Delete Report" owner="report_functions">
-<var>${deleted}</var>
-<arg>${report_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.734592" elapsed="0.000031"/>
-</kw>
-<kw name="Should Be True" owner="BuiltIn">
-<arg>${deleted}</arg>
-<doc>Fails if the given condition is not true.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.735053" elapsed="0.000041"/>
-</kw>
-<doc>TDD: Create, Read, Update, Delete report lifecycle (happy path)</doc>
-<tag>lifecycle</tag>
-<tag>reports</tag>
-<tag>tdd</tag>
-<status status="PASS" start="2025-11-07T23:11:05.730931" elapsed="0.004493"/>
-</test>
-<kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
-<kw name="Log" owner="BuiltIn">
-<arg>Cleaning up test environment</arg>
-<arg>INFO</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.736228" elapsed="0.000078"/>
-</kw>
-<doc>Clean up test environment</doc>
-<status status="PASS" start="2025-11-07T23:11:05.736101" elapsed="0.000252"/>
-</kw>
-<doc>Report API TDD tests - Direct function calls using Supabase</doc>
-<status status="PASS" start="2025-11-07T23:11:05.706208" elapsed="0.030171"/>
-</suite>
-<status status="PASS" start="2025-11-07T23:11:05.704299" elapsed="0.033171"/>
-</suite>
-<suite id="s1-s3" name="Therapists" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\therapists">
-<suite id="s1-s3-s1" name="Therapist Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\therapists\therapist_tests.robot">
-<kw name="Setup Test Environment" owner="common" type="SETUP">
-<kw name="Log" owner="BuiltIn">
-<arg>Setting up test environment for direct function calls</arg>
-<arg>INFO</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.748612" elapsed="0.000194"/>
-</kw>
-<doc>Initialize test environment for TDD</doc>
-<status status="PASS" start="2025-11-07T23:11:05.748404" elapsed="0.000533"/>
-</kw>
-<test id="s1-s3-s1-t1" name="Test Get All Therapists - TDD" line="26">
-<try>
-<branch type="TRY">
-<kw name="Get All Therapists" owner="therapist_functions">
-<var>${result}</var>
-<status status="NOT RUN" start="2025-11-07T23:11:05.749479" elapsed="0.000038"/>
-</kw>
-<kw name="Validate Therapists List Response">
-<kw name="Set Variable" owner="BuiltIn">
-<var>${therapists}</var>
-<arg>${result}[data]</arg>
-<doc>Returns the given values which can then be assigned to a variables.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.749797" elapsed="0.000036"/>
-</kw>
-<kw name="Should Not Be Empty" owner="BuiltIn">
-<arg>${therapists}</arg>
-<doc>Verifies that the given item is not empty.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.749987" elapsed="0.000047"/>
-</kw>
-<kw name="Log" owner="BuiltIn">
-<arg>IMPLEMENTATION SUCCESS: Therapist list retrieval working correctly - returned ${result}[count] therapists</arg>
-<arg>INFO</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.750101" elapsed="0.000056"/>
-</kw>
-<arg>${result}</arg>
-<status status="PASS" start="2025-11-07T23:11:05.749641" elapsed="0.000554"/>
-</kw>
-<status status="PASS" start="2025-11-07T23:11:05.749398" elapsed="0.000820"/>
-</branch>
-<branch type="EXCEPT" assign="${error}">
-<pattern>*</pattern>
-<kw name="Fail" owner="BuiltIn">
-<arg>TDD FAIL: GET therapists not implemented - implement this to make test pass: ${error}</arg>
-<doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.750321" elapsed="0.000045"/>
-</kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.750256" elapsed="0.000138"/>
-</branch>
-<status status="PASS" start="2025-11-07T23:11:05.749363" elapsed="0.001056"/>
-</try>
-<doc>TDD: Get all therapists (list retrieval)</doc>
-<tag>get</tag>
-<tag>tdd</tag>
-<tag>therapists</tag>
-<status status="PASS" start="2025-11-07T23:11:05.749017" elapsed="0.001585"/>
-</test>
-<test id="s1-s3-s1-t2" name="Test Create Therapist - TDD" line="38">
-<kw name="Create Dictionary" owner="BuiltIn">
-<var>${therapist_data}</var>
-<arg>&amp;{THERAPIST_TEMPLATE}</arg>
-<doc>Creates and returns a dictionary based on the given ``items``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.751760" elapsed="0.000064"/>
-</kw>
-<kw name="Set To Dictionary" owner="Collections">
-<arg>${therapist_data}</arg>
-<arg>first_name=TDDTest</arg>
-<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.751989" elapsed="0.000052"/>
-</kw>
-<try>
-<branch type="TRY">
-<kw name="Create Therapist" owner="therapist_functions">
-<var>${created_therapist}</var>
-<arg>${therapist_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.752237" elapsed="0.000035"/>
-</kw>
-<kw name="Validate Created Therapist Response">
-<kw name="Should Contain" owner="BuiltIn">
-<arg>${therapist_result}</arg>
-<arg>id</arg>
-<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.752522" elapsed="0.000050"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${therapist_result}[first_name]</arg>
-<arg>${expected_data}[first_name]</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.752644" elapsed="0.000052"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${therapist_result}[specialization]</arg>
-<arg>${expected_data}[specialization]</arg>
-<doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.752764" elapsed="0.000051"/>
-</kw>
-<kw name="Log" owner="BuiltIn">
-<arg>IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID ${therapist_result}[id]</arg>
-<arg>INFO</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.752887" elapsed="0.000050"/>
-</kw>
-<arg>${created_therapist}</arg>
-<arg>${therapist_data}</arg>
-<status status="PASS" start="2025-11-07T23:11:05.752378" elapsed="0.000688"/>
-</kw>
-<status status="PASS" start="2025-11-07T23:11:05.752176" elapsed="0.000974"/>
-</branch>
-<branch type="EXCEPT" assign="${error}">
-<pattern>*</pattern>
-<kw name="Fail" owner="BuiltIn">
-<arg>TDD FAIL: POST therapists not implemented - implement this to make test pass: ${error}</arg>
-<doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.753299" elapsed="0.000060"/>
-</kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.753207" elapsed="0.000183"/>
-</branch>
-<status status="PASS" start="2025-11-07T23:11:05.752151" elapsed="0.001263"/>
-</try>
-<doc>TDD: Create therapist (happy path) using direct function calls</doc>
-<tag>post</tag>
-<tag>tdd</tag>
-<tag>therapists</tag>
-<status status="PASS" start="2025-11-07T23:11:05.751261" elapsed="0.002291"/>
-</test>
-<test id="s1-s3-s1-t3" name="Test Update Therapist - TDD" line="53">
-<kw name="Generate Random UUID" owner="common">
-<kw name="Evaluate" owner="BuiltIn">
-<var>${uuid}</var>
-<arg>str(__import__('uuid').uuid4())</arg>
-<doc>Evaluates the given expression in Python and returns the result.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.754872" elapsed="0.000057"/>
-</kw>
-<return>
-<value>${uuid}</value>
-<status status="PASS" start="2025-11-07T23:11:05.754988" elapsed="0.000020"/>
-</return>
-<var>${therapist_id}</var>
-<doc>Generate a random UUID for testing</doc>
-<status status="PASS" start="2025-11-07T23:11:05.754676" elapsed="0.000367"/>
-</kw>
-<kw name="Create Dictionary" owner="BuiltIn">
-<var>${therapist_data}</var>
-<arg>&amp;{THERAPIST_TEMPLATE}</arg>
-<doc>Creates and returns a dictionary based on the given ``items``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.755308" elapsed="0.000068"/>
-</kw>
-<kw name="Set To Dictionary" owner="Collections">
-<arg>${therapist_data}</arg>
-<arg>first_name=Updated</arg>
-<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.755539" elapsed="0.000053"/>
-</kw>
-<try>
-<branch type="TRY">
-<kw name="Update Therapist" owner="therapist_functions">
-<var>${updated_therapist}</var>
-<arg>${therapist_id}</arg>
-<arg>${therapist_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.755779" elapsed="0.000040"/>
-</kw>
-<kw name="Should Be Equal" owner="BuiltIn">
-<arg>${updated_therapist}</arg>
+<arg>${updated_report}</arg>
 <arg>${None}</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.755897" elapsed="0.000054"/>
+<status status="PASS" start="2025-11-10T17:18:55.215914" elapsed="0.000193"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
-<arg>SUCCESS: Update Therapist correctly returned None for non-existent therapist</arg>
+<msg time="2025-11-10T17:18:55.216284" level="INFO">SUCCESS: Update Report correctly returned None for non-existent report</msg>
+<arg>SUCCESS: Update Report correctly returned None for non-existent report</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.756023" elapsed="0.000049"/>
+<status status="PASS" start="2025-11-10T17:18:55.216201" elapsed="0.000113"/>
 </kw>
-<status status="PASS" start="2025-11-07T23:11:05.755714" elapsed="0.000386"/>
+<status status="PASS" start="2025-11-10T17:18:51.963160" elapsed="3.253183"/>
 </branch>
 <branch type="EXCEPT" assign="${error}">
 <pattern>*</pattern>
 <kw name="Fail" owner="BuiltIn">
-<arg>TDD FAIL: PUT therapists not implemented - implement this to make test pass: ${error}</arg>
+<arg>FAIL: PUT reports: ${error}</arg>
 <doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.756198" elapsed="0.000044"/>
+<status status="NOT RUN" start="2025-11-10T17:18:55.216458" elapsed="0.000015"/>
 </kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.756133" elapsed="0.000137"/>
+<status status="NOT RUN" start="2025-11-10T17:18:55.216386" elapsed="0.000111"/>
 </branch>
-<status status="PASS" start="2025-11-07T23:11:05.755688" elapsed="0.000603"/>
+<status status="PASS" start="2025-11-10T17:18:51.963138" elapsed="3.253382"/>
 </try>
-<doc>TDD: Update therapist with random/non-existent ID (expect None)</doc>
+<doc>Update report with random/non-existent ID (expect None)</doc>
 <tag>put</tag>
-<tag>tdd</tag>
-<tag>therapists</tag>
-<status status="PASS" start="2025-11-07T23:11:05.754261" elapsed="0.002189"/>
+<tag>reports</tag>
+<status status="PASS" start="2025-11-10T17:18:51.961192" elapsed="3.255705"/>
 </test>
-<test id="s1-s3-s1-t4" name="Test Delete Therapist - TDD" line="70">
+<test id="s1-s2-s1-t5" name="Delete Report (non-existent)" line="89">
 <kw name="Generate Random UUID" owner="common">
 <kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-10T17:18:55.218973" level="INFO">${uuid} = 330d535c-de06-497c-8fc8-f45753101e9e</msg>
 <var>${uuid}</var>
 <arg>str(__import__('uuid').uuid4())</arg>
 <doc>Evaluates the given expression in Python and returns the result.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.757210" elapsed="0.000041"/>
+<status status="PASS" start="2025-11-10T17:18:55.218766" elapsed="0.000231"/>
 </kw>
 <return>
 <value>${uuid}</value>
-<status status="PASS" start="2025-11-07T23:11:05.757291" elapsed="0.000012"/>
+<status status="PASS" start="2025-11-10T17:18:55.219044" elapsed="0.000032"/>
 </return>
-<var>${therapist_id}</var>
+<msg time="2025-11-10T17:18:55.219172" level="INFO">${report_id} = 330d535c-de06-497c-8fc8-f45753101e9e</msg>
+<var>${report_id}</var>
 <doc>Generate a random UUID for testing</doc>
-<status status="PASS" start="2025-11-07T23:11:05.757074" elapsed="0.000256"/>
+<status status="PASS" start="2025-11-10T17:18:55.218570" elapsed="0.000620"/>
 </kw>
 <try>
 <branch type="TRY">
-<kw name="Delete Therapist" owner="therapist_functions">
+<kw name="Delete Report" owner="report_functions">
+<msg time="2025-11-10T17:18:58.340864" level="INFO">${result} = False</msg>
 <var>${result}</var>
-<arg>${therapist_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.757634" elapsed="0.000041"/>
+<arg>${report_id}</arg>
+<status status="PASS" start="2025-11-10T17:18:55.219433" elapsed="3.121467"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${result}</arg>
 <arg>${False}</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.757753" elapsed="0.000050"/>
+<status status="PASS" start="2025-11-10T17:18:58.341040" elapsed="0.000182"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
-<arg>SUCCESS: Delete Therapist correctly returned False for non-existent therapist</arg>
+<msg time="2025-11-10T17:18:58.341386" level="INFO">SUCCESS: Delete Report correctly returned False for non-existent report</msg>
+<arg>SUCCESS: Delete Report correctly returned False for non-existent report</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.757871" elapsed="0.000045"/>
+<status status="PASS" start="2025-11-10T17:18:58.341309" elapsed="0.000105"/>
 </kw>
-<status status="PASS" start="2025-11-07T23:11:05.757564" elapsed="0.000378"/>
+<status status="PASS" start="2025-11-10T17:18:55.219358" elapsed="3.122085"/>
 </branch>
 <branch type="EXCEPT" assign="${error}">
 <pattern>*</pattern>
 <kw name="Fail" owner="BuiltIn">
-<arg>TDD FAIL: DELETE therapists not implemented - implement this to make test pass: ${error}</arg>
+<arg>FAIL: DELETE reports: ${error}</arg>
 <doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.758028" elapsed="0.000039"/>
+<status status="NOT RUN" start="2025-11-10T17:18:58.341552" elapsed="0.000013"/>
 </kw>
-<status status="NOT RUN" start="2025-11-07T23:11:05.757972" elapsed="0.000121"/>
+<status status="NOT RUN" start="2025-11-10T17:18:58.341484" elapsed="0.000155"/>
 </branch>
-<status status="PASS" start="2025-11-07T23:11:05.757537" elapsed="0.000575"/>
+<status status="PASS" start="2025-11-10T17:18:55.219329" elapsed="3.122335"/>
 </try>
-<doc>TDD: Delete therapist with random/non-existent ID (expect False)</doc>
+<doc>Delete report with random/non-existent ID (expect False)</doc>
 <tag>delete</tag>
-<tag>tdd</tag>
-<tag>therapists</tag>
-<status status="PASS" start="2025-11-07T23:11:05.756742" elapsed="0.001539"/>
+<tag>reports</tag>
+<status status="PASS" start="2025-11-10T17:18:55.218149" elapsed="3.123853"/>
 </test>
-<test id="s1-s3-s1-t5" name="Test Therapist Lifecycle - TDD (happy path)" line="83">
+<test id="s1-s2-s1-t6" name="Test Report Lifecycle (happy path)" line="103">
 <kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-10T17:18:58.342982" level="INFO">${report_data} = {'title': 'TDD Test Report', 'description': 'Test report for TDD implementation', 'type_id': '1', 'language_id': '1', 'patient_id': '', 'therapist_id': '', 'content': '{"diagnosis": "TDD test", "treat...</msg>
+<var>${report_data}</var>
+<arg>&amp;{REPORT_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-10T17:18:58.342766" elapsed="0.000239"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${report_data}</arg>
+<arg>title=HappyPathReport</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-10T17:18:58.343155" elapsed="0.000123"/>
+</kw>
+<kw name="Create Report" owner="report_functions">
+<msg time="2025-11-10T17:19:01.448448" level="INFO">Error running TSX script: TSX script failed: Error calling actual createReport function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+
+Failed to call actual createReport function: TSX script failed: Error calling actual createReport function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+, using mock/local data</msg>
+<msg time="2025-11-10T17:19:01.448575" level="INFO">${created} = {'title': 'HappyPathReport', 'description': 'Test report for TDD implementation', 'type_id': '1', 'language_id': '1', 'patient_id': '', 'therapist_id': '', 'content': '{"diagnosis": "TDD test", "treat...</msg>
+<var>${created}</var>
+<arg>${report_data}</arg>
+<status status="PASS" start="2025-11-10T17:18:58.343405" elapsed="3.105191"/>
+</kw>
+<kw name="Validate Created Report Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${report_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-11-10T17:19:01.449270" elapsed="0.000112"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[title]</arg>
+<arg>${expected_data}[title]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-10T17:19:01.449462" elapsed="0.000137"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[description]</arg>
+<arg>${expected_data}[description]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-10T17:19:01.449668" elapsed="0.000118"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:01.449949" level="INFO">IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID a9457c15-187e-4712-a078-9a53482a9bfc</msg>
+<arg>IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID ${report_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-10T17:19:01.449855" elapsed="0.000122"/>
+</kw>
+<arg>${created}</arg>
+<arg>${report_data}</arg>
+<doc>Validate successful report creation response</doc>
+<status status="PASS" start="2025-11-10T17:19:01.448977" elapsed="0.001043"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-10T17:19:01.450489" level="INFO">${report_id} = a9457c15-187e-4712-a078-9a53482a9bfc</msg>
+<var>${report_id}</var>
+<arg>${created}[id]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-11-10T17:19:01.450343" elapsed="0.000164"/>
+</kw>
+<kw name="Get Report By Id" owner="report_functions">
+<msg time="2025-11-10T17:19:01.450893" level="INFO">${read} = {'title': 'HappyPathReport', 'description': 'Test report for TDD implementation', 'type_id': '1', 'language_id': '1', 'patient_id': '', 'therapist_id': '', 'content': '{"diagnosis": "TDD test", "treat...</msg>
+<var>${read}</var>
+<arg>${report_id}</arg>
+<status status="PASS" start="2025-11-10T17:19:01.450764" elapsed="0.000148"/>
+</kw>
+<kw name="Should Not Be Equal" owner="BuiltIn">
+<msg time="2025-11-10T17:19:01.451251" level="INFO">Argument types are:
+&lt;class 'dict'&gt;
+&lt;class 'NoneType'&gt;</msg>
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are equal.</doc>
+<status status="PASS" start="2025-11-10T17:19:01.451136" elapsed="0.000151"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}[title]</arg>
+<arg>${report_data}[title]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-10T17:19:01.451512" elapsed="0.000145"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${report_data}</arg>
+<arg>title=HappyPathReportUpdated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-10T17:19:01.451889" elapsed="0.000111"/>
+</kw>
+<kw name="Update Report" owner="report_functions">
+<msg time="2025-11-10T17:19:04.300705" level="INFO">Error running TSX script: TSX script failed: Error calling actual updateReport function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context</msg>
+<msg time="2025-11-10T17:19:04.300850" level="INFO">${updated} = {'title': 'HappyPathReportUpdated', 'description': 'Test report for TDD implementation', 'type_id': '1', 'language_id': '1', 'patient_id': '', 'therapist_id': '', 'content': '{"diagnosis": "TDD test",...</msg>
+<var>${updated}</var>
+<arg>${report_id}</arg>
+<arg>${report_data}</arg>
+<status status="PASS" start="2025-11-10T17:19:01.452437" elapsed="2.848438"/>
+</kw>
+<kw name="Validate Created Report Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${report_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-11-10T17:19:04.301579" elapsed="0.000127"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[title]</arg>
+<arg>${expected_data}[title]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-10T17:19:04.301826" elapsed="0.000260"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[description]</arg>
+<arg>${expected_data}[description]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-10T17:19:04.302224" elapsed="0.000240"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:04.302819" level="INFO">IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID a9457c15-187e-4712-a078-9a53482a9bfc</msg>
+<arg>IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID ${report_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-10T17:19:04.302604" elapsed="0.000278"/>
+</kw>
+<arg>${updated}</arg>
+<arg>${report_data}</arg>
+<doc>Validate successful report creation response</doc>
+<status status="PASS" start="2025-11-10T17:19:04.301274" elapsed="0.001697"/>
+</kw>
+<kw name="Delete Report" owner="report_functions">
+<msg time="2025-11-10T17:19:07.591972" level="INFO">${deleted} = True</msg>
+<var>${deleted}</var>
+<arg>${report_id}</arg>
+<status status="PASS" start="2025-11-10T17:19:04.303590" elapsed="3.288420"/>
+</kw>
+<kw name="Wait Until Keyword Succeeds" owner="BuiltIn">
+<kw name="Get Report By ID Should Be None">
+<kw name="Get Report By Id" owner="report_functions">
+<msg time="2025-11-10T17:19:10.371043" level="INFO">${read} = None</msg>
+<var>${read}</var>
+<arg>${report_id}</arg>
+<status status="PASS" start="2025-11-10T17:19:07.592851" elapsed="2.778228"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-10T17:19:10.371213" elapsed="0.000179"/>
+</kw>
+<arg>${report_id}</arg>
+<doc>Fail if Get Report By ID returns a value (used for retries after delete)</doc>
+<status status="PASS" start="2025-11-10T17:19:07.592625" elapsed="2.778823"/>
+</kw>
+<arg>5 times</arg>
+<arg>1s</arg>
+<arg>Get Report By ID Should Be None</arg>
+<arg>${report_id}</arg>
+<doc>Runs the specified keyword and retries if it fails.</doc>
+<status status="PASS" start="2025-11-10T17:19:07.592371" elapsed="2.779111"/>
+</kw>
+<doc>Create, Read, Update, Delete report lifecycle (happy path)</doc>
+<tag>lifecycle</tag>
+<tag>reports</tag>
+<status status="PASS" start="2025-11-10T17:18:58.342405" elapsed="12.029295"/>
+</test>
+<kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:10.372477" level="INFO">Cleaning up test environment</msg>
+<arg>Cleaning up test environment</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-10T17:19:10.372382" elapsed="0.000133"/>
+</kw>
+<doc>Clean up test environment</doc>
+<status status="PASS" start="2025-11-10T17:19:10.372222" elapsed="0.000341"/>
+</kw>
+<doc>Report tests - Direct function calls using Supabase</doc>
+<status status="PASS" start="2025-11-10T17:18:43.810799" elapsed="26.561785"/>
+</suite>
+<status status="PASS" start="2025-11-10T17:18:43.809442" elapsed="26.563879"/>
+</suite>
+<suite id="s1-s3" name="Therapists" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\therapists">
+<suite id="s1-s3-s1" name="Therapist Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\therapists\therapist_tests.robot">
+<kw name="Setup Test Environment" owner="common" type="SETUP">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:10.380404" level="INFO">Setting up test environment for direct function calls</msg>
+<arg>Setting up test environment for direct function calls</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-10T17:19:10.380286" elapsed="0.000164"/>
+</kw>
+<doc>Initialize test environment</doc>
+<status status="PASS" start="2025-11-10T17:19:10.380044" elapsed="0.000464"/>
+</kw>
+<test id="s1-s3-s1-t1" name="Get Therapist By ID (non-existent)" line="32">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-10T17:19:10.381428" level="INFO">${uuid} = 20980438-ee6a-4d34-99c3-4b55c4773906</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-10T17:19:10.381167" elapsed="0.000287"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-10T17:19:10.381505" elapsed="0.000038"/>
+</return>
+<msg time="2025-11-10T17:19:10.381640" level="INFO">${therapist_id} = 20980438-ee6a-4d34-99c3-4b55c4773906</msg>
+<var>${therapist_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-10T17:19:10.380968" elapsed="0.000689"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Get Therapist By Id" owner="therapist_functions">
+<msg time="2025-11-10T17:19:13.358774" level="INFO">Error running TSX script: TSX script failed: Error calling actual readTherapist function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context</msg>
+<msg time="2025-11-10T17:19:13.358905" level="INFO">${therapist} = None</msg>
+<var>${therapist}</var>
+<arg>${therapist_id}</arg>
+<status status="PASS" start="2025-11-10T17:19:10.381969" elapsed="2.976957"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-10T17:19:13.359067" elapsed="0.000185"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:13.359426" level="INFO">SUCCESS: Get therapist By ID correctly returned None for non-existent therapist</msg>
+<arg>SUCCESS: Get therapist By ID correctly returned None for non-existent therapist</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-10T17:19:13.359347" elapsed="0.000108"/>
+</kw>
+<status status="PASS" start="2025-11-10T17:19:10.381882" elapsed="2.977601"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: GET therapist: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-10T17:19:13.359593" elapsed="0.000013"/>
+</kw>
+<status status="NOT RUN" start="2025-11-10T17:19:13.359526" elapsed="0.000105"/>
+</branch>
+<status status="PASS" start="2025-11-10T17:19:10.381845" elapsed="2.977807"/>
+</try>
+<doc>Get therapist by random/non-existent ID (expect None)</doc>
+<tag>get</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-10T17:19:10.380559" elapsed="2.979360"/>
+</test>
+<test id="s1-s3-s1-t2" name="Get All Therapists" line="45">
+<try>
+<branch type="TRY">
+<kw name="Get All Therapists" owner="therapist_functions">
+<msg time="2025-11-10T17:19:16.335166" level="INFO">Error running TSX script: TSX script failed: Error calling actual readTherapists function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+
+Failed to call actual readTherapists function: TSX script failed: Error calling actual readTherapists function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+, using mock/local data</msg>
+<msg time="2025-11-10T17:19:16.335333" level="INFO">${result} = {'data': [{'id': '7e4ddace-7fd6-429d-9c51-7c7cf545e0d7', 'first_name': 'Dr. Mock', 'last_name': 'Therapist', 'specialization': 'Physical Therapy', 'email': 'mock@example.com', 'phone': '+1234567890', ...</msg>
+<var>${result}</var>
+<status status="PASS" start="2025-11-10T17:19:13.360933" elapsed="2.974422"/>
+</kw>
+<kw name="Validate Therapists List Response">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-10T17:19:16.336133" level="INFO">${therapists} = [{'id': '7e4ddace-7fd6-429d-9c51-7c7cf545e0d7', 'first_name': 'Dr. Mock', 'last_name': 'Therapist', 'specialization': 'Physical Therapy', 'email': 'mock@example.com', 'phone': '+1234567890', 'created_...</msg>
+<var>${therapists}</var>
+<arg>${result}[data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-11-10T17:19:16.335950" elapsed="0.000209"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-11-10T17:19:16.336372" level="INFO">Length is 1.</msg>
+<arg>${therapists}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2025-11-10T17:19:16.336274" elapsed="0.000130"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:16.336586" level="INFO">IMPLEMENTATION SUCCESS: Therapist list retrieval working correctly - returned 1 therapists</msg>
+<arg>IMPLEMENTATION SUCCESS: Therapist list retrieval working correctly - returned ${result}[count] therapists</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-10T17:19:16.336483" elapsed="0.000131"/>
+</kw>
+<arg>${result}</arg>
+<status status="PASS" start="2025-11-10T17:19:16.335552" elapsed="0.001108"/>
+</kw>
+<status status="PASS" start="2025-11-10T17:19:13.360851" elapsed="2.975883"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: GET therapists: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-10T17:19:16.336856" elapsed="0.000014"/>
+</kw>
+<status status="NOT RUN" start="2025-11-10T17:19:16.336780" elapsed="0.000114"/>
+</branch>
+<status status="PASS" start="2025-11-10T17:19:13.360821" elapsed="2.976094"/>
+</try>
+<doc>Get all therapists (list retrieval)</doc>
+<tag>get</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-10T17:19:13.360459" elapsed="2.976709"/>
+</test>
+<test id="s1-s3-s1-t3" name="Get Therapists with Parameters" line="56">
+<try>
+<branch type="TRY">
+<kw name="Get All Therapists" owner="therapist_functions">
+<msg time="2025-11-10T17:19:19.050591" level="INFO">Error running TSX script: TSX script failed: Error calling actual readTherapists function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+
+Failed to call actual readTherapists function: TSX script failed: Error calling actual readTherapists function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+, using mock/local data</msg>
+<msg time="2025-11-10T17:19:19.050748" level="INFO">${result} = {'data': [{'id': 'c867c54b-4e14-4f21-82f9-3af4cf5a4390', 'first_name': 'Dr. Mock', 'last_name': 'Therapist', 'specialization': 'Physical Therapy', 'email': 'mock@example.com', 'phone': '+1234567890', ...</msg>
+<var>${result}</var>
+<arg>clinicID=1</arg>
+<arg>countryID=1</arg>
+<arg>limit=10</arg>
+<arg>offset=0</arg>
+<status status="PASS" start="2025-11-10T17:19:16.337921" elapsed="2.712853"/>
+</kw>
+<kw name="Validate Therapists List Response">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-10T17:19:19.051452" level="INFO">${therapists} = [{'id': 'c867c54b-4e14-4f21-82f9-3af4cf5a4390', 'first_name': 'Dr. Mock', 'last_name': 'Therapist', 'specialization': 'Physical Therapy', 'email': 'mock@example.com', 'phone': '+1234567890', 'created_...</msg>
+<var>${therapists}</var>
+<arg>${result}[data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-11-10T17:19:19.051245" elapsed="0.000231"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-11-10T17:19:19.051681" level="INFO">Length is 1.</msg>
+<arg>${therapists}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2025-11-10T17:19:19.051574" elapsed="0.000143"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:19.051940" level="INFO">IMPLEMENTATION SUCCESS: Therapist list retrieval working correctly - returned 1 therapists</msg>
+<arg>IMPLEMENTATION SUCCESS: Therapist list retrieval working correctly - returned ${result}[count] therapists</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-10T17:19:19.051805" elapsed="0.000170"/>
+</kw>
+<arg>${result}</arg>
+<status status="PASS" start="2025-11-10T17:19:19.050970" elapsed="0.001059"/>
+</kw>
+<status status="PASS" start="2025-11-10T17:19:16.337834" elapsed="2.714220"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: GET therapists: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-10T17:19:19.052187" elapsed="0.000016"/>
+</kw>
+<status status="NOT RUN" start="2025-11-10T17:19:19.052104" elapsed="0.000134"/>
+</branch>
+<status status="PASS" start="2025-11-10T17:19:16.337806" elapsed="2.714457"/>
+</try>
+<doc>Test get therapists with parameters using direct function calls</doc>
+<tag>get</tag>
+<tag>parameters</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-10T17:19:16.337541" elapsed="2.715024"/>
+</test>
+<test id="s1-s3-s1-t4" name="Update Therapist (non-existent)" line="67">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-10T17:19:19.054071" level="INFO">${uuid} = 16599f88-48f0-4e78-9cfc-00792406be61</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-10T17:19:19.053824" elapsed="0.000277"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-10T17:19:19.054160" elapsed="0.000036"/>
+</return>
+<msg time="2025-11-10T17:19:19.054877" level="INFO">${therapist_id} = 16599f88-48f0-4e78-9cfc-00792406be61</msg>
+<var>${therapist_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-10T17:19:19.053582" elapsed="0.001326"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-10T17:19:19.055496" level="INFO">${therapist_data} = {'first_name': 'TestTherapist', 'last_name': 'TDD', 'age': '30', 'bio': 'TDD test therapist bio', 'clinic_id': '1', 'picture': 'https://example.com/test.jpg', 'specialization': 'Physical Therapy', 'co...</msg>
 <var>${therapist_data}</var>
 <arg>&amp;{THERAPIST_TEMPLATE}</arg>
 <doc>Creates and returns a dictionary based on the given ``items``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.759059" elapsed="0.000114"/>
+<status status="PASS" start="2025-11-10T17:19:19.055222" elapsed="0.000302"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${therapist_data}</arg>
+<arg>first_name=Updated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-10T17:19:19.055748" elapsed="0.000150"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Update Therapist" owner="therapist_functions">
+<msg time="2025-11-10T17:19:21.969936" level="INFO">Error running TSX script: TSX script failed: Error calling actual updateTherapist function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context</msg>
+<msg time="2025-11-10T17:19:21.970077" level="INFO">${updated_therapist} = None</msg>
+<var>${updated_therapist}</var>
+<arg>${therapist_id}</arg>
+<arg>${therapist_data}</arg>
+<status status="PASS" start="2025-11-10T17:19:19.056153" elapsed="2.913946"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${updated_therapist}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-10T17:19:21.970257" elapsed="0.000196"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:21.970637" level="INFO">SUCCESS: Update Therapist correctly returned None for non-existent therapist</msg>
+<arg>SUCCESS: Update Therapist correctly returned None for non-existent therapist</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-10T17:19:21.970554" elapsed="0.000113"/>
+</kw>
+<status status="PASS" start="2025-11-10T17:19:19.056070" elapsed="2.914626"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: PUT therapists: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-10T17:19:21.970811" elapsed="0.000014"/>
+</kw>
+<status status="NOT RUN" start="2025-11-10T17:19:21.970739" elapsed="0.000114"/>
+</branch>
+<status status="PASS" start="2025-11-10T17:19:19.056038" elapsed="2.914837"/>
+</try>
+<doc>Update therapist with random/non-existent ID (expect None)</doc>
+<tag>put</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-10T17:19:19.053098" elapsed="2.918122"/>
+</test>
+<test id="s1-s3-s1-t5" name="Delete Therapist (non-existent)" line="84">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-10T17:19:21.972453" level="INFO">${uuid} = a2fa3305-517d-48e7-beca-072df594dba2</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-10T17:19:21.972259" elapsed="0.000264"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-10T17:19:21.972574" elapsed="0.000033"/>
+</return>
+<msg time="2025-11-10T17:19:21.972701" level="INFO">${therapist_id} = a2fa3305-517d-48e7-beca-072df594dba2</msg>
+<var>${therapist_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-10T17:19:21.972069" elapsed="0.000649"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Delete Therapist" owner="therapist_functions">
+<msg time="2025-11-10T17:19:25.152141" level="INFO">${result} = False</msg>
+<var>${result}</var>
+<arg>${therapist_id}</arg>
+<status status="PASS" start="2025-11-10T17:19:21.972988" elapsed="3.179190"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${result}</arg>
+<arg>${False}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-10T17:19:25.152322" elapsed="0.000185"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:25.152680" level="INFO">SUCCESS: Delete Therapist correctly returned False for non-existent therapist</msg>
+<arg>SUCCESS: Delete Therapist correctly returned False for non-existent therapist</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-10T17:19:25.152598" elapsed="0.000111"/>
+</kw>
+<status status="PASS" start="2025-11-10T17:19:21.972919" elapsed="3.179819"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: DELETE therapists: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-10T17:19:25.152846" elapsed="0.000012"/>
+</kw>
+<status status="NOT RUN" start="2025-11-10T17:19:25.152779" elapsed="0.000103"/>
+</branch>
+<status status="PASS" start="2025-11-10T17:19:21.972891" elapsed="3.180011"/>
+</try>
+<doc>Delete therapist with random/non-existent ID (expect False)</doc>
+<tag>delete</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-10T17:19:21.971672" elapsed="3.181602"/>
+</test>
+<test id="s1-s3-s1-t6" name="Therapist Lifecycle (happy path)" line="98">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-10T17:19:25.154829" level="INFO">${therapist_data} = {'first_name': 'TestTherapist', 'last_name': 'TDD', 'age': '30', 'bio': 'TDD test therapist bio', 'clinic_id': '1', 'picture': 'https://example.com/test.jpg', 'specialization': 'Physical Therapy', 'co...</msg>
+<var>${therapist_data}</var>
+<arg>&amp;{THERAPIST_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-10T17:19:25.154608" elapsed="0.000245"/>
 </kw>
 <kw name="Set To Dictionary" owner="Collections">
 <arg>${therapist_data}</arg>
 <arg>first_name=HappyPathTherapist</arg>
 <doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.759449" elapsed="0.000109"/>
+<status status="PASS" start="2025-11-10T17:19:25.155195" elapsed="0.000141"/>
 </kw>
 <kw name="Create Therapist" owner="therapist_functions">
+<msg time="2025-11-10T17:19:28.384728" level="INFO">Error running TSX script: TSX script failed: Error calling actual createTherapist function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+
+Failed to call actual createTherapist function: TSX script failed: Error calling actual createTherapist function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+, using mock/local data</msg>
+<msg time="2025-11-10T17:19:28.384980" level="INFO">${created} = {'first_name': 'HappyPathTherapist', 'last_name': 'TDD', 'age': '30', 'bio': 'TDD test therapist bio', 'clinic_id': '1', 'picture': 'https://example.com/test.jpg', 'specialization': 'Physical Therapy'...</msg>
 <var>${created}</var>
 <arg>${therapist_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.759757" elapsed="0.000047"/>
+<status status="PASS" start="2025-11-10T17:19:25.155685" elapsed="3.229340"/>
 </kw>
 <kw name="Validate Created Therapist Response">
 <kw name="Should Contain" owner="BuiltIn">
 <arg>${therapist_result}</arg>
 <arg>id</arg>
 <doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.760218" elapsed="0.000057"/>
+<status status="PASS" start="2025-11-10T17:19:28.386420" elapsed="0.000211"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${therapist_result}[first_name]</arg>
 <arg>${expected_data}[first_name]</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.760358" elapsed="0.000054"/>
+<status status="PASS" start="2025-11-10T17:19:28.386785" elapsed="0.000256"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${therapist_result}[specialization]</arg>
 <arg>${expected_data}[specialization]</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.760486" elapsed="0.000051"/>
+<status status="PASS" start="2025-11-10T17:19:28.387202" elapsed="0.000361"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:28.388038" level="INFO">IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID df2a2344-4564-4044-b586-94bb03097e54</msg>
 <arg>IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID ${therapist_result}[id]</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.760608" elapsed="0.000057"/>
+<status status="PASS" start="2025-11-10T17:19:28.387766" elapsed="0.000354"/>
 </kw>
 <arg>${created}</arg>
 <arg>${therapist_data}</arg>
-<status status="PASS" start="2025-11-07T23:11:05.760039" elapsed="0.000666"/>
+<status status="PASS" start="2025-11-10T17:19:28.385824" elapsed="0.002420"/>
 </kw>
 <kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-10T17:19:28.389378" level="INFO">${therapist_id} = df2a2344-4564-4044-b586-94bb03097e54</msg>
 <var>${therapist_id}</var>
 <arg>${created}[id]</arg>
 <doc>Returns the given values which can then be assigned to a variables.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.760918" elapsed="0.000053"/>
+<status status="PASS" start="2025-11-10T17:19:28.388994" elapsed="0.000425"/>
 </kw>
 <kw name="Get Therapist By Id" owner="therapist_functions">
+<msg time="2025-11-10T17:19:28.390293" level="INFO">${read} = {'first_name': 'HappyPathTherapist', 'last_name': 'TDD', 'age': '30', 'bio': 'TDD test therapist bio', 'clinic_id': '1', 'picture': 'https://example.com/test.jpg', 'specialization': 'Physical Therapy'...</msg>
 <var>${read}</var>
 <arg>${therapist_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.761161" elapsed="0.000047"/>
+<status status="PASS" start="2025-11-10T17:19:28.389969" elapsed="0.000370"/>
 </kw>
 <kw name="Should Not Be Equal" owner="BuiltIn">
+<msg time="2025-11-10T17:19:28.391278" level="INFO">Argument types are:
+&lt;class 'dict'&gt;
+&lt;class 'NoneType'&gt;</msg>
 <arg>${read}</arg>
 <arg>${None}</arg>
 <doc>Fails if the given objects are equal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.761359" elapsed="0.000058"/>
+<status status="PASS" start="2025-11-10T17:19:28.390954" elapsed="0.000424"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${read}[first_name]</arg>
 <arg>${therapist_data}[first_name]</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.761549" elapsed="0.000054"/>
+<status status="PASS" start="2025-11-10T17:19:28.392037" elapsed="0.000449"/>
 </kw>
 <kw name="Set To Dictionary" owner="Collections">
 <arg>${therapist_data}</arg>
 <arg>first_name=HappyPathUpdated</arg>
 <doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.761732" elapsed="0.000047"/>
+<status status="PASS" start="2025-11-10T17:19:28.393156" elapsed="0.000392"/>
 </kw>
 <kw name="Update Therapist" owner="therapist_functions">
+<msg time="2025-11-10T17:19:31.394729" level="INFO">Error running TSX script: TSX script failed: Error calling actual updateTherapist function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context</msg>
+<msg time="2025-11-10T17:19:31.394864" level="INFO">${updated} = {'first_name': 'HappyPathUpdated', 'last_name': 'TDD', 'age': '30', 'bio': 'TDD test therapist bio', 'clinic_id': '1', 'picture': 'https://example.com/test.jpg', 'specialization': 'Physical Therapy', ...</msg>
 <var>${updated}</var>
 <arg>${therapist_id}</arg>
 <arg>${therapist_data}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.762014" elapsed="0.000038"/>
+<status status="PASS" start="2025-11-10T17:19:28.394966" elapsed="2.999921"/>
 </kw>
 <kw name="Validate Created Therapist Response">
 <kw name="Should Contain" owner="BuiltIn">
 <arg>${therapist_result}</arg>
 <arg>id</arg>
 <doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.762382" elapsed="0.000048"/>
+<status status="PASS" start="2025-11-10T17:19:31.395490" elapsed="0.000114"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${therapist_result}[first_name]</arg>
 <arg>${expected_data}[first_name]</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.762500" elapsed="0.000048"/>
+<status status="PASS" start="2025-11-10T17:19:31.395687" elapsed="0.000137"/>
 </kw>
 <kw name="Should Be Equal" owner="BuiltIn">
 <arg>${therapist_result}[specialization]</arg>
 <arg>${expected_data}[specialization]</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.762614" elapsed="0.000046"/>
+<status status="PASS" start="2025-11-10T17:19:31.395896" elapsed="0.000120"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:31.396182" level="INFO">IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID df2a2344-4564-4044-b586-94bb03097e54</msg>
 <arg>IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID ${therapist_result}[id]</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.762727" elapsed="0.000054"/>
+<status status="PASS" start="2025-11-10T17:19:31.396087" elapsed="0.000123"/>
 </kw>
 <arg>${updated}</arg>
 <arg>${therapist_data}</arg>
-<status status="PASS" start="2025-11-07T23:11:05.762216" elapsed="0.000599"/>
+<status status="PASS" start="2025-11-10T17:19:31.395221" elapsed="0.001034"/>
 </kw>
 <kw name="Delete Therapist" owner="therapist_functions">
+<msg time="2025-11-10T17:19:34.202146" level="INFO">${deleted} = True</msg>
 <var>${deleted}</var>
 <arg>${therapist_id}</arg>
-<status status="NOT RUN" start="2025-11-07T23:11:05.762961" elapsed="0.000033"/>
+<status status="PASS" start="2025-11-10T17:19:31.396540" elapsed="2.805668"/>
 </kw>
-<kw name="Should Be True" owner="BuiltIn">
-<arg>${deleted}</arg>
-<doc>Fails if the given condition is not true.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.763104" elapsed="0.000039"/>
+<kw name="Wait Until Keyword Succeeds" owner="BuiltIn">
+<kw name="Get Therapist By ID Should Be None">
+<kw name="Get Therapist By Id" owner="therapist_functions">
+<msg time="2025-11-10T17:19:37.245750" level="INFO">Error running TSX script: TSX script failed: Error calling actual readTherapist function: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context</msg>
+<msg time="2025-11-10T17:19:37.245895" level="INFO">${read} = None</msg>
+<var>${read}</var>
+<arg>${therapist_id}</arg>
+<status status="PASS" start="2025-11-10T17:19:34.203928" elapsed="3.041989"/>
 </kw>
-<doc>TDD: Create, Read, Update, Delete therapist lifecycle (happy path)</doc>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-10T17:19:37.246066" elapsed="0.000188"/>
+</kw>
+<arg>${therapist_id}</arg>
+<doc>Fail if Get Therapist By ID returns a value (used for retries after delete)</doc>
+<status status="PASS" start="2025-11-10T17:19:34.203391" elapsed="3.042924"/>
+</kw>
+<arg>5 times</arg>
+<arg>1s</arg>
+<arg>Get Therapist By ID Should Be None</arg>
+<arg>${therapist_id}</arg>
+<doc>Runs the specified keyword and retries if it fails.</doc>
+<status status="PASS" start="2025-11-10T17:19:34.202855" elapsed="3.043496"/>
+</kw>
+<doc>Create, Read, Update, Delete therapist lifecycle (happy path)</doc>
 <tag>lifecycle</tag>
-<tag>tdd</tag>
 <tag>therapists</tag>
-<status status="PASS" start="2025-11-07T23:11:05.758563" elapsed="0.004706"/>
+<status status="PASS" start="2025-11-10T17:19:25.154165" elapsed="12.092437"/>
 </test>
 <kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
 <kw name="Log" owner="BuiltIn">
+<msg time="2025-11-10T17:19:37.247579" level="INFO">Cleaning up test environment</msg>
 <arg>Cleaning up test environment</arg>
 <arg>INFO</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-11-07T23:11:05.763804" elapsed="0.000053"/>
+<status status="PASS" start="2025-11-10T17:19:37.247426" elapsed="0.000202"/>
 </kw>
 <doc>Clean up test environment</doc>
-<status status="PASS" start="2025-11-07T23:11:05.763698" elapsed="0.000197"/>
+<status status="PASS" start="2025-11-10T17:19:37.247259" elapsed="0.000429"/>
 </kw>
-<doc>Therapist API TDD tests - Direct function calls using Supabase</doc>
-<status status="PASS" start="2025-11-07T23:11:05.741350" elapsed="0.022567"/>
+<doc>Therapist tests - Direct function calls using Supabase</doc>
+<status status="PASS" start="2025-11-10T17:19:10.375293" elapsed="26.872419"/>
 </suite>
-<status status="PASS" start="2025-11-07T23:11:05.738632" elapsed="0.025953"/>
+<status status="PASS" start="2025-11-10T17:19:10.373857" elapsed="26.874550"/>
 </suite>
-<status status="PASS" start="2025-11-07T23:11:05.618920" elapsed="0.146326"/>
+<status status="PASS" start="2025-11-10T17:18:14.864773" elapsed="82.384181"/>
 </suite>
 <statistics>
 <total>
-<stat pass="19" fail="0" skip="0">All Tests</stat>
+<stat pass="18" fail="0" skip="0">All Tests</stat>
 </total>
 <tag>
 <stat pass="3" fail="0" skip="0">delete</stat>
-<stat pass="7" fail="0" skip="0">get</stat>
+<stat pass="9" fail="0" skip="0">get</stat>
 <stat pass="3" fail="0" skip="0">lifecycle</stat>
-<stat pass="2" fail="0" skip="0">parameters</stat>
-<stat pass="7" fail="0" skip="0">patients</stat>
-<stat pass="2" fail="0" skip="0">post</stat>
+<stat pass="3" fail="0" skip="0">parameters</stat>
+<stat pass="6" fail="0" skip="0">patients</stat>
 <stat pass="3" fail="0" skip="0">put</stat>
-<stat pass="1" fail="0" skip="0">read</stat>
-<stat pass="7" fail="0" skip="0">reports</stat>
-<stat pass="19" fail="0" skip="0">tdd</stat>
-<stat pass="5" fail="0" skip="0">therapists</stat>
+<stat pass="6" fail="0" skip="0">reports</stat>
+<stat pass="6" fail="0" skip="0">therapists</stat>
 </tag>
 <suite>
-<stat pass="19" fail="0" skip="0" id="s1" name="Robot">Robot</stat>
-<stat pass="7" fail="0" skip="0" id="s1-s1" name="Patients">Robot.Patients</stat>
-<stat pass="7" fail="0" skip="0" id="s1-s1-s1" name="Patient Tests">Robot.Patients.Patient Tests</stat>
-<stat pass="7" fail="0" skip="0" id="s1-s2" name="Reports">Robot.Reports</stat>
-<stat pass="7" fail="0" skip="0" id="s1-s2-s1" name="Report Tests">Robot.Reports.Report Tests</stat>
-<stat pass="5" fail="0" skip="0" id="s1-s3" name="Therapists">Robot.Therapists</stat>
-<stat pass="5" fail="0" skip="0" id="s1-s3-s1" name="Therapist Tests">Robot.Therapists.Therapist Tests</stat>
+<stat pass="18" fail="0" skip="0" id="s1" name="Robot">Robot</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s1" name="Patients">Robot.Patients</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s1-s1" name="Patient Tests">Robot.Patients.Patient Tests</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s2" name="Reports">Robot.Reports</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s2-s1" name="Report Tests">Robot.Reports.Report Tests</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s3" name="Therapists">Robot.Therapists</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s3-s1" name="Therapist Tests">Robot.Therapists.Therapist Tests</stat>
 </suite>
 </statistics>
 <errors>

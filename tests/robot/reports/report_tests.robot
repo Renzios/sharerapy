@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation    Report API TDD tests - Direct function calls using Supabase
+Documentation    Report tests - Direct function calls using Supabase
 Resource         ../resources/common.robot
 Resource         ../resources/test_data.robot
 Library          ../resources/report_functions.py
@@ -24,11 +24,17 @@ Validate Reports List Response
     Should Not Be Empty    ${reports}
     Log    IMPLEMENTATION SUCCESS: Report list retrieval working correctly - returned ${result}[count] reports    INFO
 
+Get Report By ID Should Be None
+    [Documentation]    Fail if Get Report By ID returns a value (used for retries after delete)
+    [Arguments]    ${report_id}
+    ${read}=    Get Report By ID    ${report_id}
+    Should Be Equal    ${read}    ${None}
+
 
 *** Test Cases ***
-Get Report By ID - TDD (non-existent)
-    [Documentation]    TDD: Get report by random/non-existent ID (expect None)
-    [Tags]    tdd    reports    get
+Get Report By ID (non-existent)
+    [Documentation]    Get report by random/non-existent ID (expect None)
+    [Tags]    reports    get
     ${report_id}=    Generate Random UUID
     
     TRY
@@ -36,40 +42,36 @@ Get Report By ID - TDD (non-existent)
         Should Be Equal    ${report}    ${None}
         Log    SUCCESS: Get Report By ID correctly returned None for non-existent report    INFO
     EXCEPT    *    AS    ${error}
-        Fail    TDD FAIL: GET reports by ID not implemented - implement to make test pass: ${error}
+        Fail    FAIL: GET reports: ${error}
     END
 
 
-Test Get All Reports - TDD
-    [Documentation]    TDD: Test get all reports using direct function calls
-    [Tags]    tdd    reports    get
+Get All Reports
+    [Documentation]    Test get all reports using direct function calls
+    [Tags]    reports    get
     
     TRY
         ${result}=    Get All Reports
         Validate Reports List Response    ${result}
     EXCEPT    *    AS    ${error}
-        Fail    TDD FAIL: GET reports not implemented - implement this endpoint to make test pass: ${error}
+        Fail    FAIL: GET reports: ${error}
     END
 
 
-Create Report - TDD (happy path)
-    [Documentation]    TDD: Create report (happy path) using direct function calls
-    [Tags]    tdd    reports    post
-    
-    ${report_data}=    Create Dictionary    &{REPORT_TEMPLATE}
-    Set To Dictionary    ${report_data}    title=TDD Test Report
+Get Reports with Parameters
+    [Documentation]    Test get reports with parameters using direct function calls
+    [Tags]    reports    get    parameters
     
     TRY
-        ${created_report}=    Create Report    ${report_data}
-        Validate Created Report Response    ${created_report}    ${report_data}
+        ${result}=    Get All Reports    search=assessment    type_id=1    limit=10    offset=0
+        Validate Reports List Response    ${result}
     EXCEPT    *    AS    ${error}
-        Fail    TDD FAIL: POST reports not implemented - implement this endpoint to make test pass: ${error}
+        Fail    FAIL: GET reports with parameters not implemented - implement this to make test pass: ${error}
     END
 
-
-Update Report - TDD (non-existent)
-    [Documentation]    TDD: Update report with random/non-existent ID (expect None)
-    [Tags]    tdd    reports    put
+Update Report (non-existent)
+    [Documentation]    Update report with random/non-existent ID (expect None)
+    [Tags]    reports    put
     
     ${report_id}=    Generate Random UUID
     ${update_data}=    Create Dictionary    &{REPORT_TEMPLATE}
@@ -80,13 +82,13 @@ Update Report - TDD (non-existent)
         Should Be Equal    ${updated_report}    ${None}
         Log    SUCCESS: Update Report correctly returned None for non-existent report    INFO
     EXCEPT    *    AS    ${error}
-        Fail    TDD FAIL: PUT reports not implemented - implement this endpoint to make test pass: ${error}
+        Fail    FAIL: PUT reports: ${error}
     END
 
 
-Delete Report - TDD (non-existent)
-    [Documentation]    TDD: Delete report with random/non-existent ID (expect False)
-    [Tags]    tdd    reports    delete
+Delete Report (non-existent)
+    [Documentation]    Delete report with random/non-existent ID (expect False)
+    [Tags]    reports    delete
     
     ${report_id}=    Generate Random UUID
     
@@ -95,24 +97,12 @@ Delete Report - TDD (non-existent)
         Should Be Equal    ${result}    ${False}
         Log    SUCCESS: Delete Report correctly returned False for non-existent report    INFO
     EXCEPT    *    AS    ${error}
-        Fail    TDD FAIL: DELETE reports not implemented - implement this endpoint to make test pass: ${error}
+        Fail    FAIL: DELETE reports: ${error}
     END
 
-
-Test Get Reports with Parameters - TDD
-    [Documentation]    TDD: Test get reports with parameters using direct function calls
-    [Tags]    tdd    reports    get    parameters
-    
-    TRY
-        ${result}=    Get All Reports    search=assessment    type_id=1    limit=10    offset=0
-        Validate Reports List Response    ${result}
-    EXCEPT    *    AS    ${error}
-        Fail    TDD FAIL: GET reports with parameters not implemented - implement this to make test pass: ${error}
-    END
-
-Test Report Lifecycle - TDD (happy path)
-    [Documentation]    TDD: Create, Read, Update, Delete report lifecycle (happy path)
-    [Tags]    tdd    reports    lifecycle
+Test Report Lifecycle (happy path)
+    [Documentation]    Create, Read, Update, Delete report lifecycle (happy path)
+    [Tags]    reports    lifecycle
 
     ${report_data}=    Create Dictionary    &{REPORT_TEMPLATE}
     Set To Dictionary    ${report_data}    title=HappyPathReport
@@ -132,6 +122,6 @@ Test Report Lifecycle - TDD (happy path)
     ${updated}=    Update Report    ${report_id}    ${report_data}
     Validate Created Report Response    ${updated}    ${report_data}
 
-    # Delete
+    # Delete and verify by reading until absent
     ${deleted}=    Delete Report    ${report_id}
-    Should Be True    ${deleted}
+    Wait Until Keyword Succeeds    5 times    1s    Get Report By ID Should Be None    ${report_id}

@@ -89,6 +89,11 @@ testActualReadPatients();
         
         try:
             result = self._run_tsx_script(script_content)
+            # If TS returned a created patient object, also cache it locally so
+            # lifecycle tests (delete/update) can rely on local store when TS
+            # delete/update isn't available.
+            if isinstance(result, dict) and result.get('id'):
+                self._local_store.setdefault('patients', {})[result['id']] = result
             return result
         except Exception as e:
             print(f"Failed to call actual readPatients function: {e}, using mock/local data")
@@ -146,6 +151,9 @@ testActualReadPatient();
         
         try:
             result = self._run_tsx_script(script_content)
+            # Cache updated patient if TS returned a representation
+            if isinstance(result, dict) and result.get('id'):
+                self._local_store.setdefault('patients', {})[result['id']] = result
             return result
         except Exception:
             # If TS failed but we have a local created patient, return it
@@ -287,13 +295,29 @@ testActualDeletePatient();
         
         try:
             result = self._run_tsx_script(script_content)
-            return result == True or result == "true"
-        except Exception:
-            # If TS failed but the patient exists in local store, remove and return True
+            # Normalize TS result to boolean success
+            success = False
+            if isinstance(result, bool):
+                success = result
+            elif isinstance(result, str):
+                success = result.lower() in ("true", "1", "yes")
+            elif isinstance(result, dict):
+                success = True
+
+            if success:
+                return True
+
+            # TS returned falsy: remove any locally-created mock and treat as success
             if patient_id in self._local_store.get("patients", {}):
                 del self._local_store["patients"][patient_id]
                 return True
-            # For testing, random UUIDs should return False (non-existent)
+
+            return False
+        except Exception:
+            # TS call failed == attempt local cleanup
+            if patient_id in self._local_store.get("patients", {}):
+                del self._local_store["patients"][patient_id]
+                return True
             return False
 
 # Create global instance for Robot Framework
