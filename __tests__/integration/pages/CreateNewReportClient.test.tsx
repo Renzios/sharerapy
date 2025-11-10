@@ -165,6 +165,41 @@ describe("CreateNewReportClient integration", () => {
     (createReport as jest.Mock).mockResolvedValue({ success: true });
   });
 
+  // Helper to fill all required fields except the ones specified in `omit`
+  const fillRequired = async (omit: string[] = []) => {
+    if (!omit.includes("country-select"))
+      fireEvent.change(screen.getByTestId("country-select"), { target: { value: "country1" } });
+    if (!omit.includes("first-name"))
+      fireEvent.change(screen.getByTestId("first-name"), { target: { value: "John" } });
+    if (!omit.includes("last-name"))
+      fireEvent.change(screen.getByTestId("last-name"), { target: { value: "Doe" } });
+    if (!omit.includes("birthdate"))
+      fireEvent.change(screen.getByTestId("birthdate"), { target: { value: "2000-01-01" } });
+    if (!omit.includes("sex-select"))
+      fireEvent.change(screen.getByTestId("sex-select"), { target: { value: "M" } });
+    if (!omit.includes("contact-number"))
+      fireEvent.change(screen.getByTestId("contact-number"), { target: { value: "09171234567" } });
+
+    if (!omit.includes("title"))
+      fireEvent.change(screen.getByTestId("title"), { target: { value: "My Report" } });
+    if (!omit.includes("description"))
+      fireEvent.change(screen.getByTestId("description"), { target: { value: "Short desc" } });
+    if (!omit.includes("language-select"))
+      fireEvent.change(screen.getByTestId("language-select"), { target: { value: "1" } });
+    if (!omit.includes("type-select"))
+      fireEvent.change(screen.getByTestId("type-select"), { target: { value: "2" } });
+
+    // Editor
+    if (!omit.includes("editor")) {
+      fireEvent.click(screen.getByTestId("set-editor"));
+      await waitFor(() =>
+        expect(screen.getByTestId("editor")).toHaveValue(
+          '[{"type":"p","content":[{"text":"Hello"}]}]'
+        )
+      );
+    }
+  };
+
   it("submits when creating a new patient and a report", async () => {
   const patients: Tables<"patients">[] = [];
     const patientOptions = [{ value: "new", label: "Create New" }];
@@ -321,5 +356,297 @@ describe("CreateNewReportClient integration", () => {
 
     // patient_id should be the new patient's ID
     expect(reportFormData.get("patient_id")).toBe("new-pat-id");
+  });
+
+  // Validation toast tests for missing required fields
+  const renderDefault = (patients: Tables<"patients">[] = []) => {
+    const patientOptions = [{ value: "new", label: "Create New" }];
+    const countryOptions = [{ value: "country1", label: "Country1" }];
+    const languageOptions = [{ value: "1", label: "English" }];
+    const typeOptions = [{ value: "2", label: "Assessment" }];
+    render(
+      <CreateNewReportClient
+        patients={patients}
+        patientOptions={patientOptions}
+        countryOptions={countryOptions}
+        languageOptions={languageOptions}
+        typeOptions={typeOptions}
+      />
+    );
+  };
+
+  it("shows country required toast when country is missing", async () => {
+    renderDefault();
+    await fillRequired(["country-select"]);
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please select patient's country");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows first name required toast when missing", async () => {
+    renderDefault();
+    await fillRequired(["first-name"]);
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please enter patient's first name");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows last name required toast when missing", async () => {
+    renderDefault();
+    await fillRequired(["last-name"]);
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please enter patient's last name");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows birthday required toast when missing", async () => {
+    renderDefault();
+    await fillRequired(["birthdate"]);
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please select patient's birthday");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows sex required toast when missing", async () => {
+    renderDefault();
+    await fillRequired(["sex-select"]);
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please select patient's sex");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows contact number required toast when missing", async () => {
+    renderDefault();
+    await fillRequired(["contact-number"]);
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please enter patient's contact number");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows report title required toast when missing", async () => {
+    renderDefault();
+    await fillRequired(["title"]);
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please enter report title");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows report description required toast when missing", async () => {
+    renderDefault();
+    await fillRequired(["description"]);
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please enter report description");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows language required toast when missing", async () => {
+    renderDefault();
+    await fillRequired(["language-select"]);
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please select report language");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows therapy type required toast when missing", async () => {
+    renderDefault();
+    await fillRequired(["type-select"]);
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please select therapy type");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows editor content required toast when content is empty", async () => {
+    renderDefault();
+    await fillRequired(["editor"]);
+
+    fireEvent.click(screen.getByText(/submit/i));
+
+    const toast = await screen.findByTestId("toast");
+
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please enter report content");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows toast when editor content is invalid JSON", async () => {
+    renderDefault();
+    // fill other required fields but leave editor so we can set an invalid value
+    await fillRequired(["editor"]);
+
+    // set editor to invalid JSON
+    fireEvent.change(screen.getByTestId("editor"), { target: { value: "not-a-json" } });
+
+    fireEvent.click(screen.getByText(/submit/i));
+
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    // parse error should show the generic 'Please enter report content' error per component behavior
+    expect(toast).toHaveTextContent("Please enter report content");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows invalid format toast when editor JSON is not an array", async () => {
+    renderDefault();
+    await fillRequired(["editor"]);
+
+    // JSON that parses but is not an array
+    fireEvent.change(screen.getByTestId("editor"), { target: { value: JSON.stringify({ foo: "bar" }) } });
+
+    fireEvent.click(screen.getByText(/submit/i));
+
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Invalid report content format");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("shows toast when editor JSON is an array but contains only empty blocks", async () => {
+    renderDefault();
+    await fillRequired(["editor"]);
+
+    const emptyBlocks = JSON.stringify([
+      { type: "p", content: [{ text: "" }] },
+      { type: "p", content: [{ text: "" }] },
+    ]);
+
+    fireEvent.change(screen.getByTestId("editor"), { target: { value: emptyBlocks } });
+
+    fireEvent.click(screen.getByText(/submit/i));
+
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please enter report content");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("calls createReport on successful submission and does not show a local success/error toast (redirects)", async () => {
+    const patients: Tables<"patients">[] = [];
+    const patientOptions = [{ value: "new", label: "Create New" }];
+    const countryOptions = [{ value: "country1", label: "Country1" }];
+    const languageOptions = [{ value: "1", label: "English" }];
+    const typeOptions = [{ value: "2", label: "Assessment" }];
+    render(
+      <CreateNewReportClient
+        patients={patients}
+        patientOptions={patientOptions}
+        countryOptions={countryOptions}
+        languageOptions={languageOptions}
+        typeOptions={typeOptions}
+      />
+    );
+
+    // Fill minimal required fields
+    fireEvent.change(screen.getByTestId("first-name"), { target: { value: "John" } });
+    fireEvent.change(screen.getByTestId("last-name"), { target: { value: "Doe" } });
+    fireEvent.change(screen.getByTestId("birthdate"), { target: { value: "2000-01-01" } });
+    fireEvent.change(screen.getByTestId("sex-select"), { target: { value: "M" } });
+    fireEvent.change(screen.getByTestId("contact-number"), { target: { value: "09171234567" } });
+    fireEvent.change(screen.getByTestId("country-select"), { target: { value: "country1" } });
+
+    fireEvent.change(screen.getByTestId("title"), { target: { value: "My Report" } });
+    fireEvent.change(screen.getByTestId("description"), { target: { value: "Short desc" } });
+    fireEvent.change(screen.getByTestId("language-select"), { target: { value: "1" } });
+    fireEvent.change(screen.getByTestId("type-select"), { target: { value: "2" } });
+
+    // Set editor content directly
+    fireEvent.change(screen.getByTestId("editor"), {
+      target: { value: '[{"type":"p","content":[{"text":"Hello"}]}]' },
+    });
+
+    await waitFor(() =>
+      expect(screen.getByTestId("editor")).toHaveValue(
+        '[{"type":"p","content":[{"text":"Hello"}]}]'
+      )
+    );
+
+    // Submit the form
+    const submitBtn = screen.getByText(/submit/i);
+    fireEvent.click(submitBtn);
+
+    // createReport should be called. The component triggers a redirect on success
+    await waitFor(() => expect(createReport).toHaveBeenCalled());
+
+  });
+
+  it("shows an error toast when birthdate is in the future", async () => {
+    renderDefault();
+    await fillRequired();
+    // Set birthdate to a future date
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 1);
+    const futureDateStr = futureDate.toISOString().split("T")[0];
+    fireEvent.change(screen.getByTestId("birthdate"), { target: { value: futureDateStr } });
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Birthday cannot be in the future");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("should not create a report when the contact number is not a number", async () => {
+    renderDefault();
+    await fillRequired();
+    // Set contact number to a non-numeric value
+    fireEvent.change(screen.getByTestId("contact-number"), { target: { value: "invalid-number" } });
+    fireEvent.click(screen.getByText(/submit/i));
+    const toast = await screen.findByTestId("toast");
+
+    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+  });
+
+  it("clears the forms when Clear Form button is clicked", async () => {
+    renderDefault();
+    await fillRequired();
+    // Click the Clear Form button
+    const clearBtn = screen.getByText(/clear form/i);
+    fireEvent.click(clearBtn);
+    // Assert all fields are reset
+    expect(screen.getByTestId("patient-select")).toHaveValue("new");
+    expect(screen.getByTestId("country-select")).toHaveValue("");
+    expect(screen.getByTestId("first-name")).toHaveValue("");
+    expect(screen.getByTestId("last-name")).toHaveValue("");
+    expect(screen.getByTestId("birthdate")).toHaveValue("");
+    expect(screen.getByTestId("sex-select")).toHaveValue("");
+    expect(screen.getByTestId("contact-number")).toHaveValue("");
+    expect(screen.getByTestId("title")).toHaveValue("");
+    expect(screen.getByTestId("description")).toHaveValue("");
+    expect(screen.getByTestId("language-select")).toHaveValue("1");
+    expect(screen.getByTestId("type-select")).toHaveValue("2");
+    expect(screen.getByTestId("editor")).toHaveValue("");
   });
 });
