@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signOut } from "@/lib/actions/auth";
+import { getPublicURL } from "@/lib/utils/storage";
+import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
 
 export default function LandingPageClient() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,6 +20,8 @@ export default function LandingPageClient() {
   );
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const { therapist, isLoading } = useTherapistProfile();
 
   useEffect(() => {
     const loginSuccess = searchParams.get("loginSuccess");
@@ -79,13 +83,15 @@ export default function LandingPageClient() {
           >
             Logout
           </Button>
-          <Image
-            src="/testpfp.jpg"
-            alt="PFP"
-            width={150}
-            height={150}
-            className="w-10 h-10 rounded-full"
-          />
+          {!isLoading && therapist?.picture && (
+            <Image
+              src={getPublicURL("therapist_pictures", therapist.picture)}
+              alt="Profile Picture"
+              width={150}
+              height={150}
+              className="w-10 h-10 rounded-full object-cover"
+            />
+          )}
         </div>
       </div>
 
