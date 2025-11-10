@@ -7,9 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch --passWithNoTests",
-    "test:coverage": "jest --coverage --passWithNoTests",
+  "test": "jest --passWithNoTests --testPathIgnorePatterns=__tests__/ai-integration/",
+  "test:integration": "jest __tests__/ai-integration -i --runInBand",
+  "test:watch": "jest --watch --passWithNoTests",
+  "test:coverage": "jest --coverage --passWithNoTests",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },
