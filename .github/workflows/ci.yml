@@ -149,7 +149,7 @@ jobs:
 
       - name: Run Robot Framework tests for all entities
         run: |
-          mkdir -p test-results
+          mkdir -p tests/robot/output
           if [ -d "tests/robot" ]; then
             # Run tests - failures will fail the pipeline until endpoints are implemented
             robot --outputdir tests/robot/output tests/robot
@@ -157,7 +157,7 @@ jobs:
           else
             echo "Robot Framework test directories not found, skipping..."
             echo "Expected: tests/robot/patients/, tests/robot/therapists/, tests/robot/reports/"
-            echo "No API tests executed" > test-results/output.xml
+            echo "No API tests executed" > tests/robot/output/output.xml
           fi
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -175,7 +175,7 @@ jobs:
         if: always()
         with:
           name: robot-framework-results
-          path: test-results/
+          path: tests/robot/output/
 
   # Cypress E2E Tests - Full Regression Suite for PRs and Develop Integration
   e2e-tests:
