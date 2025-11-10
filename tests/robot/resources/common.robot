@@ -7,7 +7,7 @@ ${BASE_URL}              http://localhost:3000
 
 *** Keywords ***
 Setup Test Environment
-    [Documentation]    Initialize test environment for TDD
+    [Documentation]    Initialize test environment
     Log    Setting up test environment for direct function calls    INFO
 
 Cleanup Test Environment
