@@ -135,13 +135,25 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
             <div className="ml-auto flex items-center gap-2">
               {therapist?.id === report.therapist_id && (
                 <div className="relative">
-                  <Button
-                    variant="outline"
-                    className="w-auto text-xs md:text-base p-1"
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsDropdownOpen((prev) => !prev);
+                    }}
+                    className="
+                      bg-transparent border border-primary text-primary
+                      hover:bg-primary/5 hover:cursor-pointer
+                      active:bg-primary active:text-white
+                      rounded-[0.5rem]
+                      font-Noto-Sans font-semibold
+                      px-3 lg:px-4 py-2
+                      flex items-center justify-center
+                      transition-colors duration-200
+                    "
+                    aria-label="More options"
                   >
-                    <MoreHorizIcon className="text-primary" />
-                  </Button>
+                    <MoreHorizIcon className="text-xl" />
+                  </button>
                   <DropdownMenu
                     isOpen={isDropdownOpen}
                     onClose={() => setIsDropdownOpen(false)}

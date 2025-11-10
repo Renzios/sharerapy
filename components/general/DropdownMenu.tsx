@@ -9,13 +9,9 @@ interface DropdownMenuItem {
 }
 
 interface DropdownMenuProps {
-  /** Whether the dropdown is open */
   isOpen: boolean;
-  /** Callback to close the dropdown */
   onClose: () => void;
-  /** Menu items to display */
   items: DropdownMenuItem[];
-  /** Optional className for positioning */
   className?: string;
 }
 
@@ -41,16 +37,27 @@ export default function DropdownMenu({
     if (!isOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        onClose();
+      const target = event.target as Node;
+
+      // Don't close if clicking the dropdown itself
+      if (dropdownRef.current && dropdownRef.current.contains(target)) {
+        return;
       }
+
+      // Don't close if clicking the trigger button (it handles its own toggle)
+      if (
+        (target as HTMLElement).closest('button[aria-label="More options"]')
+      ) {
+        return;
+      }
+
+      onClose();
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    // Use capture phase to handle this before other handlers
+    document.addEventListener("mousedown", handleClickOutside, true);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside, true);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
@@ -64,7 +71,6 @@ export default function DropdownMenu({
         rounded-[0.5rem]
         border border-bordergray
         shadow-lg
-        py-1
         min-w-[120px]
         z-50
         ${className}
@@ -81,7 +87,7 @@ export default function DropdownMenu({
             w-full
             text-left
             px-4 py-2
-            font-Noto-Sans text-sm font-medium
+            font-Noto-Sans text-sm font-medium 
             ${
               item.variant === "danger"
                 ? "text-red-600 hover:bg-red-50"
