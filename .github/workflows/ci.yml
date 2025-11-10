@@ -32,7 +32,7 @@ on:
 
 jobs:
   # CI - Run Tests (Feature): Jest Unit Tests and React Testing Library
-  jest-backend-tests:
+  jest-tests:
     name: Jest Unit Tests and React Testing Library
     runs-on: ubuntu-latest
     steps:
@@ -122,13 +122,13 @@ jobs:
 
       - name: Start Next.js server
         run: |
-          echo "Starting Next.js server for TDD testing..."
+          echo "Starting Next.js server for testing..."
 
           npm start &
           SERVER_PID=$!
           echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
 
-          # Wait for server to be ready (expect some startup errors due to missing Supabase config in TDD)
+          # Wait for server to be ready 
           sleep 10
 
           # Check if server is responding (may return 500 due to Supabase config, but server should be running)
@@ -137,7 +137,7 @@ jobs:
               echo "Server is responding"
               break
             elif [ $i -eq 12 ]; then
-              echo "Server may not be fully ready, but continuing with TDD tests..."
+              echo "Server may not be fully ready, but continuing with tests..."
             else
               echo "Waiting for server... attempt $i/12"
               sleep 5
@@ -147,17 +147,17 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
 
-      - name: Run Robot Framework TDD tests for all entities
+      - name: Run Robot Framework tests for all entities
         run: |
           mkdir -p test-results
-          if [ -d "tests/robot/patients" ] && [ -d "tests/robot/therapists" ] && [ -d "tests/robot/reports" ]; then
-            # Run TDD tests - failures will fail the pipeline until endpoints are implemented
-            robot --loglevel DEBUG --include tdd --outputdir test-results tests/robot/patients/ tests/robot/therapists/ tests/robot/reports/
-            echo "All TDD tests passed - endpoints are properly implemented"
+          if [ -d "tests/robot" ]; then
+            # Run tests - failures will fail the pipeline until endpoints are implemented
+            robot --outputdir tests/robot/output tests/robot
+            echo "All tests passed - functions are properly implemented"
           else
             echo "Robot Framework test directories not found, skipping..."
             echo "Expected: tests/robot/patients/, tests/robot/therapists/, tests/robot/reports/"
-            echo "No TDD API tests executed" > test-results/output.xml
+            echo "No API tests executed" > test-results/output.xml
           fi
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -181,7 +181,7 @@ jobs:
   e2e-tests:
     name: Cypress E2E Tests (Full Regression Suite)
     runs-on: ubuntu-latest
-    needs: [jest-backend-tests, backend-tests]
+    needs: [jest-tests, backend-tests]
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/develop')
     steps:
       - name: Checkout code
@@ -240,7 +240,7 @@ jobs:
   pr-main-integration-validation:
     name: Integration Validation for Production
     runs-on: ubuntu-latest
-    needs: [jest-backend-tests, code-quality, backend-tests, e2e-tests]
+    needs: [jest-tests, code-quality, backend-tests, e2e-tests]
     if: github.event_name == 'pull_request' && github.base_ref == 'main'
     steps:
       - name: Checkout code
@@ -289,7 +289,7 @@ jobs:
   develop-integration-validation:
     name: Develop Integration - Full Regression Suite
     runs-on: ubuntu-latest
-    needs: [jest-backend-tests, code-quality, backend-tests, e2e-tests]
+    needs: [jest-tests, code-quality, backend-tests, e2e-tests]
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
     steps:
       - name: Checkout code
@@ -342,7 +342,7 @@ jobs:
   production-deployment-validation:
     name: Production Deployment Pipeline
     runs-on: ubuntu-latest
-    needs: [jest-backend-tests, code-quality, backend-tests]
+    needs: [jest-tests, code-quality, backend-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Checkout code
