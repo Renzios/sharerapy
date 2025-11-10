@@ -6,18 +6,12 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import { getPublicURL } from "@/lib/utils/storage";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
-
-const navigationItems = [
-  { name: "Search", href: "/search", icon: <SearchIcon /> },
-  { name: "Create Report", href: "/reports/new", icon: <CreateIcon /> },
-  { name: "AI Mode", href: "/ai-mode", icon: <AutoAwesomeIcon /> },
-  { name: "Profile", href: "/profile/me", icon: <AccountBoxIcon /> },
-];
+import { signOut } from "@/lib/actions/auth";
 
 /**
  * Renders the main navigation sidebar with responsive behavior and user profile section.
@@ -35,8 +29,32 @@ export default function Sidebar({
 }) {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const router = useRouter();
   const { user } = useAuth();
   const { therapist, isLoading } = useTherapistProfile();
+
+  const navigationItems = [
+    { name: "Search", href: "/search", icon: <SearchIcon /> },
+    { name: "Create Report", href: "/reports/new", icon: <CreateIcon /> },
+    { name: "AI Mode", href: "/ai-mode", icon: <AutoAwesomeIcon /> },
+    {
+      name: "Profile",
+      href: `/profile/therapist/${user?.id}`,
+      icon: <AccountBoxIcon />,
+    },
+  ];
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.log("Error Logging Out:", error);
+    }
+  };
+
   return (
     <aside
       className={`
@@ -79,9 +97,13 @@ export default function Sidebar({
               border-b border-bordergray
               lg:hidden"
         >
-          {!isLoading && therapist?.picture && (
+          {!isLoading && (
             <Image
-              src={getPublicURL("therapist_pictures", therapist.picture)}
+              src={
+                therapist?.picture
+                  ? getPublicURL("therapist_pictures", therapist.picture)
+                  : "/testpfp.jpg"
+              }
               alt="Profile Picture"
               width={150}
               height={150}
@@ -186,9 +208,13 @@ export default function Sidebar({
                 hover:bg-bordergray/30 transition-colors
               "
             >
-              {!isLoading && therapist?.picture && (
+              {!isLoading && (
                 <Image
-                  src={getPublicURL("therapist_pictures", therapist.picture)}
+                  src={
+                    therapist?.picture
+                      ? getPublicURL("therapist_pictures", therapist.picture)
+                      : "/testpfp.jpg"
+                  }
                   alt="Profile Picture"
                   width={150}
                   height={150}
@@ -219,10 +245,19 @@ export default function Sidebar({
                 bg-white border border-gray-200 rounded-lg shadow-lg
               "
               >
-                {/* Space reserved for select dropdown */}
-                <div className="px-4 py-3">
-                  {/* Select dropdown will go here */}
-                </div>
+                <Link href={`/profile/therapist/${therapist?.id}`}>
+                  <button
+                    className="
+                  w-full text-left
+                  px-4 py-2
+                  hover:bg-gray-50
+                  font-Noto-Sans text-sm text-primary
+                  hover:cursor-pointer
+                "
+                  >
+                    View
+                  </button>
+                </Link>
                 <hr className="my-2 border-bordergray" />
                 <button
                   className="
@@ -230,9 +265,11 @@ export default function Sidebar({
                   px-4 py-2
                   hover:bg-gray-50
                   font-Noto-Sans text-sm text-primary
+                  hover:cursor-pointer
                 "
+                  onClick={handleLogout}
                 >
-                  Sign out
+                  Logout
                 </button>
               </div>
             )}

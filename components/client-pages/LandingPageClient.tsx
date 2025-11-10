@@ -83,10 +83,14 @@ export default function LandingPageClient() {
           >
             Logout
           </Button>
-          {!isLoading && therapist?.picture && (
-            <Link href={`/profile/therapist/${therapist.id}`}>
+          {!isLoading && (
+            <Link href={`/profile/therapist/${therapist?.id}`}>
               <Image
-                src={getPublicURL("therapist_pictures", therapist.picture)}
+                src={
+                  therapist?.picture
+                    ? getPublicURL("therapist_pictures", therapist.picture)
+                    : "/testpfp.jpg"
+                }
                 alt="Profile Picture"
                 width={150}
                 height={150}
