@@ -8,6 +8,7 @@ import { Editor } from "@/components/blocknote/DynamicEditor";
 import Button from "@/components/general/Button";
 import Toast from "@/components/general/Toast";
 import { createReport, updateReport } from "@/lib/actions/reports";
+import { validateContactNumber } from "@/lib/utils/frontendHelpers";
 import { createPatient } from "@/lib/actions/patients";
 import { Tables } from "@/lib/types/database.types";
 import { useAuth } from "@/app/contexts/AuthContext";
@@ -178,6 +179,14 @@ export default function CreateNewReportClient({
       }
       if (!contactNumber.trim()) {
         showToast("Please enter patient's contact number", "error");
+        return false;
+      }
+
+      if (!validateContactNumber(contactNumber)) {
+        showToast(
+          "Contact number can only contain numbers and dashes (-)",
+          "error"
+        );
         return false;
       }
     }
