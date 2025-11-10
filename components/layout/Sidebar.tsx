@@ -8,6 +8,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { getPublicURL } from "@/lib/utils/storage";
+import { useAuth } from "@/app/contexts/AuthContext";
+import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
 
 const navigationItems = [
   { name: "Search", href: "/search", icon: <SearchIcon /> },
@@ -32,6 +35,8 @@ export default function Sidebar({
 }) {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { user } = useAuth();
+  const { therapist, isLoading } = useTherapistProfile();
   return (
     <aside
       className={`
@@ -74,20 +79,22 @@ export default function Sidebar({
               border-b border-bordergray
               lg:hidden"
         >
-          <Image
-            src="/testpfp.jpg"
-            alt="Profile Picture"
-            width={70}
-            height={70}
-            className="h-[4.375rem] w-[4.375rem] rounded-full"
-          />
+          {!isLoading && therapist?.picture && (
+            <Image
+              src={getPublicURL("therapist_pictures", therapist.picture)}
+              alt="Profile Picture"
+              width={150}
+              height={150}
+              className="h-[4.375rem] w-[4.375rem] rounded-full"
+            />
+          )}
 
           <div className="flex flex-col items-center">
             <h2 className="font-Noto-Sans text-base text-black font-medium">
-              Dawson Catignas
+              {therapist?.name || "User"}
             </h2>
             <h3 className="font-Noto-Sans text-[0.6785rem] text-darkgray font-medium">
-              dawsoncatignas@gmail.com
+              {user?.email}
             </h3>
           </div>
         </div>
@@ -179,19 +186,21 @@ export default function Sidebar({
                 hover:bg-bordergray/30 transition-colors
               "
             >
-              <Image
-                src="/testpfp.jpg"
-                alt="Profile Picture"
-                width={60}
-                height={60}
-                className="w-15 h-15 rounded-full"
-              />
+              {!isLoading && therapist?.picture && (
+                <Image
+                  src={getPublicURL("therapist_pictures", therapist.picture)}
+                  alt="Profile Picture"
+                  width={150}
+                  height={150}
+                  className="h-[4.375rem] w-[4.375rem] rounded-full"
+                />
+              )}
               <div className="flex-1 text-left">
                 <h3 className="font-Noto-Sans font-semibold text-sm text-black">
-                  Dawson Catignas
+                  {therapist?.name || "User"}
                 </h3>
                 <p className="font-Noto-Sans text-xs text-darkgray">
-                  dawsoncatignas@gmail.com
+                  {user?.email}
                 </p>
               </div>
               <KeyboardArrowDownIcon
