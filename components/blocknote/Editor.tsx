@@ -41,9 +41,21 @@ interface EditorProps {
  * @param props - The editor props
  */
 export default function Editor({ onChange, value }: EditorProps) {
+  // Parse initial content if provided
+  const initialContent = value
+    ? (() => {
+        try {
+          return JSON.parse(value);
+        } catch {
+          return undefined;
+        }
+      })()
+    : undefined;
+
   const editor = useCreateBlockNote({
     schema: customSchema,
     slashMenuItems: [],
+    initialContent,
   });
 
   // Reset editor content when value becomes empty
