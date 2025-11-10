@@ -7,29 +7,32 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
 }));
 
-// Mock next/link to call useRouter().push when clicked (prevents real navigation)
+// Mock next/link to call the pushMock when clicked (no require(), typed props)
+interface NextLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  href: string;
+  children?: React.ReactNode;
+}
 jest.mock("next/link", () => {
-  const React = require("react");
-  const { useRouter } = require("next/navigation");
-  const Component = ({ href, children, ...props }: any) => (
-    <a
-      href={href}
-      onClick={(e) => {
-        e.preventDefault();
-        try {
-          const r = useRouter();
-          if (r && typeof r.push === "function") r.push(href);
-        } catch (err) {
-          // ignore
-        }
-      }}
-      {...props}
-    >
-      {children}
-    </a>
-  );
+  const Component = (props: NextLinkProps) => {
+    const { href, children, ...rest } = props;
+    return (
+      <a
+        href={href}
+        onClick={(e) => {
+          e.preventDefault();
+          if (typeof pushMock === "function") pushMock(href);
+        }}
+        {...rest}
+      >
+        {children}
+      </a>
+    );
+  };
   Component.displayName = "NextLinkMock";
-  return Component;
+  return {
+    __esModule: true,
+    default: Component,
+  };
 });
 
 import IndivReportClient from "@/components/client-pages/IndivReportClient";
