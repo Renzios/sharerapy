@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Button from "@/components/general/Button";
 import Select from "@/components/general/Select";
+import Toast from "@/components/general/Toast";
+import ConfirmationModal from "@/components/general/ConfirmationModal";
+import DropdownMenu from "@/components/general/DropdownMenu";
 import { Tables } from "@/lib/types/database.types";
 import PDFViewer from "@/components/blocknote/PDFViewer";
 import { useBackNavigation } from "@/app/hooks/useBackNavigation";
+import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { deleteReport } from "@/lib/actions/reports";
 
 // Type for the report with nested relationships based on readReport query
 type ReportWithRelations = Tables<"reports"> & {
@@ -36,10 +42,41 @@ interface IndivReportClientProps {
  */
 export default function IndivReportClient({ report }: IndivReportClientProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Get current logged-in therapist to check ownership
+  const { therapist } = useTherapistProfile();
 
   // Navigation state to disable button during transition
   const [isNavigating, setIsNavigating] = useState(false);
   const { handleBackClick } = useBackNavigation("/search/reports");
+
+  // Dropdown state
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // Confirmation modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Toast state
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error" | "info">(
+    "info"
+  );
+
+  // Check for success query param and show toast
+  useEffect(() => {
+    if (searchParams.get("updated") === "true") {
+      setToastMessage("Report updated successfully!");
+      setToastType("success");
+      setToastVisible(true);
+
+      // Clean up URL by removing the query param
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, "", newUrl);
+    }
+  }, [searchParams]);
 
   const enhancedHandleBackClick = () => {
     setIsNavigating(true);
@@ -65,21 +102,68 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
     });
   };
 
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteReport(report.id);
+      // deleteReport will redirect, so we don't need to do anything else
+    } catch (error) {
+      console.error("Error deleting report:", error);
+      setToastMessage("Failed to delete report. Please try again.");
+      setToastType("error");
+      setToastVisible(true);
+      setIsDeleting(false);
+      setIsDeleteModalOpen(false);
+    }
+  };
+
+  const dropdownItems = [
+    {
+      label: "Edit",
+      onClick: () => router.push(`/reports/${report.id}/edit`),
+      variant: "default" as const,
+    },
+    {
+      label: "Delete",
+      onClick: () => setIsDeleteModalOpen(true),
+      variant: "danger" as const,
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-y-8">
       <div className="flex flex-col gap-y-1">
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
           <h1 className="font-Noto-Sans text-xl md:text-3xl text-black font-semibold">
             {report.title}
           </h1>
-          <Button
-            variant="filled"
-            className="ml-auto w-auto text-xs md:text-base md:w-24"
-            onClick={enhancedHandleBackClick}
-            disabled={isNavigating}
-          >
-            Back
-          </Button>
+          <div className="ml-auto flex items-center gap-2">
+            {therapist?.id === report.therapist_id && (
+              <div className="relative">
+                <Button
+                  variant="outline"
+                  className="w-auto text-xs md:text-base p-1"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                >
+                  <MoreHorizIcon className="text-primary" />
+                </Button>
+                <DropdownMenu
+                  isOpen={isDropdownOpen}
+                  onClose={() => setIsDropdownOpen(false)}
+                  items={dropdownItems}
+                  className="top-full mt-1 right-0"
+                />
+              </div>
+            )}
+            <Button
+              variant="filled"
+              className="w-auto text-xs md:text-base md:w-24"
+              onClick={enhancedHandleBackClick}
+              disabled={isNavigating}
+            >
+              Back
+            </Button>
+          </div>
         </div>
         <p className="font-Noto-Sans text-[0.6875rem] md:text-sm font-medium text-darkgray ml-0.5">
           {formatDate(report.created_at)} |{" "}
@@ -149,6 +233,24 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
         content={report.content}
         title={report.title}
         therapistName={report.therapist.name}
+      />
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        title="Delete Report"
+        message="Are you sure you want to delete this report? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDelete}
+        onCancel={() => setIsDeleteModalOpen(false)}
+        isLoading={isDeleting}
+      />
+
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
       />
     </div>
   );
