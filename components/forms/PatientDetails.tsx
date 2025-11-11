@@ -29,6 +29,7 @@ interface PatientDetailsProps {
   setSelectedSex: (value: SelectOption | null) => void;
   contactNumber: string;
   setContactNumber: (value: string) => void;
+  disabled?: boolean; // New prop to disable all fields (for edit mode)
 }
 
 /**
@@ -57,6 +58,7 @@ export default function PatientDetails({
   setSelectedSex,
   contactNumber,
   setContactNumber,
+  disabled = false, // Default to false (editable)
 }: PatientDetailsProps) {
   const sexOptions: SelectOption[] = [
     { value: "Male", label: "Male" },
@@ -73,6 +75,9 @@ export default function PatientDetails({
   const isExistingPatientSelected = Boolean(
     selectedPatient && selectedPatient.value !== "new"
   );
+
+  // Determine if fields should be disabled
+  const fieldsDisabled = disabled || isExistingPatientSelected;
 
   // Auto-fill patient details when a patient is selected
   useEffect(() => {
@@ -132,6 +137,7 @@ export default function PatientDetails({
             onChange={(option) => setSelectedPatient(option)}
             placeholder="Select patient..."
             name="patient_id"
+            disabled={disabled}
           />
           <Select
             label="Country"
@@ -142,7 +148,7 @@ export default function PatientDetails({
             placeholder="Select country..."
             required={true}
             name="country_id"
-            disabled={isExistingPatientSelected}
+            disabled={fieldsDisabled}
           />
         </div>
 
@@ -156,7 +162,7 @@ export default function PatientDetails({
             onChange={(e) => setFirstName(e.target.value)}
             required={true}
             name="first_name"
-            disabled={isExistingPatientSelected}
+            disabled={fieldsDisabled}
           />
           <Input
             label="Last Name"
@@ -166,7 +172,7 @@ export default function PatientDetails({
             onChange={(e) => setLastName(e.target.value)}
             required={true}
             name="last_name"
-            disabled={isExistingPatientSelected}
+            disabled={fieldsDisabled}
           />
         </div>
 
@@ -180,7 +186,7 @@ export default function PatientDetails({
               onChange={(e) => setBirthday(e.target.value)}
               required={true}
               name="birthdate"
-              disabled={isExistingPatientSelected}
+              disabled={fieldsDisabled}
             />
             <Select
               label="Sex"
@@ -191,7 +197,7 @@ export default function PatientDetails({
               placeholder="Sex"
               required={true}
               name="sex"
-              disabled={isExistingPatientSelected}
+              disabled={fieldsDisabled}
             />
           </div>
           <Input
@@ -202,7 +208,7 @@ export default function PatientDetails({
             onChange={(e) => setContactNumber(e.target.value)}
             required={true}
             name="contact_number"
-            disabled={isExistingPatientSelected}
+            disabled={fieldsDisabled}
           />
         </div>
       </div>

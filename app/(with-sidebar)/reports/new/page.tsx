@@ -3,6 +3,7 @@ import { readCountries } from "@/lib/data/countries";
 import { readLanguages } from "@/lib/data/languages";
 import { readTypes } from "@/lib/data/types";
 import CreateNewReportClient from "@/components/client-pages/CreateNewReportClient";
+
 /**
  * This is the server component for the Create New Report page.
  * It fetches all the necessary options (Existing Patients, Countries, Languages, Types (Therapy)) and passed it into the client component.

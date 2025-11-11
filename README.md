@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![sharerapy.](https://i.imgur.com/Qn9D2Il.png)
+<h2 align="center">sharerapy.</h2>
+<p align="center">
+  a medical knowledge base of <b>speech</b>, <b>occupational</b>, <b>developmental</b>, <b>reading</b>, and <b>SPED</b> therapy records.
+</p>
 
-## Getting Started
+## About sharerapy.
+Sharerapy is a **global medical knowledge-sharing platform** built for **speech, occupational, developmental, reading, and SPED therapists**. It empowers professionals to **manage, share, and learn** from one another’s therapy records in one secure, **AI-powered space**. Designed to **bridge gaps in collaboration, language, and access**, Sharerapy centralizes clinical knowledge from around the world, making it easier for therapists to **discover insights, translate research instantly, and streamline record management**. Through smart search, translation, and an integrated AI research assistant, Sharerapy helps therapists save time, connect across borders, and deliver more **effective, evidence-based care** while turning isolated expertise into a c**ollective global resource**.
 
-First, run the development server:
+![Sharerapy All Search](https://i.imgur.com/wZTLqzR.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Key Features
+- Centralized Record Management: Therapists can create, update, and organize their records in one secure platform, building a growing shared knowledge base.
+- Smart Search, Filter, and Sort Tools: Quickly find records by therapy type, author, or timeframe using advanced search capabilities.
+- Built-in Translation: Instantly translate records into multiple languages to make global collaboration seamless.
+- AI Research Assistant: Summarizes insights, identifies patterns, and recommends relevant cases to support evidence-based practice.
+- Multilingual Search Engine: Combines keyword and semantic search to retrieve records across different languages and regions.
+- Collaboration and Knowledge Sharing: Enables therapists worldwide to contribute and learn from each other’s experiences and best practices.
+
+
+## Installation
+
+Clone the repository
+```
+git clone https://github.com/Renzios/sharerapy.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Go to the project directory
+```
+cd sharerapy
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Switch to the main branch
+```
+git checkout main
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Install dependencies
+```
+npm install
+```
 
-## Learn More
+Start the development server
+```
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Once the server is running, open http://localhost:3000 in your browser to view the app.

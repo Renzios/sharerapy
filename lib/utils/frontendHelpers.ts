@@ -5,3 +5,9 @@ export function formatDate(dateString: string) {
     day: "numeric",
   });
 }
+
+export function validateContactNumber(contact: string) {
+  const normalized = contact.replace(/\s+/g, "");
+  const regex = /^[0-9-]+$/;
+  return regex.test(normalized);
+}

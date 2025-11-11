@@ -60,6 +60,12 @@ jest.mock("date-fns", () => {
   };
 });
 
+// Mock server action deleteReport to avoid importing Next.js server-only modules during tests
+const deleteReportMock = jest.fn();
+jest.mock("@/lib/actions/reports", () => ({
+  deleteReport: (...args: unknown[]) => deleteReportMock(...args),
+}));
+
 import ReportCard from "../../../components/cards/ReportCard";
 
 describe("ReportCard", () => {
