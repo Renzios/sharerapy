@@ -46,15 +46,15 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci --verbose
+        run: npm ci
 
       - name: Run Jest unit tests
-        run: npm test -- --verbose
+        run: npm test --
         env:
           NODE_ENV: test
 
       - name: Generate
-        run: npm test -- --coverage --passWithNoTests --verbose
+        run: npm test -- --coverage --passWithNoTests
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
@@ -79,15 +79,25 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci --verbose
+        run: npm ci
 
       - name: Run AI integration tests
+        # quick non-sensitive debug to confirm the secret and refs are available in the job
+        # (does not print the secret value)
+        run: |
+          echo "Running AI integration tests (OpenAI)..."
+          echo "GITHUB_REF=$GITHUB_REF"
+          echo "GITHUB_BASE_REF=$GITHUB_BASE_REF"
+          if [ -z \"$OPENAI_API_KEY\" ]; then
+            echo "::warning::OPENAI_API_KEY is NOT set in this job environment"
+          else
+            echo "::notice::OPENAI_API_KEY is set in this job environment"
+          fi
+          npm run test:integration
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           NODE_ENV: test
-        run: |
-          echo "Running AI integration tests (OpenAI)..."
-          npm run test:integration
+        
 
   # ESLint Code Quality Checks for TypeScript/JavaScript Code
   code-quality:
@@ -104,7 +114,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci --verbose
+        run: npm ci
 
       - name: Run linting checks
         run: npm run lint
@@ -134,11 +144,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci --verbose
-          pip install --verbose robotframework
-          pip install --verbose robotframework-requests
-          pip install --verbose robotframework-databaselibrary
-          pip install --verbose -r requirements-test.txt
+          npm ci
+          pip install robotframework
+          pip install robotframework-requests
+          pip install robotframework-databaselibrary
+          pip install -r requirements-test.txt
 
       - name: Build Next.js application
         run: npm run build
@@ -220,7 +230,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci --verbose
+        run: npm ci
 
       - name: Check if Cypress tests exist
         id: cypress-check
@@ -285,10 +295,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci --verbose
-          pip install --verbose robotframework
-          pip install --verbose robotframework-requests
-          pip install --verbose -r requirements-test.txt
+          npm ci
+          pip install robotframework
+          pip install robotframework-requests
+          pip install -r requirements-test.txt
 
       - name: Run integration tests for production readiness
         run: |
@@ -334,10 +344,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci --verbose
-          pip install --verbose robotframework
-          pip install --verbose robotframework-requests
-          pip install --verbose -r requirements-test.txt
+          npm ci
+          pip install robotframework
+          pip install robotframework-requests
+          pip install -r requirements-test.txt
 
       - name: Run staging test suite
         run: |
@@ -354,7 +364,7 @@ jobs:
       - name: Build verification for staging
         run: |
           echo "Verifying build on develop branch (staging)..."
-          npm run build --verbose
+          npm run build
           echo "Staging build successful - Ready for integration testing"
 
       - name: Upload staging test results
@@ -387,10 +397,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci --verbose
-          pip install --verbose robotframework
-          pip install --verbose robotframework-requests
-          pip install --verbose -r requirements-test.txt
+          npm ci
+          pip install robotframework
+          pip install robotframework-requests
+          pip install -r requirements-test.txt
 
       - name: Run E2E tests for production validation
         run: |
@@ -450,7 +460,7 @@ jobs:
       - name: Build verification
         run: |
           echo "Verifying build on main branch with verbose output..."
-          npm run build --verbose
+          npm run build
           echo "Build successful - Ready for deployment"
 
       - name: Wait for Vercel deployment
