@@ -124,7 +124,7 @@ describe("PDFViewer component", () => {
     });
   });
 
-  test("shows error state when PDF exporter throws an exception", async () => {
+  it("shows error state when PDF exporter throws an exception", async () => {
     // Provide a block that triggers exporter error
   const blocks: TestBlock[] = [{ type: "paragraph", content: [], errorTrigger: true } as TestBlock];
   // @ts-expect-error deliberately wrong shape for test
@@ -148,27 +148,26 @@ describe("PDFViewer component", () => {
     });
   });
 
-  test("renders mobile download UI and allows clicking download button", async () => {
+  it("renders mobile download UI and allows clicking download button", async () => {
     // Simulate mobile
     setMatchMedia(true);
 
-  const blocks: TestBlock[] = [{ type: "paragraph", content: [] } as TestBlock];
-  // @ts-expect-error deliberately wrong shape for test
-  render(<PDFViewer content={blocks} title="Mobile" />);
+    const blocks: TestBlock[] = [{ type: "paragraph", content: [] } as TestBlock];
+    // @ts-expect-error deliberately wrong shape for test
+    render(<PDFViewer content={blocks} title="Mobile" />);
 
-    // wait for Report Ready UI
-    await waitFor(() => {
-      expect(screen.getByText(/Report is Ready/i)).toBeInTheDocument();
-    });
+    // Wait for exporter to run and for the mobile UI to appear. Use findBy* which polls
+    // and allow a slightly larger timeout to accommodate slower CI runners.
+    await screen.findByText(/Report is Ready/i, undefined, { timeout: 2000 });
 
-    const download = screen.getByTestId("pdf-download");
+    const download = await screen.findByTestId("pdf-download", undefined, { timeout: 2000 });
     expect(download).toBeInTheDocument();
 
-    // user-event click
+    // user-event click (no-op in our mock) — ensure it does not throw
     await userEvent.click(download);
 
     // clicking should not throw and button still present
-    expect(screen.getByTestId("pdf-download")).toBeInTheDocument();
+    expect(await screen.findByTestId("pdf-download")).toBeInTheDocument();
   });
 
   it("sanitizes colors, inline content and nested children before exporting", async () => {
