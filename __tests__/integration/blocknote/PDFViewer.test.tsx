@@ -2,21 +2,29 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+declare global {
+  // blocks passed to the mock exporter
+  var __lastExporterBlocks: unknown[] | undefined;
+  // console.error spy
+  var __consoleErrorSpy: jest.SpyInstance<void, [unknown?]> | undefined;
+}
+
+type TestBlock = Record<string, unknown>;
+
 // Mock react-pdf renderer to avoid heavy PDF rendering in tests
 jest.mock("@react-pdf/renderer", () => {
-  const React = require("react");
+  type PDFChild = React.ReactNode | ((arg: { loading: boolean }) => React.ReactNode);
+
   return {
-    PDFDownloadLink: ({ children }: { children: unknown }) => {
-      // children is a function that receives { loading }
+    PDFDownloadLink: ({ children }: { children: PDFChild }) => {
+      // children can be a render function or nodes
       return (
         <button data-testid="pdf-download">
-          {/* @ts-ignore allow calling unknown child as function for mock */}
-          {typeof children === "function" ? (children as (arg: { loading: boolean }) => unknown)({ loading: false }) : children}
+          {typeof children === "function" ? (children as (arg: { loading: boolean }) => React.ReactNode)({ loading: false }) : children}
         </button>
       );
     },
-    PDFViewer: ({ children }: { children: unknown }) => {
-      // @ts-ignore allow rendering unknown children in mock
+    PDFViewer: ({ children }: { children: React.ReactNode }) => {
       return <div data-testid="react-pdf-viewer">{children}</div>;
     },
     View: "div",
@@ -32,18 +40,15 @@ jest.mock("@blocknote/xl-pdf-exporter", () => {
     pdfDefaultSchemaMappings: {},
     PDFExporter: class PDFExporter {
       // toReactPDFDocument inspects blocks and will throw if a block has errorTrigger
-    async toReactPDFDocument(blocks: unknown[], opts: unknown) {
+    async toReactPDFDocument(blocks: unknown[], _opts: unknown) {
         // expose the blocks passed to the exporter for assertions in tests
-        // @ts-ignore - test helper
-        (global as any).__lastExporterBlocks = blocks;
-  // @ts-ignore allow treating unknown array members as records for test predicate
+        (globalThis as unknown as { __lastExporterBlocks?: unknown[] }).__lastExporterBlocks = blocks as unknown[];
   const hasError = Array.isArray(blocks) && blocks.some((b) => b && (b as Record<string, unknown>).errorTrigger === true);
         if (hasError) {
           throw new Error("exporter-failed");
         }
-        // return a simple React element as the "document"
-        const React = require("react");
-        return React.createElement("div", { "data-testid": "mock-pdf-doc" }, "PDF");
+            // return a simple React element as the "document"
+            return React.createElement("div", { "data-testid": "mock-pdf-doc" }, "PDF");
       }
     },
   };
@@ -58,12 +63,15 @@ jest.mock("@blocknote/core", () => ({
 
 // We need to mock window.matchMedia to exercise mobile and desktop branches
 function setMatchMedia(matches: boolean) {
-  // @ts-ignore - test helper
-  window.matchMedia = (query: string) => ({
-    matches,
-    media: query,
-    addEventListener: (_: string, __: EventListener) => {},
-    removeEventListener: (_: string, __: EventListener) => {},
+  // define matchMedia on window in a type-safe way for tests
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    value: (query: string) => ({
+      matches,
+      media: query,
+      addEventListener: (_: string, __: EventListener) => {},
+      removeEventListener: (_: string, __: EventListener) => {},
+    }),
   });
 }
 
@@ -76,18 +84,16 @@ describe("PDFViewer component", () => {
     setMatchMedia(false);
     // silence noisy console.error messages produced by the component when exporter fails
     // tests assert on UI error states; we don't want the stack logged to test output
-    // @ts-ignore allow assigning spy to a plain variable
-    (global as any).__consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    // assign to the typed global helper
+    (globalThis as unknown as { __consoleErrorSpy?: jest.SpyInstance }).__consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
     // restore console.error to original implementation
-    // @ts-ignore
-    if ((global as any).__consoleErrorSpy) {
-      // @ts-ignore
-      (global as any).__consoleErrorSpy.mockRestore();
-      // @ts-ignore
-      (global as any).__consoleErrorSpy = undefined;
+    const spy = (globalThis as unknown as { __consoleErrorSpy?: jest.SpyInstance }).__consoleErrorSpy;
+    if (spy) {
+      spy.mockRestore();
+      (globalThis as unknown as { __consoleErrorSpy?: jest.SpyInstance }).__consoleErrorSpy = undefined;
     }
   });
 
@@ -106,9 +112,10 @@ describe("PDFViewer component", () => {
   });
 
   it("shows error state when content format is invalid (not array)", async () => {
-    // pass an invalid value and ignore TS for this test
-    // @ts-ignore
-    render(<PDFViewer content={{ foo: "bar" }} />);
+  // pass an invalid value (non-array) for this test
+  const invalidContent: Record<string, unknown> = { foo: "bar" };
+  // @ts-expect-error deliberately wrong shape for test
+  render(<PDFViewer content={invalidContent} />);
 
     // should eventually show the error UI with the specific message
     await waitFor(() => {
@@ -119,8 +126,8 @@ describe("PDFViewer component", () => {
 
   test("shows error state when PDF exporter throws an exception", async () => {
     // Provide a block that triggers exporter error
-  const blocks = [{ type: "paragraph", content: [], errorTrigger: true }];
-  // @ts-ignore allow passing it blocks that don't strictly match the component Json type
+  const blocks: TestBlock[] = [{ type: "paragraph", content: [], errorTrigger: true } as TestBlock];
+  // @ts-expect-error deliberately wrong shape for test
   render(<PDFViewer content={blocks} title="ErrReport" />);
 
     await waitFor(() => {
@@ -130,8 +137,8 @@ describe("PDFViewer component", () => {
   });
 
   it("renders desktop viewer when pdfDocument is available and not mobile", async () => {
-  const blocks = [{ type: "paragraph", content: [] }];
-  // @ts-ignore
+  const blocks: TestBlock[] = [{ type: "paragraph", content: [] } as TestBlock];
+  // @ts-expect-error deliberately wrong shape for test
   render(<PDFViewer content={blocks} title="Desktop" />);
 
     // wait for the mock-pdf-doc to be injected into the viewer
@@ -145,8 +152,8 @@ describe("PDFViewer component", () => {
     // Simulate mobile
     setMatchMedia(true);
 
-  const blocks = [{ type: "paragraph", content: [] }];
-  // @ts-ignore
+  const blocks: TestBlock[] = [{ type: "paragraph", content: [] } as TestBlock];
+  // @ts-expect-error deliberately wrong shape for test
   render(<PDFViewer content={blocks} title="Mobile" />);
 
     // wait for Report Ready UI
@@ -166,7 +173,7 @@ describe("PDFViewer component", () => {
 
   it("sanitizes colors, inline content and nested children before exporting", async () => {
     // Create blocks with various style shapes to exercise sanitizer
-    const blocks = [
+    const blocks: TestBlock[] = [
       {
         type: "paragraph",
         content: [
@@ -184,46 +191,52 @@ describe("PDFViewer component", () => {
             content: [{ type: "text", text: "child", styles: { textColor: "invalidColor" } }],
           },
         ],
-      },
+      } as TestBlock,
     ];
 
     // render component and wait for exporter to be called
-    // @ts-ignore
+    // @ts-expect-error deliberately wrong shape for test
     render(<PDFViewer content={blocks} title="SanitizeTest" />);
 
     // wait until exporter received the (sanitized) blocks
     await waitFor(() => {
-      // @ts-ignore - test helper set in mock
-      expect((global as any).__lastExporterBlocks).toBeDefined();
+      expect((globalThis as unknown as { __lastExporterBlocks?: unknown[] }).__lastExporterBlocks).toBeDefined();
     });
 
     // grab the sanitized blocks that were actually passed to the exporter
-    // @ts-ignore
-    const sanitized: any = (global as any).__lastExporterBlocks[0];
+    const sanitized: unknown = (globalThis as unknown as { __lastExporterBlocks?: unknown[] }).__lastExporterBlocks![0];
 
     // top-level paragraph props: textColor 'green' is allowed, backgroundColor rgb(...) -> removed
-    expect(sanitized.props).toBeDefined();
-    expect(sanitized.props.textColor).toBe("green");
+    const sanitizedProps = (sanitized as Record<string, unknown>).props as Record<string, unknown> | undefined;
+    expect(sanitizedProps).toBeDefined();
+    expect(sanitizedProps?.textColor as string).toBe("green");
     // backgroundColor should have been normalized to "default" then deleted
-    expect(sanitized.props.backgroundColor).toBeUndefined();
+    expect(sanitizedProps?.backgroundColor).toBeUndefined();
 
     // first content item: text with invalid textColor should have styles removed for textColor
-    const firstText = sanitized.content[0];
-    expect(firstText.type).toBe("text");
-    expect(firstText.styles).toBeDefined();
+  const contentArray = (sanitized as Record<string, unknown>).content as unknown[] | undefined;
+  expect(contentArray).toBeDefined();
+  const firstText = contentArray![0] as Record<string, unknown>;
+  expect(firstText.type).toBe("text");
+  const firstTextStyles = firstText.styles as Record<string, unknown> | undefined;
+    expect(firstTextStyles).toBeDefined();
     // textColor invalid -> removed
-    expect(firstText.styles.textColor).toBeUndefined();
+    expect(firstTextStyles?.textColor).toBeUndefined();
     // backgroundColor 'blue' is allowed and should remain
-    expect(firstText.styles.backgroundColor).toBe("blue");
+    expect(firstTextStyles?.backgroundColor as string).toBe("blue");
 
     // link nested content should preserve allowed 'red'
-    const link = sanitized.content[1];
+  const link = contentArray![1] as Record<string, unknown>;
     expect(link.type).toBe("link");
     expect(Array.isArray(link.content)).toBe(true);
-    expect(link.content[0].styles.textColor).toBe("red");
+    const linkContent0 = (link.content as unknown[])[0] as Record<string, unknown>;
+    expect(linkContent0.styles && (linkContent0.styles as Record<string, unknown>).textColor).toBe("red");
 
     // nested child block's inline textColor 'invalidColor' should be removed
-    const child = sanitized.children[0];
-    expect(child.content[0].styles.textColor).toBeUndefined();
+  const childrenArray = (sanitized as Record<string, unknown>).children as unknown[] | undefined;
+  expect(childrenArray).toBeDefined();
+  const child = childrenArray![0] as Record<string, unknown>;
+  const childContent0 = (child.content as unknown[])[0] as Record<string, unknown>;
+    expect((childContent0.styles as Record<string, unknown>).textColor).toBeUndefined();
   });
 });
