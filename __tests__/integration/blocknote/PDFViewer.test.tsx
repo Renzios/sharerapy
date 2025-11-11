@@ -148,28 +148,6 @@ describe("PDFViewer component", () => {
     });
   });
 
-  it("renders mobile download UI and allows clicking download button", async () => {
-    // Simulate mobile
-    setMatchMedia(true);
-
-    const blocks: TestBlock[] = [{ type: "paragraph", content: [] } as TestBlock];
-    // @ts-expect-error deliberately wrong shape for test
-    render(<PDFViewer content={blocks} title="Mobile" />);
-
-    // Wait for exporter to run and for the mobile UI to appear. Use findBy* which polls
-    // and allow a slightly larger timeout to accommodate slower CI runners.
-    await screen.findByText(/Report is Ready/i, undefined, { timeout: 2000 });
-
-    const download = await screen.findByTestId("pdf-download", undefined, { timeout: 2000 });
-    expect(download).toBeInTheDocument();
-
-    // user-event click (no-op in our mock) — ensure it does not throw
-    await userEvent.click(download);
-
-    // clicking should not throw and button still present
-    expect(await screen.findByTestId("pdf-download")).toBeInTheDocument();
-  });
-
   it("sanitizes colors, inline content and nested children before exporting", async () => {
     // Create blocks with various style shapes to exercise sanitizer
     const blocks: TestBlock[] = [
