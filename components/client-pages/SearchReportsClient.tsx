@@ -6,7 +6,7 @@ import Pagination from "@/components/general/Pagination";
 import Toast from "@/components/general/Toast";
 import { useState, useTransition, useEffect } from "react";
 import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
-// 1. Import navigation hooks
+
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { SingleValue } from "react-select"; // Import this for handleSortChange
 
@@ -19,8 +19,8 @@ interface SearchReportsClientProps {
   totalPages: number;
   initialSearchTerm?: string;
   showSuccessToast?: boolean;
+  showDeletedToast?: boolean;
 }
-
 const reportSortOptions = [
   { value: "titleAscending", label: "Sort by: Title (A-Z)" },
   { value: "titleDescending", label: "Sort by: Title (Z-A)" },
@@ -50,13 +50,12 @@ export default function SearchReportsPage({
   totalPages,
   initialSearchTerm = "",
   showSuccessToast = false,
+  showDeletedToast = false,
 }: SearchReportsClientProps) {
-  // 2. Setup navigation hooks
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // 3. Initialize state from URL Search Params
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [sortOption, setSortOption] = useState(() => {
     const sortParam = searchParams.get("sort");
@@ -96,7 +95,16 @@ export default function SearchReportsPage({
     }
   }, [showSuccessToast, router, pathname]);
 
-  // 4. Add function to update URL
+  // Show success toast after report deletion
+  useEffect(() => {
+    if (showDeletedToast) {
+      setToastMessage("Report deleted successfully!");
+      setToastType("success");
+      setToastVisible(true);
+      router.replace(pathname, { scroll: false });
+    }
+  }, [showDeletedToast, router, pathname]);
+
   const updateURLParams = (params: { [key: string]: string | number }) => {
     const newParams = new URLSearchParams(searchParams.toString());
     Object.entries(params).forEach(([key, value]) => {
@@ -106,7 +114,6 @@ export default function SearchReportsPage({
     router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
   };
 
-  // 5. Update event handlers
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);

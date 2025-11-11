@@ -5,6 +5,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { SingleValue } from "react-select";
 import { Tables } from "@/lib/types/database.types";
 import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
+import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
 import TherapistProfile from "../layout/TherapistProfile";
 import SearchPageHeader from "../layout/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
@@ -78,6 +79,10 @@ export default function TherapistProfileClient({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  // Get current logged-in therapist to check if this is their own profile
+  const { therapist: currentTherapist } = useTherapistProfile();
+  const isOwnProfile = currentTherapist?.id === therapist.id;
 
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [sortOption, setSortOption] = useState(reportSortOptions[3]);
@@ -193,7 +198,11 @@ export default function TherapistProfileClient({
       >
         {reports.length > 0 ? (
           reports.map((report) => (
-            <ReportCard key={report.id} report={report} />
+            <ReportCard
+              key={report.id}
+              report={report}
+              showActions={isOwnProfile}
+            />
           ))
         ) : (
           <div className="text-center py-8">

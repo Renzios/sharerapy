@@ -29,17 +29,37 @@ export async function createReport(formData: FormData) {
 }
 
 export async function updateReport(id: string, formData: FormData) {
+  const supabase = await createClient();
+
+  // Get current user for authorization
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  // Verify ownership
+  const { data: existingReport } = await supabase
+    .from("reports")
+    .select("therapist_id")
+    .eq("id", id)
+    .single();
+
+  if (existingReport?.therapist_id !== user.id) {
+    throw new Error("Unauthorized - You don't own this report");
+  }
+
+  // Update report (patient_id and therapist_id cannot be changed)
   const ReportData = {
-    therapist_id: formData.get("therapist_id") as string,
     type_id: parseInt(formData.get("type_id") as string),
     language_id: parseInt(formData.get("language_id") as string),
-    patient_id: formData.get("patient_id") as string,
     content: JSON.parse(formData.get("content") as string) as Json,
     title: formData.get("title") as string,
     description: formData.get("description") as string,
+    updated_at: new Date().toISOString(),
   };
-
-  const supabase = await createClient();
 
   const { error } = await supabase
     .from("reports")
@@ -51,12 +71,33 @@ export async function updateReport(id: string, formData: FormData) {
     throw error;
   }
 
-  revalidatePath("");
-  redirect("");
+  revalidatePath(`/reports/${id}`);
+  revalidatePath("/search/reports");
+  redirect(`/reports/${id}?updated=true`);
 }
 
 export async function deleteReport(id: string) {
   const supabase = await createClient();
+
+  // Get current user for authorization
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  // Verify ownership
+  const { data: existingReport } = await supabase
+    .from("reports")
+    .select("therapist_id")
+    .eq("id", id)
+    .single();
+
+  if (existingReport?.therapist_id !== user.id) {
+    throw new Error("Unauthorized - You don't own this report");
+  }
 
   const { error } = await supabase.from("reports").delete().eq("id", id);
 
@@ -65,6 +106,6 @@ export async function deleteReport(id: string) {
     throw error;
   }
 
-  revalidatePath("");
-  redirect("");
+  revalidatePath("/search/reports");
+  redirect("/search/reports?deleted=true");
 }

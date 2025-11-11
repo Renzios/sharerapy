@@ -7,9 +7,11 @@ import ReportDetails from "@/components/forms/ReportDetails";
 import { Editor } from "@/components/blocknote/DynamicEditor";
 import Button from "@/components/general/Button";
 import Toast from "@/components/general/Toast";
-import { createReport } from "@/lib/actions/reports";
+import { createReport, updateReport } from "@/lib/actions/reports";
+import { validateContactNumber } from "@/lib/utils/frontendHelpers";
 import { createPatient } from "@/lib/actions/patients";
 import { Tables } from "@/lib/types/database.types";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 interface SelectOption {
   value: string;
@@ -17,6 +19,17 @@ interface SelectOption {
 }
 
 interface CreateNewReportClientProps {
+  mode?: "create" | "edit"; // Add mode prop
+  reportId?: string; // For edit mode
+  existingReport?: {
+    // For edit mode - pre-fill data
+    title: string;
+    description: string;
+    content: unknown;
+    language_id: number;
+    type_id: number;
+    patient_id: string;
+  };
   patients: Tables<"patients">[];
   patientOptions: SelectOption[];
   countryOptions: SelectOption[];
@@ -30,37 +43,72 @@ interface CreateNewReportClientProps {
  * @param props - The initial data from the server component
  */
 export default function CreateNewReportClient({
+  mode = "create", // Default to create mode
+  reportId,
+  existingReport,
   patients,
   patientOptions,
   countryOptions,
   languageOptions,
   typeOptions,
 }: CreateNewReportClientProps) {
-  // States related to patientDetails
+  // Find the existing patient data if in edit mode
+  const existingPatient =
+    mode === "edit" && existingReport
+      ? patients.find((p) => p.id === existingReport.patient_id)
+      : null;
 
+  // States related to patientDetails
   const [selectedPatient, setSelectedPatient] = useState<SelectOption | null>(
-    null
+    mode === "edit" && existingReport
+      ? patientOptions.find((p) => p.value === existingReport.patient_id) ||
+          null
+      : null
   );
   const [selectedCountry, setSelectedCountry] = useState<SelectOption | null>(
-    null
+    mode === "edit" && existingPatient && existingPatient.country_id
+      ? countryOptions.find(
+          (c) => c.value === existingPatient.country_id?.toString()
+        ) || null
+      : null
   );
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [selectedSex, setSelectedSex] = useState<SelectOption | null>(null);
-  const [contactNumber, setContactNumber] = useState("");
+  const [firstName, setFirstName] = useState(existingPatient?.first_name || "");
+  const [lastName, setLastName] = useState(existingPatient?.last_name || "");
+  const [birthday, setBirthday] = useState(existingPatient?.birthdate || "");
+  const [selectedSex, setSelectedSex] = useState<SelectOption | null>(
+    existingPatient && existingPatient.sex
+      ? { value: existingPatient.sex, label: existingPatient.sex }
+      : null
+  );
+  const [contactNumber, setContactNumber] = useState(
+    existingPatient?.contact_number || ""
+  );
 
   // States related to ReportDetails
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState(existingReport?.title || "");
+  const [description, setDescription] = useState(
+    existingReport?.description || ""
+  );
   const [selectedLanguage, setSelectedLanguage] = useState<SelectOption | null>(
-    null
+    mode === "edit" && existingReport
+      ? languageOptions.find(
+          (l) => l.value === existingReport.language_id.toString()
+        ) || null
+      : null
   );
   const [selectedTherapyType, setSelectedTherapyType] =
-    useState<SelectOption | null>(null);
+    useState<SelectOption | null>(
+      mode === "edit" && existingReport
+        ? typeOptions.find(
+            (t) => t.value === existingReport.type_id.toString()
+          ) || null
+        : null
+    );
 
   // Other states
-  const [editorContent, setEditorContent] = useState("");
+  const [editorContent, setEditorContent] = useState(
+    existingReport?.content ? JSON.stringify(existingReport.content) : ""
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -70,6 +118,8 @@ export default function CreateNewReportClient({
   const [toastType, setToastType] = useState<"success" | "error" | "info">(
     "info"
   );
+
+  const { user } = useAuth();
 
   const showToast = (
     message: string,
@@ -94,10 +144,11 @@ export default function CreateNewReportClient({
    * @returns boolean - true if valid, false otherwise
    */
   const validateForm = (): boolean => {
-    // Patient Details Validation (only if creating new patient)
+    // Patient Details Validation (only if creating new patient in CREATE mode)
     const isNewPatient = !selectedPatient || selectedPatient.value === "new";
 
-    if (isNewPatient) {
+    // Skip patient validation in edit mode (patient cannot be changed)
+    if (mode === "create" && isNewPatient) {
       if (!selectedCountry) {
         showToast("Please select patient's country", "error");
         return false;
@@ -128,6 +179,14 @@ export default function CreateNewReportClient({
       }
       if (!contactNumber.trim()) {
         showToast("Please enter patient's contact number", "error");
+        return false;
+      }
+
+      if (!validateContactNumber(contactNumber)) {
+        showToast(
+          "Contact number can only contain numbers and dashes (-)",
+          "error"
+        );
         return false;
       }
     }
@@ -258,67 +317,89 @@ export default function CreateNewReportClient({
       return;
     }
 
+    // Ensure user is authenticated (only for create mode)
+    if (mode === "create" && !user?.id) {
+      showToast("You must be logged in to create a report", "error");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
 
     try {
-      let patientId = formData.get("patient_id") as string;
+      if (mode === "edit" && reportId) {
+        // EDIT MODE - Update existing report
+        const reportFormData = new FormData();
+        reportFormData.append("title", formData.get("title") as string);
+        reportFormData.append(
+          "description",
+          formData.get("description") as string
+        );
+        reportFormData.append(
+          "language_id",
+          formData.get("language_id") as string
+        );
+        reportFormData.append("type_id", formData.get("type_id") as string);
+        reportFormData.append("content", editorContent);
 
-      // Check if we need to create a new patient (no selection or "new" selected)
-      if (!patientId || patientId === "new") {
-        const patientFormData = new FormData();
-        patientFormData.append(
-          "first_name",
-          formData.get("first_name") as string
-        );
-        patientFormData.append(
-          "last_name",
-          formData.get("last_name") as string
-        );
-        patientFormData.append(
-          "birthdate",
-          formData.get("birthdate") as string
-        );
-        patientFormData.append("sex", formData.get("sex") as string);
-        patientFormData.append(
-          "contact_number",
-          formData.get("contact_number") as string
-        );
-        patientFormData.append(
-          "country_id",
-          formData.get("country_id") as string
-        );
+        // updateReport will redirect on success
+        await updateReport(reportId, reportFormData);
+      } else {
+        // CREATE MODE - Create new report
+        let patientId = formData.get("patient_id") as string;
 
-        const newPatient = await createPatient(patientFormData);
-        patientId = newPatient.id;
+        // Check if we need to create a new patient (no selection or "new" selected)
+        if (!patientId || patientId === "new") {
+          const patientFormData = new FormData();
+          patientFormData.append(
+            "first_name",
+            formData.get("first_name") as string
+          );
+          patientFormData.append(
+            "last_name",
+            formData.get("last_name") as string
+          );
+          patientFormData.append(
+            "birthdate",
+            formData.get("birthdate") as string
+          );
+          patientFormData.append("sex", formData.get("sex") as string);
+          patientFormData.append(
+            "contact_number",
+            formData.get("contact_number") as string
+          );
+          patientFormData.append(
+            "country_id",
+            formData.get("country_id") as string
+          );
+
+          const newPatient = await createPatient(patientFormData);
+          patientId = newPatient.id;
+        }
+
+        const reportFormData = new FormData();
+        reportFormData.append("patient_id", patientId);
+        reportFormData.append("title", formData.get("title") as string);
+        reportFormData.append(
+          "description",
+          formData.get("description") as string
+        );
+        reportFormData.append(
+          "language_id",
+          formData.get("language_id") as string
+        );
+        reportFormData.append("type_id", formData.get("type_id") as string);
+
+        // Editor content is guaranteed to be valid by client-side validation
+        reportFormData.append("content", editorContent);
+
+        // Use authenticated user's ID as therapist_id
+        reportFormData.append("therapist_id", user!.id);
+
+        // Call createReport - it will redirect on success
+        await createReport(reportFormData);
       }
-
-      const reportFormData = new FormData();
-      reportFormData.append("patient_id", patientId);
-      reportFormData.append("title", formData.get("title") as string);
-      reportFormData.append(
-        "description",
-        formData.get("description") as string
-      );
-      reportFormData.append(
-        "language_id",
-        formData.get("language_id") as string
-      );
-      reportFormData.append("type_id", formData.get("type_id") as string);
-
-      // Editor content is guaranteed to be valid by client-side validation
-      reportFormData.append("content", editorContent);
-
-      // Hardcoded for now, will change once auth is implemented and can use context files.
-      reportFormData.append(
-        "therapist_id",
-        "5646f7f9-cf5b-48ff-a961-d8fabeab8f7b"
-      );
-
-      // Call createReport - it will redirect on success
-      // The success toast will be shown on the destination page
-      await createReport(reportFormData);
     } catch (error) {
       // Check if this is a Next.js redirect (which is actually success)
       if (error && typeof error === "object" && "digest" in error) {
@@ -344,13 +425,15 @@ export default function CreateNewReportClient({
 
   const handleClearForm = () => {
     // Clear Patient Details
-    setSelectedPatient(null);
-    setSelectedCountry(null);
-    setFirstName("");
-    setLastName("");
-    setBirthday("");
-    setSelectedSex(null);
-    setContactNumber("");
+    if (mode === "create") {
+      setSelectedPatient(null);
+      setSelectedCountry(null);
+      setFirstName("");
+      setLastName("");
+      setBirthday("");
+      setSelectedSex(null);
+      setContactNumber("");
+    }
 
     // Clear Report Details
     setTitle("");
@@ -367,6 +450,7 @@ export default function CreateNewReportClient({
 
   return (
     <div className="flex flex-col gap-y-8 mb-30">
+      {/* File Upload */}
       <div className="flex flex-col gap-y-4">
         <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
           Upload
@@ -376,6 +460,7 @@ export default function CreateNewReportClient({
 
       <form ref={formRef} onSubmit={handleSubmit} noValidate>
         <div className="flex flex-col gap-y-8">
+          {/* Patient Details */}
           <PatientDetails
             patients={patients}
             patientOptions={patientOptions}
@@ -394,6 +479,7 @@ export default function CreateNewReportClient({
             setSelectedSex={setSelectedSex}
             contactNumber={contactNumber}
             setContactNumber={setContactNumber}
+            disabled={mode === "edit"}
           />
           <ReportDetails
             languageOptions={languageOptions}
@@ -417,22 +503,24 @@ export default function CreateNewReportClient({
           </div>
 
           <div className="flex gap-x-4 justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              className="w-30"
-              onClick={handleClearForm}
-              disabled={isSubmitting}
-            >
-              Clear Form
-            </Button>
+            {mode === "create" && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-30"
+                onClick={handleClearForm}
+                disabled={isSubmitting}
+              >
+                Clear Form
+              </Button>
+            )}
             <Button
               type="submit"
               variant="filled"
               className="w-30"
               disabled={isSubmitting}
             >
-              Submit
+              {mode === "edit" ? "Update" : "Submit"}
             </Button>
           </div>
         </div>

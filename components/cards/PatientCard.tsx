@@ -33,6 +33,7 @@ export default function PatientCard({ patient }: PatientCardProps) {
     <Link
       href={`/profile/patient/${patient.id}`}
       className="
+        group
         flex flex-col gap-y-2
         bg-white rounded-[0.5rem] p-6
         border border-bordergray

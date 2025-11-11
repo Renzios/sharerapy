@@ -1,9 +1,8 @@
 import { readReports } from "@/lib/data/reports";
 import SearchReportsClient from "@/components/client-pages/SearchReportsClient";
 
-const REPORTS_PER_PAGE = 10; // Define page size
+const REPORTS_PER_PAGE = 10;
 
-// --- ADDED THESE ---
 const reportSortOptions = [
   { value: "titleAscending", label: "Sort by: Title (A-Z)" },
   { value: "titleDescending", label: "Sort by: Title (Z-A)" },
@@ -27,36 +26,33 @@ const getSortParams = (
       return { column: "created_at", ascending: false };
   }
 };
-// --- END OF ADDED CODE ---
 
-/**
- * This is the server component for the Reports search page.
- * It fetches the initial report data and passes it to the client component for rendering.
- */
 export default async function SearchReportsPage({
   searchParams,
 }: {
   searchParams: Promise<{
     q?: string;
     success?: string;
+    deleted?: string;
     p?: string;
-    sort?: string; // <-- 1. Accept 'sort' param
+    sort?: string;
   }>;
 }) {
   const params = await searchParams;
   const searchQuery = params.q || "";
   const showSuccessToast = params.success === "true";
+  const showDeletedToast = params.deleted === "true";
   const currentPage = Number(params.p) || 1;
-  const sortQuery = params.sort || "dateDescending"; // <-- 2. Read 'sort' param
+  const sortQuery = params.sort || "dateDescending";
 
-  const { column, ascending } = getSortParams(sortQuery); // <-- 3. Get sort params
+  const { column, ascending } = getSortParams(sortQuery);
 
   const { data, count } = await readReports({
     search: searchQuery,
     page: currentPage - 1,
     pageSize: REPORTS_PER_PAGE,
-    column: column, // <-- 4. Use for fetch
-    ascending: ascending, // <-- 5. Use for fetch
+    column: column,
+    ascending: ascending,
   });
 
   const totalPages = Math.ceil((count || 0) / REPORTS_PER_PAGE);
@@ -67,6 +63,7 @@ export default async function SearchReportsPage({
       totalPages={totalPages}
       initialSearchTerm={searchQuery}
       showSuccessToast={showSuccessToast}
+      showDeletedToast={showDeletedToast}
     />
   );
 }

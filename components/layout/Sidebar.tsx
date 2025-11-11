@@ -6,15 +6,12 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
-
-const navigationItems = [
-  { name: "Search", href: "/search", icon: <SearchIcon /> },
-  { name: "Create Report", href: "/reports/new", icon: <CreateIcon /> },
-  { name: "AI Mode", href: "/ai-mode", icon: <AutoAwesomeIcon /> },
-  { name: "Profile", href: "/profile/me", icon: <AccountBoxIcon /> },
-];
+import { getPublicURL } from "@/lib/utils/storage";
+import { useAuth } from "@/app/contexts/AuthContext";
+import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
+import { signOut } from "@/lib/actions/auth";
 
 /**
  * Renders the main navigation sidebar with responsive behavior and user profile section.
@@ -32,6 +29,32 @@ export default function Sidebar({
 }) {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const router = useRouter();
+  const { user } = useAuth();
+  const { therapist, isLoading } = useTherapistProfile();
+
+  const navigationItems = [
+    { name: "Search", href: "/search", icon: <SearchIcon /> },
+    { name: "Create Report", href: "/reports/new", icon: <CreateIcon /> },
+    { name: "AI Mode", href: "/ai-mode", icon: <AutoAwesomeIcon /> },
+    {
+      name: "Profile",
+      href: `/profile/therapist/${user?.id}`,
+      icon: <AccountBoxIcon />,
+    },
+  ];
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.log("Error Logging Out:", error);
+    }
+  };
+
   return (
     <aside
       className={`
@@ -74,20 +97,26 @@ export default function Sidebar({
               border-b border-bordergray
               lg:hidden"
         >
-          <Image
-            src="/testpfp.jpg"
-            alt="Profile Picture"
-            width={70}
-            height={70}
-            className="h-[4.375rem] w-[4.375rem] rounded-full"
-          />
+          {!isLoading && (
+            <Image
+              src={
+                therapist?.picture
+                  ? getPublicURL("therapist_pictures", therapist.picture)
+                  : "/testpfp.jpg"
+              }
+              alt="Profile Picture"
+              width={150}
+              height={150}
+              className="h-[4.375rem] w-[4.375rem] rounded-full"
+            />
+          )}
 
           <div className="flex flex-col items-center">
             <h2 className="font-Noto-Sans text-base text-black font-medium">
-              Dawson Catignas
+              {therapist?.name || "User"}
             </h2>
             <h3 className="font-Noto-Sans text-[0.6785rem] text-darkgray font-medium">
-              dawsoncatignas@gmail.com
+              {user?.email}
             </h3>
           </div>
         </div>
@@ -179,19 +208,25 @@ export default function Sidebar({
                 hover:bg-bordergray/30 transition-colors
               "
             >
-              <Image
-                src="/testpfp.jpg"
-                alt="Profile Picture"
-                width={60}
-                height={60}
-                className="w-15 h-15 rounded-full"
-              />
+              {!isLoading && (
+                <Image
+                  src={
+                    therapist?.picture
+                      ? getPublicURL("therapist_pictures", therapist.picture)
+                      : "/testpfp.jpg"
+                  }
+                  alt="Profile Picture"
+                  width={150}
+                  height={150}
+                  className="h-[4.375rem] w-[4.375rem] rounded-full"
+                />
+              )}
               <div className="flex-1 text-left">
                 <h3 className="font-Noto-Sans font-semibold text-sm text-black">
-                  Dawson Catignas
+                  {therapist?.name || "User"}
                 </h3>
                 <p className="font-Noto-Sans text-xs text-darkgray">
-                  dawsoncatignas@gmail.com
+                  {user?.email}
                 </p>
               </div>
               <KeyboardArrowDownIcon
@@ -210,10 +245,19 @@ export default function Sidebar({
                 bg-white border border-gray-200 rounded-lg shadow-lg
               "
               >
-                {/* Space reserved for select dropdown */}
-                <div className="px-4 py-3">
-                  {/* Select dropdown will go here */}
-                </div>
+                <Link href={`/profile/therapist/${therapist?.id}`}>
+                  <button
+                    className="
+                  w-full text-left
+                  px-4 py-2
+                  hover:bg-gray-50
+                  font-Noto-Sans text-sm text-primary
+                  hover:cursor-pointer
+                "
+                  >
+                    View
+                  </button>
+                </Link>
                 <hr className="my-2 border-bordergray" />
                 <button
                   className="
@@ -221,9 +265,11 @@ export default function Sidebar({
                   px-4 py-2
                   hover:bg-gray-50
                   font-Noto-Sans text-sm text-primary
+                  hover:cursor-pointer
                 "
+                  onClick={handleLogout}
                 >
-                  Sign out
+                  Logout
                 </button>
               </div>
             )}
