@@ -143,11 +143,5 @@ describe("Select Component", () => {
       const wrapper = container.querySelector("div");
       expect(wrapper).toHaveStyle({ cursor: "not-allowed" });
     });
-
   });
-
-
-  
-
-
 });
