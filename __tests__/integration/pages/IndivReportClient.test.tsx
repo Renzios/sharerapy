@@ -3,19 +3,40 @@ import { render, screen, fireEvent } from "@testing-library/react";
 
 import IndivReportClient from "@/components/client-pages/IndivReportClient";
 
+// Small helper types to avoid using `any`
+type SelectValue = { value: string; label: string };
+
+type SampleReport = {
+	id: string;
+	title: string;
+	created_at: string;
+	therapist_id: string;
+	therapist: {
+		id: string;
+		name: string;
+		clinic: { clinic: string; country: { country: string } };
+	};
+	language: { language: string };
+	type: { type: string };
+	patient: { id: string; name: string; sex: string; age: string };
+	description: string;
+	content: Uint8Array;
+};
+
 // Exposed mocks so tests can assert interactions
 const pushMock = jest.fn();
 const selectChangeMock = jest.fn();
 
 // Mock next/link so clicks call router.push (so we can assert navigation)
-jest.mock("next/link", () => ({
-	__esModule: true,
-	default: ({ href, children }: any) => (
+jest.mock("next/link", () => {
+	const LinkMock = ({ href, children }: { href: string; children: React.ReactNode }) => (
 		<a href={href} onClick={(e) => { e.preventDefault(); pushMock(href); }}>
 			{children}
 		</a>
-	),
-}));
+	);
+	LinkMock.displayName = "NextLinkMock";
+	return { __esModule: true, default: LinkMock };
+});
 
 // Mock next/navigation hooks to return the shared pushMock
 jest.mock("next/navigation", () => ({
@@ -24,60 +45,84 @@ jest.mock("next/navigation", () => ({
 }));
 
 // Mock child components to keep the test focused on IndivReportClient behavior
-jest.mock("@/components/general/Button", () => (props: any) => {
-	const { children, onClick, disabled, className } = props;
-	return (
-		<button onClick={onClick} disabled={disabled} className={className}>
-			{children}
-		</button>
-	);
+jest.mock("@/components/general/Button", () => {
+	const ButtonMock = (props: { children?: React.ReactNode; onClick?: () => void; disabled?: boolean; className?: string }) => {
+		const { children, onClick, disabled, className } = props;
+		return (
+			<button onClick={onClick} disabled={disabled} className={className}>
+				{children}
+			</button>
+		);
+	};
+	ButtonMock.displayName = "ButtonMock";
+	return ButtonMock;
 });
 
 // The Select mock exposes a clickable element that triggers onChange and also notifies test via selectChangeMock
-jest.mock("@/components/general/Select", () => (props: any) => {
-	return (
-		<div>
-			<label>{props.label}</label>
-			<button
-				data-testid="display-language-select"
-				onClick={() => {
-					const val = { value: "filipino", label: "Filipino" };
-					props.onChange?.(val);
-					selectChangeMock(val);
-				}}
-			>
-				Change
-			</button>
-		</div>
-	);
+jest.mock("@/components/general/Select", () => {
+	const SelectMock = (props: { label?: string; onChange?: (v: SelectValue) => void }) => {
+		return (
+			<div>
+				<label>{props.label}</label>
+				<button
+					data-testid="display-language-select"
+					onClick={() => {
+						const val: SelectValue = { value: "filipino", label: "Filipino" };
+						props.onChange?.(val);
+						selectChangeMock(val);
+					}}
+				>
+					Change
+				</button>
+			</div>
+		);
+	};
+	SelectMock.displayName = "SelectMock";
+	return SelectMock;
 });
 
-jest.mock("@/components/general/Toast", () => (props: any) => {
-	return props.isVisible ? <div>{props.message}</div> : null;
+jest.mock("@/components/general/Toast", () => {
+	const ToastMock = (props: { isVisible?: boolean; message?: React.ReactNode }) => {
+		return props.isVisible ? <div>{props.message}</div> : null;
+	};
+	ToastMock.displayName = "ToastMock";
+	return ToastMock;
 });
 
-jest.mock("@/components/general/ConfirmationModal", () => (props: any) => {
-	return props.isOpen ? <div>{props.title}</div> : null;
+jest.mock("@/components/general/ConfirmationModal", () => {
+	const ConfirmationModalMock = (props: { isOpen?: boolean; title?: React.ReactNode }) => {
+		return props.isOpen ? <div>{props.title}</div> : null;
+	};
+	ConfirmationModalMock.displayName = "ConfirmationModalMock";
+	return ConfirmationModalMock;
 });
 
-jest.mock("@/components/general/DropdownMenu", () => (props: any) => {
-	const { isOpen, items } = props;
-	return isOpen ? (
-		<div>
-			{Array.isArray(items) &&
-				items.map((it: any) => <div key={it.label}>{it.label}</div>)}
-		</div>
-	) : null;
+jest.mock("@/components/general/DropdownMenu", () => {
+	const DropdownMenuMock = (props: { isOpen?: boolean; items?: Array<{ label: string }> | undefined }) => {
+		const { isOpen, items } = props;
+		return isOpen ? (
+			<div>
+				{Array.isArray(items) &&
+					items.map((it) => <div key={it.label}>{it.label}</div>)}
+			</div>
+		) : null;
+	};
+	DropdownMenuMock.displayName = "DropdownMenuMock";
+	return DropdownMenuMock;
 });
 
-jest.mock("@/components/blocknote/PDFViewer", () => (props: any) => {
-	return <div>PDF: {props.title}</div>;
+jest.mock("@/components/blocknote/PDFViewer", () => {
+	const PDFViewerMock = (props: { title?: string }) => {
+		return <div>PDF: {props.title}</div>;
+	};
+	PDFViewerMock.displayName = "PDFViewerMock";
+	return PDFViewerMock;
 });
 
 // Mock actions
 const mockDeleteReport = jest.fn();
 jest.mock("@/lib/actions/reports", () => ({
-	deleteReport: (...args: any[]) => mockDeleteReport(...args),
+	deleteReport: (...args: unknown[]) => (mockDeleteReport as (...a: unknown[]) => unknown)(...args),
 }));
 
 // Mock hooks used by the component
@@ -105,8 +150,8 @@ describe("IndivReportClient", () => {
 		type: { type: "Assessment" },
 		patient: { id: "patient-1", name: "Jane Doe", sex: "F", age: "25" },
 		description: "This is a description of the report.",
-		content: new Uint8Array(),
-	} as any;
+		content: null,
+	} as unknown as React.ComponentProps<typeof IndivReportClient>["report"];
 
 	it("calls back navigation when Back is clicked and disables the button", () => {
 		render(<IndivReportClient report={sampleReport} />);
