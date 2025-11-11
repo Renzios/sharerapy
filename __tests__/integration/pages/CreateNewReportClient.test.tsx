@@ -55,6 +55,11 @@ jest.mock("@/lib/actions/reports", () => ({
   createReport: jest.fn(),
 }));
 
+// Mock authentication context so component thinks a user is logged in during tests
+jest.mock("@/app/contexts/AuthContext", () => ({
+  useAuth: () => ({ user: { id: "test-user-id" } }),
+}));
+
 // Mock child components used by the CreateNewReportClient to keep tests deterministic
 jest.mock("@/components/forms/PatientDetails", () => {
   // mock implementation keeps an internal selected value and exposes a hidden input
