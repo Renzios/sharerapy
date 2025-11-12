@@ -21,8 +21,10 @@ jest.mock("@/app/hooks/useBackNavigation", () => ({
 	}),
 }));
 
-function makePatient(overrides = {}) {
-	return {
+type Patient = React.ComponentProps<typeof PatientProfile>["patient"];
+
+function makePatient(overrides: Record<string, unknown> = {}) {
+	const base = {
 		id: "p1",
 		name: "Test Patient",
 		first_name: "Test",
@@ -33,8 +35,9 @@ function makePatient(overrides = {}) {
 		age: "30",
 		country: { id: 1, country: "Canada" },
 		reports: [],
-		...overrides,
-	} as any;
+	} as unknown as Patient;
+
+	return ({ ...base, ...overrides } as unknown) as Patient;
 }
 
 describe("PatientProfile (layout)", () => {

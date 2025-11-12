@@ -6,11 +6,13 @@ import TherapistProfile from "@/components/layout/TherapistProfile";
 // Trackable mock for the back navigation handler
 const handleBackClickMock = jest.fn();
 
+type Therapist = React.ComponentProps<typeof TherapistProfile>["therapist"];
+
 jest.mock("next/image", () => {
 	// simple img passthrough so we can assert src/alt
 	return {
 		__esModule: true,
-		default: (props: any) => {
+		default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
 			// eslint-disable-next-line jsx-a11y/alt-text
 			return <img {...props} />;
 		},
@@ -31,10 +33,11 @@ jest.mock("@/app/hooks/useBackNavigation", () => ({
 // Keep the Button simple and testable
 jest.mock("@/components/general/Button", () => ({
 	__esModule: true,
-	default: (props: any) => {
+
+	default: (props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children?: React.ReactNode }) => {
 		const { children, ...rest } = props;
 		return (
-			<button type="button" {...rest}>
+			<button type="button" {...(rest as React.ButtonHTMLAttributes<HTMLButtonElement>)}>
 				{children}
 			</button>
 		);
@@ -53,7 +56,7 @@ describe("TherapistProfile layout component", () => {
 			clinic: "Mindful Clinic",
 			country: { country: "Philippines" },
 		},
-	} as any;
+	} as Therapist;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
