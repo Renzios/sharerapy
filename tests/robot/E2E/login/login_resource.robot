@@ -4,6 +4,7 @@ Library    SeleniumLibrary
 *** Variables ***
 ${URL}        https://sharerapy-staging.vercel.app/
 ${BROWSER}    Chrome
+${HEADLESS}    headless
 ${VALID_USERNAME}   testuser@email.com
 ${VALID_PASSWORD}   testuserpw
 ${INVALID_USERNAME}     test@email.com
@@ -11,8 +12,9 @@ ${INVALID_PASSWORD}     testtesttest
 
 *** Keywords ***
 Open Sharerapy Login Page
-    Open Browser    ${URL}    ${BROWSER}
-    Maximize Browser Window
+    Open Browser    ${URL}    ${BROWSER}    
+    ...    options=add_argument("--headless=new");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--disable-gpu");add_argument("--window-size=1920,1080")
+    Set Window Size    1920    1080
 
 Login With Valid Credentials
     Input Text    css=input[type="email"]    ${VALID_USERNAME}
@@ -20,7 +22,7 @@ Login With Valid Credentials
     Click Element  css=button[type="submit"]
 
 Should See Landing Page
-    Wait Until Page Contains    Share Knowledge     10s
+    Wait Until Page Contains    Share Knowledge     20s
 
 Login With Invalid Credentials
     Input Text    css=input[type="email"]    ${INVALID_USERNAME}

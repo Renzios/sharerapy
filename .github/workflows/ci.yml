@@ -240,6 +240,16 @@ jobs:
           npm ci
           pip install -r requirements-test.txt
 
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Verify Chrome installation
+        run: |
+          chrome --version
+          which chrome
+
       - name: Check if Robot E2E tests exist
         id: robot-check
         run: |
@@ -444,6 +454,16 @@ jobs:
           pip install robotframework
           pip install robotframework-requests
           pip install -r requirements-test.txt
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Verify Chrome installation
+        run: |
+          chrome --version
+          which chrome
 
       - name: Run E2E tests for production validation
         run: |
