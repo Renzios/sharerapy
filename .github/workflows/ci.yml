@@ -8,7 +8,7 @@ name: Sharerapy CI/CD Pipeline
 #
 # PULL REQUEST TO DEVELOP:
 # - All feature development tests PLUS
-# - Cypress E2E Tests (full user workflow validation)
+# - Robot Framework E2E Tests (full user workflow validation)
 #
 # DEVELOP BRANCH INTEGRATION:
 # - All PR tests PLUS
@@ -186,13 +186,14 @@ jobs:
       - name: Run Robot Framework tests for all entities
         run: |
           mkdir -p tests/robot/output
-          if [ -d "tests/robot" ]; then
+          if [ -d "tests/robot/crud" ]; then
             # Run tests - failures will fail the pipeline until endpoints are implemented
-            robot --outputdir tests/robot/output tests/robot
+            # Exclude E2E tests as they require Selenium and run separately
+            robot --outputdir tests/robot/output --exclude E2E tests/robot/crud
             echo "All tests passed - functions are properly implemented"
           else
             echo "Robot Framework test directories not found, skipping..."
-            echo "Expected: tests/robot/patients/, tests/robot/therapists/, tests/robot/reports/"
+            echo "Expected: tests/robot/crud"
             echo "No API tests executed" > tests/robot/output/output.xml
           fi
         env:
@@ -211,14 +212,14 @@ jobs:
         if: always()
         with:
           name: robot-framework-results
-          path: tests/robot/output/
+          path: tests/robot/crud/output/
 
-  # Cypress E2E Tests - Full Regression Suite for PRs and Develop Integration
+  # Robot E2E Tests - Full Regression Suite for PRs and Develop Integration
   e2e-tests:
-    name: Cypress E2E Tests (Full Regression Suite)
+    name: Robot E2E Tests (Full Regression Suite)
     runs-on: ubuntu-latest
     needs: [jest-tests, backend-tests]
-    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/develop')
+    if: (github.event_name == 'pull_request' && github.base_ref == 'develop') || (github.event_name == 'push' && github.ref == 'refs/heads/develop')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -229,48 +230,90 @@ jobs:
           node-version: 18
           cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-      - name: Check if Cypress tests exist
-        id: cypress-check
+      - name: Install dependencies
         run: |
-          if [ -d "cypress/e2e" ] && [ "$(ls -A cypress/e2e 2>/dev/null)" ]; then
+          npm ci
+          pip install -r requirements-test.txt
+
+      - name: Check if Robot E2E tests exist
+        id: robot-check
+        run: |
+          if [ -d "tests/robot/E2E" ] && [ "$(ls -A tests/robot/E2E 2>/dev/null)" ]; then
             echo "has-tests=true" >> $GITHUB_OUTPUT
-            echo "Found Cypress tests - will run with verbose output"
+            echo "Found Robot E2E tests - will run with verbose output"
           else
             echo "has-tests=false" >> $GITHUB_OUTPUT
-            echo "No Cypress tests found, skipping E2E testing"
+            echo "No Robot E2E tests found, skipping E2E testing"
           fi
 
-      - name: Run Cypress E2E tests
-        if: steps.cypress-check.outputs.has-tests == 'true'
-        uses: cypress-io/github-action@v6
-        with:
-          build: npm run build
-          start: npm start
-          wait-on: "http://localhost:3000"
-          wait-on-timeout: 120
-          browser: chrome
-          config: baseUrl=http://localhost:3000
+      - name: Build Next.js application
+        if: steps.robot-check.outputs.has-tests == 'true'
+        run: npm run build
         env:
-          DEBUG: cypress:*
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Start Next.js server
+        if: steps.robot-check.outputs.has-tests == 'true'
+        run: |
+          echo "Starting Next.js server for E2E testing..."
+          npm start &
+          SERVER_PID=$!
+          echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
+
+          # Wait for server to be ready
+          sleep 10
+
+          # Check if server is responding
+          for i in {1..12}; do
+            if curl -s http://localhost:3000 > /dev/null 2>&1; then
+              echo "Server is responding"
+              break
+            elif [ $i -eq 12 ]; then
+              echo "Server may not be fully ready, but continuing with tests..."
+            else
+              echo "Waiting for server... attempt $i/12"
+              sleep 5
+            fi
+          done
+        env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-          NODE_ENV: test
+
+      - name: Run Robot E2E tests
+        if: steps.robot-check.outputs.has-tests == 'true'
+        run: |
+          mkdir -p tests/robot/E2E/output
+          robot --outputdir tests/robot/E2E/output tests/robot/E2E/
+          echo "Robot E2E tests completed"
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Stop Next.js server
+        if: always()
+        run: |
+          if [ ! -z "$SERVER_PID" ]; then
+            kill $SERVER_PID 2>/dev/null || true
+          fi
 
       - name: Skip E2E tests (no test files)
-        if: steps.cypress-check.outputs.has-tests == 'false'
+        if: steps.robot-check.outputs.has-tests == 'false'
         run: |
-          echo "Cypress E2E tests skipped - No test files found"
-          echo "Add test files to cypress/e2e/ directory to enable E2E testing"
+          echo "Robot E2E tests skipped - No test files found"
+          echo "Add test files to tests/robot/E2E/ directory to enable E2E testing"
 
-      - name: Upload Cypress screenshots
-        if: failure() && steps.cypress-check.outputs.has-tests == 'true'
+      - name: Upload Robot E2E test results
+        if: always() && steps.robot-check.outputs.has-tests == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-screenshots
-          path: cypress/screenshots
+          name: robot-e2e-test-results
+          path: tests/robot/E2E/output/
 
   # Integration Validation for PRs to Main (Production Safety)
   pr-main-integration-validation:
@@ -303,10 +346,10 @@ jobs:
       - name: Run integration tests for production readiness
         run: |
           echo "Running integration validation for PR to main..."
-          mkdir -p tests/robot
-          if [ -f "tests/robot/*.robot" ]; then
+          mkdir -p tests/robot/crud
+          if [ -f "tests/robot/crud/*.robot" ]; then
             # Run staging and regression tests for production readiness
-            robot --loglevel DEBUG --include staging --include regression --outputdir pr-integration-results tests/robot/
+            robot --loglevel DEBUG --include staging --include regression --outputdir pr-integration-results tests/robot/crud/
             echo "Integration validation completed for production"
           else
             echo "No Robot Framework integration tests found, skipping..."
@@ -351,10 +394,10 @@ jobs:
 
       - name: Run staging test suite
         run: |
-          mkdir -p tests/robot
-          if [ -f "tests/robot/*.robot" ]; then
+          mkdir -p tests/robot/crud
+          if [ -f "tests/robot/crud/*.robot" ]; then
             # Run staging tests on develop branch
-            robot --loglevel DEBUG --include staging --outputdir staging-results tests/robot/
+            robot --loglevel DEBUG --include staging --outputdir staging-results tests/robot/crud/
           else
             echo "No Robot Framework staging tests found, skipping..."
             mkdir -p staging-results
@@ -404,46 +447,39 @@ jobs:
 
       - name: Run E2E tests for production validation
         run: |
-          # Check if Cypress tests exist
-          if [ -d "cypress/e2e" ] && [ "$(ls -A cypress/e2e 2>/dev/null)" ]; then
-            echo "Running Cypress E2E tests for production validation..."
-            npx cypress run --browser chrome --config baseUrl=http://localhost:3000 &
-            CYPRESS_PID=$!
-            npm run build && npm start &
+          # Check if Robot E2E tests exist
+          if [ -d "tests/robot/E2E" ] && [ "$(ls -A tests/robot/E2E 2>/dev/null)" ]; then
+            echo "Running Robot Framework E2E tests for production validation..."
+            
+            # Build and start server
+            npm run build
+            npm start &
             SERVER_PID=$!
             
             # Wait for server to be ready
             timeout 120 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
             
-            # Wait for Cypress to complete
-            wait $CYPRESS_PID
-            CYPRESS_EXIT_CODE=$?
+            # Run Robot E2E tests
+            mkdir -p tests/robot/E2E/output
+            robot --outputdir tests/robot/E2E/output tests/robot/E2E/
+            ROBOT_EXIT_CODE=$?
             
             # Clean up
             kill $SERVER_PID 2>/dev/null || true
             
-            if [ $CYPRESS_EXIT_CODE -ne 0 ]; then
-              echo "❌ E2E tests failed - blocking production deployment"
+            if [ $ROBOT_EXIT_CODE -ne 0 ]; then
+              echo "E2E tests failed - blocking production deployment"
               exit 1
             fi
-            echo "✅ E2E tests passed for production"
+            echo "E2E tests passed for production"
           else
-            echo "No Cypress tests found - skipping E2E validation"
+            echo "No Robot E2E tests found - skipping E2E validation"
           fi
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
 
-      - name: Run regression test suite
-        run: |
-          mkdir -p tests/robot
-          if [ -f "tests/robot/*.robot" ]; then
-            # Run critical regression tests on main branch with verbose output
-            robot --loglevel DEBUG --include regression --outputdir regression-results tests/robot/
-          else
-            echo "No Robot Framework regression tests found, skipping..."
-            mkdir -p regression-results
-            echo "No regression tests executed" > regression-results/output.xml
-          fi
-
-      - name: Run integration validation for production
+      - name: Run all robot integration validation for production
         run: |
           echo "Running integration validation for production deployment..."
           mkdir -p tests/robot

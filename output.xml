@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.3.2 (Python 3.13.1 on win32)" generated="2025-11-14T13:39:46.721654" rpa="false" schemaversion="5">
+<suite id="s1" name="Login Tests" source="C:\Users\Anthony\Documents\Repos\sharerapy\tests\robot\E2E\login\login_tests.robot">
+<test id="s1-t1" name="Successful Login To Sharerapy" line="7">
+<kw name="Open Sharerapy Login Page" owner="login_resource">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:39:47.005232" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
+<arg>${URL}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-11-14T13:39:47.005040" elapsed="2.301463"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2025-11-14T13:39:49.306789" elapsed="0.066700"/>
+</kw>
+<status status="PASS" start="2025-11-14T13:39:47.004558" elapsed="2.369171"/>
+</kw>
+<kw name="Login With Valid Credentials" owner="login_resource">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:39:49.375320" level="INFO">Typing text 'testuser@email.com' into text field 'css=input[type="email"]'.</msg>
+<arg>css=input[type="email"]</arg>
+<arg>${VALID_USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-14T13:39:49.374676" elapsed="0.177485"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:39:49.552693" level="INFO">Typing text 'testuserpw' into text field 'css=input[type="password"]'.</msg>
+<arg>css=input[type="password"]</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-14T13:39:49.552382" elapsed="0.084184"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:39:49.636979" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
+<arg>css=button[type="submit"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-14T13:39:49.636762" elapsed="0.050487"/>
+</kw>
+<status status="PASS" start="2025-11-14T13:39:49.374296" elapsed="0.313078"/>
+</kw>
+<kw name="Should See Landing Page" owner="login_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Share Knowledge</arg>
+<arg>10s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-14T13:39:49.687952" elapsed="2.367265"/>
+</kw>
+<status status="PASS" start="2025-11-14T13:39:49.687708" elapsed="2.367625"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-11-14T13:39:52.055700" elapsed="2.160474"/>
+</kw>
+<doc>This test checks if login works with correct credentials</doc>
+<status status="PASS" start="2025-11-14T13:39:47.003497" elapsed="7.213514"/>
+</test>
+<test id="s1-t2" name="Logging in with Invalid Credentials" line="14">
+<kw name="Open Sharerapy Login Page" owner="login_resource">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:39:54.219459" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
+<arg>${URL}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-11-14T13:39:54.219300" elapsed="2.205570"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2025-11-14T13:39:56.425129" elapsed="0.046000"/>
+</kw>
+<status status="PASS" start="2025-11-14T13:39:54.219107" elapsed="2.252197"/>
+</kw>
+<kw name="Login With Invalid Credentials" owner="login_resource">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:39:56.472350" level="INFO">Typing text 'test@email.com' into text field 'css=input[type="email"]'.</msg>
+<arg>css=input[type="email"]</arg>
+<arg>${INVALID_USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-14T13:39:56.472072" elapsed="0.151992"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:39:56.624689" level="INFO">Typing text 'testtesttest' into text field 'css=input[type="password"]'.</msg>
+<arg>css=input[type="password"]</arg>
+<arg>${INVALID_PASSWORD}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-14T13:39:56.624322" elapsed="0.100823"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:39:56.725742" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
+<arg>css=button[type="submit"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-14T13:39:56.725452" elapsed="0.068033"/>
+</kw>
+<status status="PASS" start="2025-11-14T13:39:56.471766" elapsed="0.321870"/>
+</kw>
+<kw name="Should See Error Prompt" owner="login_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Invalid credentials</arg>
+<arg>10s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-14T13:39:56.795043" elapsed="0.856895"/>
+</kw>
+<status status="PASS" start="2025-11-14T13:39:56.793989" elapsed="0.858119"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-11-14T13:39:57.652474" elapsed="2.160069"/>
+</kw>
+<doc>This test checks if a user is unable to log in using invalid credentials</doc>
+<status status="PASS" start="2025-11-14T13:39:54.218757" elapsed="5.595652"/>
+</test>
+<test id="s1-t3" name="Successful Login with Logout" line="21">
+<kw name="Open Sharerapy Login Page" owner="login_resource">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:39:59.816680" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
+<arg>${URL}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-11-14T13:39:59.816537" elapsed="2.292405"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2025-11-14T13:40:02.109117" elapsed="0.057024"/>
+</kw>
+<status status="PASS" start="2025-11-14T13:39:59.816346" elapsed="2.350042"/>
+</kw>
+<kw name="Login With Valid Credentials" owner="login_resource">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:40:02.167360" level="INFO">Typing text 'testuser@email.com' into text field 'css=input[type="email"]'.</msg>
+<arg>css=input[type="email"]</arg>
+<arg>${VALID_USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-14T13:40:02.167055" elapsed="0.167385"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:40:02.335020" level="INFO">Typing text 'testuserpw' into text field 'css=input[type="password"]'.</msg>
+<arg>css=input[type="password"]</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-14T13:40:02.334669" elapsed="0.088693"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:40:02.423775" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
+<arg>css=button[type="submit"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-14T13:40:02.423557" elapsed="0.052186"/>
+</kw>
+<status status="PASS" start="2025-11-14T13:40:02.166768" elapsed="0.309080"/>
+</kw>
+<kw name="Should See Landing Page" owner="login_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Share Knowledge</arg>
+<arg>10s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-14T13:40:02.476406" elapsed="1.889768"/>
+</kw>
+<status status="PASS" start="2025-11-14T13:40:02.476178" elapsed="1.890119"/>
+</kw>
+<kw name="Logout" owner="login_resource">
+<kw name="Wait Until Page Does Not Contain" owner="SeleniumLibrary">
+<arg>Successfully</arg>
+<arg>10s</arg>
+<doc>Waits until ``text`` disappears from the current page.</doc>
+<status status="PASS" start="2025-11-14T13:40:04.367130" elapsed="3.807384"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-14T13:40:08.175613" level="INFO">Clicking element 'xpath=//button[normalize-space(.)="Logout"]'.</msg>
+<arg>xpath=//button[normalize-space(.)="Logout"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-14T13:40:08.175053" elapsed="0.064344"/>
+</kw>
+<status status="PASS" start="2025-11-14T13:40:04.366774" elapsed="3.872954"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-11-14T13:40:08.240317" elapsed="2.292410"/>
+</kw>
+<doc>This test checks if login works with correct credentials</doc>
+<status status="PASS" start="2025-11-14T13:39:59.815857" elapsed="10.717832"/>
+</test>
+<doc>Test case for different inputs on login to Sharerapy</doc>
+<status status="PASS" start="2025-11-14T13:39:46.722635" elapsed="23.813538"/>
+</suite>
+<statistics>
+<total>
+<stat pass="3" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Login Tests" id="s1" pass="3" fail="0" skip="0">Login Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
