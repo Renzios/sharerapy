@@ -31,6 +31,7 @@ jest.mock("next/image", () => ({
   default: (() => {
     const NextImageMock = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
       // eslint-disable-next-line jsx-a11y/alt-text
+      // eslint-disable-next-line @next/next/no-img-element
       return <img {...props} />;
     };
     NextImageMock.displayName = "NextImageMock";
@@ -68,7 +69,15 @@ jest.mock("@/components/general/Search", () => {
 
 jest.mock("@/components/general/Toast", () => {
   type ToastProps = { isVisible?: boolean; message?: React.ReactNode; onClose?: () => void };
-  return (props: ToastProps) => (props.isVisible ? <div>{props.message}<button onClick={props.onClose}>close</button></div> : null);
+  const ToastMock = (props: ToastProps) =>
+    props.isVisible ? (
+      <div>
+        {props.message}
+        <button onClick={props.onClose}>close</button>
+      </div>
+    ) : null;
+  ToastMock.displayName = "ToastMock";
+  return ToastMock;
 });
 
 // Mock auth actions and storage
