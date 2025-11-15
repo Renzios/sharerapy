@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import CreateNewReportClient from "@/components/client-pages/CreateNewReportClient";
 import type { Tables } from "@/lib/types/database.types";
 
-// Local mock prop types to avoid using `any` which violates ESLint rules
 interface Option {
   value: string;
   label: string;
@@ -53,6 +52,7 @@ jest.mock("@/lib/actions/patients", () => ({
 
 jest.mock("@/lib/actions/reports", () => ({
   createReport: jest.fn(),
+  updateReport: jest.fn(),
 }));
 
 // Mock authentication context so component thinks a user is logged in during tests
@@ -161,13 +161,14 @@ jest.mock("@/components/general/Toast", () => {
 });
 
 import { createPatient } from "@/lib/actions/patients";
-import { createReport } from "@/lib/actions/reports";
+import { createReport, updateReport } from "@/lib/actions/reports";
 
 describe("CreateNewReportClient integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (createPatient as jest.Mock).mockResolvedValue({ id: "new-pat-id" });
     (createReport as jest.Mock).mockResolvedValue({ success: true });
+    (updateReport as jest.Mock).mockResolvedValue({ success: true });
   });
 
   // Helper to fill all required fields except the ones specified in `omit`
@@ -653,5 +654,88 @@ describe("CreateNewReportClient integration", () => {
     expect(screen.getByTestId("language-select")).toHaveValue("1");
     expect(screen.getByTestId("type-select")).toHaveValue("2");
     expect(screen.getByTestId("editor")).toHaveValue("");
+  });
+
+  it("updates existing report in edit mode and does not create patient or createReport", async () => {
+    const patients: Tables<"patients">[] = [
+      {
+        id: "pat-1",
+        first_name: "Existing",
+        last_name: "Patient",
+        name: "Existing Patient",
+        birthdate: "1990-05-05",
+        contact_number: "09170000000",
+        country_id: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+  sex: "Male",
+      },
+    ];
+
+    const patientOptions = [{ value: "pat-1", label: "Existing Patient" }];
+    const countryOptions = [{ value: "country1", label: "Country1" }];
+    const languageOptions = [{ value: "1", label: "English" }];
+    const typeOptions = [{ value: "2", label: "Assessment" }];
+
+    const existingReport = {
+      title: "Existing Title",
+      description: "Existing desc",
+      content: [{ type: "p", content: [{ text: "Old" }] }],
+      language_id: 1,
+      type_id: 2,
+      patient_id: "pat-1",
+    };
+
+    render(
+      <CreateNewReportClient
+        mode="edit"
+        reportId="r-1"
+        existingReport={existingReport}
+        patients={patients}
+        patientOptions={patientOptions}
+        countryOptions={countryOptions}
+        languageOptions={languageOptions}
+        typeOptions={typeOptions}
+      />
+    );
+
+    // Editor should be prefilled with existing content
+    expect(screen.getByTestId("editor")).toHaveValue(JSON.stringify(existingReport.content));
+
+    // Submit button should show Update and Clear Form should not be present in edit mode
+    expect(screen.getByText(/update/i)).toBeTruthy();
+    expect(screen.queryByText(/clear form/i)).toBeNull();
+
+    // Update report details
+    fireEvent.change(screen.getByTestId("title"), { target: { value: "Updated Title" } });
+    fireEvent.change(screen.getByTestId("description"), { target: { value: "Updated Desc" } });
+    // Update the editor content directly to ensure parent state is updated
+    fireEvent.change(screen.getByTestId("editor"), {
+      target: { value: '[{"type":"p","content":[{"text":"Hello"}]}]' },
+    });
+
+    // Wait for editor state to update to the new content
+    await waitFor(() =>
+      expect(screen.getByTestId("editor")).toHaveValue(
+        '[{"type":"p","content":[{"text":"Hello"}]}]'
+      )
+    );
+
+    // Submit the form
+    fireEvent.click(screen.getByText(/update/i));
+
+    await waitFor(() => expect(updateReport).toHaveBeenCalled());
+
+    // Validate updateReport arguments
+    const calledArgs = (updateReport as jest.Mock).mock.calls[0];
+    expect(calledArgs[0]).toBe("r-1");
+    const form = calledArgs[1] as FormData;
+    expect(form.get("title")).toBe("Updated Title");
+    expect(form.get("description")).toBe("Updated Desc");
+    expect(form.get("content")).toContain('"text":"Hello"');
+
+    // Ensure no patient creation or createReport was invoked in edit mode
+    expect(createPatient).not.toHaveBeenCalled();
+    expect(createReport).not.toHaveBeenCalled();
   });
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 // Provide mocks for next/navigation so Link clicks can call router.push and
@@ -131,7 +131,7 @@ describe("SearchReportsClient integration", () => {
   render(<SearchReportsClient initialReports={initialReports} totalPages={1} />);
 
     const repLink = screen.getByText("Report One").closest("a");
-    fireEvent.click(repLink!);
+    await userEvent.click(repLink!);
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/reports/rep-1"));
   });
 
@@ -186,9 +186,11 @@ describe("SearchReportsClient integration", () => {
 
   render(<SearchReportsClient initialReports={initialReports} totalPages={1} />);
 
-    const input = screen.getByPlaceholderText("Search") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "Alice" } });
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+  // Query by role to avoid relying on placeholder text (more robust)
+  const input = screen.getByRole("textbox") as HTMLInputElement;
+  await userEvent.clear(input);
+  await userEvent.type(input, "Alice");
+    await userEvent.keyboard("{Enter}");
 
     await waitFor(() => expect(mockFetchReports).toHaveBeenCalled());
     await waitFor(() => expect(screen.getByText("Report Two")).toBeInTheDocument());
@@ -369,6 +371,22 @@ describe("SearchReportsClient integration", () => {
     await waitFor(() => expect(replaceMock).toHaveBeenCalledWith("/search/reports", { scroll: false }));
   });
 
+  it("shows deleted toast and cleans URL when showDeletedToast is true", async () => {
+    render(
+      <SearchReportsClient
+        initialReports={initialReports}
+        totalPages={1}
+        showDeletedToast={true}
+      />
+    );
+
+    // The toast message should be visible
+    const toast = await screen.findByText("Report deleted successfully!");
+    expect(toast).toBeInTheDocument();
+
+    // The component should call router.replace to clean the URL
+    await waitFor(() => expect(replaceMock).toHaveBeenCalledWith("/search/reports", { scroll: false }));
+  });
   
 
 });
