@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 import IndivReportClient from "@/components/client-pages/IndivReportClient";
 
@@ -38,10 +38,12 @@ jest.mock("next/link", () => {
 	return { __esModule: true, default: LinkMock };
 });
 
-// Mock next/navigation hooks to return the shared pushMock
+// Make useSearchParams controllable in tests
+const useSearchParamsMock = jest.fn(() => new URLSearchParams());
+// Mock next/navigation hooks to return the shared pushMock and controllable search params
 jest.mock("next/navigation", () => ({
 	useRouter: () => ({ push: pushMock }),
-	useSearchParams: () => new URLSearchParams(),
+	useSearchParams: () => useSearchParamsMock(),
 }));
 
 // Mock child components to keep the test focused on IndivReportClient behavior
@@ -89,23 +91,37 @@ jest.mock("@/components/general/Toast", () => {
 	return ToastMock;
 });
 
+// Make ConfirmationModal interactive so tests can trigger confirm/cancel
 jest.mock("@/components/general/ConfirmationModal", () => {
-	const ConfirmationModalMock = (props: { isOpen?: boolean; title?: React.ReactNode }) => {
-		return props.isOpen ? <div>{props.title}</div> : null;
+	const ConfirmationModalMock = (props: { isOpen?: boolean; title?: React.ReactNode; onConfirm?: () => void; onCancel?: () => void; confirmText?: string; cancelText?: string }) => {
+		if (!props.isOpen) return null;
+		return (
+			<div>
+				<div>{props.title}</div>
+				<button data-testid="confirm-delete" onClick={() => props.onConfirm?.()}>{props.confirmText ?? "Confirm"}</button>
+				<button data-testid="cancel-delete" onClick={() => props.onCancel?.()}>{props.cancelText ?? "Cancel"}</button>
+			</div>
+		);
 	};
 	ConfirmationModalMock.displayName = "ConfirmationModalMock";
 	return ConfirmationModalMock;
 });
 
+// Make DropdownMenu render interactive buttons for each item so tests can click them
 jest.mock("@/components/general/DropdownMenu", () => {
-	const DropdownMenuMock = (props: { isOpen?: boolean; items?: Array<{ label: string }> | undefined }) => {
+	const DropdownMenuMock = (props: { isOpen?: boolean; items?: Array<{ label: string; onClick?: () => void }> | undefined }) => {
 		const { isOpen, items } = props;
-		return isOpen ? (
+		if (!isOpen) return null;
+		return (
 			<div>
 				{Array.isArray(items) &&
-					items.map((it) => <div key={it.label}>{it.label}</div>)}
+					items.map((it) => (
+						<button key={it.label} onClick={() => it.onClick?.()}>
+							{it.label}
+						</button>
+					))}
 			</div>
-		) : null;
+		);
 	};
 	DropdownMenuMock.displayName = "DropdownMenuMock";
 	return DropdownMenuMock;
@@ -153,6 +169,11 @@ describe("IndivReportClient", () => {
 		content: null,
 	} as unknown as React.ComponentProps<typeof IndivReportClient>["report"];
 
+	beforeEach(() => {
+		// clear mock call history between tests so assertions start fresh
+		jest.clearAllMocks();
+	});
+
 	it("calls back navigation when Back is clicked and disables the button", () => {
 		render(<IndivReportClient report={sampleReport} />);
 
@@ -198,6 +219,77 @@ describe("IndivReportClient", () => {
 
 		fireEvent.click(patientLink!);
 		expect(pushMock).toHaveBeenCalledWith(`/profile/patient/${sampleReport.patient.id}`);
+	});
+
+	it("shows success toast when updated query param is present", async () => {
+		// make the hook return updated=true
+		useSearchParamsMock.mockReturnValueOnce(new URLSearchParams("updated=true"));
+
+		render(<IndivReportClient report={sampleReport} />);
+
+		// Toast mock renders message when isVisible
+		expect(await screen.findByText("Report updated successfully!")).toBeInTheDocument();
+	});
+
+	it("calls deleteReport when delete is confirmed", async () => {
+		// Ensure delete resolves
+		mockDeleteReport.mockResolvedValueOnce({});
+
+		render(<IndivReportClient report={sampleReport} />);
+
+		// open dropdown
+		const moreBtn = screen.getByLabelText("More options");
+		fireEvent.click(moreBtn);
+
+		// click Delete item in our DropdownMenu mock
+		const deleteBtn = screen.getByText("Delete");
+		fireEvent.click(deleteBtn);
+
+		// confirmation modal should render a confirm button
+		const confirmBtn = await screen.findByTestId("confirm-delete");
+		fireEvent.click(confirmBtn);
+
+		await waitFor(() => expect(mockDeleteReport).toHaveBeenCalledWith(sampleReport.id));
+	});
+
+	it("shows error toast when deleteReport rejects with non-redirect error", async () => {
+		// make deleteReport reject with a normal error
+		mockDeleteReport.mockRejectedValueOnce(new Error("network failure"));
+
+		render(<IndivReportClient report={sampleReport} />);
+
+		// open dropdown and click Delete
+		fireEvent.click(screen.getByLabelText("More options"));
+		fireEvent.click(screen.getByText("Delete"));
+
+		// confirm
+		fireEvent.click(await screen.findByTestId("confirm-delete"));
+
+		// toast should show the failure message
+		expect(await screen.findByText("Failed to delete report. Please try again.")).toBeInTheDocument();
+	});
+
+	it("deletes confirmation modal when cancelled", async () => {
+		render(<IndivReportClient report={sampleReport} />);
+
+		// open dropdown and click Delete
+		fireEvent.click(screen.getByLabelText("More options"));
+		fireEvent.click(screen.getByText("Delete"));
+		// confirmation modal should render a cancel button
+		const cancelBtn = await screen.findByTestId("cancel-delete");
+		fireEvent.click(cancelBtn);
+		// deleteReport should not be called
+		expect(mockDeleteReport).not.toHaveBeenCalled();
+	});
+
+	it("routes to edit page when Edit is clicked", () => {
+		render(<IndivReportClient report={sampleReport} />);
+		// open dropdown
+		fireEvent.click(screen.getByLabelText("More options"));
+		// click Edit item in our DropdownMenu mock
+		const editBtn = screen.getByText("Edit");
+		fireEvent.click(editBtn);
+		expect(pushMock).toHaveBeenCalledWith(`/reports/${sampleReport.id}/edit`);
 	});
 });
 

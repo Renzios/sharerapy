@@ -1,5 +1,6 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 // Provide a push mock and mock next/navigation so Link clicks can call router.push
 const pushMock = jest.fn();
@@ -216,15 +217,15 @@ describe("SearchAllClient integration", () => {
     );
 
     const therLink = screen.getByText("Dr. Alice").closest("a");
-    fireEvent.click(therLink!);
+    await userEvent.click(therLink!);
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/profile/therapist/ther-1"));
 
     const patLink = screen.getByText("Jane Doe").closest("a");
-    fireEvent.click(patLink!);
+    await userEvent.click(patLink!);
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/profile/patient/pat-1"));
 
     const repLink = screen.getByText("Report One").closest("a");
-    fireEvent.click(repLink!);
+    await userEvent.click(repLink!);
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/reports/rep-1"));
   });
 
@@ -326,10 +327,12 @@ describe("SearchAllClient integration", () => {
     );
 
     // Use the Search input in the header
-    const input = screen.getByPlaceholderText("Search") as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "Alice" } });
+  // Query by role to avoid relying on placeholder text (more robust)
+  const input = screen.getByRole("textbox") as HTMLInputElement;
+    await userEvent.clear(input);
+    await userEvent.type(input, "Alice");
     // Press Enter to trigger onSearch
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    await userEvent.keyboard("{Enter}");
 
     // The mocked fetches should be invoked and new items rendered
     await waitFor(() => expect(mockFetchPatients).toHaveBeenCalled());
