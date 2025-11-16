@@ -29,6 +29,25 @@ interface PatientCardProps {
  * @param props - The patient card props
  */
 export default function PatientCard({ patient }: PatientCardProps) {
+  const getTherapyTypeKey = (
+    type: string
+  ):
+    | "speech"
+    | "occupational"
+    | "sped"
+    | "developmental"
+    | "reading"
+    | undefined => {
+    const normalized = type.toLowerCase().trim();
+    if (normalized.includes("speech")) return "speech";
+    if (normalized.includes("occupational")) return "occupational";
+    if (normalized.includes("sped") || normalized.includes("special ed"))
+      return "sped";
+    if (normalized.includes("developmental")) return "developmental";
+    if (normalized.includes("reading")) return "reading";
+    return undefined;
+  };
+
   return (
     <Link
       href={`/profile/patient/${patient.id}`}
@@ -71,12 +90,13 @@ export default function PatientCard({ patient }: PatientCardProps) {
       <div className="flex flex-col gap-y-1 lg:gap-y-2 mt-2">
         <div className="flex flex-wrap gap-1 justify-end">
           {patient.reports && patient.reports.length > 0 ? (
-            patient.reports.map((report) =>
+            patient.reports.map((report, index) =>
               report.type?.type ? (
                 <Tag
-                  key={report.type.type}
+                  key={`${report.type.type}-${index}`}
                   text={report.type.type}
                   fontSize="text-xs"
+                  therapyType={getTherapyTypeKey(report.type.type)}
                 />
               ) : null
             )
