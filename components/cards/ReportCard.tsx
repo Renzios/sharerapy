@@ -70,6 +70,25 @@ export default function ReportCard({
   const therapyType = report.type.type;
   const language = report.language.language;
 
+  const getTherapyTypeKey = (
+    type: string
+  ):
+    | "speech"
+    | "occupational"
+    | "sped"
+    | "developmental"
+    | "reading"
+    | undefined => {
+    const normalized = type.toLowerCase().trim();
+    if (normalized.includes("speech")) return "speech";
+    if (normalized.includes("occupational")) return "occupational";
+    if (normalized.includes("sped") || normalized.includes("special ed"))
+      return "sped";
+    if (normalized.includes("developmental")) return "developmental";
+    if (normalized.includes("reading")) return "reading";
+    return undefined;
+  };
+
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
@@ -181,9 +200,13 @@ export default function ReportCard({
               {report.title}
             </h1>
             <div className="flex flex-wrap gap-2">
+              <Tag
+                text={therapyType}
+                fontSize="text-xs"
+                therapyType={getTherapyTypeKey(therapyType)}
+              />
               <Tag text={country} fontSize="text-xs" />
               <Tag text={language} fontSize="text-xs" />
-              <Tag text={therapyType} fontSize="text-xs" />
               <Tag text={clinic} fontSize="text-xs" />
             </div>
           </div>
