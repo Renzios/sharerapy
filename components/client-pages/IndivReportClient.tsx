@@ -8,6 +8,7 @@ import Select from "@/components/general/Select";
 import Toast from "@/components/general/Toast";
 import ConfirmationModal from "@/components/general/ConfirmationModal";
 import DropdownMenu from "@/components/general/DropdownMenu";
+import Tag from "@/components/general/Tag";
 import { Tables } from "@/lib/types/database.types";
 import PDFViewer from "@/components/blocknote/PDFViewer";
 import { useBackNavigation } from "@/app/hooks/useBackNavigation";
@@ -55,6 +56,12 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
     "info"
   );
 
+  const isEdited = report.created_at !== report.updated_at;
+  const country = report.therapist.clinic.country.country;
+  const clinic = report.therapist.clinic.clinic;
+  const therapyType = report.type.type;
+  const language = report.language.language;
+
   useEffect(() => {
     if (searchParams.get("updated") === "true") {
       setToastMessage("Report updated successfully!");
@@ -67,6 +74,25 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
   const enhancedHandleBackClick = () => {
     setIsNavigating(true);
     handleBackClick();
+  };
+
+  const getTherapyTypeKey = (
+    type: string
+  ):
+    | "speech"
+    | "occupational"
+    | "sped"
+    | "developmental"
+    | "reading"
+    | undefined => {
+    const normalized = type.toLowerCase().trim();
+    if (normalized.includes("speech")) return "speech";
+    if (normalized.includes("occupational")) return "occupational";
+    if (normalized.includes("sped") || normalized.includes("special ed"))
+      return "sped";
+    if (normalized.includes("developmental")) return "developmental";
+    if (normalized.includes("reading")) return "reading";
+    return undefined;
   };
 
   const [selectedLanguage, setSelectedLanguage] = useState<{
@@ -173,10 +199,20 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
             </div>
           </div>
           <p className="font-Noto-Sans text-[0.6875rem] md:text-sm font-medium text-darkgray ml-0.5">
-            {formatDate(report.created_at)} |{" "}
-            {report.therapist.clinic.country.country} |{" "}
-            {report.language.language} | {report.type.type}
+            {isEdited
+              ? `Edited on ${formatDate(report.updated_at)}`
+              : `Created on ${formatDate(report.created_at)}`}
           </p>
+          <div className="flex flex-wrap gap-2 mt-2">
+            <Tag
+              text={therapyType}
+              fontSize="text-xs"
+              therapyType={getTherapyTypeKey(therapyType)}
+            />
+            <Tag text={country} fontSize="text-xs" />
+            <Tag text={language} fontSize="text-xs" />
+            <Tag text={clinic} fontSize="text-xs" />
+          </div>
         </div>
 
         {/* Language select */}

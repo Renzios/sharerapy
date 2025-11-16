@@ -19,6 +19,7 @@ interface ReportCardProps {
     title: string;
     description: string;
     created_at: string;
+    updated_at: string;
     therapist: {
       first_name: string;
       last_name: string;
@@ -60,9 +61,13 @@ export default function ReportCard({
     "info"
   );
 
-  const dateUploaded = formatDistanceToNow(new Date(report.created_at), {
-    addSuffix: true,
-  });
+  const isEdited = report.created_at !== report.updated_at;
+  const dateUploaded = formatDistanceToNow(
+    new Date(isEdited ? report.updated_at : report.created_at),
+    {
+      addSuffix: true,
+    }
+  );
 
   const therapistName = `${report.therapist.first_name} ${report.therapist.last_name}`;
   const country = report.therapist.clinic.country.country;
@@ -190,7 +195,7 @@ export default function ReportCard({
                 •
               </p>
               <p className="font-Noto-Sans text-sm text-darkgray font-medium">
-                {dateUploaded}
+                {isEdited ? "Edited" : ""} {dateUploaded}
               </p>
             </div>
           </div>
