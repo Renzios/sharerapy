@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import DropdownMenu from "../../../components/general/DropdownMenu";
+import DropdownMenu from "../../../../components/general/DropdownMenu";
 
 describe("DropdownMenu Component", () => {
   const makeItems = (onClick = jest.fn()) => [

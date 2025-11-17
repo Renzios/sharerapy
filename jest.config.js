@@ -17,18 +17,19 @@ const customJestConfig = {
     '!lib/**/*.d.ts',
   ],
   testMatch: [
-    '<rootDir>/__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}',
+    '<rootDir>/tests/jest/**/*.{test,spec}.{js,jsx,ts,tsx}',
+    '<rootDir>/tests/unit/**/*.{test,spec}.{js,jsx,ts,tsx}',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
-    '^@tests/(.*)$': '<rootDir>/__tests__/$1',
+    '^@tests/(.*)$': '<rootDir>/tests/$1',
   },
   testPathIgnorePatterns: [
     '<rootDir>/.next/',
     '<rootDir>/node_modules/',
     '<rootDir>/cypress/',
     '<rootDir>/tests/robot/',
-    '<rootDir>/tests/server-actions/',
+    '<rootDir>/tests/jest/ai-integration/',
   ],
   // Ensure proper handling of ES modules and async/await
   transformIgnorePatterns: [
@@ -41,9 +42,17 @@ const customJestConfig = {
   // Increase timeout for CI environments
   testTimeout: 10000,
   // Use separate TypeScript config for tests to avoid conflicts
+  preset: 'ts-jest/presets/js-with-ts',
   globals: {
     'ts-jest': {
-      tsconfig: '__tests__/tsconfig.json'
+      tsconfig: {
+        compilerOptions: {
+          types: ['jest', '@types/jest', '@testing-library/jest-dom'],
+          esModuleInterop: true,
+          allowSyntheticDefaultImports: true,
+          jsx: 'react-jsx'
+        }
+      }
     }
   },
 
