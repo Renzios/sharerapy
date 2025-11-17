@@ -1,7 +1,8 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import FileUpload from "../../../../components/forms/FileUpload";
+import * as reactDropzone from "react-dropzone";
 
 describe("FileUpload component", () => {
   describe("Rendering", () => {

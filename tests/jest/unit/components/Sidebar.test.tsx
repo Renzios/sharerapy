@@ -25,6 +25,7 @@ const testUser: TestUser = {
 
 declare global {
   // typed test-only global used by the mock Sidebar below
+  // eslint-disable-next-line no-var
   var $user: TestUser | undefined;
 }
 
