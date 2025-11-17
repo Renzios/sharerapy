@@ -14,6 +14,9 @@
 
   /* Toast animation */
   --animate-slideIn: slideIn 0.3s ease-out;
+
+  /* Loading color swap animation */
+  --animate-color-swap: color-swap 1.5s ease-in-out infinite;
 }
 
 @keyframes slideIn {
@@ -35,6 +38,16 @@
   to {
     transform: translateX(100%);
     opacity: 0;
+  }
+}
+
+@keyframes color-swap {
+  0%,
+  100% {
+    color: hsl(0, 0, 40%); /* darkgray */
+  }
+  50% {
+    color: hsl(217, 78, 35); /* primary */
   }
 }
 
