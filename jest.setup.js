@@ -31,7 +31,6 @@ if (!global.File) {
       this.lastModified = (options && options.lastModified) || Date.now();
     }
   }
-  // eslint-disable-next-line no-global-assign
   global.File = FilePoly;
 }
 

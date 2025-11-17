@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 
 declare global {
   // blocks passed to the mock exporter
