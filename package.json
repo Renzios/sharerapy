@@ -10,9 +10,7 @@
     "test": "jest --passWithNoTests --testPathIgnorePatterns=tests/jest/ai-integration/",
     "test:integration": "jest --testPathIgnorePatterns=node_modules --testMatch='**/tests/jest/ai-integration/**/*.{test,spec}.{js,jsx,ts,tsx}' --passWithNoTests -i --runInBand",
     "test:watch": "jest --watch --passWithNoTests",
-    "test:coverage": "jest --coverage --passWithNoTests",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "test:coverage": "jest --coverage --passWithNoTests"
   },
   "dependencies": {
     "@blocknote/core": "^0.41.1",
@@ -47,7 +45,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "cypress": "^13.15.2",
     "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
