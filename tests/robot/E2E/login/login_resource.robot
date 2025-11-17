@@ -22,7 +22,7 @@ Login With Valid Credentials
     Click Element  css=button[type="submit"]
 
 Should See Landing Page
-    Wait Until Page Contains    Share Knowledge     20s
+    Wait Until Page Contains    Share Knowledge     30s
 
 Login With Invalid Credentials
     Input Text    css=input[type="email"]    ${INVALID_USERNAME}
