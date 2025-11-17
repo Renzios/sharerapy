@@ -45,7 +45,7 @@ const hasKey = !!process.env.OPENAI_API_KEY;
   }
 
   it('calls OpenAI and returns markdown containing the expected phrase', async () => {
-    const samplePath = path.join(__dirname, '..', 'files', 'sample.pdf');
+    const samplePath = path.join(__dirname, 'files', 'sample.pdf');
     const pdfBuffer = fs.readFileSync(samplePath);
 
     // Create a File object in Node (jest.setup.js provides a minimal File polyfill)

@@ -1,197 +1,2643 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 7.3.2 (Python 3.13.1 on win32)" generated="2025-11-14T14:22:09.397266" rpa="false" schemaversion="5">
-<suite id="s1" name="Login Tests" source="C:\Users\Anthony\Documents\Repos\sharerapy\tests\robot\E2E\login\login_tests.robot">
-<test id="s1-t1" name="Successful Login To Sharerapy" line="7">
+<robot generator="Robot 7.1.1 (Python 3.13.3 on win32)" generated="2025-11-17T14:13:56.010149" rpa="false" schemaversion="5">
+<suite id="s1" name="Robot" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot">
+<suite id="s1-s1" name="Crud" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\crud">
+<suite id="s1-s1-s1" name="Auth" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\crud\auth">
+<suite id="s1-s1-s1-s1" name="Auth Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\crud\auth\auth_tests.robot">
+<kw name="Setup Test Environment" owner="common" type="SETUP">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:13:56.132677" level="INFO">Setting up test environment for direct function calls</msg>
+<arg>Setting up test environment for direct function calls</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:13:56.132539" elapsed="0.000192"/>
+</kw>
+<doc>Initialize test environment</doc>
+<status status="PASS" start="2025-11-17T14:13:56.132154" elapsed="0.000650"/>
+</kw>
+<test id="s1-s1-s1-s1-t1" name="Signup (happy path)" line="11">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-17T14:13:56.133969" level="INFO">${data} = {'email': 'robot+signup@example.com', 'password': 'Passw0rd!', 'first_name': 'Robot', 'last_name': 'Signup'}</msg>
+<var>${data}</var>
+<arg>email=robot+signup@example.com</arg>
+<arg>password=Passw0rd!</arg>
+<arg>first_name=Robot</arg>
+<arg>last_name=Signup</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-17T14:13:56.133593" elapsed="0.000424"/>
+</kw>
+<kw name="Signup" owner="auth_functions">
+<msg time="2025-11-17T14:13:59.553860" level="INFO">${created} = {'id': '2288d281-7ca1-4c43-9f04-28e411d9f5a5', 'email': 'robot+signup@example.com', 'first_name': 'Robot', 'last_name': 'Signup', 'created_at': '2025-11-17T06:13:59Z'}</msg>
+<var>${created}</var>
+<arg>${data}</arg>
+<status status="PASS" start="2025-11-17T14:13:56.134361" elapsed="3.419548"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${created}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-11-17T14:13:59.554290" elapsed="0.000240"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:13:59.554968" level="INFO">Created user robot+signup@example.com with id 2288d281-7ca1-4c43-9f04-28e411d9f5a5</msg>
+<arg>Created user ${created}[email] with id ${created}[id]</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:13:59.554790" elapsed="0.000218"/>
+</kw>
+<doc>Signup should create a new user</doc>
+<tag>auth</tag>
+<tag>signup</tag>
+<status status="PASS" start="2025-11-17T14:13:56.132866" elapsed="3.422316"/>
+</test>
+<test id="s1-s1-s1-s1-t2" name="Login (success)" line="21">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-17T14:13:59.556477" level="INFO">${data} = {'email': 'robot+login@example.com', 'password': 'Secret123', 'first_name': 'Robot', 'last_name': 'Login'}</msg>
+<var>${data}</var>
+<arg>email=robot+login@example.com</arg>
+<arg>password=Secret123</arg>
+<arg>first_name=Robot</arg>
+<arg>last_name=Login</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-17T14:13:59.556232" elapsed="0.000278"/>
+</kw>
+<kw name="Run Keyword And Ignore Error" owner="BuiltIn">
+<kw name="Signup" owner="auth_functions">
+<arg>${data}</arg>
+<status status="PASS" start="2025-11-17T14:13:59.556920" elapsed="3.417940"/>
+</kw>
+<arg>Signup</arg>
+<arg>${data}</arg>
+<doc>Runs the given keyword with the given arguments and ignores possible error.</doc>
+<status status="PASS" start="2025-11-17T14:13:59.556768" elapsed="3.418301"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-17T14:14:02.976541" level="INFO">${login_payload} = {'email': 'robot+login@example.com', 'password': 'Secret123'}</msg>
+<var>${login_payload}</var>
+<arg>email=robot+login@example.com</arg>
+<arg>password=Secret123</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-17T14:14:02.975982" elapsed="0.000632"/>
+</kw>
+<kw name="Login" owner="auth_functions">
+<msg time="2025-11-17T14:14:05.868796" level="INFO">${result} = {'token': '8020b636-67fe-49c8-b355-7fecd6238d9f', 'email': 'robot+login@example.com'}</msg>
+<var>${result}</var>
+<arg>${login_payload}</arg>
+<status status="PASS" start="2025-11-17T14:14:02.977542" elapsed="2.891300"/>
+</kw>
+<kw name="Should Not Be Equal" owner="BuiltIn">
+<msg time="2025-11-17T14:14:05.869318" level="INFO">Argument types are:
+&lt;class 'dict'&gt;
+&lt;class 'NoneType'&gt;</msg>
+<arg>${result}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are equal.</doc>
+<status status="PASS" start="2025-11-17T14:14:05.869116" elapsed="0.000254"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${result}</arg>
+<arg>token</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-11-17T14:14:05.869694" elapsed="0.000341"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2025-11-17T14:14:05.871562" level="INFO">${TOKEN} = 8020b636-67fe-49c8-b355-7fecd6238d9f</msg>
+<arg>${TOKEN}</arg>
+<arg>${result}[token]</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2025-11-17T14:14:05.870383" elapsed="0.001263"/>
+</kw>
+<doc>Login succeeds with correct credentials</doc>
+<tag>auth</tag>
+<tag>login</tag>
+<status status="PASS" start="2025-11-17T14:13:59.555791" elapsed="6.316213"/>
+</test>
+<test id="s1-s1-s1-s1-t3" name="Login (failure)" line="36">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-17T14:14:05.873645" level="INFO">${login_payload} = {'email': 'nonexistent@example.com', 'password': 'Nope'}</msg>
+<var>${login_payload}</var>
+<arg>email=nonexistent@example.com</arg>
+<arg>password=Nope</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-17T14:14:05.873450" elapsed="0.000217"/>
+</kw>
+<kw name="Login" owner="auth_functions">
+<msg time="2025-11-17T14:14:08.182626" level="INFO">${result} = None</msg>
+<var>${result}</var>
+<arg>${login_payload}</arg>
+<status status="PASS" start="2025-11-17T14:14:05.873844" elapsed="2.308889"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${result}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:08.183465" elapsed="0.000454"/>
+</kw>
+<doc>Login fails with incorrect credentials</doc>
+<tag>auth</tag>
+<tag>login</tag>
+<status status="PASS" start="2025-11-17T14:14:05.873004" elapsed="2.311447"/>
+</test>
+<test id="s1-s1-s1-s1-t4" name="Sign Out" line="45">
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2025-11-17T14:14:08.186094" level="INFO">${token} = 8020b636-67fe-49c8-b355-7fecd6238d9f</msg>
+<var>${token}</var>
+<arg>'${TOKEN}' != ''</arg>
+<arg>${TOKEN}</arg>
+<arg>${EMPTY}</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2025-11-17T14:14:08.185884" elapsed="0.000233"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>'${token}' == ''</arg>
+<arg>${signup_data}=</arg>
+<arg>Create Dictionary</arg>
+<arg>email=robot+signout@example.com</arg>
+<arg>password=Abcd1234</arg>
+<arg>${created}=</arg>
+<arg>Signup</arg>
+<arg>${signup_data}</arg>
+<arg>${login_payload}=</arg>
+<arg>Create Dictionary</arg>
+<arg>email=robot+signout@example.com</arg>
+<arg>password=Abcd1234</arg>
+<arg>${login_result}=</arg>
+<arg>Login</arg>
+<arg>${login_payload}</arg>
+<arg>${token}=</arg>
+<arg>Set Variable</arg>
+<arg>${login_result}[token]</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-17T14:14:08.186796" elapsed="0.000234"/>
+</kw>
+<kw name="Sign Out" owner="auth_functions">
+<msg time="2025-11-17T14:14:08.187864" level="INFO">${signed} = True</msg>
+<var>${signed}</var>
+<arg>${token}</arg>
+<status status="PASS" start="2025-11-17T14:14:08.187708" elapsed="0.000180"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${signed}</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" start="2025-11-17T14:14:08.188182" elapsed="0.000118"/>
+</kw>
+<doc>Sign out invalidates session token</doc>
+<tag>auth</tag>
+<tag>signout</tag>
+<status status="PASS" start="2025-11-17T14:14:08.185548" elapsed="0.003005"/>
+</test>
+<kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:08.189938" level="INFO">Cleaning up test environment</msg>
+<arg>Cleaning up test environment</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:08.189837" elapsed="0.000139"/>
+</kw>
+<doc>Clean up test environment</doc>
+<status status="PASS" start="2025-11-17T14:14:08.189648" elapsed="0.000383"/>
+</kw>
+<doc>Authentication tests (signup / login / signout) using local helper fallback</doc>
+<status status="PASS" start="2025-11-17T14:13:56.069786" elapsed="12.120269"/>
+</suite>
+<status status="PASS" start="2025-11-17T14:13:56.068338" elapsed="12.123062"/>
+</suite>
+<suite id="s1-s1-s2" name="Patients" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\crud\patients">
+<suite id="s1-s1-s2-s1" name="Patient Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\crud\patients\patient_tests.robot">
+<kw name="Setup Test Environment" owner="common" type="SETUP">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:08.207376" level="INFO">Setting up test environment for direct function calls</msg>
+<arg>Setting up test environment for direct function calls</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:08.207181" elapsed="0.000275"/>
+</kw>
+<doc>Initialize test environment</doc>
+<status status="PASS" start="2025-11-17T14:14:08.206794" elapsed="0.000758"/>
+</kw>
+<test id="s1-s1-s2-s1-t1" name="Get Patient By ID (non-existent)" line="43">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-17T14:14:08.208755" level="INFO">${uuid} = a089736a-ab47-40fd-b02b-7da8b50d41ab</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-17T14:14:08.208513" elapsed="0.000270"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-17T14:14:08.208915" elapsed="0.000061"/>
+</return>
+<msg time="2025-11-17T14:14:08.209116" level="INFO">${patient_id} = a089736a-ab47-40fd-b02b-7da8b50d41ab</msg>
+<var>${patient_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-17T14:14:08.208257" elapsed="0.000879"/>
+</kw>
+<kw name="Get Patient By Id" owner="patient_functions">
+<msg time="2025-11-17T14:14:10.943469" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:14:10.943606" level="INFO">${patient} = None</msg>
+<var>${patient}</var>
+<arg>${patient_id}</arg>
+<status status="PASS" start="2025-11-17T14:14:08.209309" elapsed="2.734315"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${patient}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:10.943888" elapsed="0.000194"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:10.944538" level="INFO">SUCCESS: Get Patient By ID correctly returned None for non-existent patient</msg>
+<arg>SUCCESS: Get Patient By ID correctly returned None for non-existent patient</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:10.944375" elapsed="0.000240"/>
+</kw>
+<doc>Get patient by random/non-existent ID (expect None)</doc>
+<tag>get</tag>
+<tag>patients</tag>
+<status status="PASS" start="2025-11-17T14:14:08.207636" elapsed="2.737307"/>
+</test>
+<test id="s1-s1-s2-s1-t2" name="Get All Patients" line="53">
+<try>
+<branch type="TRY">
+<kw name="Get All Patients" owner="patient_functions">
+<msg time="2025-11-17T14:14:13.694620" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+
+Failed to call actual readPatients function: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+, using mock/local data</msg>
+<msg time="2025-11-17T14:14:13.695046" level="INFO">${result} = {'data': [{'id': 'e406a3e3-5d2c-469c-b29b-54db281b084d', 'first_name': 'John', 'last_name': 'Doe', 'birthdate': '1990-01-01', 'sex': 'Male', 'contact_number': '+1234567890', 'country_id': 1}], 'count'...</msg>
+<var>${result}</var>
+<status status="PASS" start="2025-11-17T14:14:10.945697" elapsed="2.749400"/>
+</kw>
+<kw name="Validate Patients List Response">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-17T14:14:13.695758" level="INFO">${patients} = [{'id': 'e406a3e3-5d2c-469c-b29b-54db281b084d', 'first_name': 'John', 'last_name': 'Doe', 'birthdate': '1990-01-01', 'sex': 'Male', 'contact_number': '+1234567890', 'country_id': 1}]</msg>
+<var>${patients}</var>
+<arg>${result}[data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-11-17T14:14:13.695620" elapsed="0.000159"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-11-17T14:14:13.696098" level="INFO">Length is 1.</msg>
+<arg>${patients}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2025-11-17T14:14:13.695958" elapsed="0.000179"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:13.696336" level="INFO">IMPLEMENTATION SUCCESS: Patient list retrieval working correctly - returned 1 patients</msg>
+<arg>IMPLEMENTATION SUCCESS: Patient list retrieval working correctly - returned ${result}[count] patients</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:13.696217" elapsed="0.000149"/>
+</kw>
+<arg>${result}</arg>
+<doc>Validate successful patients list response</doc>
+<status status="PASS" start="2025-11-17T14:14:13.695335" elapsed="0.001103"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:14:10.945620" elapsed="2.750840"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: Get All Patients failed: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:14:13.696591" elapsed="0.000014"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:14:13.696516" elapsed="0.000112"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:14:10.945576" elapsed="2.751075"/>
+</try>
+<doc>Test get all patients using direct function calls</doc>
+<tag>get</tag>
+<tag>patients</tag>
+<status status="PASS" start="2025-11-17T14:14:10.945297" elapsed="2.752055"/>
+</test>
+<test id="s1-s1-s2-s1-t3" name="Get Patients with ReadParameters" line="64">
+<try>
+<branch type="TRY">
+<kw name="Get All Patients" owner="patient_functions">
+<msg time="2025-11-17T14:14:16.378941" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+
+Failed to call actual readPatients function: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+, using mock/local data</msg>
+<msg time="2025-11-17T14:14:16.379090" level="INFO">${result} = {'data': [{'id': '1a25181f-9847-40fd-99e0-46c3f57528d7', 'first_name': 'John', 'last_name': 'Doe', 'birthdate': '1990-01-01', 'sex': 'Male', 'contact_number': '+1234567890', 'country_id': 1}], 'count'...</msg>
+<var>${result}</var>
+<arg>search=TestPatient</arg>
+<arg>page=0</arg>
+<arg>page_size=10</arg>
+<status status="PASS" start="2025-11-17T14:14:13.698595" elapsed="2.680517"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:16.379420" level="INFO">SUCCESS: Get patients with parameters working - returned 1 patients</msg>
+<arg>SUCCESS: Get patients with parameters working - returned ${result}[count] patients</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:16.379258" elapsed="0.000197"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${result}[count] &gt;= 0</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" start="2025-11-17T14:14:16.379547" elapsed="0.000194"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:14:13.698510" elapsed="2.681263"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: Get All Patients with parameters failed: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:14:16.379898" elapsed="0.000013"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:14:16.379820" elapsed="0.000117"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:14:13.698473" elapsed="2.681491"/>
+</try>
+<doc>Test get patients with search/filter parameters using direct function calls</doc>
+<tag>get</tag>
+<tag>parameters</tag>
+<tag>patients</tag>
+<status status="PASS" start="2025-11-17T14:14:13.697926" elapsed="2.682392"/>
+</test>
+<test id="s1-s1-s2-s1-t4" name="Update Patient (non-existent)" line="76">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-17T14:14:16.382549" level="INFO">${uuid} = 887290cb-17d0-430c-9965-f16813ba6ce9</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-17T14:14:16.382367" elapsed="0.000207"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-17T14:14:16.382672" elapsed="0.000040"/>
+</return>
+<msg time="2025-11-17T14:14:16.382816" level="INFO">${patient_id} = 887290cb-17d0-430c-9965-f16813ba6ce9</msg>
+<var>${patient_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-17T14:14:16.382155" elapsed="0.000678"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-17T14:14:16.383362" level="INFO">${patient_data} = {'first_name': 'TestPatient', 'last_name': 'TDD', 'birthdate': '1990-01-01', 'sex': 'male', 'contact_number': '+1234567890', 'country_id': '1'}</msg>
+<var>${patient_data}</var>
+<arg>&amp;{PATIENT_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-17T14:14:16.383119" elapsed="0.000266"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${patient_data}</arg>
+<arg>first_name=Updated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-17T14:14:16.383582" elapsed="0.000131"/>
+</kw>
+<kw name="Update Patient" owner="patient_functions">
+<msg time="2025-11-17T14:14:19.314344" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:14:19.314684" level="INFO">${updated_patient} = None</msg>
+<var>${updated_patient}</var>
+<arg>${patient_id}</arg>
+<arg>${patient_data}</arg>
+<status status="PASS" start="2025-11-17T14:14:16.383846" elapsed="2.930892"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${updated_patient}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:19.315535" elapsed="0.000593"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:19.317155" level="INFO">SUCCESS: Update Patient correctly returned None for non-existent patient</msg>
+<arg>SUCCESS: Update Patient correctly returned None for non-existent patient</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:19.316832" elapsed="0.000432"/>
+</kw>
+<doc>Update patient with random/non-existent ID (expect None)</doc>
+<tag>patients</tag>
+<tag>put</tag>
+<status status="PASS" start="2025-11-17T14:14:16.380973" elapsed="2.936580"/>
+</test>
+<test id="s1-s1-s2-s1-t5" name="Delete Patient (non-existent)" line="89">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-17T14:14:19.319023" level="INFO">${uuid} = b84041e0-e364-437e-ab65-64f2c2eb89e7</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-17T14:14:19.318819" elapsed="0.000227"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-17T14:14:19.319098" elapsed="0.000034"/>
+</return>
+<msg time="2025-11-17T14:14:19.319231" level="INFO">${patient_id} = b84041e0-e364-437e-ab65-64f2c2eb89e7</msg>
+<var>${patient_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-17T14:14:19.318619" elapsed="0.000629"/>
+</kw>
+<kw name="Delete Patient" owner="patient_functions">
+<msg time="2025-11-17T14:14:22.604362" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:14:22.604494" level="INFO">${result} = False</msg>
+<var>${result}</var>
+<arg>${patient_id}</arg>
+<status status="PASS" start="2025-11-17T14:14:19.319507" elapsed="3.285007"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${result}</arg>
+<arg>${False}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:22.604799" elapsed="0.000208"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:22.605276" level="INFO">SUCCESS: Delete Patient correctly returned False for non-existent patient</msg>
+<arg>SUCCESS: Delete Patient correctly returned False for non-existent patient</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:22.605181" elapsed="0.000126"/>
+</kw>
+<doc>Delete patient with random/non-existent ID (expect False)</doc>
+<tag>delete</tag>
+<tag>patients</tag>
+<status status="PASS" start="2025-11-17T14:14:19.318122" elapsed="3.287327"/>
+</test>
+<test id="s1-s1-s2-s1-t6" name="Test Patient Lifecycle (happy path)" line="99">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-17T14:14:22.606438" level="INFO">${patient_data} = {'first_name': 'TestPatient', 'last_name': 'TDD', 'birthdate': '1990-01-01', 'sex': 'male', 'contact_number': '+1234567890', 'country_id': '1'}</msg>
+<var>${patient_data}</var>
+<arg>&amp;{PATIENT_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-17T14:14:22.606240" elapsed="0.000221"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${patient_data}</arg>
+<arg>first_name=HappyPathTest</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-17T14:14:22.606642" elapsed="0.000153"/>
+</kw>
+<kw name="Create Patient" owner="patient_functions">
+<msg time="2025-11-17T14:14:25.672136" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+
+Failed to call actual createPatient function: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+, using mock/local data</msg>
+<msg time="2025-11-17T14:14:25.672277" level="INFO">${created} = {'first_name': 'HappyPathTest', 'last_name': 'TDD', 'birthdate': '1990-01-01', 'sex': 'male', 'contact_number': '+1234567890', 'country_id': '1', 'id': '83621c38-320c-44d8-b9da-833a9090e0e5', 'created...</msg>
+<var>${created}</var>
+<arg>${patient_data}</arg>
+<status status="PASS" start="2025-11-17T14:14:22.607061" elapsed="3.065236"/>
+</kw>
+<kw name="Validate Created Patient Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${patient_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-11-17T14:14:25.673055" elapsed="0.000128"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${patient_result}[first_name]</arg>
+<arg>${expected_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:25.673272" elapsed="0.000148"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${patient_result}[last_name]</arg>
+<arg>${expected_data}[last_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:25.673496" elapsed="0.000124"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:25.673787" level="INFO">IMPLEMENTATION SUCCESS: Patient creation working correctly - created patient with ID 83621c38-320c-44d8-b9da-833a9090e0e5</msg>
+<arg>IMPLEMENTATION SUCCESS: Patient creation working correctly - created patient with ID ${patient_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:25.673690" elapsed="0.000126"/>
+</kw>
+<arg>${created}</arg>
+<arg>${patient_data}</arg>
+<doc>Validate successful patient creation response</doc>
+<status status="PASS" start="2025-11-17T14:14:25.672778" elapsed="0.001082"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-17T14:14:25.674716" level="INFO">${patient_id} = 83621c38-320c-44d8-b9da-833a9090e0e5</msg>
+<var>${patient_id}</var>
+<arg>${created}[id]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-11-17T14:14:25.674476" elapsed="0.000269"/>
+</kw>
+<kw name="Get Patient By Id" owner="patient_functions">
+<msg time="2025-11-17T14:14:25.675306" level="INFO">${read} = {'first_name': 'HappyPathTest', 'last_name': 'TDD', 'birthdate': '1990-01-01', 'sex': 'male', 'contact_number': '+1234567890', 'country_id': '1', 'id': '83621c38-320c-44d8-b9da-833a9090e0e5', 'created...</msg>
+<var>${read}</var>
+<arg>${patient_id}</arg>
+<status status="PASS" start="2025-11-17T14:14:25.675136" elapsed="0.000192"/>
+</kw>
+<kw name="Should Not Be Equal" owner="BuiltIn">
+<msg time="2025-11-17T14:14:25.675811" level="INFO">Argument types are:
+&lt;class 'dict'&gt;
+&lt;class 'NoneType'&gt;</msg>
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are equal.</doc>
+<status status="PASS" start="2025-11-17T14:14:25.675662" elapsed="0.000190"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}[first_name]</arg>
+<arg>${patient_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:25.676195" elapsed="0.000168"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${patient_data}</arg>
+<arg>first_name=HappyPathUpdated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-17T14:14:25.676687" elapsed="0.000135"/>
+</kw>
+<kw name="Update Patient" owner="patient_functions">
+<msg time="2025-11-17T14:14:28.628412" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:14:28.628783" level="INFO">${updated} = {'first_name': 'HappyPathUpdated', 'last_name': 'TDD', 'birthdate': '1990-01-01', 'sex': 'male', 'contact_number': '+1234567890', 'country_id': '1', 'id': '83621c38-320c-44d8-b9da-833a9090e0e5', 'crea...</msg>
+<var>${updated}</var>
+<arg>${patient_id}</arg>
+<arg>${patient_data}</arg>
+<status status="PASS" start="2025-11-17T14:14:25.677394" elapsed="2.951423"/>
+</kw>
+<kw name="Validate Patient Update Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${patient_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-11-17T14:14:28.629847" elapsed="0.000216"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${patient_result}[first_name]</arg>
+<arg>${expected_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:28.630237" elapsed="0.000256"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:28.630764" level="INFO">IMPLEMENTATION SUCCESS: Patient update working correctly - updated patient</msg>
+<arg>IMPLEMENTATION SUCCESS: Patient update working correctly - updated patient</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:28.630636" elapsed="0.000180"/>
+</kw>
+<arg>${updated}</arg>
+<arg>${patient_data}</arg>
+<doc>Validate successful patient update response</doc>
+<status status="PASS" start="2025-11-17T14:14:28.629320" elapsed="0.001598"/>
+</kw>
+<kw name="Delete Patient" owner="patient_functions">
+<msg time="2025-11-17T14:14:31.304148" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:14:31.304279" level="INFO">${deleted} = True</msg>
+<var>${deleted}</var>
+<arg>${patient_id}</arg>
+<status status="PASS" start="2025-11-17T14:14:28.631217" elapsed="2.673082"/>
+</kw>
+<kw name="Wait Until Keyword Succeeds" owner="BuiltIn">
+<kw name="Get Patient By ID Should Be None">
+<kw name="Get Patient By Id" owner="patient_functions">
+<msg time="2025-11-17T14:14:34.262417" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/patients.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_patient_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_patient_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:14:34.262563" level="INFO">${read} = None</msg>
+<var>${read}</var>
+<arg>${patient_id}</arg>
+<status status="PASS" start="2025-11-17T14:14:31.305069" elapsed="2.957515"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:34.262732" elapsed="0.000202"/>
+</kw>
+<arg>${patient_id}</arg>
+<doc>Fail if Get Patient By ID returns a value (used for retries after delete)</doc>
+<status status="PASS" start="2025-11-17T14:14:31.304848" elapsed="2.958147"/>
+</kw>
+<arg>5 times</arg>
+<arg>1s</arg>
+<arg>Get Patient By ID Should Be None</arg>
+<arg>${patient_id}</arg>
+<doc>Runs the specified keyword and retries if it fails.</doc>
+<status status="PASS" start="2025-11-17T14:14:31.304590" elapsed="2.958441"/>
+</kw>
+<doc>Create, Read, Update, Delete patient lifecycle (happy path)</doc>
+<tag>lifecycle</tag>
+<tag>patients</tag>
+<status status="PASS" start="2025-11-17T14:14:22.605897" elapsed="11.657426"/>
+</test>
+<kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:34.264080" level="INFO">Cleaning up test environment</msg>
+<arg>Cleaning up test environment</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:34.263987" elapsed="0.000131"/>
+</kw>
+<doc>Clean up test environment</doc>
+<status status="PASS" start="2025-11-17T14:14:34.263825" elapsed="0.000341"/>
+</kw>
+<doc>Patient tests - Direct function calls using Supabase</doc>
+<status status="PASS" start="2025-11-17T14:14:08.193961" elapsed="26.070225"/>
+</suite>
+<status status="PASS" start="2025-11-17T14:14:08.192051" elapsed="26.072974"/>
+</suite>
+<suite id="s1-s1-s3" name="Reports" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\crud\reports">
+<suite id="s1-s1-s3-s1" name="Report Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\crud\reports\report_tests.robot">
+<kw name="Setup Test Environment" owner="common" type="SETUP">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:34.277775" level="INFO">Setting up test environment for direct function calls</msg>
+<arg>Setting up test environment for direct function calls</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:34.277270" elapsed="0.000554"/>
+</kw>
+<doc>Initialize test environment</doc>
+<status status="PASS" start="2025-11-17T14:14:34.277084" elapsed="0.000798"/>
+</kw>
+<test id="s1-s1-s3-s1-t1" name="Get Report By ID (non-existent)" line="35">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-17T14:14:34.278754" level="INFO">${uuid} = 6adf7850-f550-4702-91e1-aa03f1887897</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-17T14:14:34.278574" elapsed="0.000202"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-17T14:14:34.278933" elapsed="0.000034"/>
+</return>
+<msg time="2025-11-17T14:14:34.279065" level="INFO">${report_id} = 6adf7850-f550-4702-91e1-aa03f1887897</msg>
+<var>${report_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-17T14:14:34.278386" elapsed="0.000695"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Get Report By Id" owner="report_functions">
+<msg time="2025-11-17T14:14:37.032146" level="INFO">${report} = None</msg>
+<var>${report}</var>
+<arg>${report_id}</arg>
+<status status="PASS" start="2025-11-17T14:14:34.279316" elapsed="2.752868"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:37.032323" elapsed="0.000209"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:37.032710" level="INFO">SUCCESS: Get Report By ID correctly returned None for non-existent report</msg>
+<arg>SUCCESS: Get Report By ID correctly returned None for non-existent report</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:37.032627" elapsed="0.000115"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:14:34.279249" elapsed="2.753523"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: GET reports: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:14:37.032884" elapsed="0.000012"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:14:37.032815" elapsed="0.000106"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:14:34.279222" elapsed="2.753720"/>
+</try>
+<doc>Get report by random/non-existent ID (expect None)</doc>
+<tag>get</tag>
+<tag>reports</tag>
+<status status="PASS" start="2025-11-17T14:14:34.277931" elapsed="2.755368"/>
+</test>
+<test id="s1-s1-s3-s1-t2" name="Get All Reports" line="49">
+<try>
+<branch type="TRY">
+<kw name="Get All Reports" owner="report_functions">
+<msg time="2025-11-17T14:14:40.203047" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/reports.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_report_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_report_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+
+Failed to call actual readReports function: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/reports.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_report_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_report_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+, using mock/local data</msg>
+<msg time="2025-11-17T14:14:40.203307" level="INFO">${result} = {'data': [{'id': '27a87b0c-c433-43ff-8238-7f61ed20caa7', 'title': 'Mock Report', 'description': 'Mock report for testing', 'type_id': 1, 'report_id': 'ae4229e4-1ce5-45b6-bf01-e9437063809e', 'therapist...</msg>
+<var>${result}</var>
+<status status="PASS" start="2025-11-17T14:14:37.034274" elapsed="3.169072"/>
+</kw>
+<kw name="Validate Reports List Response">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-17T14:14:40.204267" level="INFO">${reports} = [{'id': '27a87b0c-c433-43ff-8238-7f61ed20caa7', 'title': 'Mock Report', 'description': 'Mock report for testing', 'type_id': 1, 'report_id': 'ae4229e4-1ce5-45b6-bf01-e9437063809e', 'therapist_id': '8f...</msg>
+<var>${reports}</var>
+<arg>${result}[data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-11-17T14:14:40.204045" elapsed="0.000265"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-11-17T14:14:40.204810" level="INFO">Length is 1.</msg>
+<arg>${reports}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2025-11-17T14:14:40.204534" elapsed="0.000345"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:40.205052" level="INFO">IMPLEMENTATION SUCCESS: Report list retrieval working correctly - returned 1 reports</msg>
+<arg>IMPLEMENTATION SUCCESS: Report list retrieval working correctly - returned ${result}[count] reports</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:40.204951" elapsed="0.000128"/>
+</kw>
+<arg>${result}</arg>
+<doc>Validate successful reports list response</doc>
+<status status="PASS" start="2025-11-17T14:14:40.203636" elapsed="0.001487"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:14:37.034185" elapsed="3.170961"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: GET reports: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:14:40.205250" elapsed="0.000012"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:14:40.205187" elapsed="0.000096"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:14:37.034154" elapsed="3.171150"/>
+</try>
+<doc>Test get all reports using direct function calls</doc>
+<tag>get</tag>
+<tag>reports</tag>
+<status status="PASS" start="2025-11-17T14:14:37.033825" elapsed="3.171969"/>
+</test>
+<test id="s1-s1-s3-s1-t3" name="Get Reports with Parameters" line="61">
+<try>
+<branch type="TRY">
+<kw name="Get All Reports" owner="report_functions">
+<msg time="2025-11-17T14:14:43.326027" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/reports.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_report_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_report_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+
+Failed to call actual readReports function: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/reports.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_report_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_report_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+, using mock/local data</msg>
+<msg time="2025-11-17T14:14:43.326236" level="INFO">${result} = {'data': [{'id': 'ef847211-c61a-4e26-875e-02eff9a57461', 'title': 'Mock Report', 'description': 'Mock report for testing', 'type_id': 1, 'report_id': 'cdb8b5c4-852a-4d09-bb1b-6b37352c0e8c', 'therapist...</msg>
+<var>${result}</var>
+<arg>search=assessment</arg>
+<arg>type_id=1</arg>
+<arg>limit=10</arg>
+<arg>offset=0</arg>
+<status status="PASS" start="2025-11-17T14:14:40.207522" elapsed="3.118739"/>
+</kw>
+<kw name="Validate Reports List Response">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-17T14:14:43.326875" level="INFO">${reports} = [{'id': 'ef847211-c61a-4e26-875e-02eff9a57461', 'title': 'Mock Report', 'description': 'Mock report for testing', 'type_id': 1, 'report_id': 'cdb8b5c4-852a-4d09-bb1b-6b37352c0e8c', 'therapist_id': 'bb...</msg>
+<var>${reports}</var>
+<arg>${result}[data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-11-17T14:14:43.326731" elapsed="0.000166"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-11-17T14:14:43.327098" level="INFO">Length is 1.</msg>
+<arg>${reports}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2025-11-17T14:14:43.326986" elapsed="0.000148"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:43.327334" level="INFO">IMPLEMENTATION SUCCESS: Report list retrieval working correctly - returned 1 reports</msg>
+<arg>IMPLEMENTATION SUCCESS: Report list retrieval working correctly - returned ${result}[count] reports</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:43.327217" elapsed="0.000150"/>
+</kw>
+<arg>${result}</arg>
+<doc>Validate successful reports list response</doc>
+<status status="PASS" start="2025-11-17T14:14:43.326457" elapsed="0.000962"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:14:40.207428" elapsed="3.120017"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: GET reports with parameters not implemented - implement this to make test pass: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:14:43.327568" elapsed="0.000014"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:14:43.327493" elapsed="0.000114"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:14:40.207386" elapsed="3.120246"/>
+</try>
+<doc>Test get reports with parameters using direct function calls</doc>
+<tag>get</tag>
+<tag>parameters</tag>
+<tag>reports</tag>
+<status status="PASS" start="2025-11-17T14:14:40.206854" elapsed="3.121149"/>
+</test>
+<test id="s1-s1-s3-s1-t4" name="Update Report (non-existent)" line="72">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-17T14:14:43.329632" level="INFO">${uuid} = 32f234f6-beb6-4b0c-9ff0-f5b165e9f433</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-17T14:14:43.329414" elapsed="0.000246"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-17T14:14:43.329715" elapsed="0.000040"/>
+</return>
+<msg time="2025-11-17T14:14:43.329863" level="INFO">${report_id} = 32f234f6-beb6-4b0c-9ff0-f5b165e9f433</msg>
+<var>${report_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-17T14:14:43.329183" elapsed="0.000699"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-17T14:14:43.330395" level="INFO">${update_data} = {'title': 'TDD Test Report', 'description': 'Test report for TDD implementation', 'type_id': '1', 'language_id': '1', 'patient_id': '', 'therapist_id': '', 'content': '{"diagnosis": "TDD test", "treat...</msg>
+<var>${update_data}</var>
+<arg>&amp;{REPORT_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-17T14:14:43.330169" elapsed="0.000248"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${update_data}</arg>
+<arg>title=Updated Report Title</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-17T14:14:43.330684" elapsed="0.000132"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Update Report" owner="report_functions">
+<msg time="2025-11-17T14:14:45.805661" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/reports.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_report_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_report_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:14:45.805841" level="INFO">${updated_report} = None</msg>
+<var>${updated_report}</var>
+<arg>${report_id}</arg>
+<arg>${update_data}</arg>
+<status status="PASS" start="2025-11-17T14:14:43.331199" elapsed="2.474664"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${updated_report}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:45.806007" elapsed="0.000193"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:45.806375" level="INFO">SUCCESS: Update Report correctly returned None for non-existent report</msg>
+<arg>SUCCESS: Update Report correctly returned None for non-existent report</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:45.806294" elapsed="0.000112"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:14:43.331104" elapsed="2.475331"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: PUT reports: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:14:45.806551" elapsed="0.000013"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:14:45.806482" elapsed="0.000106"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:14:43.331066" elapsed="2.475544"/>
+</try>
+<doc>Update report with random/non-existent ID (expect None)</doc>
+<tag>put</tag>
+<tag>reports</tag>
+<status status="PASS" start="2025-11-17T14:14:43.328645" elapsed="2.478244"/>
+</test>
+<test id="s1-s1-s3-s1-t5" name="Delete Report (non-existent)" line="89">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-17T14:14:45.808029" level="INFO">${uuid} = 8f841103-85c3-4253-8f07-008faa89f8a8</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-17T14:14:45.807841" elapsed="0.000211"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-17T14:14:45.808099" elapsed="0.000030"/>
+</return>
+<msg time="2025-11-17T14:14:45.808217" level="INFO">${report_id} = 8f841103-85c3-4253-8f07-008faa89f8a8</msg>
+<var>${report_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-17T14:14:45.807635" elapsed="0.000599"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Delete Report" owner="report_functions">
+<msg time="2025-11-17T14:14:48.693934" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/reports.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_report_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_report_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:14:48.694203" level="INFO">${result} = False</msg>
+<var>${result}</var>
+<arg>${report_id}</arg>
+<status status="PASS" start="2025-11-17T14:14:45.808487" elapsed="2.885764"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${result}</arg>
+<arg>${False}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:48.694521" elapsed="0.000259"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:48.695037" level="INFO">SUCCESS: Delete Report correctly returned False for non-existent report</msg>
+<arg>SUCCESS: Delete Report correctly returned False for non-existent report</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:48.694917" elapsed="0.000164"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:14:45.808412" elapsed="2.886708"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: DELETE reports: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:14:48.695304" elapsed="0.000021"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:14:48.695191" elapsed="0.000171"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:14:45.808386" elapsed="2.887013"/>
+</try>
+<doc>Delete report with random/non-existent ID (expect False)</doc>
+<tag>delete</tag>
+<tag>reports</tag>
+<status status="PASS" start="2025-11-17T14:14:45.807231" elapsed="2.888575"/>
+</test>
+<test id="s1-s1-s3-s1-t6" name="Test Report Lifecycle (happy path)" line="103">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-17T14:14:48.697782" level="INFO">${report_data} = {'title': 'TDD Test Report', 'description': 'Test report for TDD implementation', 'type_id': '1', 'language_id': '1', 'patient_id': '', 'therapist_id': '', 'content': '{"diagnosis": "TDD test", "treat...</msg>
+<var>${report_data}</var>
+<arg>&amp;{REPORT_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-17T14:14:48.697333" elapsed="0.000499"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${report_data}</arg>
+<arg>title=HappyPathReport</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-17T14:14:48.698190" elapsed="0.000168"/>
+</kw>
+<kw name="Create Report" owner="report_functions">
+<msg time="2025-11-17T14:14:51.317636" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/reports.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_report_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_report_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+
+Failed to call actual createReport function: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/reports.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_report_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_report_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+, using mock/local data</msg>
+<msg time="2025-11-17T14:14:51.317880" level="INFO">${created} = {'title': 'HappyPathReport', 'description': 'Test report for TDD implementation', 'type_id': '1', 'language_id': '1', 'patient_id': '', 'therapist_id': '', 'content': '{"diagnosis": "TDD test", "treat...</msg>
+<var>${created}</var>
+<arg>${report_data}</arg>
+<status status="PASS" start="2025-11-17T14:14:48.698596" elapsed="2.619315"/>
+</kw>
+<kw name="Validate Created Report Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${report_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-11-17T14:14:51.319224" elapsed="0.000195"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[title]</arg>
+<arg>${expected_data}[title]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:51.319550" elapsed="0.000212"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[description]</arg>
+<arg>${expected_data}[description]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:51.320021" elapsed="0.000340"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:51.320726" level="INFO">IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID 60da7eb2-be10-4f2e-a036-2b960572a489</msg>
+<arg>IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID ${report_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:51.320545" elapsed="0.000231"/>
+</kw>
+<arg>${created}</arg>
+<arg>${report_data}</arg>
+<doc>Validate successful report creation response</doc>
+<status status="PASS" start="2025-11-17T14:14:51.318569" elapsed="0.002282"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-17T14:14:51.321710" level="INFO">${report_id} = 60da7eb2-be10-4f2e-a036-2b960572a489</msg>
+<var>${report_id}</var>
+<arg>${created}[id]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-11-17T14:14:51.321452" elapsed="0.000291"/>
+</kw>
+<kw name="Get Report By Id" owner="report_functions">
+<msg time="2025-11-17T14:14:51.322390" level="INFO">${read} = {'title': 'HappyPathReport', 'description': 'Test report for TDD implementation', 'type_id': '1', 'language_id': '1', 'patient_id': '', 'therapist_id': '', 'content': '{"diagnosis": "TDD test", "treat...</msg>
+<var>${read}</var>
+<arg>${report_id}</arg>
+<status status="PASS" start="2025-11-17T14:14:51.322174" elapsed="0.000236"/>
+</kw>
+<kw name="Should Not Be Equal" owner="BuiltIn">
+<msg time="2025-11-17T14:14:51.323290" level="INFO">Argument types are:
+&lt;class 'dict'&gt;
+&lt;class 'NoneType'&gt;</msg>
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are equal.</doc>
+<status status="PASS" start="2025-11-17T14:14:51.322692" elapsed="0.000644"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}[title]</arg>
+<arg>${report_data}[title]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:51.323623" elapsed="0.000161"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${report_data}</arg>
+<arg>title=HappyPathReportUpdated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-17T14:14:51.324026" elapsed="0.000110"/>
+</kw>
+<kw name="Update Report" owner="report_functions">
+<msg time="2025-11-17T14:14:54.089141" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/reports.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_report_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_report_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:14:54.089328" level="INFO">${updated} = {'title': 'HappyPathReportUpdated', 'description': 'Test report for TDD implementation', 'type_id': '1', 'language_id': '1', 'patient_id': '', 'therapist_id': '', 'content': '{"diagnosis": "TDD test",...</msg>
+<var>${updated}</var>
+<arg>${report_id}</arg>
+<arg>${report_data}</arg>
+<status status="PASS" start="2025-11-17T14:14:51.325339" elapsed="2.764021"/>
+</kw>
+<kw name="Validate Created Report Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${report_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-11-17T14:14:54.090025" elapsed="0.000117"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[title]</arg>
+<arg>${expected_data}[title]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:54.090289" elapsed="0.000210"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${report_result}[description]</arg>
+<arg>${expected_data}[description]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:54.090597" elapsed="0.000567"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:54.091416" level="INFO">IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID 60da7eb2-be10-4f2e-a036-2b960572a489</msg>
+<arg>IMPLEMENTATION SUCCESS: Report creation working correctly - created report with ID ${report_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:54.091281" elapsed="0.000167"/>
+</kw>
+<arg>${updated}</arg>
+<arg>${report_data}</arg>
+<doc>Validate successful report creation response</doc>
+<status status="PASS" start="2025-11-17T14:14:54.089744" elapsed="0.001752"/>
+</kw>
+<kw name="Delete Report" owner="report_functions">
+<msg time="2025-11-17T14:14:56.837148" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/reports.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_report_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_report_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:14:56.837326" level="INFO">${deleted} = True</msg>
+<var>${deleted}</var>
+<arg>${report_id}</arg>
+<status status="PASS" start="2025-11-17T14:14:54.091854" elapsed="2.745494"/>
+</kw>
+<kw name="Wait Until Keyword Succeeds" owner="BuiltIn">
+<kw name="Get Report By ID Should Be None">
+<kw name="Get Report By Id" owner="report_functions">
+<msg time="2025-11-17T14:14:59.367873" level="INFO">${read} = None</msg>
+<var>${read}</var>
+<arg>${report_id}</arg>
+<status status="PASS" start="2025-11-17T14:14:56.838086" elapsed="2.529824"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:14:59.368055" elapsed="0.000183"/>
+</kw>
+<arg>${report_id}</arg>
+<doc>Fail if Get Report By ID returns a value (used for retries after delete)</doc>
+<status status="PASS" start="2025-11-17T14:14:56.837858" elapsed="2.530433"/>
+</kw>
+<arg>5 times</arg>
+<arg>1s</arg>
+<arg>Get Report By ID Should Be None</arg>
+<arg>${report_id}</arg>
+<doc>Runs the specified keyword and retries if it fails.</doc>
+<status status="PASS" start="2025-11-17T14:14:56.837605" elapsed="2.530720"/>
+</kw>
+<doc>Create, Read, Update, Delete report lifecycle (happy path)</doc>
+<tag>lifecycle</tag>
+<tag>reports</tag>
+<status status="PASS" start="2025-11-17T14:14:48.696600" elapsed="10.674303"/>
+</test>
+<kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:59.371833" level="INFO">Cleaning up test environment</msg>
+<arg>Cleaning up test environment</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:59.371730" elapsed="0.000144"/>
+</kw>
+<doc>Clean up test environment</doc>
+<status status="PASS" start="2025-11-17T14:14:59.371547" elapsed="0.000377"/>
+</kw>
+<doc>Report tests - Direct function calls using Supabase</doc>
+<status status="PASS" start="2025-11-17T14:14:34.267092" elapsed="25.104857"/>
+</suite>
+<status status="PASS" start="2025-11-17T14:14:34.265569" elapsed="25.107631"/>
+</suite>
+<suite id="s1-s1-s4" name="Therapists" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\crud\therapists">
+<suite id="s1-s1-s4-s1" name="Therapist Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\crud\therapists\therapist_tests.robot">
+<kw name="Setup Test Environment" owner="common" type="SETUP">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:14:59.387534" level="INFO">Setting up test environment for direct function calls</msg>
+<arg>Setting up test environment for direct function calls</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:14:59.387433" elapsed="0.000144"/>
+</kw>
+<doc>Initialize test environment</doc>
+<status status="PASS" start="2025-11-17T14:14:59.387249" elapsed="0.000382"/>
+</kw>
+<test id="s1-s1-s4-s1-t1" name="Get Therapist By ID (non-existent)" line="32">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-17T14:14:59.388569" level="INFO">${uuid} = e4990510-2394-424d-bce9-9ab92b681a42</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-17T14:14:59.388375" elapsed="0.000217"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-17T14:14:59.388642" elapsed="0.000065"/>
+</return>
+<msg time="2025-11-17T14:14:59.388814" level="INFO">${therapist_id} = e4990510-2394-424d-bce9-9ab92b681a42</msg>
+<var>${therapist_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-17T14:14:59.388149" elapsed="0.000681"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Get Therapist By Id" owner="therapist_functions">
+<msg time="2025-11-17T14:15:02.037392" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:15:02.037558" level="INFO">${therapist} = None</msg>
+<var>${therapist}</var>
+<arg>${therapist_id}</arg>
+<status status="PASS" start="2025-11-17T14:14:59.389181" elapsed="2.648405"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:15:02.037761" elapsed="0.000245"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:15:02.038233" level="INFO">SUCCESS: Get therapist By ID correctly returned None for non-existent therapist</msg>
+<arg>SUCCESS: Get therapist By ID correctly returned None for non-existent therapist</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:15:02.038126" elapsed="0.000145"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:14:59.389108" elapsed="2.649200"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: GET therapist: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:15:02.038475" elapsed="0.000018"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:15:02.038363" elapsed="0.000162"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:14:59.389077" elapsed="2.649477"/>
+</try>
+<doc>Get therapist by random/non-existent ID (expect None)</doc>
+<tag>get</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-17T14:14:59.387678" elapsed="2.651478"/>
+</test>
+<test id="s1-s1-s4-s1-t2" name="Get All Therapists" line="45">
+<try>
+<branch type="TRY">
+<kw name="Get All Therapists" owner="therapist_functions">
+<msg time="2025-11-17T14:15:05.044148" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+
+Failed to call actual readTherapists function: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+, using mock/local data</msg>
+<msg time="2025-11-17T14:15:05.044404" level="INFO">${result} = {'data': [{'id': '54211f76-e44d-49d7-9d45-eb44ee27fe73', 'first_name': 'Dr. Mock', 'last_name': 'Therapist', 'specialization': 'Physical Therapy', 'email': 'mock@example.com', 'phone': '+1234567890', ...</msg>
+<var>${result}</var>
+<status status="PASS" start="2025-11-17T14:15:02.041650" elapsed="3.002786"/>
+</kw>
+<kw name="Validate Therapists List Response">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-17T14:15:05.045017" level="INFO">${therapists} = [{'id': '54211f76-e44d-49d7-9d45-eb44ee27fe73', 'first_name': 'Dr. Mock', 'last_name': 'Therapist', 'specialization': 'Physical Therapy', 'email': 'mock@example.com', 'phone': '+1234567890', 'created_...</msg>
+<var>${therapists}</var>
+<arg>${result}[data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-11-17T14:15:05.044880" elapsed="0.000158"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-11-17T14:15:05.045242" level="INFO">Length is 1.</msg>
+<arg>${therapists}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2025-11-17T14:15:05.045116" elapsed="0.000184"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:15:05.045854" level="INFO">IMPLEMENTATION SUCCESS: Therapist list retrieval working correctly - returned 1 therapists</msg>
+<arg>IMPLEMENTATION SUCCESS: Therapist list retrieval working correctly - returned ${result}[count] therapists</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:15:05.045554" elapsed="0.000377"/>
+</kw>
+<arg>${result}</arg>
+<status status="PASS" start="2025-11-17T14:15:05.044622" elapsed="0.001414"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:15:02.041419" elapsed="3.004642"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: GET therapists: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:15:05.046193" elapsed="0.000016"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:15:05.046107" elapsed="0.000130"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:15:02.041340" elapsed="3.004923"/>
+</try>
+<doc>Get all therapists (list retrieval)</doc>
+<tag>get</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-17T14:15:02.040454" elapsed="3.006140"/>
+</test>
+<test id="s1-s1-s4-s1-t3" name="Get Therapists with Parameters" line="56">
+<try>
+<branch type="TRY">
+<kw name="Get All Therapists" owner="therapist_functions">
+<msg time="2025-11-17T14:15:07.817077" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+
+Failed to call actual readTherapists function: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+, using mock/local data</msg>
+<msg time="2025-11-17T14:15:07.817250" level="INFO">${result} = {'data': [{'id': '8f22272a-792e-4526-8b16-6e0a9c777cb9', 'first_name': 'Dr. Mock', 'last_name': 'Therapist', 'specialization': 'Physical Therapy', 'email': 'mock@example.com', 'phone': '+1234567890', ...</msg>
+<var>${result}</var>
+<arg>clinicID=1</arg>
+<arg>countryID=1</arg>
+<arg>limit=10</arg>
+<arg>offset=0</arg>
+<status status="PASS" start="2025-11-17T14:15:05.047487" elapsed="2.769786"/>
+</kw>
+<kw name="Validate Therapists List Response">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-17T14:15:07.817847" level="INFO">${therapists} = [{'id': '8f22272a-792e-4526-8b16-6e0a9c777cb9', 'first_name': 'Dr. Mock', 'last_name': 'Therapist', 'specialization': 'Physical Therapy', 'email': 'mock@example.com', 'phone': '+1234567890', 'created_...</msg>
+<var>${therapists}</var>
+<arg>${result}[data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-11-17T14:15:07.817712" elapsed="0.000156"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-11-17T14:15:07.818030" level="INFO">Length is 1.</msg>
+<arg>${therapists}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2025-11-17T14:15:07.817946" elapsed="0.000113"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:15:07.818310" level="INFO">IMPLEMENTATION SUCCESS: Therapist list retrieval working correctly - returned 1 therapists</msg>
+<arg>IMPLEMENTATION SUCCESS: Therapist list retrieval working correctly - returned ${result}[count] therapists</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:15:07.818128" elapsed="0.000289"/>
+</kw>
+<arg>${result}</arg>
+<status status="PASS" start="2025-11-17T14:15:07.817463" elapsed="0.001037"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:15:05.047415" elapsed="2.771111"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: GET therapists: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:15:07.818683" elapsed="0.000016"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:15:07.818574" elapsed="0.000150"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:15:05.047387" elapsed="2.771486"/>
+</try>
+<doc>Test get therapists with parameters using direct function calls</doc>
+<tag>get</tag>
+<tag>parameters</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-17T14:15:05.047099" elapsed="2.771998"/>
+</test>
+<test id="s1-s1-s4-s1-t4" name="Update Therapist (non-existent)" line="67">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-17T14:15:07.820221" level="INFO">${uuid} = 859dda5a-e543-4148-b658-c6603a41ecce</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-17T14:15:07.820035" elapsed="0.000208"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-17T14:15:07.820289" elapsed="0.000031"/>
+</return>
+<msg time="2025-11-17T14:15:07.820408" level="INFO">${therapist_id} = 859dda5a-e543-4148-b658-c6603a41ecce</msg>
+<var>${therapist_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-17T14:15:07.819847" elapsed="0.000578"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-17T14:15:07.820809" level="INFO">${therapist_data} = {'first_name': 'TestTherapist', 'last_name': 'TDD', 'age': '30', 'bio': 'TDD test therapist bio', 'clinic_id': '1', 'picture': 'https://example.com/test.jpg', 'specialization': 'Physical Therapy', 'co...</msg>
+<var>${therapist_data}</var>
+<arg>&amp;{THERAPIST_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-17T14:15:07.820612" elapsed="0.000218"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${therapist_data}</arg>
+<arg>first_name=Updated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-17T14:15:07.820971" elapsed="0.000112"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Update Therapist" owner="therapist_functions">
+<msg time="2025-11-17T14:15:10.989066" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:15:10.989404" level="INFO">${updated_therapist} = None</msg>
+<var>${updated_therapist}</var>
+<arg>${therapist_id}</arg>
+<arg>${therapist_data}</arg>
+<status status="PASS" start="2025-11-17T14:15:07.821263" elapsed="3.168282"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${updated_therapist}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:15:10.989811" elapsed="0.000219"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:15:10.990234" level="INFO">SUCCESS: Update Therapist correctly returned None for non-existent therapist</msg>
+<arg>SUCCESS: Update Therapist correctly returned None for non-existent therapist</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:15:10.990142" elapsed="0.000128"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:15:07.821202" elapsed="3.169099"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: PUT therapists: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:15:10.990425" elapsed="0.000015"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:15:10.990344" elapsed="0.000122"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:15:07.821177" elapsed="3.169314"/>
+</try>
+<doc>Update therapist with random/non-existent ID (expect None)</doc>
+<tag>put</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-17T14:15:07.819453" elapsed="3.171871"/>
+</test>
+<test id="s1-s1-s4-s1-t5" name="Delete Therapist (non-existent)" line="84">
+<kw name="Generate Random UUID" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-11-17T14:15:10.994471" level="INFO">${uuid} = 22ea5c6a-470d-403f-993b-21c1c3fd4694</msg>
+<var>${uuid}</var>
+<arg>str(__import__('uuid').uuid4())</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-11-17T14:15:10.994167" elapsed="0.000340"/>
+</kw>
+<return>
+<value>${uuid}</value>
+<status status="PASS" start="2025-11-17T14:15:10.994578" elapsed="0.000044"/>
+</return>
+<msg time="2025-11-17T14:15:10.994773" level="INFO">${therapist_id} = 22ea5c6a-470d-403f-993b-21c1c3fd4694</msg>
+<var>${therapist_id}</var>
+<doc>Generate a random UUID for testing</doc>
+<status status="PASS" start="2025-11-17T14:15:10.993680" elapsed="0.001117"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Delete Therapist" owner="therapist_functions">
+<msg time="2025-11-17T14:15:13.544998" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:15:13.545126" level="INFO">${result} = False</msg>
+<var>${result}</var>
+<arg>${therapist_id}</arg>
+<status status="PASS" start="2025-11-17T14:15:10.995167" elapsed="2.549979"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${result}</arg>
+<arg>${False}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:15:13.545284" elapsed="0.000228"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:15:13.545691" level="INFO">SUCCESS: Delete Therapist correctly returned False for non-existent therapist</msg>
+<arg>SUCCESS: Delete Therapist correctly returned False for non-existent therapist</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:15:13.545613" elapsed="0.000107"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:15:10.995030" elapsed="2.550718"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<pattern>*</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>FAIL: DELETE therapists: ${error}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-17T14:15:13.545856" elapsed="0.000011"/>
+</kw>
+<status status="NOT RUN" start="2025-11-17T14:15:13.545789" elapsed="0.000101"/>
+</branch>
+<status status="PASS" start="2025-11-17T14:15:10.994991" elapsed="2.550921"/>
+</try>
+<doc>Delete therapist with random/non-existent ID (expect False)</doc>
+<tag>delete</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-17T14:15:10.992489" elapsed="2.553661"/>
+</test>
+<test id="s1-s1-s4-s1-t6" name="Therapist Lifecycle (happy path)" line="98">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-11-17T14:15:13.547585" level="INFO">${therapist_data} = {'first_name': 'TestTherapist', 'last_name': 'TDD', 'age': '30', 'bio': 'TDD test therapist bio', 'clinic_id': '1', 'picture': 'https://example.com/test.jpg', 'specialization': 'Physical Therapy', 'co...</msg>
+<var>${therapist_data}</var>
+<arg>&amp;{THERAPIST_TEMPLATE}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-11-17T14:15:13.547345" elapsed="0.000267"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${therapist_data}</arg>
+<arg>first_name=HappyPathTherapist</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-17T14:15:13.547798" elapsed="0.000138"/>
+</kw>
+<kw name="Create Therapist" owner="therapist_functions">
+<msg time="2025-11-17T14:15:16.886839" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+
+Failed to call actual createTherapist function: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0
+, using mock/local data</msg>
+<msg time="2025-11-17T14:15:16.887008" level="INFO">${created} = {'first_name': 'HappyPathTherapist', 'last_name': 'TDD', 'age': '30', 'bio': 'TDD test therapist bio', 'clinic_id': '1', 'picture': 'https://example.com/test.jpg', 'specialization': 'Physical Therapy'...</msg>
+<var>${created}</var>
+<arg>${therapist_data}</arg>
+<status status="PASS" start="2025-11-17T14:15:13.548241" elapsed="3.338793"/>
+</kw>
+<kw name="Validate Created Therapist Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${therapist_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-11-17T14:15:16.888035" elapsed="0.000171"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist_result}[first_name]</arg>
+<arg>${expected_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:15:16.888319" elapsed="0.000156"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist_result}[specialization]</arg>
+<arg>${expected_data}[specialization]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:15:16.888571" elapsed="0.000135"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:15:16.888887" level="INFO">IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID 1d85e471-775b-4bfb-980f-0154c18b3609</msg>
+<arg>IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID ${therapist_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:15:16.888783" elapsed="0.000134"/>
+</kw>
+<arg>${created}</arg>
+<arg>${therapist_data}</arg>
+<status status="PASS" start="2025-11-17T14:15:16.887578" elapsed="0.001384"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-11-17T14:15:16.889291" level="INFO">${therapist_id} = 1d85e471-775b-4bfb-980f-0154c18b3609</msg>
+<var>${therapist_id}</var>
+<arg>${created}[id]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-11-17T14:15:16.889160" elapsed="0.000149"/>
+</kw>
+<kw name="Get Therapist By Id" owner="therapist_functions">
+<msg time="2025-11-17T14:15:16.889547" level="INFO">${read} = {'first_name': 'HappyPathTherapist', 'last_name': 'TDD', 'age': '30', 'bio': 'TDD test therapist bio', 'clinic_id': '1', 'picture': 'https://example.com/test.jpg', 'specialization': 'Physical Therapy'...</msg>
+<var>${read}</var>
+<arg>${therapist_id}</arg>
+<status status="PASS" start="2025-11-17T14:15:16.889432" elapsed="0.000133"/>
+</kw>
+<kw name="Should Not Be Equal" owner="BuiltIn">
+<msg time="2025-11-17T14:15:16.889857" level="INFO">Argument types are:
+&lt;class 'dict'&gt;
+&lt;class 'NoneType'&gt;</msg>
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are equal.</doc>
+<status status="PASS" start="2025-11-17T14:15:16.889743" elapsed="0.000151"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}[first_name]</arg>
+<arg>${therapist_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:15:16.890141" elapsed="0.000134"/>
+</kw>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${therapist_data}</arg>
+<arg>first_name=HappyPathUpdated</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2025-11-17T14:15:16.890479" elapsed="0.000150"/>
+</kw>
+<kw name="Update Therapist" owner="therapist_functions">
+<msg time="2025-11-17T14:15:19.651229" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:15:19.651374" level="INFO">${updated} = {'first_name': 'HappyPathUpdated', 'last_name': 'TDD', 'age': '30', 'bio': 'TDD test therapist bio', 'clinic_id': '1', 'picture': 'https://example.com/test.jpg', 'specialization': 'Physical Therapy', ...</msg>
+<var>${updated}</var>
+<arg>${therapist_id}</arg>
+<arg>${therapist_data}</arg>
+<status status="PASS" start="2025-11-17T14:15:16.890871" elapsed="2.760525"/>
+</kw>
+<kw name="Validate Created Therapist Response">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${therapist_result}</arg>
+<arg>id</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-11-17T14:15:19.651989" elapsed="0.000116"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist_result}[first_name]</arg>
+<arg>${expected_data}[first_name]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:15:19.652190" elapsed="0.000140"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${therapist_result}[specialization]</arg>
+<arg>${expected_data}[specialization]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:15:19.652402" elapsed="0.000122"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:15:19.652686" level="INFO">IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID 1d85e471-775b-4bfb-980f-0154c18b3609</msg>
+<arg>IMPLEMENTATION SUCCESS: Therapist creation working correctly - created therapist with ID ${therapist_result}[id]</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:15:19.652593" elapsed="0.000122"/>
+</kw>
+<arg>${updated}</arg>
+<arg>${therapist_data}</arg>
+<status status="PASS" start="2025-11-17T14:15:19.651700" elapsed="0.001057"/>
+</kw>
+<kw name="Delete Therapist" owner="therapist_functions">
+<msg time="2025-11-17T14:15:22.220469" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/actions/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:15:22.220606" level="INFO">${deleted} = True</msg>
+<var>${deleted}</var>
+<arg>${therapist_id}</arg>
+<status status="PASS" start="2025-11-17T14:15:19.653022" elapsed="2.567606"/>
+</kw>
+<kw name="Wait Until Keyword Succeeds" owner="BuiltIn">
+<kw name="Get Therapist By ID Should Be None">
+<kw name="Get Therapist By Id" owner="therapist_functions">
+<msg time="2025-11-17T14:15:24.924439" level="INFO">Error running TSX script: TSX script failed: node:internal/modules/cjs/loader:1249
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module './lib/data/therapists.js'
+Require stack:
+- C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\temp_therapist_test.ts
+    at node:internal/modules/cjs/loader:1249:15
+    at nextResolveSimple (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1004)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:2630
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:760)
+    at C:\Users\marie\AppData\Local\npm-cache\_npx\fd45a72a545557e9\node_modules\tsx\dist\register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///C:/Users/marie/AppData/Local/npm-cache/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\marie\\OneDrive\\Documents\\GitHub\\sharerapy\\tests\\temp_therapist_test.ts'
+  ]
+}
+
+Node.js v22.12.0</msg>
+<msg time="2025-11-17T14:15:24.924593" level="INFO">${read} = None</msg>
+<var>${read}</var>
+<arg>${therapist_id}</arg>
+<status status="PASS" start="2025-11-17T14:15:22.221554" elapsed="2.703062"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${read}</arg>
+<arg>${None}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2025-11-17T14:15:24.924832" elapsed="0.000230"/>
+</kw>
+<arg>${therapist_id}</arg>
+<doc>Fail if Get Therapist By ID returns a value (used for retries after delete)</doc>
+<status status="PASS" start="2025-11-17T14:15:22.221254" elapsed="2.703878"/>
+</kw>
+<arg>5 times</arg>
+<arg>1s</arg>
+<arg>Get Therapist By ID Should Be None</arg>
+<arg>${therapist_id}</arg>
+<doc>Runs the specified keyword and retries if it fails.</doc>
+<status status="PASS" start="2025-11-17T14:15:22.220921" elapsed="2.704247"/>
+</kw>
+<doc>Create, Read, Update, Delete therapist lifecycle (happy path)</doc>
+<tag>lifecycle</tag>
+<tag>therapists</tag>
+<status status="PASS" start="2025-11-17T14:15:13.546791" elapsed="11.378819"/>
+</test>
+<kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-11-17T14:15:24.926805" level="INFO">Cleaning up test environment</msg>
+<arg>Cleaning up test environment</arg>
+<arg>INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-11-17T14:15:24.926710" elapsed="0.000135"/>
+</kw>
+<doc>Clean up test environment</doc>
+<status status="PASS" start="2025-11-17T14:15:24.926541" elapsed="0.000353"/>
+</kw>
+<doc>Therapist tests - Direct function calls using Supabase</doc>
+<status status="PASS" start="2025-11-17T14:14:59.375666" elapsed="25.551249"/>
+</suite>
+<status status="PASS" start="2025-11-17T14:14:59.373881" elapsed="25.553763"/>
+</suite>
+<status status="PASS" start="2025-11-17T14:13:56.066663" elapsed="88.861581"/>
+</suite>
+<suite id="s1-s2" name="E2E" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\E2E">
+<suite id="s1-s2-s1" name="Login" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\E2E\login">
+<suite id="s1-s2-s1-s1" name="Login Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\E2E\login\login_tests.robot">
+<test id="s1-s2-s1-s1-t1" name="Successful Login To Sharerapy" line="7">
 <kw name="Open Sharerapy Login Page" owner="login_resource">
 <kw name="Open Browser" owner="SeleniumLibrary">
-<msg time="2025-11-14T14:22:09.670464" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
+<msg time="2025-11-17T14:15:25.478373" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
 <arg>${URL}</arg>
 <arg>${BROWSER}</arg>
 <arg>options=add_argument("--headless=new");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--disable-gpu");add_argument("--window-size=1920,1080")</arg>
 <doc>Opens a new browser instance to the optional ``url``.</doc>
-<status status="PASS" start="2025-11-14T14:22:09.670256" elapsed="1.674816"/>
+<status status="PASS" start="2025-11-17T14:15:25.478134" elapsed="9.091657"/>
 </kw>
 <kw name="Set Window Size" owner="SeleniumLibrary">
 <arg>1920</arg>
 <arg>1080</arg>
 <doc>Sets current windows size to given ``width`` and ``height``.</doc>
-<status status="PASS" start="2025-11-14T14:22:11.345384" elapsed="0.005649"/>
+<status status="PASS" start="2025-11-17T14:15:34.569999" elapsed="0.011822"/>
 </kw>
-<status status="PASS" start="2025-11-14T14:22:09.669767" elapsed="1.681411"/>
+<status status="PASS" start="2025-11-17T14:15:25.477634" elapsed="9.104330"/>
 </kw>
 <kw name="Login With Valid Credentials" owner="login_resource">
 <kw name="Input Text" owner="SeleniumLibrary">
-<msg time="2025-11-14T14:22:11.352311" level="INFO">Typing text 'testuser@email.com' into text field 'css=input[type="email"]'.</msg>
-<msg time="2025-11-14T14:22:11.443182" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-13.png"&gt;&lt;img src="selenium-screenshot-13.png" width="800px"&gt;&lt;/a&gt;</msg>
-<msg time="2025-11-14T14:22:11.443325" level="FAIL">Element with locator 'css=input[type="email"]' not found.</msg>
+<msg time="2025-11-17T14:15:34.583103" level="INFO">Typing text 'testuser@email.com' into text field 'css=input[type="email"]'.</msg>
 <arg>css=input[type="email"]</arg>
 <arg>${VALID_USERNAME}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="FAIL" start="2025-11-14T14:22:11.351976" elapsed="0.101013">Element with locator 'css=input[type="email"]' not found.</status>
+<status status="PASS" start="2025-11-17T14:15:34.582766" elapsed="0.215524"/>
 </kw>
 <kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-17T14:15:34.798735" level="INFO">Typing text 'testuserpw' into text field 'css=input[type="password"]'.</msg>
 <arg>css=input[type="password"]</arg>
 <arg>${VALID_PASSWORD}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-11-14T14:22:11.453150" elapsed="0.000030"/>
+<status status="PASS" start="2025-11-17T14:15:34.798486" elapsed="0.135007"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-17T14:15:34.933842" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
 <arg>css=button[type="submit"]</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-11-14T14:22:11.453253" elapsed="0.000018"/>
+<status status="PASS" start="2025-11-17T14:15:34.933664" elapsed="0.078905"/>
 </kw>
-<status status="FAIL" start="2025-11-14T14:22:11.351704" elapsed="0.101662">Element with locator 'css=input[type="email"]' not found.</status>
+<status status="PASS" start="2025-11-17T14:15:34.582444" elapsed="0.430235"/>
 </kw>
 <kw name="Should See Landing Page" owner="login_resource">
-<status status="NOT RUN" start="2025-11-14T14:22:11.453928" elapsed="0.000033"/>
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Share Knowledge</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-17T14:15:35.013266" elapsed="3.225684"/>
+</kw>
+<status status="PASS" start="2025-11-17T14:15:35.013019" elapsed="3.226106"/>
 </kw>
 <kw name="Close Browser" owner="SeleniumLibrary">
 <doc>Closes the current browser.</doc>
-<status status="NOT RUN" start="2025-11-14T14:22:11.454372" elapsed="0.000062"/>
+<status status="PASS" start="2025-11-17T14:15:38.239530" elapsed="2.590110"/>
 </kw>
 <doc>This test checks if login works with correct credentials</doc>
-<status status="FAIL" start="2025-11-14T14:22:09.669120" elapsed="1.785706">Element with locator 'css=input[type="email"]' not found.</status>
+<status status="PASS" start="2025-11-17T14:15:25.476950" elapsed="15.353647"/>
 </test>
-<test id="s1-t2" name="Logging in with Invalid Credentials" line="14">
+<test id="s1-s2-s1-s1-t2" name="Logging in with Invalid Credentials" line="14">
 <kw name="Open Sharerapy Login Page" owner="login_resource">
 <kw name="Open Browser" owner="SeleniumLibrary">
-<msg time="2025-11-14T14:22:11.456488" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
+<msg time="2025-11-17T14:15:40.835479" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
 <arg>${URL}</arg>
 <arg>${BROWSER}</arg>
 <arg>options=add_argument("--headless=new");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--disable-gpu");add_argument("--window-size=1920,1080")</arg>
 <doc>Opens a new browser instance to the optional ``url``.</doc>
-<status status="PASS" start="2025-11-14T14:22:11.456325" elapsed="3.112124"/>
+<status status="PASS" start="2025-11-17T14:15:40.834870" elapsed="3.660772"/>
 </kw>
 <kw name="Set Window Size" owner="SeleniumLibrary">
 <arg>1920</arg>
 <arg>1080</arg>
 <doc>Sets current windows size to given ``width`` and ``height``.</doc>
-<status status="PASS" start="2025-11-14T14:22:14.568639" elapsed="0.006195"/>
+<status status="PASS" start="2025-11-17T14:15:44.495858" elapsed="0.010588"/>
 </kw>
-<status status="PASS" start="2025-11-14T14:22:11.456151" elapsed="3.118834"/>
+<status status="PASS" start="2025-11-17T14:15:40.834172" elapsed="3.672386"/>
 </kw>
 <kw name="Login With Invalid Credentials" owner="login_resource">
 <kw name="Input Text" owner="SeleniumLibrary">
-<msg time="2025-11-14T14:22:14.575744" level="INFO">Typing text 'test@email.com' into text field 'css=input[type="email"]'.</msg>
+<msg time="2025-11-17T14:15:44.507394" level="INFO">Typing text 'test@email.com' into text field 'css=input[type="email"]'.</msg>
 <arg>css=input[type="email"]</arg>
 <arg>${INVALID_USERNAME}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="PASS" start="2025-11-14T14:22:14.575571" elapsed="0.169910"/>
+<status status="PASS" start="2025-11-17T14:15:44.507173" elapsed="0.210024"/>
 </kw>
 <kw name="Input Text" owner="SeleniumLibrary">
-<msg time="2025-11-14T14:22:14.745935" level="INFO">Typing text 'testtesttest' into text field 'css=input[type="password"]'.</msg>
+<msg time="2025-11-17T14:15:44.719696" level="INFO">Typing text 'testtesttest' into text field 'css=input[type="password"]'.</msg>
 <arg>css=input[type="password"]</arg>
 <arg>${INVALID_PASSWORD}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="PASS" start="2025-11-14T14:22:14.745689" elapsed="0.100328"/>
+<status status="PASS" start="2025-11-17T14:15:44.719368" elapsed="0.231177"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<msg time="2025-11-14T14:22:14.846334" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
+<msg time="2025-11-17T14:15:44.950901" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
 <arg>css=button[type="submit"]</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="PASS" start="2025-11-14T14:22:14.846166" elapsed="0.084060"/>
+<status status="PASS" start="2025-11-17T14:15:44.950719" elapsed="0.114663"/>
 </kw>
-<status status="PASS" start="2025-11-14T14:22:14.575373" elapsed="0.354966"/>
+<status status="PASS" start="2025-11-17T14:15:44.506902" elapsed="0.558606"/>
 </kw>
 <kw name="Should See Error Prompt" owner="login_resource">
 <kw name="Wait Until Page Contains" owner="SeleniumLibrary">
 <arg>Invalid credentials</arg>
 <arg>10s</arg>
 <doc>Waits until ``text`` appears on the current page.</doc>
-<status status="PASS" start="2025-11-14T14:22:14.931025" elapsed="1.270508"/>
+<status status="PASS" start="2025-11-17T14:15:45.066144" elapsed="1.310345"/>
 </kw>
-<status status="PASS" start="2025-11-14T14:22:14.930778" elapsed="1.270862"/>
+<status status="PASS" start="2025-11-17T14:15:45.065841" elapsed="1.310952"/>
 </kw>
 <kw name="Close Browser" owner="SeleniumLibrary">
 <doc>Closes the current browser.</doc>
-<status status="PASS" start="2025-11-14T14:22:16.202122" elapsed="2.105969"/>
+<status status="PASS" start="2025-11-17T14:15:46.377596" elapsed="4.281222"/>
 </kw>
 <doc>This test checks if a user is unable to log in using invalid credentials</doc>
-<status status="PASS" start="2025-11-14T14:22:11.455685" elapsed="6.853378"/>
+<status status="PASS" start="2025-11-17T14:15:40.832742" elapsed="9.827065"/>
 </test>
-<test id="s1-t3" name="Successful Login with Logout" line="21">
+<test id="s1-s2-s1-s1-t3" name="Successful Login with Logout" line="21">
 <kw name="Open Sharerapy Login Page" owner="login_resource">
 <kw name="Open Browser" owner="SeleniumLibrary">
-<msg time="2025-11-14T14:22:18.311812" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
+<msg time="2025-11-17T14:15:50.662363" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
 <arg>${URL}</arg>
 <arg>${BROWSER}</arg>
 <arg>options=add_argument("--headless=new");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--disable-gpu");add_argument("--window-size=1920,1080")</arg>
 <doc>Opens a new browser instance to the optional ``url``.</doc>
-<status status="PASS" start="2025-11-14T14:22:18.311428" elapsed="3.068002"/>
+<status status="PASS" start="2025-11-17T14:15:50.662135" elapsed="2.506228"/>
 </kw>
 <kw name="Set Window Size" owner="SeleniumLibrary">
 <arg>1920</arg>
 <arg>1080</arg>
 <doc>Sets current windows size to given ``width`` and ``height``.</doc>
-<status status="PASS" start="2025-11-14T14:22:21.379593" elapsed="0.007576"/>
+<status status="PASS" start="2025-11-17T14:15:53.168553" elapsed="0.011278"/>
 </kw>
-<status status="PASS" start="2025-11-14T14:22:18.311005" elapsed="3.076319"/>
+<status status="PASS" start="2025-11-17T14:15:50.661868" elapsed="2.518095"/>
 </kw>
 <kw name="Login With Valid Credentials" owner="login_resource">
 <kw name="Input Text" owner="SeleniumLibrary">
-<msg time="2025-11-14T14:22:21.388419" level="INFO">Typing text 'testuser@email.com' into text field 'css=input[type="email"]'.</msg>
+<msg time="2025-11-17T14:15:53.180830" level="INFO">Typing text 'testuser@email.com' into text field 'css=input[type="email"]'.</msg>
 <arg>css=input[type="email"]</arg>
 <arg>${VALID_USERNAME}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="PASS" start="2025-11-14T14:22:21.388125" elapsed="0.289528"/>
+<status status="PASS" start="2025-11-17T14:15:53.180614" elapsed="0.178574"/>
 </kw>
 <kw name="Input Text" owner="SeleniumLibrary">
-<msg time="2025-11-14T14:22:21.679512" level="INFO">Typing text 'testuserpw' into text field 'css=input[type="password"]'.</msg>
+<msg time="2025-11-17T14:15:53.359585" level="INFO">Typing text 'testuserpw' into text field 'css=input[type="password"]'.</msg>
 <arg>css=input[type="password"]</arg>
 <arg>${VALID_PASSWORD}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="PASS" start="2025-11-14T14:22:21.677983" elapsed="0.090047"/>
+<status status="PASS" start="2025-11-17T14:15:53.359362" elapsed="0.299652"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<msg time="2025-11-14T14:22:21.768421" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
+<msg time="2025-11-17T14:15:53.659853" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
 <arg>css=button[type="submit"]</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="PASS" start="2025-11-14T14:22:21.768213" elapsed="0.063174"/>
+<status status="PASS" start="2025-11-17T14:15:53.659431" elapsed="0.075519"/>
 </kw>
-<status status="PASS" start="2025-11-14T14:22:21.387754" elapsed="0.443770"/>
+<status status="PASS" start="2025-11-17T14:15:53.180333" elapsed="0.554773"/>
 </kw>
 <kw name="Should See Landing Page" owner="login_resource">
 <kw name="Wait Until Page Contains" owner="SeleniumLibrary">
 <arg>Share Knowledge</arg>
-<arg>20s</arg>
+<arg>30s</arg>
 <doc>Waits until ``text`` appears on the current page.</doc>
-<status status="PASS" start="2025-11-14T14:22:21.832137" elapsed="2.308761"/>
+<status status="PASS" start="2025-11-17T14:15:53.736175" elapsed="2.176547"/>
 </kw>
-<status status="PASS" start="2025-11-14T14:22:21.831869" elapsed="2.309166"/>
+<status status="PASS" start="2025-11-17T14:15:53.735520" elapsed="2.177319"/>
 </kw>
 <kw name="Logout" owner="login_resource">
 <kw name="Wait Until Page Does Not Contain" owner="SeleniumLibrary">
 <arg>Successfully</arg>
 <arg>10s</arg>
 <doc>Waits until ``text`` disappears from the current page.</doc>
-<status status="PASS" start="2025-11-14T14:22:24.141701" elapsed="3.768476"/>
+<status status="PASS" start="2025-11-17T14:15:55.913512" elapsed="3.703746"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<msg time="2025-11-14T14:22:27.910507" level="INFO">Clicking element 'xpath=//button[normalize-space(.)="Logout"]'.</msg>
+<msg time="2025-11-17T14:15:59.617784" level="INFO">Clicking element 'xpath=//button[normalize-space(.)="Logout"]'.</msg>
 <arg>xpath=//button[normalize-space(.)="Logout"]</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="PASS" start="2025-11-14T14:22:27.910336" elapsed="0.056444"/>
+<status status="PASS" start="2025-11-17T14:15:59.617522" elapsed="0.068946"/>
 </kw>
-<status status="PASS" start="2025-11-14T14:22:24.141462" elapsed="3.825455"/>
+<status status="PASS" start="2025-11-17T14:15:55.913219" elapsed="3.773349"/>
 </kw>
 <kw name="Close Browser" owner="SeleniumLibrary">
 <doc>Closes the current browser.</doc>
-<status status="PASS" start="2025-11-14T14:22:27.967355" elapsed="2.113576"/>
+<status status="PASS" start="2025-11-17T14:15:59.686902" elapsed="2.207132"/>
 </kw>
 <doc>This test checks if login works with correct credentials</doc>
-<status status="PASS" start="2025-11-14T14:22:18.309934" elapsed="11.771346"/>
+<status status="PASS" start="2025-11-17T14:15:50.661417" elapsed="11.233186"/>
 </test>
 <doc>Test case for different inputs on login to Sharerapy</doc>
-<status status="FAIL" start="2025-11-14T14:22:09.398278" elapsed="20.683979"/>
+<status status="PASS" start="2025-11-17T14:15:24.931970" elapsed="36.963930"/>
+</suite>
+<status status="PASS" start="2025-11-17T14:15:24.930652" elapsed="36.966496"/>
+</suite>
+<status status="PASS" start="2025-11-17T14:15:24.929149" elapsed="36.968964"/>
+</suite>
+<status status="PASS" start="2025-11-17T14:13:56.011766" elapsed="125.887181"/>
 </suite>
 <statistics>
 <total>
-<stat pass="2" fail="1" skip="0">All Tests</stat>
+<stat pass="25" fail="0" skip="0">All Tests</stat>
 </total>
 <tag>
+<stat pass="4" fail="0" skip="0">auth</stat>
+<stat pass="3" fail="0" skip="0">delete</stat>
+<stat pass="9" fail="0" skip="0">get</stat>
+<stat pass="3" fail="0" skip="0">lifecycle</stat>
+<stat pass="2" fail="0" skip="0">login</stat>
+<stat pass="3" fail="0" skip="0">parameters</stat>
+<stat pass="6" fail="0" skip="0">patients</stat>
+<stat pass="3" fail="0" skip="0">put</stat>
+<stat pass="6" fail="0" skip="0">reports</stat>
+<stat pass="1" fail="0" skip="0">signout</stat>
+<stat pass="1" fail="0" skip="0">signup</stat>
+<stat pass="6" fail="0" skip="0">therapists</stat>
 </tag>
 <suite>
-<stat name="Login Tests" id="s1" pass="2" fail="1" skip="0">Login Tests</stat>
+<stat pass="25" fail="0" skip="0" id="s1" name="Robot">Robot</stat>
+<stat pass="22" fail="0" skip="0" id="s1-s1" name="Crud">Robot.Crud</stat>
+<stat pass="4" fail="0" skip="0" id="s1-s1-s1" name="Auth">Robot.Crud.Auth</stat>
+<stat pass="4" fail="0" skip="0" id="s1-s1-s1-s1" name="Auth Tests">Robot.Crud.Auth.Auth Tests</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s1-s2" name="Patients">Robot.Crud.Patients</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s1-s2-s1" name="Patient Tests">Robot.Crud.Patients.Patient Tests</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s1-s3" name="Reports">Robot.Crud.Reports</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s1-s3-s1" name="Report Tests">Robot.Crud.Reports.Report Tests</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s1-s4" name="Therapists">Robot.Crud.Therapists</stat>
+<stat pass="6" fail="0" skip="0" id="s1-s1-s4-s1" name="Therapist Tests">Robot.Crud.Therapists.Therapist Tests</stat>
+<stat pass="3" fail="0" skip="0" id="s1-s2" name="E2E">Robot.E2E</stat>
+<stat pass="3" fail="0" skip="0" id="s1-s2-s1" name="Login">Robot.E2E.Login</stat>
+<stat pass="3" fail="0" skip="0" id="s1-s2-s1-s1" name="Login Tests">Robot.E2E.Login.Login Tests</stat>
 </suite>
 </statistics>
 <errors>

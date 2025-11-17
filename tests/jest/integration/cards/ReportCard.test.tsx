@@ -66,7 +66,7 @@ jest.mock("@/lib/actions/reports", () => ({
   deleteReport: (...args: unknown[]) => deleteReportMock(...args),
 }));
 
-import ReportCard from "../../../components/cards/ReportCard";
+import ReportCard from "../../../../components/cards/ReportCard";
 
 describe("ReportCard", () => {
   beforeEach(() => {
