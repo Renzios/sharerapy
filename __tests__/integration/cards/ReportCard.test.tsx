@@ -82,6 +82,7 @@ describe("ReportCard", () => {
     title: "Understanding CBT",
     description: "This report explores core concepts and applications.",
     created_at: "2024-01-15T10:00:00.000Z",
+    updated_at: "2024-01-15T10:00:00.000Z",
     therapist: {
       first_name: "Jane",
       last_name: "Doe",
@@ -105,7 +106,7 @@ describe("ReportCard", () => {
 
       // Therapist and date
       expect(screen.getByText(`Written by ${baseReport.therapist.first_name} ${baseReport.therapist.last_name}`)).toBeInTheDocument();
-      expect(screen.getByText("3 days ago")).toBeInTheDocument();
+      expect(screen.getByText(/3 days ago/)).toBeInTheDocument();
 
       // Title and description
       expect(screen.getByText(baseReport.title)).toBeInTheDocument();
