@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest --passWithNoTests --testPathIgnorePatterns=tests/jest/ai-integration/",
-    "test:ai": "jest --testPathIgnorePatterns=node_modules --testMatch='**/tests/jest/ai-integration/**/*.{test,spec}.{js,jsx,ts,tsx}' --passWithNoTests -i --runInBand",
+    "test:integration": "jest --testPathIgnorePatterns=node_modules --testMatch='**/tests/jest/ai-integration/**/*.{test,spec}.{js,jsx,ts,tsx}' --passWithNoTests -i --runInBand",
     "test:watch": "jest --watch --passWithNoTests",
     "test:coverage": "jest --coverage --passWithNoTests",
     "cypress:open": "cypress open",
