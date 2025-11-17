@@ -42,9 +42,17 @@ const customJestConfig = {
   // Increase timeout for CI environments
   testTimeout: 10000,
   // Use separate TypeScript config for tests to avoid conflicts
+  preset: 'ts-jest/presets/js-with-ts',
   globals: {
     'ts-jest': {
-      tsconfig: 'tests/jest/tsconfig.json'
+      tsconfig: {
+        compilerOptions: {
+          types: ['jest', '@types/jest', '@testing-library/jest-dom'],
+          esModuleInterop: true,
+          allowSyntheticDefaultImports: true,
+          jsx: 'react-jsx'
+        }
+      }
     }
   },
 
