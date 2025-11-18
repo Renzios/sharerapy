@@ -9,6 +9,7 @@ interface FileUploadProps {
   maxSize?: number;
   width?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 /**
@@ -23,6 +24,7 @@ export default function FileUpload({
   maxSize = 10485760, // 10MB default
   width,
   className = "",
+  disabled = false,
 }: FileUploadProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -41,6 +43,7 @@ export default function FileUpload({
       },
       maxSize,
       multiple: false,
+      disabled,
     });
 
   return (
@@ -53,18 +56,30 @@ export default function FileUpload({
           rounded-[0.5rem]
           bg-white
           flex flex-col items-center justify-center
-          cursor-pointer
-          transition-all duration-200 hover:border-primary
+          transition-all duration-200
+          ${
+            disabled
+              ? "cursor-not-allowed opacity-50"
+              : "cursor-pointer hover:border-primary"
+          }
           ${
             isDragActive
               ? "border-primary bg-primary/5"
+              : disabled
+              ? ""
               : "hover:bg-bordergray/30"
           }
         `}
       >
         <input {...getInputProps()} />
         <div className="text-center px-6">
-          {isDragActive ? (
+          {disabled ? (
+            <p className="font-Noto-Sans text-sm font-medium animate-pulse">
+              <span className="inline-block animate-[color-swap_2.5s_ease-in-out_infinite]">
+                Processing file...
+              </span>
+            </p>
+          ) : isDragActive ? (
             <p className="font-Noto-Sans text-sm text-primary font-medium">
               Drop your PDF here...
             </p>

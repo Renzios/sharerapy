@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useTransition } from "react";
 import FileUpload from "@/components/forms/FileUpload";
 import PatientDetails from "@/components/forms/PatientDetails";
 import ReportDetails from "@/components/forms/ReportDetails";
 import { Editor } from "@/components/blocknote/DynamicEditor";
+import { EditorRef } from "@/components/blocknote/Editor";
 import Button from "@/components/general/Button";
 import Toast from "@/components/general/Toast";
 import { createReport, updateReport } from "@/lib/actions/reports";
@@ -12,6 +13,7 @@ import { validateContactNumber } from "@/lib/utils/frontendHelpers";
 import { createPatient } from "@/lib/actions/patients";
 import { Tables } from "@/lib/types/database.types";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { parseFile } from "@/lib/actions/parse";
 
 interface SelectOption {
   value: string;
@@ -110,7 +112,9 @@ export default function CreateNewReportClient({
     existingReport?.content ? JSON.stringify(existingReport.content) : ""
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isParsing, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
+  const editorRef = useRef<EditorRef>(null);
 
   // States related to Toast
   const [toastVisible, setToastVisible] = useState(false);
@@ -130,15 +134,22 @@ export default function CreateNewReportClient({
     setToastVisible(true);
   };
 
-  // Empty for now, will be implemented in sprint 3.
-  const handleFileUpload = (file: File) => {
-    console.log("File uploaded:", file);
+  const handleFileUpload = async (file: File) => {
+    startTransition(async () => {
+      try {
+        const markdown = await parseFile(file);
+        showToast("PDF converted successfully!", "success");
+
+        if (editorRef.current) {
+          await editorRef.current.importMarkdown(markdown);
+        }
+      } catch (err) {
+        console.error("PDF parse error:", err);
+        showToast("Failed to convert PDF", "error");
+      }
+    });
   };
 
-  /**
-   * Function to validate the entire form before submission. (client-side)
-   * @returns boolean - true if valid, false otherwise
-   */
   /**
    * Function to validate the entire form before submission. (client-side)
    * @returns boolean - true if valid, false otherwise
@@ -211,8 +222,6 @@ export default function CreateNewReportClient({
       showToast("Please select therapy type", "error");
       return false;
     }
-
-    // --- START REVISED SECTION ---
 
     // Report Content Validation
     if (
@@ -455,7 +464,7 @@ export default function CreateNewReportClient({
         <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
           Upload
         </h1>
-        <FileUpload onFileUpload={handleFileUpload} />
+        <FileUpload onFileUpload={handleFileUpload} disabled={isParsing} />
       </div>
 
       <form ref={formRef} onSubmit={handleSubmit} noValidate>
@@ -499,7 +508,11 @@ export default function CreateNewReportClient({
               Report Content
               <span className="text-red-500 ml-1">*</span>
             </h1>
-            <Editor onChange={setEditorContent} value={editorContent} />
+            <Editor
+              ref={editorRef}
+              onChange={setEditorContent}
+              value={editorContent}
+            />
           </div>
 
           <div className="flex gap-x-4 justify-end">
