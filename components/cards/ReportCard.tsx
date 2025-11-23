@@ -37,6 +37,8 @@ interface ReportCardProps {
     language: {
       language: string;
     };
+    writtenByText?: string; // Optional translated "Written by" text
+    editedText?: string; // Optional translated "Edited" text
   };
   showActions?: boolean; // Whether to show edit/delete actions
   disabled?: boolean; // Whether to show disabled state
@@ -192,13 +194,13 @@ export default function ReportCard({
             />
             <div className="flex gap-x-2">
               <p className="font-Noto-Sans text-sm text-darkgray font-medium">
-                Written by {therapistName}
+                {report.writtenByText || "Written by"} {therapistName}
               </p>
               <p className="font-Noto-Sans text-sm text-darkgray font-medium">
                 •
               </p>
               <p className="font-Noto-Sans text-sm text-darkgray font-medium">
-                {isEdited ? "Edited" : ""} {dateUploaded}
+                {isEdited ? report.editedText || "Edited" : ""} {dateUploaded}
               </p>
             </div>
           </div>

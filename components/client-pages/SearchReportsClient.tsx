@@ -218,11 +218,21 @@ export default function SearchReportsPage({
     }
 
     try {
+      // Translate "Written by" and "Edited" text once for all reports
+      const [writtenByText, editedText] = await Promise.all([
+        translateText("Written by", option.value),
+        translateText("Edited", option.value),
+      ]);
+
       // Translate all reports
       const translationPromises = reports.map(async (report) => {
-        // If report's original language matches selected language, return original
+        // If report's original language matches selected language, don't translate content but still add UI text
         if (report.language.code === option.value) {
-          return report;
+          return {
+            ...report,
+            writtenByText,
+            editedText,
+          };
         }
 
         // Otherwise, translate title and description
@@ -236,11 +246,17 @@ export default function SearchReportsPage({
             ...report,
             title: translatedTitle,
             description: translatedDescription,
+            writtenByText,
+            editedText,
           };
         } catch (error) {
           console.error(`Failed to translate report ${report.id}:`, error);
-          // Return original if translation fails
-          return report;
+          // Return original content but still add translated UI text
+          return {
+            ...report,
+            writtenByText,
+            editedText,
+          };
         }
       });
 

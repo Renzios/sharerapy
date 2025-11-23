@@ -88,6 +88,12 @@ export default function IndivReportClient({
   const [translatedDescription, setTranslatedDescription] = useState<
     string | null
   >(null);
+  const [translatedEditedText, setTranslatedEditedText] = useState<
+    string | null
+  >(null);
+  const [translatedCreatedText, setTranslatedCreatedText] = useState<
+    string | null
+  >(null);
   const [isTranslating, setIsTranslating] = useState(false);
 
   const isEdited = report.created_at !== report.updated_at;
@@ -139,12 +145,29 @@ export default function IndivReportClient({
   const handleLanguageChange = async (option: SelectOption | null) => {
     setSelectedLanguage(option);
     if (option) {
-      /* If option selected is the original Language of the report, reset to original content */
+      /* If option selected is the original Language of the report, don't translate content but still translate UI text */
       if (option.value === report.language.code) {
         setTranslatedContent(null);
         setTranslatedTitle(null);
         setTranslatedDescription(null);
-        setIsTranslating(false);
+        setIsTranslating(true);
+
+        // Still translate the "Edited" and "Created" UI text
+        try {
+          const [translatedEditedTextValue, translatedCreatedTextValue] =
+            await Promise.all([
+              translateText("Edited", option.value),
+              translateText("Created", option.value),
+            ]);
+          setTranslatedEditedText(translatedEditedTextValue);
+          setTranslatedCreatedText(translatedCreatedTextValue);
+        } catch (error) {
+          console.error("Translation error:", error);
+          setTranslatedEditedText(null);
+          setTranslatedCreatedText(null);
+        } finally {
+          setIsTranslating(false);
+        }
         return;
       } else {
         setIsTranslating(true);
@@ -162,10 +185,14 @@ export default function IndivReportClient({
                 translatedMarkdown,
                 translatedTitleText,
                 translatedDescriptionText,
+                translatedEditedTextValue,
+                translatedCreatedTextValue,
               ] = await Promise.all([
                 translateText(markdown, option.value),
                 translateText(report.title, option.value),
                 translateText(report.description, option.value),
+                translateText("Edited", option.value),
+                translateText("Created", option.value),
               ]);
 
               if (
@@ -180,6 +207,8 @@ export default function IndivReportClient({
                 setTranslatedContent(translatedBlocks);
                 setTranslatedTitle(translatedTitleText);
                 setTranslatedDescription(translatedDescriptionText);
+                setTranslatedEditedText(translatedEditedTextValue);
+                setTranslatedCreatedText(translatedCreatedTextValue);
                 setToastMessage("Translation successful!");
                 setToastType("success");
                 setToastVisible(true);
@@ -206,6 +235,8 @@ export default function IndivReportClient({
       setTranslatedContent(null);
       setTranslatedTitle(null);
       setTranslatedDescription(null);
+      setTranslatedEditedText(null);
+      setTranslatedCreatedText(null);
       setIsTranslating(false);
     }
   };
@@ -299,8 +330,12 @@ export default function IndivReportClient({
           </div>
           <p className="font-Noto-Sans text-[0.6875rem] md:text-sm font-medium text-darkgray ml-0.5">
             {isEdited
-              ? `Edited on ${formatDate(report.updated_at)}`
-              : `Created on ${formatDate(report.created_at)}`}
+              ? `${translatedEditedText || "Edited"} on ${formatDate(
+                  report.updated_at
+                )}`
+              : `${translatedCreatedText || "Created"} on ${formatDate(
+                  report.created_at
+                )}`}
           </p>
           <div className="flex flex-wrap gap-2 mt-2">
             <Tag
