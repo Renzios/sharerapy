@@ -350,16 +350,13 @@ export default function SearchReportsPage({
       />
 
       <div className="mt-6">
-        {isTranslating && (
-          <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-primary font-Noto-Sans text-sm font-medium">
-              Translating reports...
-            </p>
-          </div>
-        )}
         <div className="grid grid-cols-1 gap-4">
           {translatedReports.map((report) => (
-            <ReportCard key={report.id} report={report} />
+            <ReportCard
+              key={report.id}
+              report={report}
+              disabled={isPending || isTranslating}
+            />
           ))}
         </div>
 

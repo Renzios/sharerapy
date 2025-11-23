@@ -39,11 +39,13 @@ interface ReportCardProps {
     };
   };
   showActions?: boolean; // Whether to show edit/delete actions
+  disabled?: boolean; // Whether to show disabled state
 }
 
 export default function ReportCard({
   report,
   showActions = false,
+  disabled = false,
 }: ReportCardProps) {
   const router = useRouter();
 
@@ -133,7 +135,7 @@ export default function ReportCard({
   return (
     <>
       <div
-        className="
+        className={`
           group
           relative
           flex flex-col gap-y-2
@@ -141,7 +143,8 @@ export default function ReportCard({
           border border-bordergray
           hover:bg-bordergray/30 hover:cursor-pointer
           transition-transform duration-200 ease-in-out
-        "
+          ${disabled ? "opacity-60 pointer-events-none" : ""}
+        `}
       >
         {showActions && (
           <div className="absolute top-4 right-4 dropdown-trigger">
