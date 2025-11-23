@@ -74,10 +74,14 @@ export default function IndivReportClient({
   const [toastType, setToastType] = useState<"success" | "error" | "info">(
     "info"
   );
-  const [selectedLanguage, setSelectedLanguage] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<SelectOption | null>(
+    () => {
+      return (
+        languageOptions.find((opt) => opt.value === report.language.code) ||
+        null
+      );
+    }
+  );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [translatedContent, setTranslatedContent] = useState<any>(null);
   const [translatedTitle, setTranslatedTitle] = useState<string | null>(null);
