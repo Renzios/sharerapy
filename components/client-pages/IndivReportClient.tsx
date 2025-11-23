@@ -152,12 +152,12 @@ export default function IndivReportClient({
         setTranslatedDescription(null);
         setIsTranslating(true);
 
-        // Still translate the "Edited" and "Created" UI text
+        // Still translate the "Edited on" and "Created on" UI text
         try {
           const [translatedEditedTextValue, translatedCreatedTextValue] =
             await Promise.all([
-              translateText("Edited", option.value),
-              translateText("Created", option.value),
+              translateText("Edited on", option.value),
+              translateText("Created on", option.value),
             ]);
           setTranslatedEditedText(translatedEditedTextValue);
           setTranslatedCreatedText(translatedCreatedTextValue);
@@ -191,8 +191,8 @@ export default function IndivReportClient({
                 translateText(markdown, option.value),
                 translateText(report.title, option.value),
                 translateText(report.description, option.value),
-                translateText("Edited", option.value),
-                translateText("Created", option.value),
+                translateText("Edited on", option.value),
+                translateText("Created on", option.value),
               ]);
 
               if (
@@ -330,10 +330,10 @@ export default function IndivReportClient({
           </div>
           <p className="font-Noto-Sans text-[0.6875rem] md:text-sm font-medium text-darkgray ml-0.5">
             {isEdited
-              ? `${translatedEditedText || "Edited"} on ${formatDate(
+              ? `${translatedEditedText || "Edited on"} ${formatDate(
                   report.updated_at
                 )}`
-              : `${translatedCreatedText || "Created"} on ${formatDate(
+              : `${translatedCreatedText || "Created on"} ${formatDate(
                   report.created_at
                 )}`}
           </p>
