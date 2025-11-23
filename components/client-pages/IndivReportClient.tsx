@@ -78,6 +78,7 @@ export default function IndivReportClient({
     value: string;
     label: string;
   } | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [translatedContent, setTranslatedContent] = useState<any>(null);
   const [translatedTitle, setTranslatedTitle] = useState<string | null>(null);
   const [translatedDescription, setTranslatedDescription] = useState<
@@ -149,6 +150,7 @@ export default function IndivReportClient({
           const editor = BlockNoteEditor.create();
           /* Convert blocks to markdown, since translateText expects markdown */
           const markdown = await editor.blocksToMarkdownLossy(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             report.content as any
           );
 
