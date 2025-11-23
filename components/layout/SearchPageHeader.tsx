@@ -63,7 +63,7 @@ interface SearchPageHeaderProps {
   /** Available language options for the language dropdown */
   languageOptions?: SelectOption[];
   /** Currently selected language option */
-  languageValue?: SelectOption;
+  languageValue?: SelectOption | null;
   /** Callback fired when language option changes */
   onLanguageChange?: (option: SingleValue<SelectOption>) => void;
   /** Whether the language dropdown is disabled */
@@ -95,7 +95,7 @@ export default function SearchPageHeader({
     { value: "en", label: "English" },
     { value: "fl", label: "Filipino" },
   ],
-  languageValue = { value: "en", label: "English" },
+  languageValue,
   onLanguageChange,
   languageDisabled = false,
 }: SearchPageHeaderProps) {
@@ -330,6 +330,7 @@ export default function SearchPageHeader({
               value={languageValue}
               onChange={onLanguageChange}
               isDisabled={languageDisabled}
+              placeholder="Display Language"
               className="w-[7rem] lg:w-[8rem] xl:w-[10rem] 2xl:w-[11.875rem] min-w-[7rem] flex-shrink"
               classNamePrefix="react-select"
               styles={selectStyles(languageDisabled)}

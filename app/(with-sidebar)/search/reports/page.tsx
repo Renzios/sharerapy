@@ -1,4 +1,5 @@
 import { readReports } from "@/lib/data/reports";
+import { readLanguages } from "@/lib/data/languages";
 import SearchReportsClient from "@/components/client-pages/SearchReportsClient";
 
 const REPORTS_PER_PAGE = 10;
@@ -48,6 +49,12 @@ export default async function SearchReportsPage({
     ascending: ascending,
   });
 
+  const languages = await readLanguages();
+  const languageOptions = languages.map((language) => ({
+    value: language.code,
+    label: language.language,
+  }));
+
   const totalPages = Math.ceil((count || 0) / REPORTS_PER_PAGE);
 
   return (
@@ -57,6 +64,7 @@ export default async function SearchReportsPage({
       initialSearchTerm={searchQuery}
       showSuccessToast={showSuccessToast}
       showDeletedToast={showDeletedToast}
+      languageOptions={languageOptions}
     />
   );
 }

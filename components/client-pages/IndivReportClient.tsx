@@ -132,9 +132,7 @@ export default function IndivReportClient({
       day: "numeric",
     });
 
-  const handleLanguageChange = async (
-    option: { value: string; label: string } | null
-  ) => {
+  const handleLanguageChange = async (option: SelectOption | null) => {
     setSelectedLanguage(option);
     if (option) {
       /* If option selected is the original Language of the report, reset to original content */
