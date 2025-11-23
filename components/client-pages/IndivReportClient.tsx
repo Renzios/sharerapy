@@ -1,22 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
+/* React Hooks & NextJS Utilities */
+import { useState, useEffect, startTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+
+/* Components */
 import Button from "@/components/general/Button";
 import Select from "@/components/general/Select";
 import Toast from "@/components/general/Toast";
 import ConfirmationModal from "@/components/general/ConfirmationModal";
 import DropdownMenu from "@/components/general/DropdownMenu";
 import Tag from "@/components/general/Tag";
-import { Tables } from "@/lib/types/database.types";
 import PDFViewer from "@/components/blocknote/PDFViewer";
+
+/* Types */
+import { Tables } from "@/lib/types/database.types";
+
+/* Custom Hooks */
 import { useBackNavigation } from "@/app/hooks/useBackNavigation";
 import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { deleteReport } from "@/lib/actions/reports";
 
-// Type for the report with nested relationships
+/* Icons */
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+
+/* Actions */
+import { deleteReport } from "@/lib/actions/reports";
+import { translateText } from "@/lib/actions/translate";
+
+/* Others */
+import { BlockNoteEditor } from "@blocknote/core";
+
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
 type ReportWithRelations = Tables<"reports"> & {
   therapist: Tables<"therapists"> & {
     clinic: Tables<"clinics"> & {
@@ -33,28 +52,38 @@ type ReportWithRelations = Tables<"reports"> & {
 
 interface IndivReportClientProps {
   report: ReportWithRelations;
+  languageOptions: SelectOption[];
 }
 
-export default function IndivReportClient({ report }: IndivReportClientProps) {
+export default function IndivReportClient({
+  report,
+  languageOptions,
+}: IndivReportClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const { therapist } = useTherapistProfile();
-  const [isNavigating, setIsNavigating] = useState(false);
   const { handleBackClick } = useBackNavigation("/search/reports");
 
-  // Dropdown
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  // Modal
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  // Toast
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [isNavigating, setIsNavigating] = useState(false);
   const [toastType, setToastType] = useState<"success" | "error" | "info">(
     "info"
   );
+  const [selectedLanguage, setSelectedLanguage] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+  const [translatedContent, setTranslatedContent] = useState<any>(null);
+  const [translatedTitle, setTranslatedTitle] = useState<string | null>(null);
+  const [translatedDescription, setTranslatedDescription] = useState<
+    string | null
+  >(null);
+  const [isTranslating, setIsTranslating] = useState(false);
 
   const isEdited = report.created_at !== report.updated_at;
   const country = report.therapist.clinic.country.country;
@@ -95,21 +124,87 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
     return undefined;
   };
 
-  const [selectedLanguage, setSelectedLanguage] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
-  const languageOptions = [
-    { value: "english", label: "English" },
-    { value: "filipino", label: "Filipino" },
-  ];
-
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
+
+  const handleLanguageChange = async (
+    option: { value: string; label: string } | null
+  ) => {
+    setSelectedLanguage(option);
+    if (option) {
+      /* If option selected is the original Language of the report, reset to original content */
+      if (option.value === report.language.code) {
+        setTranslatedContent(null);
+        setTranslatedTitle(null);
+        setTranslatedDescription(null);
+        setIsTranslating(false);
+        return;
+      } else {
+        setIsTranslating(true);
+        try {
+          const editor = BlockNoteEditor.create();
+          /* Convert blocks to markdown, since translateText expects markdown */
+          const markdown = await editor.blocksToMarkdownLossy(
+            report.content as any
+          );
+
+          startTransition(async () => {
+            try {
+              const [
+                translatedMarkdown,
+                translatedTitleText,
+                translatedDescriptionText,
+              ] = await Promise.all([
+                translateText(markdown, option.value),
+                translateText(report.title, option.value),
+                translateText(report.description, option.value),
+              ]);
+
+              if (
+                translatedMarkdown &&
+                translatedTitleText &&
+                translatedDescriptionText
+              ) {
+                /* Convert translated markdown back to blocks */
+                const translatedBlocks = await editor.tryParseMarkdownToBlocks(
+                  translatedMarkdown
+                );
+                setTranslatedContent(translatedBlocks);
+                setTranslatedTitle(translatedTitleText);
+                setTranslatedDescription(translatedDescriptionText);
+                setToastMessage("Translation successful!");
+                setToastType("success");
+                setToastVisible(true);
+              }
+            } catch (error) {
+              console.error("Translation error:", error);
+              setToastMessage("Translation failed. Please try again.");
+              setToastType("error");
+              setToastVisible(true);
+            } finally {
+              setIsTranslating(false);
+            }
+          });
+        } catch (error) {
+          console.error("Translation error:", error);
+          setToastMessage("Translation failed. Please try again.");
+          setToastType("error");
+          setToastVisible(true);
+          setIsTranslating(false);
+        }
+      }
+    } else {
+      /* If no option selected, reset to original content */
+      setTranslatedContent(null);
+      setTranslatedTitle(null);
+      setTranslatedDescription(null);
+      setIsTranslating(false);
+    }
+  };
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -156,7 +251,7 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
         <div className="flex flex-col gap-y-1">
           <div className="flex items-center gap-2">
             <h1 className="font-Noto-Sans text-xl md:text-3xl text-black font-semibold">
-              {report.title}
+              {translatedTitle || report.title}
             </h1>
             <div className="ml-auto flex items-center gap-2">
               {therapist?.id === report.therapist_id && (
@@ -221,9 +316,10 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
             label="Display Language"
             options={languageOptions}
             value={selectedLanguage}
-            onChange={setSelectedLanguage}
+            onChange={handleLanguageChange}
             placeholder="Select language..."
             instanceId="display-language-select"
+            disabled={isTranslating}
           />
         </div>
 
@@ -270,14 +366,15 @@ export default function IndivReportClient({ report }: IndivReportClientProps) {
             Description
           </h2>
           <p className="font-Noto-Sans text-sm text-darkgray ml-0.5 font-medium">
-            {report.description}
+            {translatedDescription || report.description}
           </p>
         </div>
 
         {/* PDF */}
         <PDFViewer
-          content={report.content}
-          title={report.title}
+          key={translatedContent ? "translated" : "original"}
+          content={translatedContent ? translatedContent : report.content}
+          title={translatedTitle || report.title}
           therapistName={report.therapist.name}
         />
       </div>

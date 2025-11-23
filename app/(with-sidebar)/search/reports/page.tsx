@@ -3,13 +3,6 @@ import SearchReportsClient from "@/components/client-pages/SearchReportsClient";
 
 const REPORTS_PER_PAGE = 10;
 
-const reportSortOptions = [
-  { value: "titleAscending", label: "Sort by: Title (A-Z)" },
-  { value: "titleDescending", label: "Sort by: Title (Z-A)" },
-  { value: "dateAscending", label: "Sort by: Date (Oldest First)" },
-  { value: "dateDescending", label: "Sort by: Date (Newest First)" },
-];
-
 const getSortParams = (
   optionValue: string
 ): { column: "title" | "created_at"; ascending: boolean } => {

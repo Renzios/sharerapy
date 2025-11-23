@@ -1,5 +1,6 @@
 import IndivReportClient from "@/components/client-pages/IndivReportClient";
 import { readReport } from "@/lib/data/reports";
+import { readLanguages } from "@/lib/data/languages";
 
 /**
  * This is the server component for viewing an individual report.
@@ -12,11 +13,19 @@ export default async function ViewIndividualReportPage({
 }) {
   // Await the params Promise first
   const { id } = await params;
-  const report = await readReport(id);
+  const [report, languages] = await Promise.all([
+    readReport(id),
+    readLanguages(),
+  ]);
+
+  const languageOptions = languages.map((language) => ({
+    value: language.code,
+    label: language.language,
+  }));
 
   return (
     <div>
-      <IndivReportClient report={report} />
+      <IndivReportClient report={report} languageOptions={languageOptions} />
     </div>
   );
 }
