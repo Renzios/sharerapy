@@ -19,7 +19,9 @@ import { Tables } from "@/lib/types/database.types";
 
 /* Custom Hooks */
 import { useBackNavigation } from "@/app/hooks/useBackNavigation";
-import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
+
+/* Contexts */
+import { useTherapistProfile } from "@/app/contexts/TherapistProfileContext";
 
 /* Icons */
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";

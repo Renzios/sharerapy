@@ -10,7 +10,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   outputFileTracingRoot: __dirname, // This will now work
   serverExternalPackages: ["@supabase/supabase-js"],
-  experimental: {},
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb", // Increase limit for photo uploads
+    },
+  },
   turbopack: {
     root: __dirname, // This will now work
   },

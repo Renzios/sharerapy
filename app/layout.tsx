@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "@/app/contexts/AuthContext";
+import { TherapistProfileProvider } from "./contexts/TherapistProfileContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 /**
  * Root layout component that wraps all pages. This is empty.
@@ -21,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <TherapistProfileProvider>{children}</TherapistProfileProvider>
+        </AuthProvider>
       </body>
     </html>
   );
