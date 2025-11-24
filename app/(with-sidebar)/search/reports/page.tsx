@@ -1,14 +1,8 @@
 import { readReports } from "@/lib/data/reports";
+import { readLanguages } from "@/lib/data/languages";
 import SearchReportsClient from "@/components/client-pages/SearchReportsClient";
 
 const REPORTS_PER_PAGE = 10;
-
-const reportSortOptions = [
-  { value: "titleAscending", label: "Sort by: Title (A-Z)" },
-  { value: "titleDescending", label: "Sort by: Title (Z-A)" },
-  { value: "dateAscending", label: "Sort by: Date (Oldest First)" },
-  { value: "dateDescending", label: "Sort by: Date (Newest First)" },
-];
 
 const getSortParams = (
   optionValue: string
@@ -55,6 +49,12 @@ export default async function SearchReportsPage({
     ascending: ascending,
   });
 
+  const languages = await readLanguages();
+  const languageOptions = languages.map((language) => ({
+    value: language.code,
+    label: language.language,
+  }));
+
   const totalPages = Math.ceil((count || 0) / REPORTS_PER_PAGE);
 
   return (
@@ -64,6 +64,7 @@ export default async function SearchReportsPage({
       initialSearchTerm={searchQuery}
       showSuccessToast={showSuccessToast}
       showDeletedToast={showDeletedToast}
+      languageOptions={languageOptions}
     />
   );
 }

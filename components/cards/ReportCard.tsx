@@ -37,13 +37,17 @@ interface ReportCardProps {
     language: {
       language: string;
     };
+    writtenByText?: string; // Optional translated "Written by" text
+    editedText?: string; // Optional translated "Edited" text
   };
   showActions?: boolean; // Whether to show edit/delete actions
+  disabled?: boolean; // Whether to show disabled state
 }
 
 export default function ReportCard({
   report,
   showActions = false,
+  disabled = false,
 }: ReportCardProps) {
   const router = useRouter();
 
@@ -133,7 +137,7 @@ export default function ReportCard({
   return (
     <>
       <div
-        className="
+        className={`
           group
           relative
           flex flex-col gap-y-2
@@ -141,7 +145,8 @@ export default function ReportCard({
           border border-bordergray
           hover:bg-bordergray/30 hover:cursor-pointer
           transition-transform duration-200 ease-in-out
-        "
+          ${disabled ? "opacity-60 pointer-events-none" : ""}
+        `}
       >
         {showActions && (
           <div className="absolute top-4 right-4 dropdown-trigger">
@@ -189,13 +194,13 @@ export default function ReportCard({
             />
             <div className="flex gap-x-2">
               <p className="font-Noto-Sans text-sm text-darkgray font-medium">
-                Written by {therapistName}
+                {report.writtenByText || "Written by"} {therapistName}
               </p>
               <p className="font-Noto-Sans text-sm text-darkgray font-medium">
                 •
               </p>
               <p className="font-Noto-Sans text-sm text-darkgray font-medium">
-                {isEdited ? "Edited" : ""} {dateUploaded}
+                {isEdited ? report.editedText || "Edited" : ""} {dateUploaded}
               </p>
             </div>
           </div>

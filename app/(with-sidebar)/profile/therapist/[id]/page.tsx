@@ -1,6 +1,7 @@
 import TherapistProfileClient from "@/components/client-pages/TherapistProfileClient";
 import { readTherapist } from "@/lib/data/therapists";
 import { readReports } from "@/lib/data/reports";
+import { readLanguages } from "@/lib/data/languages";
 import { notFound } from "next/navigation";
 
 const REPORTS_PER_PAGE = 10;
@@ -23,7 +24,7 @@ export default async function TherapistProfilePage({
   const currentPage = Number(resolvedSearchParams.p) || 1;
 
   try {
-    const [therapist, reportsData] = await Promise.all([
+    const [therapist, reportsData, languages] = await Promise.all([
       readTherapist(id),
       readReports({
         therapistID: id,
@@ -33,6 +34,7 @@ export default async function TherapistProfilePage({
         column: "created_at",
         ascending: false,
       }),
+      readLanguages(),
     ]);
 
     if (!therapist) {
@@ -41,6 +43,11 @@ export default async function TherapistProfilePage({
     const { data: initialReports, count } = reportsData;
     const totalPages = Math.ceil((count || 0) / REPORTS_PER_PAGE);
 
+    const languageOptions = languages.map((language) => ({
+      value: language.code,
+      label: language.language,
+    }));
+
     return (
       <div>
         <TherapistProfileClient
@@ -48,6 +55,7 @@ export default async function TherapistProfilePage({
           initialReports={initialReports || []}
           totalPages={totalPages}
           initialSearchTerm={searchTerm}
+          languageOptions={languageOptions}
         />
       </div>
     );

@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { SingleValue } from "react-select";
 import { Tables } from "@/lib/types/database.types";
 import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
+import { translateText } from "@/lib/actions/translate";
 import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
 import TherapistProfile from "../layout/TherapistProfile";
 import SearchPageHeader from "../layout/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
 import Pagination from "@/components/general/Pagination";
+import Toast from "@/components/general/Toast";
 
 type TherapistRelation = Tables<"therapists"> & {
   clinic: Tables<"clinics"> & {
@@ -39,11 +41,17 @@ export type TherapistProfile = TherapistRelation & {
   reports: BasicReport[];
 };
 
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
 interface TherapistProfileClientProps {
   therapist: TherapistProfile;
   initialReports: ReportWithRelations[];
   totalPages: number;
   initialSearchTerm?: string;
+  languageOptions: SelectOption[];
 }
 
 const reportSortOptions = [
@@ -75,6 +83,7 @@ export default function TherapistProfileClient({
   initialReports,
   totalPages,
   initialSearchTerm,
+  languageOptions,
 }: TherapistProfileClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -85,11 +94,22 @@ export default function TherapistProfileClient({
   const isOwnProfile = currentTherapist?.id === therapist.id;
 
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-  const [sortOption, setSortOption] = useState(reportSortOptions[3]);
-  const [languageOption, setLanguageOption] = useState({
-    value: "en",
-    label: "English",
+  const [sortOption, setSortOption] = useState(() => {
+    const sortParam = searchParams.get("sort");
+    return (
+      reportSortOptions.find((o) => o.value === sortParam) ||
+      reportSortOptions[3]
+    );
   });
+  const [selectedLanguage, setSelectedLanguage] = useState<SelectOption | null>(
+    () => {
+      const langParam = searchParams.get("lang");
+      if (langParam) {
+        return languageOptions.find((opt) => opt.value === langParam) || null;
+      }
+      return null;
+    }
+  );
 
   const [reports, setReports] = useState(initialReports);
   const [currentPage, setCurrentPage] = useState(() => {
@@ -98,6 +118,25 @@ export default function TherapistProfileClient({
   });
   const [currentTotalPages, setCurrentTotalPages] = useState(totalPages);
   const [isPending, startTransition] = useTransition();
+  const [translatedReports, setTranslatedReports] =
+    useState<ReportWithRelations[]>(initialReports);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const shouldTranslateRef = useRef(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error" | "info">(
+    "info"
+  );
+
+  // Update translated reports when reports change
+  useEffect(() => {
+    if (selectedLanguage && shouldTranslateRef.current) {
+      translateReports(selectedLanguage);
+    } else {
+      setTranslatedReports(reports);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reports]);
 
   const updateURLParams = (params: { [key: string]: string | number }) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -110,8 +149,17 @@ export default function TherapistProfileClient({
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);
+
+    const params: { [key: string]: string | number } = { q: value, p: 1 };
+    if (selectedLanguage) {
+      params.lang = selectedLanguage.value;
+    }
+    if (sortOption) {
+      params.sort = sortOption.value;
+    }
+    updateURLParams(params);
+
     const { column, ascending } = getSortParams(sortOption.value);
-    updateURLParams({ q: value, p: 1 });
 
     startTransition(async () => {
       const result = await fetchReports({
@@ -134,6 +182,19 @@ export default function TherapistProfileClient({
     if (!option) return;
 
     setSortOption(option);
+    setCurrentPage(1);
+    const params: { [key: string]: string | number } = {
+      sort: option.value,
+      p: 1,
+    };
+    if (searchTerm) {
+      params.q = searchTerm;
+    }
+    if (selectedLanguage) {
+      params.lang = selectedLanguage.value;
+    }
+    updateURLParams(params);
+
     const { column, ascending } = getSortParams(option.value);
 
     startTransition(async () => {
@@ -141,7 +202,7 @@ export default function TherapistProfileClient({
         therapistID: therapist.id,
         column,
         ascending,
-        page: currentPage,
+        page: 1,
         search: searchTerm,
       });
       if (result.success && result.data) {
@@ -151,10 +212,97 @@ export default function TherapistProfileClient({
     });
   };
 
+  const translateReports = async (
+    option: SelectOption,
+    showLoading = false
+  ) => {
+    if (showLoading) {
+      setIsTranslating(true);
+    }
+
+    try {
+      const translationPromises = reports.map(async (report) => {
+        if (report.language.code === option.value) {
+          return report;
+        }
+
+        try {
+          const [translatedTitle, translatedDescription] = await Promise.all([
+            translateText(report.title, option.value),
+            translateText(report.description, option.value),
+          ]);
+
+          return {
+            ...report,
+            title: translatedTitle,
+            description: translatedDescription,
+          };
+        } catch (error) {
+          console.error(`Failed to translate report ${report.id}:`, error);
+          return report;
+        }
+      });
+
+      const translated = await Promise.all(translationPromises);
+      setTranslatedReports(translated);
+      return true;
+    } catch (error) {
+      console.error("Translation error:", error);
+      setTranslatedReports(reports);
+      return false;
+    } finally {
+      if (showLoading) {
+        setIsTranslating(false);
+      }
+    }
+  };
+
+  const handleLanguageChange = async (option: SelectOption | null) => {
+    setSelectedLanguage(option);
+
+    const newParams = new URLSearchParams(searchParams.toString());
+    if (option) {
+      newParams.set("lang", option.value);
+      shouldTranslateRef.current = true;
+    } else {
+      newParams.delete("lang");
+      shouldTranslateRef.current = false;
+    }
+    router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
+
+    if (!option) {
+      setTranslatedReports(reports);
+      setIsTranslating(false);
+      return;
+    }
+
+    const success = await translateReports(option, true);
+    if (success) {
+      setToastMessage("Translation successful!");
+      setToastType("success");
+      setToastVisible(true);
+    } else {
+      setToastMessage("Translation failed. Please try again.");
+      setToastType("error");
+      setToastVisible(true);
+    }
+  };
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    const params: { [key: string]: string | number } = { p: page };
+    if (searchTerm) {
+      params.q = searchTerm;
+    }
+    if (sortOption) {
+      params.sort = sortOption.value;
+    }
+    if (selectedLanguage) {
+      params.lang = selectedLanguage.value;
+    }
+    updateURLParams(params);
+
     const { column, ascending } = getSortParams(sortOption.value);
-    updateURLParams({ p: page });
 
     startTransition(async () => {
       const result = await fetchReports({
@@ -185,23 +333,19 @@ export default function TherapistProfileClient({
         sortOptions={reportSortOptions}
         sortValue={sortOption}
         onSortChange={handleSortChange}
-        languageValue={languageOption}
-        onLanguageChange={(option) => {
-          if (option) setLanguageOption(option);
-        }}
+        languageValue={selectedLanguage}
+        onLanguageChange={handleLanguageChange}
+        languageOptions={languageOptions}
       />
 
-      <div
-        className={`flex flex-col gap-4 ${
-          isPending ? "opacity-60 transition-opacity" : ""
-        }`}
-      >
-        {reports.length > 0 ? (
-          reports.map((report) => (
+      <div className="flex flex-col gap-4">
+        {translatedReports.length > 0 ? (
+          translatedReports.map((report) => (
             <ReportCard
               key={report.id}
               report={report}
               showActions={isOwnProfile}
+              disabled={isPending || isTranslating}
             />
           ))
         ) : (
@@ -211,7 +355,7 @@ export default function TherapistProfileClient({
         )}
       </div>
 
-      {reports.length > 0 && currentTotalPages > 1 && (
+      {translatedReports.length > 0 && currentTotalPages > 1 && (
         <Pagination
           currentPage={currentPage}
           totalPages={currentTotalPages}
@@ -219,6 +363,13 @@ export default function TherapistProfileClient({
           isPending={isPending}
         />
       )}
+
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+      />
     </div>
   );
 }
