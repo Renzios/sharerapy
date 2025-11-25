@@ -1,13 +1,24 @@
 "use client";
 
+/* React & NextJS Utilities */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+
+/* Components */
+import Button from "@/components/general/Button";
+/* Types */
+import { Tables } from "@/lib/types/database.types";
+
+/* Custom Hooks */
 import { useBackNavigation } from "@/app/hooks/useBackNavigation";
 
-import { Tables } from "@/lib/types/database.types";
-import Button from "@/components/general/Button";
-import Image from "next/image";
+/* Contexts */
+import { useTherapistProfile } from "@/app/contexts/TherapistProfileContext";
+
+/* Utilities */
 import { getPublicURL } from "@/lib/utils/storage";
+import { formatDate } from "@/lib/utils/frontendHelpers";
 
 type TherapistRelation = Tables<"therapists"> & {
   clinic: Tables<"clinics"> & {
@@ -23,25 +34,19 @@ export default function TherapistProfile({ therapist }: TherapistProfileProps) {
   const router = useRouter();
   const [isNavigating, setIsNavigating] = useState(false);
   const { handleBackClick } = useBackNavigation("/search/therapists");
+  const { therapist: currentTherapist } = useTherapistProfile();
+
+  const isOwnProfile = currentTherapist?.id === therapist.id;
 
   const enhancedHandleBackClick = () => {
     setIsNavigating(true);
     handleBackClick();
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   return (
     <div className="flex flex-col gap-y-6">
       <div>
         <div className="flex flex-col gap-y-4 border-b border-bordergray pb-8">
-          {/* Added items-center here */}
           <div className="flex items-center gap-x-4 md:gap-x-8">
             <Image
               src={getPublicURL("therapist_pictures", therapist.picture || "")}
@@ -59,14 +64,27 @@ export default function TherapistProfile({ therapist }: TherapistProfileProps) {
                 {therapist.clinic.clinic}
               </p>
             </div>
-            {/* Added Back Button */}
-            <Button
-              variant="filled"
-              className="ml-auto mb-auto w-auto text-xs md:text-base md:w-24"
-              onClick={enhancedHandleBackClick}
-            >
-              Back
-            </Button>
+
+            <div className="ml-auto mb-auto flex flex-col sm:flex-row items-center gap-2">
+              {isOwnProfile && (
+                <Button
+                  variant="outline"
+                  className="w-12 sm:w-auto text-xs md:text-base md:w-24"
+                  onClick={() =>
+                    router.push(`/profile/therapist/${therapist.id}/edit`)
+                  }
+                >
+                  Edit
+                </Button>
+              )}
+              <Button
+                variant="filled"
+                className="w-12 sm:w-auto text-xs md:text-base md:w-24"
+                onClick={enhancedHandleBackClick}
+              >
+                Back
+              </Button>
+            </div>
           </div>
         </div>
       </div>

@@ -1,17 +1,28 @@
+/* React & NextJS Utilities */
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
+
+/* Actions */
+import { signOut } from "@/lib/actions/auth";
+
+/* Contexts */
+import { useAuth } from "@/app/contexts/AuthContext";
+import { useTherapistProfile } from "@/app/contexts/TherapistProfileContext";
+
+/* Utilities */
+import { getPublicURL } from "@/lib/utils/storage";
+
+/* Icons */
 import SearchIcon from "@mui/icons-material/Search";
+import PatientIcon from "@mui/icons-material/PersonalInjury";
+import ReportIcon from "@mui/icons-material/Article";
+import TherapistIcon from "@mui/icons-material/People";
 import CreateIcon from "@mui/icons-material/Create";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter, usePathname } from "next/navigation";
-import { useState } from "react";
-import { getPublicURL } from "@/lib/utils/storage";
-import { useAuth } from "@/app/contexts/AuthContext";
-import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
-import { signOut } from "@/lib/actions/auth";
 
 /**
  * Renders the main navigation sidebar with responsive behavior and user profile section.
@@ -33,14 +44,37 @@ export default function Sidebar({
   const { user } = useAuth();
   const { therapist, isLoading } = useTherapistProfile();
 
-  const navigationItems = [
-    { name: "Search", href: "/search", icon: <SearchIcon /> },
-    { name: "Create Report", href: "/reports/new", icon: <CreateIcon /> },
-    { name: "AI Mode", href: "/ai-mode", icon: <AutoAwesomeIcon /> },
+  // Defined sections for logical grouping
+  const navigationSections = [
     {
-      name: "Profile",
-      href: `/profile/therapist/${user?.id}`,
-      icon: <AccountBoxIcon />,
+      title: "Overview",
+      items: [
+        { name: "Search", href: "/", icon: <SearchIcon /> },
+        { name: "Patients", href: "/search/patients", icon: <PatientIcon /> },
+        { name: "Reports", href: "/search/reports", icon: <ReportIcon /> },
+        {
+          name: "Therapists",
+          href: "/search/therapists",
+          icon: <TherapistIcon />,
+        },
+      ],
+    },
+    {
+      title: "Workspace",
+      items: [
+        { name: "Create Report", href: "/reports/new", icon: <CreateIcon /> },
+        { name: "AI Mode", href: "/ai-mode", icon: <AutoAwesomeIcon /> },
+      ],
+    },
+    {
+      title: "Account",
+      items: [
+        {
+          name: "Profile",
+          href: `/profile/therapist/${user?.id}`,
+          icon: <AccountBoxIcon />,
+        },
+      ],
     },
   ];
 
@@ -121,50 +155,61 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* Navigation Menu */}
-        <nav className="px-8 py-3 lg:py-6">
-          <h4 className="font-Noto-Sans text-darkgray text-xs font-medium mb-4">
-            Navigation
-          </h4>
-          <ul className="space-y-2">
-            {navigationItems.map((item) => {
-              const isActive = pathname.startsWith(item.href);
-              return (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`
-                      flex items-center
-                      h-10 px-4 gap-3
-                      rounded-md
-                      transition-all duration-200 ease-in-out
-                      ${
-                        isActive
-                          ? "bg-secondary/30"
-                          : "text-darkgray hover:bg-bordergray/30 hover:text-primary"
-                      }
-                    `}
-                  >
-                    <span
-                      className={`text-lg flex items-center justify-center ${
-                        isActive ? "text-primary" : ""
-                      }`}
-                    >
-                      {item.icon}
-                    </span>
-                    <span
-                      className={`font-Noto-Sans font-semibold text-sm flex items-center ${
-                        isActive ? "text-primary" : "text-darkgray"
-                      }`}
-                    >
-                      {item.name}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+        {/* Navigation Menu (Grouped) */}
+        <nav className="px-8 py-3 lg:py-6 overflow-y-auto flex-1">
+          <div className="space-y-6">
+            {navigationSections.map((section) => (
+              <div key={section.title}>
+                <h4 className="font-Noto-Sans text-darkgray text-xs font-bold uppercase tracking-wider mb-3">
+                  {section.title}
+                </h4>
+                <ul className="space-y-2">
+                  {section.items.map((item) => {
+                    const isActive = pathname === item.href;
+                    return (
+                      <li key={item.name}>
+                        <Link
+                          href={item.href}
+                          onClick={() => setIsOpen(false)}
+                          className={`
+                            group
+                            flex items-center
+                            h-10 px-4 gap-3
+                            rounded-sm
+                            transition-all duration-200 ease-in-out
+                            ${
+                              isActive
+                                ? "bg-secondary/30"
+                                : "hover:bg-bordergray/30"
+                            }
+                          `}
+                        >
+                          <span
+                            className={`text-lg flex items-center justify-center transition-colors ${
+                              isActive
+                                ? "text-primary"
+                                : "text-darkgray group-hover:text-primary"
+                            }`}
+                          >
+                            {item.icon}
+                          </span>
+                          <span
+                            className={`font-Noto-Sans font-semibold text-sm flex items-center transition-colors ${
+                              isActive
+                                ? "text-primary"
+                                : "text-darkgray group-hover:text-primary"
+                            }`}
+                          >
+                            {item.name}
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
         </nav>
 
         {/* Bottom Section */}
@@ -175,7 +220,7 @@ export default function Sidebar({
               flex flex-col items-center justify-center
               py-4 gap-2
               lg:hidden
-          "
+            "
           >
             <Link href="/">
               <Image
@@ -198,7 +243,7 @@ export default function Sidebar({
               h-[7rem]
               border-t border-bordergray
               lg:block
-          "
+            "
           >
             <div
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -206,6 +251,7 @@ export default function Sidebar({
                 flex items-center
                 w-full h-full p-8 gap-3
                 hover:bg-bordergray/30 transition-colors
+                cursor-pointer
               "
             >
               {!isLoading && (
@@ -240,20 +286,21 @@ export default function Sidebar({
             {isDropdownOpen && (
               <div
                 className="
-                absolute bottom-full left-4 right-4
-                mb-1 py-2
-                bg-white border border-gray-200 rounded-lg shadow-lg
-              "
+                  absolute bottom-full left-4 right-4
+                  mb-1 py-2
+                  bg-white border border-gray-200 rounded-lg shadow-lg
+                  z-50
+                "
               >
                 <Link href={`/profile/therapist/${therapist?.id}`}>
                   <button
                     className="
-                  w-full text-left
-                  px-4 py-2
-                  hover:bg-gray-50
-                  font-Noto-Sans text-sm text-primary
-                  hover:cursor-pointer
-                "
+                    w-full text-left
+                    px-4 py-2
+                    hover:bg-gray-50
+                    font-Noto-Sans text-sm text-primary
+                    hover:cursor-pointer
+                  "
                   >
                     View
                   </button>
@@ -261,12 +308,12 @@ export default function Sidebar({
                 <hr className="my-2 border-bordergray" />
                 <button
                   className="
-                  w-full text-left
-                  px-4 py-2
-                  hover:bg-gray-50
-                  font-Noto-Sans text-sm text-primary
-                  hover:cursor-pointer
-                "
+                    w-full text-left
+                    px-4 py-2
+                    hover:bg-gray-50
+                    font-Noto-Sans text-sm text-primary
+                    hover:cursor-pointer
+                  "
                   onClick={handleLogout}
                 >
                   Logout

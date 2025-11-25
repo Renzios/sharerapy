@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signOut } from "@/lib/actions/auth";
 import { getPublicURL } from "@/lib/utils/storage";
-import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
+import { useTherapistProfile } from "@/app/contexts/TherapistProfileContext";
 
 export default function LandingPageClient() {
   const [searchTerm, setSearchTerm] = useState("");

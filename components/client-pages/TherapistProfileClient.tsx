@@ -1,17 +1,26 @@
 "use client";
 
+/* React Hooks & NextJS Utilities */
 import { useState, useTransition, useRef, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { SingleValue } from "react-select";
-import { Tables } from "@/lib/types/database.types";
-import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
-import { translateText } from "@/lib/actions/translate";
-import { useTherapistProfile } from "@/app/hooks/useTherapistProfile";
-import TherapistProfile from "../layout/TherapistProfile";
-import SearchPageHeader from "../layout/SearchPageHeader";
+
+/* Components */
+import TherapistProfile from "@/components/layout/TherapistProfile";
+import SearchPageHeader from "@/components/layout/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
 import Pagination from "@/components/general/Pagination";
 import Toast from "@/components/general/Toast";
+
+/* Types */
+import { Tables } from "@/lib/types/database.types";
+
+/* Actions */
+import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
+import { translateText } from "@/lib/actions/translate";
+
+/* Contexts */
+import { useTherapistProfile } from "@/app/contexts/TherapistProfileContext";
 
 type TherapistRelation = Tables<"therapists"> & {
   clinic: Tables<"clinics"> & {
