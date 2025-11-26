@@ -133,6 +133,7 @@ export type Database = {
           title: string;
           type_id: number;
           updated_at: string;
+          markdown?: string;
         };
         Insert: {
           content: Json;
@@ -145,6 +146,7 @@ export type Database = {
           title: string;
           type_id: number;
           updated_at?: string;
+          markdown?: string;
         };
         Update: {
           content?: Json;
@@ -157,6 +159,7 @@ export type Database = {
           title?: string;
           type_id?: number;
           updated_at?: string;
+          markdown?: string;
         };
         Relationships: [
           {
@@ -333,6 +336,7 @@ export type Database = {
           title: string | null;
           type_id: number | null;
           updated_at: string | null;
+          markdown: string | null;
         };
         Relationships: [
           {
