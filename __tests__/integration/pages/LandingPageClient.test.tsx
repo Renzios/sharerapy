@@ -30,7 +30,6 @@ jest.mock("next/image", () => ({
   __esModule: true,
   default: (() => {
     const NextImageMock = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
-      // eslint-disable-next-line jsx-a11y/alt-text
       // eslint-disable-next-line @next/next/no-img-element
       return <img {...props} />;
     };
@@ -89,7 +88,7 @@ jest.mock("@/lib/utils/storage", () => ({ getPublicURL: (bucket: string, path: s
 // Mock therapist hook
 type TherapistProfile = { therapist: { id: string; picture: string } | null; isLoading: boolean };
 const useTherapistProfileMock = jest.fn<TherapistProfile, []>(() => ({ therapist: { id: "ther-1", picture: "pic.jpg" }, isLoading: false }));
-jest.mock("@/app/hooks/useTherapistProfile", () => ({ useTherapistProfile: () => useTherapistProfileMock() }));
+jest.mock("@/app/contexts/TherapistProfileContext", () => ({ useTherapistProfile: () => useTherapistProfileMock() }));
 
 describe("LandingPageClient", () => {
   beforeEach(() => {

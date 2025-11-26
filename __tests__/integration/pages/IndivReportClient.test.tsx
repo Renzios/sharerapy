@@ -1,5 +1,6 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import IndivReportClient from "@/components/client-pages/IndivReportClient";
 
@@ -200,7 +201,7 @@ jest.mock("@/app/hooks/useBackNavigation", () => ({
   useBackNavigation: () => ({ handleBackClick: mockHandleBack }),
 }));
 
-jest.mock("@/app/hooks/useTherapistProfile", () => ({
+jest.mock("@/app/contexts/TherapistProfileContext", () => ({
   useTherapistProfile: () => ({
     therapist: { id: "therapist-1", name: "Dr. Mock" },
   }),
@@ -235,7 +236,7 @@ describe("IndivReportClient", () => {
     jest.clearAllMocks();
   });
 
-  it("calls back navigation when Back is clicked and disables the button", () => {
+  it("calls back navigation when Back is clicked and disables the button", async () => {
     render(
       <IndivReportClient
         report={sampleReport}
@@ -247,14 +248,14 @@ describe("IndivReportClient", () => {
     expect(back).toBeInTheDocument();
     expect(back).not.toBeDisabled();
 
-    fireEvent.click(back);
+    await userEvent.click(back);
 
     // handleBack should be called and the button should become disabled
     expect(mockHandleBack).toHaveBeenCalled();
     expect(back).toBeDisabled();
   });
 
-  it("changes display language via the Select mock", () => {
+  it("changes display language via the Select mock", async () => {
     render(
       <IndivReportClient
         report={sampleReport}
@@ -266,7 +267,7 @@ describe("IndivReportClient", () => {
     const selectButton = screen.getByTestId("display-language-select");
     expect(selectButton).toBeInTheDocument();
 
-    fireEvent.click(selectButton);
+    await userEvent.click(selectButton);
 
     // our helper spy should be called with the selected value
     expect(selectChangeMock).toHaveBeenCalledWith({
@@ -275,7 +276,7 @@ describe("IndivReportClient", () => {
     });
   });
 
-  it("navigates to therapist profile on click (router.push)", () => {
+  it("navigates to therapist profile on click (router.push)", async () => {
     render(
       <IndivReportClient
         report={sampleReport}
@@ -288,13 +289,13 @@ describe("IndivReportClient", () => {
       .closest("a");
     expect(therapistLink).toBeTruthy();
 
-    fireEvent.click(therapistLink!);
+    await userEvent.click(therapistLink!);
     expect(pushMock).toHaveBeenCalledWith(
       `/profile/therapist/${sampleReport.therapist.id}`
     );
   });
 
-  it("navigates to patient profile on click (router.push)", () => {
+  it("navigates to patient profile on click (router.push)", async () => {
     render(
       <IndivReportClient
         report={sampleReport}
@@ -307,7 +308,7 @@ describe("IndivReportClient", () => {
       .closest("a");
     expect(patientLink).toBeTruthy();
 
-    fireEvent.click(patientLink!);
+    await userEvent.click(patientLink!);
     expect(pushMock).toHaveBeenCalledWith(
       `/profile/patient/${sampleReport.patient.id}`
     );
@@ -345,15 +346,15 @@ describe("IndivReportClient", () => {
 
     // open dropdown
     const moreBtn = screen.getByLabelText("More options");
-    fireEvent.click(moreBtn);
+    await userEvent.click(moreBtn);
 
     // click Delete item in our DropdownMenu mock
     const deleteBtn = screen.getByText("Delete");
-    fireEvent.click(deleteBtn);
+    await userEvent.click(deleteBtn);
 
     // confirmation modal should render a confirm button
     const confirmBtn = await screen.findByTestId("confirm-delete");
-    fireEvent.click(confirmBtn);
+    await userEvent.click(confirmBtn);
 
     await waitFor(() =>
       expect(mockDeleteReport).toHaveBeenCalledWith(sampleReport.id)
@@ -372,11 +373,11 @@ describe("IndivReportClient", () => {
     );
 
     // open dropdown and click Delete
-    fireEvent.click(screen.getByLabelText("More options"));
-    fireEvent.click(screen.getByText("Delete"));
+    await userEvent.click(screen.getByLabelText("More options"));
+    await userEvent.click(screen.getByText("Delete"));
 
     // confirm
-    fireEvent.click(await screen.findByTestId("confirm-delete"));
+    await userEvent.click(await screen.findByTestId("confirm-delete"));
 
     // toast should show the failure message
     expect(
@@ -393,16 +394,16 @@ describe("IndivReportClient", () => {
     );
 
     // open dropdown and click Delete
-    fireEvent.click(screen.getByLabelText("More options"));
-    fireEvent.click(screen.getByText("Delete"));
+    await userEvent.click(screen.getByLabelText("More options"));
+    await userEvent.click(screen.getByText("Delete"));
     // confirmation modal should render a cancel button
     const cancelBtn = await screen.findByTestId("cancel-delete");
-    fireEvent.click(cancelBtn);
+    await userEvent.click(cancelBtn);
     // deleteReport should not be called
     expect(mockDeleteReport).not.toHaveBeenCalled();
   });
 
-  it("routes to edit page when Edit is clicked", () => {
+  it("routes to edit page when Edit is clicked", async () => {
     render(
       <IndivReportClient
         report={sampleReport}
@@ -410,10 +411,10 @@ describe("IndivReportClient", () => {
       />
     );
     // open dropdown
-    fireEvent.click(screen.getByLabelText("More options"));
+    await userEvent.click(screen.getByLabelText("More options"));
     // click Edit item in our DropdownMenu mock
     const editBtn = screen.getByText("Edit");
-    fireEvent.click(editBtn);
+    await userEvent.click(editBtn);
     expect(pushMock).toHaveBeenCalledWith(`/reports/${sampleReport.id}/edit`);
   });
 });

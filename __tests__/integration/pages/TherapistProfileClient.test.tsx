@@ -1,9 +1,8 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import TherapistProfileClient from "@/components/client-pages/TherapistProfileClient";
-import { fetchReports as mockFetchReports } from "@/app/(with-sidebar)/search/reports/actions";
 import * as nextNav from "next/navigation";
 
+// Mocks must be defined before importing the components that use them
 jest.mock("next/navigation", () => {
   const actual = jest.requireActual("next/navigation");
   return {
@@ -17,6 +16,27 @@ jest.mock("next/navigation", () => {
 jest.mock("@/app/(with-sidebar)/search/reports/actions", () => ({
   fetchReports: jest.fn(),
 }));
+
+jest.mock("@/lib/supabase/client", () => ({
+  createClient: jest.fn(() => ({
+    auth: {
+      getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } },
+      })),
+    },
+  })),
+}));
+
+jest.mock("@/lib/client/therapists", () => ({
+  fetchTherapist: jest.fn().mockResolvedValue(null),
+}));
+
+// Now import the components after mocks are set up
+import TherapistProfileClient from "@/components/client-pages/TherapistProfileClient";
+import { fetchReports as mockFetchReports } from "@/app/(with-sidebar)/search/reports/actions";
+import { AuthProvider } from "@/app/contexts/AuthContext";
+import { TherapistProfileProvider } from "@/app/contexts/TherapistProfileContext";
 
 // Mock layout and child components to make unit deterministic
 jest.mock("@/components/layout/TherapistProfile", () => {
@@ -113,69 +133,240 @@ describe("TherapistProfileClient integration", () => {
   const pushMock = jest.fn();
   const pathname = "/therapists/1";
   const searchParams = new URLSearchParams("p=2&q=initial");
-  // Minimal types used in tests to avoid `any` casts
+  // Minimal types used in tests
+  type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+  
   interface TherapistMinimal {
     id: string;
-    name?: string;
-    clinic: { id: string; country: { id: string; name: string } };
-    reports: unknown[];
+    name: string;
+    age: number;
+    bio: string;
+    clinic_id: number;
+    created_at: string;
+    first_name: string;
+    last_name: string;
+    picture: string;
+    updated_at: string;
+    clinic: {
+      clinic: string;
+      country_id: number;
+      id: number;
+      country: {
+        country: string;
+        id: number;
+      };
+    };
+    reports: ReportMinimal[];
   }
 
   interface ReportMinimal {
     id: string;
     title: string;
+    content: Json;
     created_at: string;
-    therapist: { id: string } | TherapistMinimal;
-    type: { id: string; name: string };
-    language: { id: string; name: string };
-    patient: { id: string; country: { id: string; name: string } };
+    description: string;
+    language_id: number;
+    patient_id: string;
+    therapist_id: string;
+    type_id: number;
+    updated_at: string;
+    therapist: {
+      id: string;
+      name: string;
+      age: number;
+      bio: string;
+      clinic_id: number;
+      created_at: string;
+      first_name: string;
+      last_name: string;
+      picture: string;
+      updated_at: string;
+      clinic: {
+        clinic: string;
+        country_id: number;
+        id: number;
+        country: {
+          country: string;
+          id: number;
+        };
+      };
+    };
+    type: {
+      id: number;
+      type: string;
+    };
+    language: {
+      id: number;
+      language: string;
+      code: string;
+    };
+    patient: {
+      id: string;
+      first_name: string;
+      last_name: string;
+      name: string;
+      birthdate: string;
+      contact_number: string;
+      country_id: number;
+      created_at: string;
+      updated_at: string;
+      sex: "Male" | "Female";
+      country: {
+        country: string;
+        id: number;
+      };
+    };
   }
 
   const therapist: TherapistMinimal = {
     id: "ther-1",
     name: "Therapist One",
-    clinic: { id: "c1", country: { id: "country1", name: "Country" } },
+    age: 35,
+    bio: "Test bio",
+    clinic_id: 1,
+    created_at: "2020-01-01T00:00:00Z",
+    first_name: "Therapist",
+    last_name: "One",
+    picture: "picture.jpg",
+    updated_at: "2020-01-01T00:00:00Z",
+    clinic: {
+      clinic: "Test Clinic",
+      country_id: 1,
+      id: 1,
+      country: {
+        country: "Test Country",
+        id: 1,
+      },
+    },
     reports: [],
   };
+
+  const languageOptions = [
+    { value: "en", label: "English" },
+    { value: "es", label: "Spanish" },
+  ];
 
   const initialReports: ReportMinimal[] = [
     {
       id: "r-alpha",
       title: "Alpha report",
+      content: {},
       created_at: "2022-01-01",
+      description: "Alpha description",
+      language_id: 1,
+      patient_id: "p1",
+      therapist_id: "ther-1",
+      type_id: 1,
+      updated_at: "2022-01-01",
       therapist,
-      type: { id: "t1", name: "Assessment" },
-      language: { id: "en", name: "English" },
-      patient: { id: "p1", country: { id: "country1", name: "Country" } },
+      type: { id: 1, type: "Assessment" },
+      language: { id: 1, language: "English", code: "en" },
+      patient: {
+        id: "p1",
+        first_name: "Patient",
+        last_name: "One",
+        name: "Patient One",
+        birthdate: "2000-01-01",
+        contact_number: "1234567890",
+        country_id: 1,
+        created_at: "2020-01-01",
+        updated_at: "2020-01-01",
+        sex: "Male",
+        country: { country: "Test Country", id: 1 },
+      },
     },
     {
       id: "r-zulu",
       title: "Zulu report",
+      content: {},
       created_at: "2020-05-01",
+      description: "Zulu description",
+      language_id: 1,
+      patient_id: "p2",
+      therapist_id: "ther-1",
+      type_id: 2,
+      updated_at: "2020-05-01",
       therapist,
-      type: { id: "t2", name: "Progress" },
-      language: { id: "en", name: "English" },
-      patient: { id: "p2", country: { id: "country1", name: "Country" } },
+      type: { id: 2, type: "Progress" },
+      language: { id: 1, language: "English", code: "en" },
+      patient: {
+        id: "p2",
+        first_name: "Patient",
+        last_name: "Two",
+        name: "Patient Two",
+        birthdate: "2000-01-01",
+        contact_number: "1234567890",
+        country_id: 1,
+        created_at: "2020-01-01",
+        updated_at: "2020-01-01",
+        sex: "Female",
+        country: { country: "Test Country", id: 1 },
+      },
     },
     {
       id: "r-mike",
       title: "Mike report",
+      content: {},
       created_at: "2021-06-01",
+      description: "Mike description",
+      language_id: 1,
+      patient_id: "p3",
+      therapist_id: "ther-1",
+      type_id: 3,
+      updated_at: "2021-06-01",
       therapist,
-      type: { id: "t3", name: "Evaluation" },
-      language: { id: "en", name: "English" },
-      patient: { id: "p3", country: { id: "country1", name: "Country" } },
+      type: { id: 3, type: "Evaluation" },
+      language: { id: 1, language: "English", code: "en" },
+      patient: {
+        id: "p3",
+        first_name: "Patient",
+        last_name: "Three",
+        name: "Patient Three",
+        birthdate: "2000-01-01",
+        contact_number: "1234567890",
+        country_id: 1,
+        created_at: "2020-01-01",
+        updated_at: "2020-01-01",
+        sex: "Male",
+        country: { country: "Test Country", id: 1 },
+      },
     },
     {
       id: "r-beta",
       title: "Beta report",
+      content: {},
       created_at: "2019-03-01",
+      description: "Beta description",
+      language_id: 1,
+      patient_id: "p4",
+      therapist_id: "ther-1",
+      type_id: 4,
+      updated_at: "2019-03-01",
       therapist,
-      type: { id: "t4", name: "FollowUp" },
-      language: { id: "en", name: "English" },
-      patient: { id: "p4", country: { id: "country1", name: "Country" } },
+      type: { id: 4, type: "FollowUp" },
+      language: { id: 1, language: "English", code: "en" },
+      patient: {
+        id: "p4",
+        first_name: "Patient",
+        last_name: "Four",
+        name: "Patient Four",
+        birthdate: "2000-01-01",
+        contact_number: "1234567890",
+        country_id: 1,
+        created_at: "2020-01-01",
+        updated_at: "2020-01-01",
+        sex: "Female",
+        country: { country: "Test Country", id: 1 },
+      },
     },
-  ] as ReportMinimal[];
+  ];
+
+  // Wrapper component to provide necessary contexts
+  const TestWrapper = ({ children }: { children: React.ReactNode }) => (
+    <AuthProvider>
+      <TherapistProfileProvider>{children}</TherapistProfileProvider>
+    </AuthProvider>
+  );
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -199,12 +390,15 @@ describe("TherapistProfileClient integration", () => {
   it("renders therapist and initial report cards and pagination", () => {
   
   render(
-      <TherapistProfileClient
-        therapist={therapist}
-        initialReports={initialReports}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
+      <TestWrapper>
+        <TherapistProfileClient
+          therapist={therapist}
+          initialReports={initialReports}
+          totalPages={2}
+          initialSearchTerm="initial"
+          languageOptions={languageOptions}
+        />
+      </TestWrapper>
     );
 
     expect(screen.getByTestId("therapist-profile")).toHaveTextContent(
@@ -216,15 +410,34 @@ describe("TherapistProfileClient integration", () => {
   });
 
   it("performs a search: updates reports via fetchReports and updates URL via router.push", async () => {
-    const newReports = [
+    const newReports: ReportMinimal[] = [
       {
         id: "r-new",
         title: "New Report",
+        content: {},
         created_at: "2022-01-01",
+        description: "New description",
+        language_id: 1,
+        patient_id: "p3",
+        therapist_id: "ther-1",
+        type_id: 1,
+        updated_at: "2022-01-01",
         therapist,
-        type: { id: "t1", name: "Type" },
-        language: { id: "en", name: "English" },
-        patient: { id: "p3", country: { id: "country1", name: "Country" } },
+        type: { id: 1, type: "Type" },
+        language: { id: 1, language: "English", code: "en" },
+        patient: {
+          id: "p3",
+          first_name: "Patient",
+          last_name: "Three",
+          name: "Patient Three",
+          birthdate: "2000-01-01",
+          contact_number: "1234567890",
+          country_id: 1,
+          created_at: "2020-01-01",
+          updated_at: "2020-01-01",
+          sex: "Male",
+          country: { country: "Test Country", id: 1 },
+        },
       },
     ];
 
@@ -235,12 +448,15 @@ describe("TherapistProfileClient integration", () => {
     });
   
   render(
-      <TherapistProfileClient
-        therapist={therapist}
-        initialReports={initialReports}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
+      <TestWrapper>
+        <TherapistProfileClient
+          therapist={therapist}
+          initialReports={initialReports}
+          totalPages={2}
+          initialSearchTerm="initial"
+          languageOptions={languageOptions}
+        />
+      </TestWrapper>
     );
 
     // trigger search via the mocked header
@@ -260,12 +476,15 @@ describe("TherapistProfileClient integration", () => {
     const sortedReports = [...initialReports].sort((a, b) => a.title.localeCompare(b.title));
 
     render(
-      <TherapistProfileClient
-        therapist={therapist}
-        initialReports={initialReports}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
+      <TestWrapper>
+        <TherapistProfileClient
+          therapist={therapist}
+          initialReports={initialReports}
+          totalPages={2}
+          initialSearchTerm="initial"
+          languageOptions={languageOptions}
+        />
+      </TestWrapper>
     );
 
     // change sort
@@ -310,12 +529,15 @@ describe("TherapistProfileClient integration", () => {
     }); 
 
     render(
-      <TherapistProfileClient
-        therapist={therapist}
-        initialReports={initialReports}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
+      <TestWrapper>
+        <TherapistProfileClient
+          therapist={therapist}
+          initialReports={initialReports}
+          totalPages={2}
+          initialSearchTerm="initial"
+          languageOptions={languageOptions}
+        />
+      </TestWrapper>
     ); 
 
     // change language via the mocked select
@@ -352,15 +574,16 @@ describe("TherapistProfileClient integration", () => {
         totalPages: 2,
       });
 
-  // ts-expect-error: simplified test fixture
-  
   const { unmount } = render(
-        <TherapistProfileClient
-          therapist={therapist}
-          initialReports={initialReports}
-          totalPages={2}
-          initialSearchTerm="initial"
-        />
+        <TestWrapper>
+          <TherapistProfileClient
+            therapist={therapist}
+            initialReports={initialReports}
+            totalPages={2}
+            initialSearchTerm="initial"
+            languageOptions={languageOptions}
+          />
+        </TestWrapper>
       );
 
       fireEvent.change(screen.getByTestId("mock-sort-select"), {
@@ -384,15 +607,16 @@ describe("TherapistProfileClient integration", () => {
       data: initialReports,
       totalPages: 2,
     });
-  // ts-expect-error: simplified test fixture
-  
   const { unmount: u2 } = render(
-      <TherapistProfileClient
-        therapist={therapist}
-        initialReports={initialReports}
-        totalPages={2}
-        initialSearchTerm="initial"
-      />
+      <TestWrapper>
+        <TherapistProfileClient
+          therapist={therapist}
+          initialReports={initialReports}
+          totalPages={2}
+          initialSearchTerm="initial"
+          languageOptions={languageOptions}
+        />
+      </TestWrapper>
     );
     fireEvent.change(screen.getByTestId("mock-sort-select"), {
       target: { value: "unknown-option" },
