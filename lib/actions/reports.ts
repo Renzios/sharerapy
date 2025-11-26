@@ -14,6 +14,7 @@ export async function createReport(formData: FormData) {
     content: JSON.parse(formData.get("content") as string) as Json,
     title: formData.get("title") as string,
     description: formData.get("description") as string,
+    markdown: formData.get("markdown") as string,
   };
 
   const supabase = await createClient();
@@ -23,7 +24,7 @@ export async function createReport(formData: FormData) {
   if (error) {
     throw error;
   }
-
+  
   revalidatePath("/search/reports");
   redirect("/search/reports?success=true");
 }
@@ -59,6 +60,7 @@ export async function updateReport(id: string, formData: FormData) {
     title: formData.get("title") as string,
     description: formData.get("description") as string,
     updated_at: new Date().toISOString(),
+    markdown: formData.get("markdown") as string,
   };
 
   const { error } = await supabase
