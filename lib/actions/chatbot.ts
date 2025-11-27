@@ -1,10 +1,13 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { openai as openaiProvider } from "@ai-sdk/openai";
+import { streamText } from "ai";
+import { createStreamableValue } from "@ai-sdk/rsc";
 import OpenAI from "openai";
 import { readReport } from "@/lib/data/reports";
 
-const openai = new OpenAI({
+const openaiClient = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -19,13 +22,12 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
     }
 
     try {
-        const embeddingResponse = await openai.embeddings.create({
+        const embeddingResponse = await openaiClient.embeddings.create({
             model: "text-embedding-3-large",
             input: userQuery.replace(/\n/g, " "),
         });
 
         const queryVector = embeddingResponse.data[0].embedding;
-
         const supabase = await createClient();
 
         const { data: documents, error: matchError } = await supabase.rpc(
@@ -38,7 +40,6 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
         );
 
         if (matchError) {
-            console.error("Supabase RPC Error:", matchError);
             throw new Error("Failed to retrieve documents");
         }
 
@@ -50,15 +51,7 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
 
         const reportsMap = new Map(reports.map((r) => [r.id, r]));
 
-        type DocumentSource = {
-            id: string;
-            report_id: string;
-            text: string;
-            similarity: number;
-            report: any;
-        };
-
-        const sources: DocumentSource[] = (documents || []).map((doc: any) => ({
+        const sources = (documents || []).map((doc: any) => ({
             ...doc,
             report: reportsMap.get(doc.report_id) || null,
         }));
@@ -66,7 +59,7 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
         let contextText = "";
 
         if (sources.length > 0) {
-            contextText = sources.map((doc) => doc.text).join("\n---\n");
+            contextText = sources.map((doc: any) => doc.text).join("\n---\n");
         } else {
             contextText = "No relevant documentation found for this query.";
         }
@@ -87,25 +80,32 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
             content: msg.content,
         }));
 
-        const completion = await openai.chat.completions.create({
-            model: "gpt-5.1",
-            messages: [
-                { role: "system", content: systemPrompt },
-                ...recentHistory,
-                { role: "user", content: userQuery },
-            ],
-        });
+        const stream = createStreamableValue("");
 
-        const answer = completion.choices[0].message.content || "No response generated.";
+        (async () => {
+            const { textStream } = await streamText({
+                model: openaiProvider("gpt-5.1"),
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    ...recentHistory,
+                    { role: "user", content: userQuery },
+                ],
+            });
 
-        return { 
-            success: true, 
-            answer, 
-            sources 
+            for await (const delta of textStream) {
+                stream.update(delta);
+            }
+
+            stream.done();
+        })();
+
+        return {
+            success: true,
+            sources,
+            output: stream.value,
         };
 
     } catch (error: any) {
-        console.error("RAG Pipeline Error:", error);
         return { success: false, error: error.message };
     }
 }
