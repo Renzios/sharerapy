@@ -134,8 +134,8 @@ describe("ReportCard", () => {
       expect(img).toHaveAttribute("height", "100");
       expect(img).toHaveAttribute("class", expect.stringContaining("rounded-full"));
       expect(img).toHaveAttribute("class", expect.stringContaining("object-cover"));
-      expect(img).toHaveAttribute("class", expect.stringContaining("h-[2rem]"));
-      expect(img).toHaveAttribute("class", expect.stringContaining("w-[2rem]"));
+      expect(img).toHaveAttribute("class", expect.stringContaining("h-8"));
+      expect(img).toHaveAttribute("class", expect.stringContaining("w-8"));
     });
   });
 
