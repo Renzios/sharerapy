@@ -1,8 +1,5 @@
 import React from "react";
 
-/**
- * Props for the Input component
- */
 interface InputProps {
   label: string;
   type?:
@@ -69,10 +66,10 @@ export default function Input({
         required={required}
         disabled={disabled}
         className="
-          h-[2.8125rem]
+          h-11.25
           bg-white
           border border-bordergray
-          rounded-[0.5rem]
+          rounded-lg
           px-4
           font-Noto-Sans text-sm text-black
           placeholder:text-darkgray

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Input from "@/components/general/Input";
 import Select from "@/components/general/Select";
 import { Tables } from "@/lib/types/database.types";
@@ -14,7 +14,6 @@ interface PatientDetailsProps {
   patients: Tables<"patients">[];
   patientOptions: SelectOption[];
   countryOptions: SelectOption[];
-  // Controlled state props
   selectedPatient: SelectOption | null;
   setSelectedPatient: (value: SelectOption | null) => void;
   selectedCountry: SelectOption | null;
@@ -30,6 +29,15 @@ interface PatientDetailsProps {
   contactNumber: string;
   setContactNumber: (value: string) => void;
   disabled?: boolean; // New prop to disable all fields (for edit mode)
+  ids?: {
+    patientSelectId?: string;
+    countrySelectId?: string;
+    firstNameInputId?: string;
+    lastNameInputId?: string;
+    birthdayInputId?: string;
+    sexSelectId?: string;
+    contactNumberInputId?: string;
+  };
 }
 
 /**
@@ -59,6 +67,7 @@ export default function PatientDetails({
   contactNumber,
   setContactNumber,
   disabled = false, // Default to false (editable)
+  ids,
 }: PatientDetailsProps) {
   const sexOptions: SelectOption[] = [
     { value: "Male", label: "Male" },
@@ -130,8 +139,9 @@ export default function PatientDetails({
         {/* Row 1: Choose Patient and Country */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Select
+            id={ids?.patientSelectId}
             label="Choose Patient"
-            instanceId="patient-select"
+            instanceId={ids?.patientSelectId ?? ""}
             options={patientOptionsWithNew}
             value={selectedPatient}
             onChange={(option) => setSelectedPatient(option)}
@@ -140,8 +150,9 @@ export default function PatientDetails({
             disabled={disabled}
           />
           <Select
+            id={ids?.countrySelectId}
             label="Country"
-            instanceId="patient-country"
+            instanceId={ids?.countrySelectId ?? ""}
             options={countryOptions}
             value={selectedCountry}
             onChange={(option) => setSelectedCountry(option)}
@@ -162,6 +173,7 @@ export default function PatientDetails({
             onChange={(e) => setFirstName(e.target.value)}
             required={true}
             name="first_name"
+            id={ids?.firstNameInputId}
             disabled={fieldsDisabled}
           />
           <Input
@@ -172,6 +184,7 @@ export default function PatientDetails({
             onChange={(e) => setLastName(e.target.value)}
             required={true}
             name="last_name"
+            id={ids?.lastNameInputId}
             disabled={fieldsDisabled}
           />
         </div>
@@ -186,11 +199,13 @@ export default function PatientDetails({
               onChange={(e) => setBirthday(e.target.value)}
               required={true}
               name="birthdate"
+              id={ids?.birthdayInputId}
               disabled={fieldsDisabled}
             />
             <Select
+              id={ids?.sexSelectId}
               label="Sex"
-              instanceId="patient-sex"
+              instanceId={ids?.sexSelectId ?? ""}
               options={sexOptions}
               value={selectedSex}
               onChange={(option) => setSelectedSex(option)}
@@ -208,6 +223,7 @@ export default function PatientDetails({
             onChange={(e) => setContactNumber(e.target.value)}
             required={true}
             name="contact_number"
+            id={ids?.contactNumberInputId}
             disabled={fieldsDisabled}
           />
         </div>
