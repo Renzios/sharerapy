@@ -439,10 +439,10 @@ describe("PatientDetails form", () => {
       expect(sex.name).toBe("sex");
       expect(phone.name).toBe("contact_number");
 
-      // IDs from instanceId or name
-      expect(choose.id).toBe("patient-select");
-      expect(country.id).toBe("patient-country");
-      expect(sex.id).toBe("patient-sex");
+      // IDs from instanceId or name (when instanceId is not provided, falls back to name)
+      expect(choose.id).toBe("patient_id");
+      expect(country.id).toBe("country_id");
+      expect(sex.id).toBe("sex");
       expect(first.id).toBe("first_name");
       expect(last.id).toBe("last_name");
       expect(birth.id).toBe("birthdate");
@@ -450,14 +450,14 @@ describe("PatientDetails form", () => {
 
       // Labels correctly associated
       expect((screen.getByText("Choose Patient") as HTMLLabelElement).htmlFor).toBe(
-        "patient-select"
+        "patient_id"
       );
       expect((screen.getByText("Country") as HTMLLabelElement).htmlFor).toBe(
-        "patient-country"
+        "country_id"
       );
       // Use the control's associated label to avoid matching the "Sex" placeholder option
       const sexLabel = sex.labels?.[0] as HTMLLabelElement | undefined;
-      expect(sexLabel?.htmlFor).toBe("patient-sex");
+      expect(sexLabel?.htmlFor).toBe("sex");
       expect((screen.getByText("First Name") as HTMLLabelElement).htmlFor).toBe(
         "first_name"
       );

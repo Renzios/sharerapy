@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Input from "@/components/general/Input";
 import TextArea from "@/components/general/TextArea";
 import Select from "@/components/general/Select";
@@ -13,7 +12,6 @@ interface SelectOption {
 interface ReportDetailsProps {
   languageOptions: SelectOption[];
   typeOptions: SelectOption[];
-  // Controlled state props
   title: string;
   setTitle: (value: string) => void;
   description: string;
@@ -22,6 +20,12 @@ interface ReportDetailsProps {
   setSelectedLanguage: (value: SelectOption | null) => void;
   selectedTherapyType: SelectOption | null;
   setSelectedTherapyType: (value: SelectOption | null) => void;
+  ids?: {
+    titleInputId?: string;
+    descriptionTextAreaId?: string;
+    languageSelectId?: string;
+    therapyTypeSelectId?: string;
+  };
 }
 
 /**
@@ -41,6 +45,7 @@ export default function ReportDetails({
   setSelectedLanguage,
   selectedTherapyType,
   setSelectedTherapyType,
+  ids,
 }: ReportDetailsProps) {
   return (
     <div className="flex flex-col gap-y-4">
@@ -60,6 +65,7 @@ export default function ReportDetails({
             maxLength={100}
             onChange={(e) => setTitle(e.target.value)}
             name="title"
+            id={ids?.titleInputId}
           />
         </div>
 
@@ -74,14 +80,16 @@ export default function ReportDetails({
             onChange={(e) => setDescription(e.target.value)}
             rows={6}
             name="description"
+            id={ids?.descriptionTextAreaId}
           />
         </div>
 
         {/* Row 3: Language and Therapy Type */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Select
+            id={ids?.languageSelectId}
             label="Language"
-            instanceId="report-language"
+            instanceId={ids?.languageSelectId ?? ""}
             options={languageOptions}
             value={selectedLanguage}
             onChange={(option) => setSelectedLanguage(option)}
@@ -90,8 +98,9 @@ export default function ReportDetails({
             name="language_id"
           />
           <Select
+            id={ids?.therapyTypeSelectId}
             label="Therapy Type"
-            instanceId="report-therapy-type"
+            instanceId={ids?.therapyTypeSelectId ?? ""}
             options={typeOptions}
             value={selectedTherapyType}
             onChange={(option) => setSelectedTherapyType(option)}

@@ -1,14 +1,23 @@
 "use client";
 
+/* React Hooks & NextJS Utilities */
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+
+/* Components */
 import Button from "@/components/general/Button";
 import Search from "@/components/general/Search";
 import Toast from "@/components/general/Toast";
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { signOut } from "@/lib/actions/auth";
+
+/* Utilities */
 import { getPublicURL } from "@/lib/utils/storage";
+
+/* Actions */
+import { signOut } from "@/lib/actions/auth";
+
+/* Contexts */
 import { useTherapistProfile } from "@/app/contexts/TherapistProfileContext";
 
 export default function LandingPageClient() {
@@ -65,7 +74,7 @@ export default function LandingPageClient() {
         duration={3000}
       />
 
-      <div className="w-full h-[5.5rem] px-5 lg:px-10 flex items-center">
+      <div className="w-full h-22 px-5 lg:px-10 flex items-center">
         <Image
           src="/logo.png"
           alt="Logo"
@@ -80,23 +89,33 @@ export default function LandingPageClient() {
             shape="pill"
             onClick={handleLogout}
             className="text-xs"
+            id="landing-logout-btn"
           >
             Logout
           </Button>
-          {!isLoading && (
-            <Link href={`/profile/therapist/${therapist?.id}`}>
+          {isLoading ? (
+            <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
+          ) : therapist ? (
+            <Link
+              id="landing-profile-link"
+              href={`/profile/therapist/${therapist.id}`}
+            >
               <Image
-                src={
-                  therapist?.picture
-                    ? getPublicURL("therapist_pictures", therapist.picture)
-                    : "/testpfp.jpg"
-                }
+                src={getPublicURL("therapist_pictures", therapist.picture)}
                 alt="Profile Picture"
                 width={150}
                 height={150}
                 className="w-10 h-10 rounded-full object-cover transition-transform hover:scale-102"
               />
             </Link>
+          ) : (
+            <Image
+              src="/testpfp.jpg"
+              alt="Default Profile Picture"
+              width={150}
+              height={150}
+              className="w-10 h-10 rounded-full object-cover"
+            />
           )}
         </div>
       </div>
@@ -107,6 +126,7 @@ export default function LandingPageClient() {
             <span className="text-primary">share</span>rapy.
           </h1>
           <Search
+            id="landing-search-input"
             size="50%"
             className="min-w-2xs"
             value={searchTerm}
@@ -118,36 +138,39 @@ export default function LandingPageClient() {
           <div className="flex items-center space-between space-x-2 md:space-x-4">
             <Link href="/search/patients">
               <Button
+                id="landing-patients-btn"
                 variant="outline"
                 fontSize="text-[0.6875rem]"
                 shape="pill"
                 width="auto"
                 height="2rem"
-                className="flex-shrink min-w-0 whitespace-nowrap"
+                className="shrink min-w-0 whitespace-nowrap"
               >
                 Patients
               </Button>
             </Link>
             <Link href="/search/reports">
               <Button
+                id="landing-reports-btn"
                 variant="outline"
                 fontSize="text-[0.6875rem]"
                 shape="pill"
                 width="auto"
                 height="2rem"
-                className="flex-shrink min-w-0 whitespace-nowrap"
+                className="shrink min-w-0 whitespace-nowrap"
               >
                 Reports
               </Button>
             </Link>
             <Link href="/search/therapists">
               <Button
+                id="landing-therapists-btn"
                 variant="outline"
                 fontSize="text-[0.6875rem]"
                 shape="pill"
                 width="auto"
                 height="2rem"
-                className="flex-shrink min-w-0 whitespace-nowrap"
+                className="shrink min-w-0 whitespace-nowrap"
               >
                 Therapists
               </Button>

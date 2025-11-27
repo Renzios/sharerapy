@@ -107,15 +107,15 @@ export default function Sidebar({
               hidden items-center
               h-auto px-8 gap-2.5
               border-b border-bordergray
-              lg:flex lg:h-[5.3125rem]"
+              lg:flex lg:h-21.25"
         >
-          <Link href="/">
+          <Link href="/" id="sidebar-logo-link">
             <Image
               src="/logo.png"
               alt="Sharerapy Logo"
               width={40}
               height={40}
-              className="w-[2.5rem] h-[2.5rem] hover:cursor-pointer"
+              className="w-10 h-10 hover:cursor-pointer"
             />
           </Link>
           <h1 className="font-Noto-Sans text-[1.5rem] font-black">
@@ -127,7 +127,7 @@ export default function Sidebar({
         <div
           className="
               flex flex-col items-center justify-center
-              w-full h-[11.875rem] p-2 gap-2
+              w-full h-47.5 p-2 gap-2
               border-b border-bordergray
               lg:hidden"
         >
@@ -141,7 +141,7 @@ export default function Sidebar({
               alt="Profile Picture"
               width={150}
               height={150}
-              className="h-[4.375rem] w-[4.375rem] rounded-full"
+              className="h-17.5 w-17.5 rounded-full"
             />
           )}
 
@@ -169,6 +169,9 @@ export default function Sidebar({
                     return (
                       <li key={item.name}>
                         <Link
+                          id={`sidebar-${item.name
+                            .toLowerCase()
+                            .replace(/\s+/g, "-")}-link`}
                           href={item.href}
                           onClick={() => setIsOpen(false)}
                           className={`
@@ -222,7 +225,7 @@ export default function Sidebar({
               lg:hidden
             "
           >
-            <Link href="/">
+            <Link href="/" id="sidebar-logo-link-mobile">
               <Image
                 src="/logo.png"
                 alt="Sharerapy Logo"
@@ -240,12 +243,13 @@ export default function Sidebar({
           <div
             className="
               hidden relative
-              h-[7rem]
+              h-28
               border-t border-bordergray
               lg:block
             "
           >
             <div
+              id="sidebar-profile-dropdown-btn"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="
                 flex items-center
@@ -264,7 +268,7 @@ export default function Sidebar({
                   alt="Profile Picture"
                   width={150}
                   height={150}
-                  className="h-[4.375rem] w-[4.375rem] rounded-full"
+                  className="h-17.5 w-17.5 rounded-full"
                 />
               )}
               <div className="flex-1 text-left">
@@ -294,6 +298,7 @@ export default function Sidebar({
               >
                 <Link href={`/profile/therapist/${therapist?.id}`}>
                   <button
+                    id="sidebar-profile-view-btn"
                     className="
                     w-full text-left
                     px-4 py-2
@@ -307,6 +312,7 @@ export default function Sidebar({
                 </Link>
                 <hr className="my-2 border-bordergray" />
                 <button
+                  id="sidebar-profile-logout-btn"
                   className="
                     w-full text-left
                     px-4 py-2

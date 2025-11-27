@@ -1,33 +1,21 @@
 import SearchIcon from "@mui/icons-material/Search";
 
 interface SearchProps {
-  /** Controls the width of the search component */
   size?: "full" | string;
-  /** Value of the search input */
   value?: string;
-  /** Callback function when input value changes */
   onChange?: (value: string) => void;
-  /** Callback function when search is submitted */
   onSearch?: (value: string) => void;
-  /** Additional CSS classes */
   className?: string;
+  id?: string;
 }
 
-/**
- * A flexible search input component with customizable width and consistent styling.
- *
- * @param size - Controls width: 'full' for w-full, or custom width (e.g., '20rem', '300px')
- * @param value - Controlled input value
- * @param onChange - Handler for input changes
- * @param onSearch - Handler for search submission (Enter key or icon click)
- * @param className - Additional CSS classes
- */
 export default function Search({
   size = "full",
   value,
   onChange,
   onSearch,
   className = "",
+  id,
 }: SearchProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -44,7 +32,6 @@ export default function Search({
     onSearch?.(value || "");
   };
 
-  // Determine width style
   const widthStyle = size === "full" ? "w-full" : "";
   const customWidth = size !== "full" ? { width: size } : {};
 
@@ -52,13 +39,14 @@ export default function Search({
     <div
       className={`
         relative flex items-center
-        h-[2.8125rem]
+        h-11.25
         ${widthStyle}
         ${className}
       `}
       style={customWidth}
     >
       <button
+        id="search-btn"
         type="button"
         onClick={handleSearchClick}
         className="
@@ -74,6 +62,7 @@ export default function Search({
       </button>
 
       <input
+        id={id}
         suppressHydrationWarning={true}
         type="text"
         value={value}

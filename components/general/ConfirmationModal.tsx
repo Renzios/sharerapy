@@ -12,6 +12,8 @@ interface ConfirmationModalProps {
   onConfirm: () => void;
   onCancel: () => void;
   isLoading?: boolean;
+  confirmButtonID?: string;
+  cancelButtonID?: string;
 }
 
 export default function ConfirmationModal({
@@ -23,6 +25,8 @@ export default function ConfirmationModal({
   onConfirm,
   onCancel,
   isLoading = false,
+  confirmButtonID,
+  cancelButtonID,
 }: ConfirmationModalProps) {
   if (!isOpen) return null;
 
@@ -32,7 +36,7 @@ export default function ConfirmationModal({
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-[0.5rem] border border-bordergray shadow-lg p-6 max-w-md w-full mx-4 animate-fadeIn">
+      <div className="relative bg-white rounded-lg border border-bordergray shadow-lg p-6 max-w-md w-full mx-4 animate-fadeIn">
         {/* Title */}
         <h2 className="font-Noto-Sans text-xl font-semibold text-black mb-2">
           {title}
@@ -43,10 +47,15 @@ export default function ConfirmationModal({
 
         {/* Buttons */}
         <div className="flex gap-x-3 justify-end">
-          <Button variant="outline" onClick={onCancel} disabled={isLoading}>
+          <Button
+            id={cancelButtonID}
+            variant="outline"
+            onClick={onCancel}
+            disabled={isLoading}
+          >
             {cancelText}
           </Button>
-          <Button onClick={onConfirm} disabled={isLoading}>
+          <Button id={confirmButtonID} onClick={onConfirm} disabled={isLoading}>
             {confirmText}
           </Button>
         </div>

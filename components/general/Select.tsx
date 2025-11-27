@@ -20,6 +20,7 @@ interface SelectProps {
   width?: string;
   className?: string;
   name?: string;
+  id?: string;
 }
 
 /**
@@ -35,11 +36,11 @@ export default function Select({
   onChange,
   placeholder = "Select...",
   required = false,
-  instanceId,
   disabled = false,
   width,
   className = "",
   name,
+  id,
 }: SelectProps) {
   const selectStyles = {
     control: (base: object) => ({
@@ -98,7 +99,7 @@ export default function Select({
         </label>
       )}
       <ReactSelect
-        instanceId={instanceId}
+        instanceId={id}
         options={options}
         value={value}
         onChange={onChange}
@@ -110,6 +111,7 @@ export default function Select({
       {/* Hidden input for form submission */}
       {name && (
         <input
+          id={id}
           type="hidden"
           name={name}
           value={value?.value || ""}

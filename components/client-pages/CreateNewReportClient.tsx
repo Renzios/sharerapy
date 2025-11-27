@@ -1,19 +1,30 @@
 "use client";
 
+/* React Hooks & NextJS Utilities */
 import { useState, useRef, useTransition } from "react";
+
+/* Components */
+import Button from "@/components/general/Button";
+import Toast from "@/components/general/Toast";
 import FileUpload from "@/components/forms/FileUpload";
 import PatientDetails from "@/components/forms/PatientDetails";
 import ReportDetails from "@/components/forms/ReportDetails";
 import { Editor } from "@/components/blocknote/DynamicEditor";
 import { EditorRef } from "@/components/blocknote/Editor";
-import Button from "@/components/general/Button";
-import Toast from "@/components/general/Toast";
-import { createReport, updateReport } from "@/lib/actions/reports";
-import { validateContactNumber } from "@/lib/utils/frontendHelpers";
-import { createPatient } from "@/lib/actions/patients";
+
+/* Types */
 import { Tables } from "@/lib/types/database.types";
-import { useAuth } from "@/app/contexts/AuthContext";
+
+/* Utilities */
+import { validateContactNumber } from "@/lib/utils/frontendHelpers";
+
+/* Actions */
+import { createReport, updateReport } from "@/lib/actions/reports";
+import { createPatient } from "@/lib/actions/patients";
 import { parseFile } from "@/lib/actions/parse";
+
+/* Contexts */
+import { useAuth } from "@/app/contexts/AuthContext";
 
 interface SelectOption {
   value: string;
@@ -21,10 +32,10 @@ interface SelectOption {
 }
 
 interface CreateNewReportClientProps {
-  mode?: "create" | "edit"; // Add mode prop
-  reportId?: string; // For edit mode
+  mode?: "create" | "edit";
+  reportId?: string; // need this for edit mode (the report being edited)
   existingReport?: {
-    // For edit mode - pre-fill data
+    // also for edit mode, for autofilling data
     title: string;
     description: string;
     content: unknown;
@@ -45,7 +56,7 @@ interface CreateNewReportClientProps {
  * @param props - The initial data from the server component
  */
 export default function CreateNewReportClient({
-  mode = "create", // Default to create mode
+  mode = "create", // default to create mode
   reportId,
   existingReport,
   patients,
@@ -464,7 +475,11 @@ export default function CreateNewReportClient({
         <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
           Upload
         </h1>
-        <FileUpload onFileUpload={handleFileUpload} disabled={isParsing} />
+        <FileUpload
+          id="create-edit-report-file-upload"
+          onFileUpload={handleFileUpload}
+          disabled={isParsing}
+        />
       </div>
 
       <form ref={formRef} onSubmit={handleSubmit} noValidate>
@@ -489,6 +504,15 @@ export default function CreateNewReportClient({
             contactNumber={contactNumber}
             setContactNumber={setContactNumber}
             disabled={mode === "edit"}
+            ids={{
+              patientSelectId: "create-edit-report-patient-select",
+              countrySelectId: "create-edit-report-country-select",
+              firstNameInputId: "create-edit-report-first-name-input",
+              lastNameInputId: "create-edit-report-last-name-input",
+              birthdayInputId: "create-edit-report-birthday-input",
+              sexSelectId: "create-edit-report-sex-select",
+              contactNumberInputId: "create-edit-report-contact-number-input",
+            }}
           />
           <ReportDetails
             languageOptions={languageOptions}
@@ -501,6 +525,12 @@ export default function CreateNewReportClient({
             setSelectedLanguage={setSelectedLanguage}
             selectedTherapyType={selectedTherapyType}
             setSelectedTherapyType={setSelectedTherapyType}
+            ids={{
+              titleInputId: "create-edit-report-title-input",
+              descriptionTextAreaId: "create-edit-report-description-textarea",
+              languageSelectId: "create-edit-report-language-select",
+              therapyTypeSelectId: "create-edit-report-therapy-type-select",
+            }}
           />
 
           <div className="flex flex-col gap-y-4">
@@ -518,6 +548,7 @@ export default function CreateNewReportClient({
           <div className="flex gap-x-4 justify-end">
             {mode === "create" && (
               <Button
+                id="create-report-clear-form-btn"
                 type="button"
                 variant="outline"
                 className="w-30"
@@ -528,6 +559,7 @@ export default function CreateNewReportClient({
               </Button>
             )}
             <Button
+              id="create-edit-report-submit-btn"
               type="submit"
               variant="filled"
               className="w-30"

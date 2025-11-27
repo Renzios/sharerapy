@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
@@ -10,6 +10,7 @@ interface FileUploadProps {
   width?: string;
   className?: string;
   disabled?: boolean;
+  id?: string;
 }
 
 /**
@@ -25,6 +26,7 @@ export default function FileUpload({
   width,
   className = "",
   disabled = false,
+  id,
 }: FileUploadProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -51,9 +53,9 @@ export default function FileUpload({
       <div
         {...getRootProps()}
         className={`
-          h-[20rem]
+          h-80
           border-2 border-dashed border-bordergray
-          rounded-[0.5rem]
+          rounded-lg
           bg-white
           flex flex-col items-center justify-center
           transition-all duration-200
@@ -71,7 +73,7 @@ export default function FileUpload({
           }
         `}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} id={id} />
         <div className="text-center px-6">
           {disabled ? (
             <p className="font-Noto-Sans text-sm font-medium animate-pulse">
@@ -86,7 +88,7 @@ export default function FileUpload({
           ) : (
             <>
               <UploadFileIcon
-                className="!text-bordergray/80"
+                className="text-bordergray/80!"
                 sx={{ fontSize: "10rem" }}
               />
               <p className="font-Noto-Sans text-lg text-black font-medium">
