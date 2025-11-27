@@ -8,12 +8,15 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  // New function exposed to manualy refresh session
+  checkSession: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
   isAuthenticated: false,
+  checkSession: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -21,18 +24,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
 
-  useEffect(() => {
-    const checkSession = async () => {
+  // Logic extracted into a reusable function
+  const checkSession = async () => {
+    try {
       const {
         data: { session },
       } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
+    } catch (error) {
+      console.error("Session check failed", error);
+      setUser(null);
+    } finally {
       setIsLoading(false);
-    };
+    }
+  };
 
+  useEffect(() => {
+    // Initial check
     checkSession();
 
-    // listen for auth changes
+    // Listen for automatic updates (like token expiry)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -49,6 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         isLoading,
         isAuthenticated: !!user,
+        checkSession,
       }}
     >
       {children}
