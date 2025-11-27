@@ -55,6 +55,10 @@ jest.mock("@/lib/actions/reports", () => ({
   updateReport: jest.fn(),
 }));
 
+jest.mock("@/lib/actions/parse", () => ({
+  parseFile: jest.fn(),
+}));
+
 // Mock authentication context so component thinks a user is logged in during tests
 jest.mock("@/app/contexts/AuthContext", () => ({
   useAuth: () => ({ user: { id: "test-user-id" } }),

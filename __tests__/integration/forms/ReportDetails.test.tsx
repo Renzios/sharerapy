@@ -375,7 +375,8 @@ describe("ReportDetails form", () => {
         const user = userEvent.setup();
         const desc = screen.getByLabelText("Description") as HTMLTextAreaElement;
         const longText = "b".repeat(600);
-        await user.type(desc, longText);
+        await user.click(desc);
+        await user.paste(longText);
         expect(desc.value.length).toBe(500);
       });
 
@@ -384,6 +385,7 @@ describe("ReportDetails form", () => {
         const user = userEvent.setup();
         const titleInput = screen.getByLabelText("Title") as HTMLInputElement;
         const specialText = "{}!@#$%^&*()_+|:\"<>?-=[]\\;',./`~";
+        await user.click(titleInput);
         await user.clear(titleInput);
         await user.paste(specialText);
         expect(titleInput.value).toBe(specialText);
@@ -394,6 +396,7 @@ describe("ReportDetails form", () => {
         const user = userEvent.setup();
         const desc = screen.getByLabelText("Description") as HTMLTextAreaElement;
         const specialText = "{}!@#$%^&*()_+|:\"<>?-=[]\\;',./`~";
+        await user.click(desc);
         await user.clear(desc);
         await user.paste(specialText);
         expect(desc.value).toBe(specialText);
@@ -404,6 +407,7 @@ describe("ReportDetails form", () => {
         const user = userEvent.setup();
         const titleInput = screen.getByLabelText("Title") as HTMLInputElement;
         const longText = "c".repeat(150);
+        await user.click(titleInput);
         await user.clear(titleInput);
         await user.paste(longText);
         expect(titleInput.value.length).toBe(100);
@@ -414,6 +418,7 @@ describe("ReportDetails form", () => {
         const user = userEvent.setup();
         const desc = screen.getByLabelText("Description") as HTMLTextAreaElement;
         const longText = "d".repeat(600);
+        await user.click(desc);
         await user.clear(desc);
         await user.paste(longText);
         expect(desc.value.length).toBe(500);
