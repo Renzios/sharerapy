@@ -109,7 +109,7 @@ export default function Sidebar({
               border-b border-bordergray
               lg:flex lg:h-21.25"
         >
-          <Link href="/">
+          <Link href="/" id="sidebar-logo-link">
             <Image
               src="/logo.png"
               alt="Sharerapy Logo"
@@ -225,7 +225,7 @@ export default function Sidebar({
               lg:hidden
             "
           >
-            <Link href="/">
+            <Link href="/" id="sidebar-logo-link-mobile">
               <Image
                 src="/logo.png"
                 alt="Sharerapy Logo"
@@ -249,7 +249,7 @@ export default function Sidebar({
             "
           >
             <div
-              id="sidebar-profile-dropdown-button"
+              id="sidebar-profile-dropdown-btn"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="
                 flex items-center
@@ -298,7 +298,7 @@ export default function Sidebar({
               >
                 <Link href={`/profile/therapist/${therapist?.id}`}>
                   <button
-                    id="sidebar-profile-view-button"
+                    id="sidebar-profile-view-btn"
                     className="
                     w-full text-left
                     px-4 py-2
@@ -312,7 +312,7 @@ export default function Sidebar({
                 </Link>
                 <hr className="my-2 border-bordergray" />
                 <button
-                  id="sidebar-profile-logout-button"
+                  id="sidebar-profile-logout-btn"
                   className="
                     w-full text-left
                     px-4 py-2

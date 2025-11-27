@@ -42,12 +42,14 @@ interface ReportCardProps {
   };
   showActions?: boolean; // Whether to show edit/delete actions
   disabled?: boolean; // Whether to show disabled state
+  id?: string;
 }
 
 export default function ReportCard({
   report,
   showActions = false,
   disabled = false,
+  id,
 }: ReportCardProps) {
   const router = useRouter();
 
@@ -141,7 +143,7 @@ export default function ReportCard({
           group
           relative
           flex flex-col gap-y-2
-          bg-white rounded-[0.5rem] p-6
+          bg-white rounded-lg p-6
           border border-bordergray
           hover:bg-bordergray/30 hover:cursor-pointer
           transition-transform duration-200 ease-in-out
@@ -180,7 +182,7 @@ export default function ReportCard({
         )}
 
         {/* Link only wraps the main card content */}
-        <Link href={`/reports/${report.id}`} className="block">
+        <Link href={`/reports/${report.id}`} className="block" id={id}>
           <div className="flex items-center gap-x-2 mb-2">
             <Image
               src={getPublicURL(
@@ -190,7 +192,7 @@ export default function ReportCard({
               alt="Therapist Profile Picture"
               width={100}
               height={100}
-              className="rounded-full object-cover h-[2rem] w-[2rem]"
+              className="rounded-full object-cover h-8 w-8"
             />
             <div className="flex gap-x-2">
               <p className="font-Noto-Sans text-sm text-darkgray font-medium">

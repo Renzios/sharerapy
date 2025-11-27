@@ -6,6 +6,7 @@ interface DropdownMenuItem {
   label: string;
   onClick: () => void;
   variant?: "default" | "danger";
+  id?: string;
 }
 
 interface DropdownMenuProps {
@@ -68,7 +69,7 @@ export default function DropdownMenu({
       className={`
         absolute
         bg-white
-        rounded-[0.5rem]
+        rounded-lg
         border border-bordergray
         shadow-lg
         min-w-[120px]
@@ -78,6 +79,7 @@ export default function DropdownMenu({
     >
       {items.map((item, index) => (
         <button
+          id={item.id}
           key={index}
           onClick={() => {
             item.onClick();

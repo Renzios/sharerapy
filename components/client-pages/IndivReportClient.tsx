@@ -17,6 +17,9 @@ import PDFViewer from "@/components/blocknote/PDFViewer";
 /* Types */
 import { Tables } from "@/lib/types/database.types";
 
+/* Utilities */
+import { formatDate } from "@/lib/utils/frontendHelpers";
+
 /* Custom Hooks */
 import { useBackNavigation } from "@/app/hooks/useBackNavigation";
 
@@ -136,13 +139,6 @@ export default function IndivReportClient({
     if (normalized.includes("reading")) return "reading";
     return undefined;
   };
-
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
 
   const handleLanguageChange = async (option: SelectOption | null) => {
     setSelectedLanguage(option);
@@ -273,11 +269,13 @@ export default function IndivReportClient({
       label: "Edit",
       onClick: () => router.push(`/reports/${report.id}/edit`),
       variant: "default" as const,
+      id: "indiv-report-edit-btn",
     },
     {
       label: "Delete",
       onClick: () => setIsDeleteModalOpen(true),
       variant: "danger" as const,
+      id: "indiv-report-delete-btn",
     },
   ];
 
@@ -294,6 +292,7 @@ export default function IndivReportClient({
               {therapist?.id === report.therapist_id && (
                 <div className="relative">
                   <button
+                    id="indiv-report-dropdown-btn"
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsDropdownOpen((prev) => !prev);
@@ -302,7 +301,7 @@ export default function IndivReportClient({
                       bg-transparent border border-primary text-primary
                       hover:bg-primary/5 hover:cursor-pointer
                       active:bg-primary active:text-white
-                      rounded-[0.5rem]
+                      rounded-lg
                       font-Noto-Sans font-semibold
                       px-3 lg:px-4 py-2
                       flex items-center justify-center
@@ -321,6 +320,7 @@ export default function IndivReportClient({
                 </div>
               )}
               <Button
+                id="indiv-report-back-btn"
                 variant="filled"
                 className="w-auto text-xs md:text-base md:w-24"
                 onClick={enhancedHandleBackClick}
@@ -367,8 +367,9 @@ export default function IndivReportClient({
         {/* Cards */}
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
           <Link
+            id="indiv-report-therapist-card-link"
             href={`/profile/therapist/${report.therapist.id}`}
-            className="flex-1 bg-white rounded-[0.5rem] border border-bordergray p-4 hover:bg-bordergray/30 hover:cursor-pointer transition-transform duration-200 ease-in-out"
+            className="flex-1 bg-white rounded-lg border border-bordergray p-4 hover:bg-bordergray/30 hover:cursor-pointer transition-transform duration-200 ease-in-out"
           >
             <div className="flex flex-col gap-1">
               <h2 className="font-Noto-Sans text-xs font-medium text-darkgray uppercase tracking-wide">
@@ -384,8 +385,9 @@ export default function IndivReportClient({
           </Link>
 
           <Link
+            id="indiv-report-patient-card-link"
             href={`/profile/patient/${report.patient.id}`}
-            className="flex-1 bg-white rounded-[0.5rem] border border-bordergray p-4 hover:bg-bordergray/30 hover:cursor-pointer transition-transform duration-200 ease-in-out"
+            className="flex-1 bg-white rounded-lg border border-bordergray p-4 hover:bg-bordergray/30 hover:cursor-pointer transition-transform duration-200 ease-in-out"
           >
             <div className="flex flex-col gap-1">
               <h2 className="font-Noto-Sans text-xs font-medium text-darkgray uppercase tracking-wide">
@@ -430,6 +432,8 @@ export default function IndivReportClient({
         onConfirm={handleDelete}
         onCancel={() => setIsDeleteModalOpen(false)}
         isLoading={isDeleting}
+        confirmButtonID="indiv-report-confirm-delete-btn"
+        cancelButtonID="indiv-report-cancel-delete-btn"
       />
 
       {/* Toast */}

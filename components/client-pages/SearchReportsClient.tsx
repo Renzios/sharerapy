@@ -1,17 +1,17 @@
 "use client";
 
+/* React Hooks & NextJS Utilities */
+import { useState, useTransition, useEffect, useRef } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+
+/* Components */
 import SearchPageHeader from "@/components/layout/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
 import Pagination from "@/components/general/Pagination";
 import Toast from "@/components/general/Toast";
-import { useState, useTransition, useEffect, useRef } from "react";
-import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
-import { translateText } from "@/lib/actions/translate";
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { SingleValue } from "react-select"; // Import this for handleSortChange
-
-// Extract the type from fetchReports
+/* Types */
+import { SingleValue } from "react-select";
 type ReportsData = Awaited<ReturnType<typeof fetchReports>>["data"];
 type Report = NonNullable<ReportsData>[number];
 
@@ -28,6 +28,11 @@ interface SearchReportsClientProps {
   showDeletedToast?: boolean;
   languageOptions: SelectOption[];
 }
+
+/* Actions */
+import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
+import { translateText } from "@/lib/actions/translate";
+
 const reportSortOptions = [
   { value: "titleAscending", label: "Sort by: Title (A-Z)" },
   { value: "titleDescending", label: "Sort by: Title (Z-A)" },
@@ -363,12 +368,24 @@ export default function SearchReportsPage({
         onMobileSettingsClick={() => {
           console.log("Open mobile settings popup");
         }}
+        ids={{
+          searchInputId: "search-reports-input",
+          mobileFiltersButtonId: "search-reports-mobile-filters-button",
+          mobileSettingsButtonId: "search-reports-mobile-settings-button",
+          searchAllButtonId: "search-reports-all-button",
+          searchPatientsButtonId: "search-reports-patients-button",
+          searchReportsButtonId: "search-reports-reports-button",
+          searchTherapistsButtonId: "search-reports-therapists-button",
+          sortSelectId: "search-reports-sort-select",
+          languageSelectId: "search-reports-language-select",
+        }}
       />
 
       <div className="mt-6">
         <div className="grid grid-cols-1 gap-4">
           {translatedReports.map((report) => (
             <ReportCard
+              id={`search-report-${report.id}`}
               key={report.id}
               report={report}
               disabled={isPending || isTranslating}

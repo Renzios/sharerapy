@@ -3,7 +3,6 @@ import Button from "@/components/general/Button";
 import Filter from "@mui/icons-material/Tune";
 import Settings from "@mui/icons-material/Settings";
 import Link from "next/link";
-import React from "react";
 import Select, { SingleValue } from "react-select";
 
 /**
@@ -68,6 +67,17 @@ interface SearchPageHeaderProps {
   onLanguageChange?: (option: SingleValue<SelectOption>) => void;
   /** Whether the language dropdown is disabled */
   languageDisabled?: boolean;
+  ids?: {
+    searchInputId?: string;
+    mobileFiltersButtonId?: string;
+    mobileSettingsButtonId?: string;
+    searchAllButtonId?: string;
+    searchPatientsButtonId?: string;
+    searchReportsButtonId?: string;
+    searchTherapistsButtonId?: string;
+    sortSelectId?: string;
+    languageSelectId?: string;
+  };
 }
 
 /**
@@ -98,6 +108,7 @@ export default function SearchPageHeader({
   languageValue,
   onLanguageChange,
   languageDisabled = false,
+  ids,
 }: SearchPageHeaderProps) {
   /**
    * Custom styling function for React Select components.
@@ -188,6 +199,7 @@ export default function SearchPageHeader({
       <div className="h-1/3 w-full flex gap-2">
         <div className="flex-1 min-w-1 lg:w-full">
           <Search
+            id={ids?.searchInputId}
             value={searchValue}
             onChange={onSearchChange}
             onSearch={onSearch}
@@ -195,16 +207,17 @@ export default function SearchPageHeader({
         </div>
 
         <button
+          id={ids?.mobileFiltersButtonId}
           onClick={onAdvancedFiltersClick}
           disabled={advancedFiltersDisabled}
           className={`
-            w-[2.5rem] h-[2.5rem] sm:w-[3rem] sm:h-[2.8125rem]
+            w-10 h-10 sm:w-12 sm:h-11.25
             bg-white border border-bordergray
             rounded-full
             flex items-center justify-center
             text-darkgray hover:bg-bordergray/30
             transition-colors duration-200
-            flex-shrink-0
+            shrink-0
             lg:hidden
             ${advancedFiltersDisabled ? "opacity-50 cursor-not-allowed" : ""}
           `}
@@ -213,16 +226,17 @@ export default function SearchPageHeader({
         </button>
 
         <button
+          id={ids?.mobileSettingsButtonId}
           onClick={onMobileSettingsClick}
           disabled={mobileSettingsDisabled}
           className={`
-            w-[2.5rem] h-[2.5rem] sm:w-[3rem] sm:h-[2.8125rem]
+            w-10 h-10 sm:w-12 sm:h-11.25
             bg-white border border-bordergray
             rounded-full
             flex items-center justify-center
             text-darkgray hover:bg-bordergray/30
             transition-colors duration-200
-            flex-shrink-0
+            shrink-0
             lg:hidden
             ${mobileSettingsDisabled ? "opacity-50 cursor-not-allowed" : ""}
           `}
@@ -234,19 +248,20 @@ export default function SearchPageHeader({
       <div className="h-1/2 w-full flex items-center gap-2 lg:gap-4 min-w-0 overflow-hidden">
         {/* --- Conditional Rendering Wrapper --- */}
         {showNavButtons && (
-          <div className="flex items-center gap-1 sm:gap-2.5 flex-shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
             <Link
               href={`/search${
                 searchValue ? `?q=${encodeURIComponent(searchValue)}` : ""
               }`}
             >
               <Button
+                id={ids?.searchAllButtonId}
                 variant={currentPage === "all" ? "filled" : "outline"}
                 fontSize="text-[0.6875rem]"
                 shape="pill"
                 width="auto"
                 height="1.875rem"
-                className="flex-shrink min-w-0 whitespace-nowrap"
+                className="shrink min-w-0 whitespace-nowrap"
               >
                 All
               </Button>
@@ -258,12 +273,13 @@ export default function SearchPageHeader({
               }`}
             >
               <Button
+                id={ids?.searchPatientsButtonId}
                 variant={currentPage === "patients" ? "filled" : "outline"}
                 fontSize="text-[0.6875rem]"
                 shape="pill"
                 width="auto"
                 height="1.875rem"
-                className="flex-shrink min-w-0 whitespace-nowrap"
+                className="shrink min-w-0 whitespace-nowrap"
               >
                 Patients
               </Button>
@@ -275,12 +291,13 @@ export default function SearchPageHeader({
               }`}
             >
               <Button
+                id={ids?.searchReportsButtonId}
                 variant={currentPage === "reports" ? "filled" : "outline"}
                 fontSize="text-[0.6875rem]"
                 shape="pill"
                 width="auto"
                 height="1.875rem"
-                className="flex-shrink min-w-0 whitespace-nowrap"
+                className="shrink min-w-0 whitespace-nowrap"
               >
                 Reports
               </Button>
@@ -292,12 +309,13 @@ export default function SearchPageHeader({
               }`}
             >
               <Button
+                id={ids?.searchTherapistsButtonId}
                 variant={currentPage === "therapists" ? "filled" : "outline"}
                 fontSize="text-[0.6875rem]"
                 shape="pill"
                 width="auto"
                 height="1.875rem"
-                className="flex-shrink min-w-0 whitespace-nowrap"
+                className="shrink min-w-0 whitespace-nowrap"
               >
                 Therapist
               </Button>
@@ -305,15 +323,16 @@ export default function SearchPageHeader({
           </div>
         )}
 
-        <div className="hidden lg:flex items-center gap-1 lg:gap-2 min-w-0 flex-shrink ml-auto">
+        <div className="hidden lg:flex items-center gap-1 lg:gap-2 min-w-0 shrink ml-auto">
           {!sortDisabled && (
             <Select
-              instanceId="sort-select"
+              id={ids?.sortSelectId}
+              instanceId={ids?.sortSelectId ?? ""}
               options={sortOptions}
               value={sortValue}
               onChange={onSortChange}
               isDisabled={sortDisabled}
-              className="w-[7rem] lg:w-[8rem] xl:w-[10rem] 2xl:w-[11.875rem] min-w-[7rem] flex-shrink"
+              className="w-28 lg:w-32 xl:w-40 2xl:w-47.5 min-w-28 shrink"
               classNamePrefix="react-select"
               styles={selectStyles(sortDisabled)}
               menuPortalTarget={
@@ -325,13 +344,14 @@ export default function SearchPageHeader({
 
           {!languageDisabled && (
             <Select
-              instanceId="language-select"
+              id={ids?.languageSelectId}
+              instanceId={ids?.languageSelectId ?? ""}
               options={languageOptions}
               value={languageValue}
               onChange={onLanguageChange}
               isDisabled={languageDisabled}
               placeholder="Display Language"
-              className="w-[7rem] lg:w-[8rem] xl:w-[10rem] 2xl:w-[11.875rem] min-w-[7rem] flex-shrink"
+              className="w-28 lg:w-32 xl:w-40 2xl:w-47.5 min-w-28 shrink"
               classNamePrefix="react-select"
               styles={selectStyles(languageDisabled)}
               menuPortalTarget={
