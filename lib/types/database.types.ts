@@ -439,7 +439,19 @@ export type Database = {
       };
     };
     Functions: {
-      [_ in never]: never;
+      match_documents: {
+        Args: {
+          query_embedding: string | number[]
+          match_threshold: number
+          match_count: number
+        }
+        Returns: {
+          id: string
+          report_id: string
+          text: string
+          similarity: number
+        }[]
+      }
     };
     Enums: {
       sex: "Male" | "Female";
