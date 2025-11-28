@@ -1,10 +1,5 @@
-/**
- * Simple E2E Test Data Cleanup Script (No TypeScript dependencies)
- * 
- * This script removes all test data from Supabase that contains test identifiers
- * 
- * Usage: node scripts/cleanup-e2e-test-data.js
- */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
@@ -26,7 +21,7 @@ for (const envPath of possiblePaths) {
       break;
     }
   } catch (err) {
-    // Continue trying other paths
+    console.error(`Failed to load .env from ${envPath}: ${err.message}`);
   }
 }
 
