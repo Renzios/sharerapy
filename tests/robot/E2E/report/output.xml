@@ -1,0 +1,1810 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.1.1 (Python 3.13.3 on win32)" generated="2025-11-28T18:10:38.417709" rpa="false" schemaversion="5">
+<suite id="s1" name="Create Report Tests" source="C:\Users\marie\OneDrive\Documents\GitHub\sharerapy\tests\robot\e2e\report\create_report_tests.robot">
+<test id="s1-t1" name="Successful Create Report - Normal Data" line="7">
+<kw name="Open Sharerapy Login Page" owner="create_report_resource">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:38.595759" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
+<arg>${URL}</arg>
+<arg>${BROWSER}</arg>
+<arg>options=add_argument("--headless");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--disable-gpu");add_argument("--window-size=1920,1080")</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-11-28T18:10:38.595577" elapsed="2.984923"/>
+</kw>
+<kw name="Set Window Size" owner="SeleniumLibrary">
+<arg>1920</arg>
+<arg>1080</arg>
+<doc>Sets current windows size to given ``width`` and ``height``.</doc>
+<status status="PASS" start="2025-11-28T18:10:41.580673" elapsed="0.001746"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:10:38.595153" elapsed="2.987356"/>
+</kw>
+<kw name="Login With Valid Credentials" owner="create_report_resource">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:41.583313" level="INFO">Typing text 'testuser@email.com' into text field 'css=input[type="email"]'.</msg>
+<arg>css=input[type="email"]</arg>
+<arg>${VALID_USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:41.582932" elapsed="0.118533"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:41.701778" level="INFO">Typing text 'testuserpw' into text field 'css=input[type="password"]'.</msg>
+<arg>css=input[type="password"]</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:41.701603" elapsed="0.045149"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:41.747040" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
+<arg>css=button[type="submit"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:41.746897" elapsed="0.037477"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:10:41.582753" elapsed="0.201716"/>
+</kw>
+<kw name="Should See Landing Page" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Share Knowledge</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:10:41.784940" elapsed="1.671202"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:10:41.784725" elapsed="1.671518"/>
+</kw>
+<kw name="Click Reports From Landing" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Reports</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:10:43.456688" elapsed="0.007553"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:10:46.465481" level="INFO">Slept 3 seconds.</msg>
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:10:43.464438" elapsed="3.001337"/>
+</kw>
+<kw name="Execute Javascript" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:46.466660" level="INFO">Executing JavaScript:
+document.getElementById('landing-reports-btn').click()
+Without any arguments.</msg>
+<arg>document.getElementById('landing-reports-btn').click()</arg>
+<doc>Executes the given JavaScript code with possible arguments.</doc>
+<status status="PASS" start="2025-11-28T18:10:46.466138" elapsed="0.012381"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:10:43.456490" elapsed="3.022123"/>
+</kw>
+<kw name="Should See Reports Page" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Create Report</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:10:46.479150" elapsed="2.787586"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:10:46.478879" elapsed="2.788004"/>
+</kw>
+<kw name="Click Create Report" owner="create_report_resource">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=sidebar-create-report-link</arg>
+<arg>30s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:10:49.267576" elapsed="0.033475"/>
+</kw>
+<kw name="Execute Javascript" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:49.301765" level="INFO">Executing JavaScript:
+document.getElementById('sidebar-create-report-link').click()
+Without any arguments.</msg>
+<arg>document.getElementById('sidebar-create-report-link').click()</arg>
+<doc>Executes the given JavaScript code with possible arguments.</doc>
+<status status="PASS" start="2025-11-28T18:10:49.301269" elapsed="0.008390"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:10:51.310228" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:10:49.309883" elapsed="2.000454"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:10:49.267370" elapsed="2.043057"/>
+</kw>
+<kw name="Input Report Details With Data" owner="create_report_resource">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:10:51.311460" elapsed="0.011112"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:51.322832" level="INFO">Clicking element 'id=react-select-create-edit-report-country-select-input'.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:51.322690" elapsed="0.063577"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:10:52.386724" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:10:51.386400" elapsed="1.000436"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:52.387797" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-country-select-input element.</msg>
+<msg time="2025-11-28T18:10:52.653951" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:10:52.654012" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:10:52.387053" elapsed="0.271876"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:52.659341" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-country-select-input element.</msg>
+<msg time="2025-11-28T18:10:52.932211" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:10:52.932271" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:10:52.659067" elapsed="0.284096"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:52.943863" level="INFO">Typing text 'John' into text field 'id=create-edit-report-first-name-input'.</msg>
+<arg>id=create-edit-report-first-name-input</arg>
+<arg>${first_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:52.943558" elapsed="0.075424"/>
+</kw>
+<arg>'${first_name}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-first-name-input</arg>
+<arg>${first_name}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:10:52.943325" elapsed="0.075788"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:53.019744" level="INFO">Typing text 'Doe' into text field 'id=create-edit-report-last-name-input'.</msg>
+<arg>id=create-edit-report-last-name-input</arg>
+<arg>${last_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:53.019555" elapsed="0.089755"/>
+</kw>
+<arg>'${last_name}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-last-name-input</arg>
+<arg>${last_name}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:10:53.019270" elapsed="0.090152"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:53.110082" level="INFO">Typing text '01/15/1990' into text field 'id=create-edit-report-birthday-input'.</msg>
+<arg>id=create-edit-report-birthday-input</arg>
+<arg>${birthdate}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:53.109892" elapsed="0.090480"/>
+</kw>
+<arg>'${birthdate}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-birthday-input</arg>
+<arg>${birthdate}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:10:53.109581" elapsed="0.090864"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:53.200909" level="INFO">Typing text '1234567890' into text field 'id=create-edit-report-contact-number-input'.</msg>
+<arg>id=create-edit-report-contact-number-input</arg>
+<arg>${contact_number}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:53.200754" elapsed="0.117679"/>
+</kw>
+<arg>'${contact_number}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-contact-number-input</arg>
+<arg>${contact_number}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:10:53.200555" elapsed="0.117956"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:10:53.318641" elapsed="0.015966"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:53.335017" level="INFO">Clicking element 'id=react-select-create-edit-report-sex-select-input'.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:53.334818" elapsed="0.051927"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:10:54.387557" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:10:53.386892" elapsed="1.000786"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:54.388101" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-sex-select-input element.</msg>
+<msg time="2025-11-28T18:10:54.651331" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:10:54.651397" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:10:54.387832" elapsed="0.268870"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:54.657111" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-sex-select-input element.</msg>
+<msg time="2025-11-28T18:10:54.930389" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:10:54.930442" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:10:54.656835" elapsed="0.284267"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:54.941840" level="INFO">Typing text '[E2E_TEST] Report Title' into text field 'id=create-edit-report-title-input'.</msg>
+<arg>id=create-edit-report-title-input</arg>
+<arg>${report_title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:54.941655" elapsed="0.179034"/>
+</kw>
+<arg>'${report_title}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-title-input</arg>
+<arg>${report_title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:10:54.941390" elapsed="0.179408"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:55.121842" level="INFO">Typing text 'This is a normal report description.' into text field 'id=create-edit-report-description-textarea'.</msg>
+<arg>id=create-edit-report-description-textarea</arg>
+<arg>${report_description}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:55.121311" elapsed="0.295897"/>
+</kw>
+<arg>'${report_description}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-description-textarea</arg>
+<arg>${report_description}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:10:55.120952" elapsed="0.296370"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:10:55.417484" elapsed="0.017967"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:55.435812" level="INFO">Clicking element 'id=react-select-create-edit-report-language-select-input'.</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:55.435637" elapsed="0.048980"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:10:56.485372" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:10:55.484751" elapsed="1.000703"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:56.485853" level="INFO">Sending key(s) ('English',) to id=react-select-create-edit-report-language-select-input element.</msg>
+<msg time="2025-11-28T18:10:56.764470" level="INFO">Sending keys English</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>English</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:10:56.485581" elapsed="0.325209"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:10:57.312073" level="INFO">Slept 500 milliseconds.</msg>
+<arg>0.5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:10:56.810941" elapsed="0.501386"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:57.313591" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-language-select-input element.</msg>
+<msg time="2025-11-28T18:10:57.599741" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:10:57.599797" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:10:57.312721" elapsed="0.295478"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:10:57.608349" elapsed="0.014969"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:57.623593" level="INFO">Clicking element 'id=react-select-create-edit-report-therapy-type-select-input'.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:57.623456" elapsed="0.037460"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:10:58.661589" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:10:57.661074" elapsed="1.000678"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:58.662126" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-therapy-type-select-input element.</msg>
+<msg time="2025-11-28T18:10:58.945728" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:10:58.946106" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:10:58.661881" elapsed="0.297366"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:58.959968" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-therapy-type-select-input element.</msg>
+<msg time="2025-11-28T18:10:59.242348" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:10:59.242514" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:10:58.959492" elapsed="0.304249"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=.bn-inline-content</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:10:59.264179" elapsed="0.014569"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Wait Until Element Is Visible</arg>
+<arg>css=.bn-inline-content</arg>
+<arg>10s</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:10:59.263894" elapsed="0.014951"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:10:59.279514" level="INFO">Clicking element 'css=.bn-inline-content'.</msg>
+<arg>css=.bn-inline-content</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:10:59.279353" elapsed="0.053997"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Click Element</arg>
+<arg>css=.bn-inline-content</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:10:59.278994" elapsed="0.054441"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:00.334516" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:10:59.333789" elapsed="1.000907"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Sleep</arg>
+<arg>1s</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:10:59.333566" elapsed="1.001256"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:00.335827" level="INFO">Typing text 'This is normal report content for the therapy session.' into text field 'css=.bn-inline-content'.</msg>
+<arg>css=.bn-inline-content</arg>
+<arg>${report_content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:00.335516" elapsed="0.430086"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Input Text</arg>
+<arg>css=.bn-inline-content</arg>
+<arg>${report_content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:00.335069" elapsed="0.430656"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=create-edit-report-submit-btn</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:00.765903" elapsed="0.020334"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:00.786554" level="INFO">Clicking element 'id=create-edit-report-submit-btn'.</msg>
+<arg>id=create-edit-report-submit-btn</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:00.786396" elapsed="0.068665"/>
+</kw>
+<arg>John</arg>
+<arg>Doe</arg>
+<arg>01/15/1990</arg>
+<arg>1234567890</arg>
+<arg>[E2E_TEST] Report Title</arg>
+<arg>This is a normal report description.</arg>
+<arg>This is normal report content for the therapy session.</arg>
+<status status="PASS" start="2025-11-28T18:10:51.311187" elapsed="9.543994"/>
+</kw>
+<kw name="Verify Report Created Successfully" owner="create_report_resource">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:03.856624" level="INFO">Slept 3 seconds.</msg>
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:00.855874" elapsed="3.001069"/>
+</kw>
+<kw name="Wait Until Page Does Not Contain" owner="SeleniumLibrary">
+<arg>Patient Details</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` disappears from the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:03.857290" elapsed="1.923991"/>
+</kw>
+<kw name="Wait Until Page Does Not Contain" owner="SeleniumLibrary">
+<arg>Report Details</arg>
+<arg>10s</arg>
+<doc>Waits until ``text`` disappears from the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:05.781452" elapsed="0.006829"/>
+</kw>
+<kw name="Wait Until Page Does Not Contain" owner="SeleniumLibrary">
+<arg>Report Content</arg>
+<arg>10s</arg>
+<doc>Waits until ``text`` disappears from the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:05.788426" elapsed="0.007315"/>
+</kw>
+<arg>Normal Report Title</arg>
+<status status="PASS" start="2025-11-28T18:11:00.855656" elapsed="4.940240"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:05.796199" elapsed="2.161943"/>
+</kw>
+<doc>This test creates a report with normal valid data</doc>
+<status status="PASS" start="2025-11-28T18:10:38.594630" elapsed="29.364460"/>
+</test>
+<test id="s1-t2" name="Create Report - Title Over 100 Characters" line="20">
+<kw name="Open Sharerapy Login Page" owner="create_report_resource">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:07.962430" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
+<arg>${URL}</arg>
+<arg>${BROWSER}</arg>
+<arg>options=add_argument("--headless");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--disable-gpu");add_argument("--window-size=1920,1080")</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-11-28T18:11:07.961955" elapsed="3.108820"/>
+</kw>
+<kw name="Set Window Size" owner="SeleniumLibrary">
+<arg>1920</arg>
+<arg>1080</arg>
+<doc>Sets current windows size to given ``width`` and ``height``.</doc>
+<status status="PASS" start="2025-11-28T18:11:11.070916" elapsed="0.004925"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:07.961150" elapsed="3.114865"/>
+</kw>
+<kw name="Login With Valid Credentials" owner="create_report_resource">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:11.077347" level="INFO">Typing text 'testuser@email.com' into text field 'css=input[type="email"]'.</msg>
+<arg>css=input[type="email"]</arg>
+<arg>${VALID_USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:11.077001" elapsed="0.090885"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:11.168214" level="INFO">Typing text 'testuserpw' into text field 'css=input[type="password"]'.</msg>
+<arg>css=input[type="password"]</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:11.168033" elapsed="0.061615"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:11.229962" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
+<arg>css=button[type="submit"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:11.229808" elapsed="0.052555"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:11.076578" elapsed="0.205872"/>
+</kw>
+<kw name="Should See Landing Page" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Share Knowledge</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:11.282950" elapsed="1.703772"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:11.282760" elapsed="1.704071"/>
+</kw>
+<kw name="Click Reports From Landing" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Reports</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:12.987360" elapsed="0.011364"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:15.999541" level="INFO">Slept 3 seconds.</msg>
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:12.998976" elapsed="3.000696"/>
+</kw>
+<kw name="Execute Javascript" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:16.000272" level="INFO">Executing JavaScript:
+document.getElementById('landing-reports-btn').click()
+Without any arguments.</msg>
+<arg>document.getElementById('landing-reports-btn').click()</arg>
+<doc>Executes the given JavaScript code with possible arguments.</doc>
+<status status="PASS" start="2025-11-28T18:11:15.999883" elapsed="0.009974"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:12.987131" elapsed="3.022918"/>
+</kw>
+<kw name="Should See Reports Page" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Create Report</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:16.010651" elapsed="1.714001"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:16.010455" elapsed="1.714380"/>
+</kw>
+<kw name="Click Create Report" owner="create_report_resource">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=sidebar-create-report-link</arg>
+<arg>30s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:17.726247" elapsed="0.013675"/>
+</kw>
+<kw name="Execute Javascript" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:17.740303" level="INFO">Executing JavaScript:
+document.getElementById('sidebar-create-report-link').click()
+Without any arguments.</msg>
+<arg>document.getElementById('sidebar-create-report-link').click()</arg>
+<doc>Executes the given JavaScript code with possible arguments.</doc>
+<status status="PASS" start="2025-11-28T18:11:17.740056" elapsed="0.006645"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:19.747703" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:17.747090" elapsed="2.000862"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:17.725759" elapsed="2.022410"/>
+</kw>
+<kw name="Input Report Details With Data" owner="create_report_resource">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:19.749886" elapsed="0.030318"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:19.780626" level="INFO">Clicking element 'id=react-select-create-edit-report-country-select-input'.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:19.780417" elapsed="0.049268"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:20.830461" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:19.829838" elapsed="1.000731"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:20.831005" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-country-select-input element.</msg>
+<msg time="2025-11-28T18:11:21.116972" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:11:21.117023" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:20.830700" elapsed="0.292569"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:21.123661" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-country-select-input element.</msg>
+<msg time="2025-11-28T18:11:21.396865" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:11:21.396980" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.123403" elapsed="0.285952"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:21.409908" level="INFO">Typing text 'John' into text field 'id=create-edit-report-first-name-input'.</msg>
+<arg>id=create-edit-report-first-name-input</arg>
+<arg>${first_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.409781" elapsed="0.087175"/>
+</kw>
+<arg>'${first_name}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-first-name-input</arg>
+<arg>${first_name}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.409578" elapsed="0.087502"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:21.497768" level="INFO">Typing text 'Doe' into text field 'id=create-edit-report-last-name-input'.</msg>
+<arg>id=create-edit-report-last-name-input</arg>
+<arg>${last_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.497546" elapsed="0.085648"/>
+</kw>
+<arg>'${last_name}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-last-name-input</arg>
+<arg>${last_name}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.497255" elapsed="0.086010"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:21.583693" level="INFO">Typing text '01/15/1990' into text field 'id=create-edit-report-birthday-input'.</msg>
+<arg>id=create-edit-report-birthday-input</arg>
+<arg>${birthdate}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.583561" elapsed="0.080546"/>
+</kw>
+<arg>'${birthdate}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-birthday-input</arg>
+<arg>${birthdate}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.583370" elapsed="0.080815"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:21.664675" level="INFO">Typing text '1234567890' into text field 'id=create-edit-report-contact-number-input'.</msg>
+<arg>id=create-edit-report-contact-number-input</arg>
+<arg>${contact_number}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.664542" elapsed="0.082701"/>
+</kw>
+<arg>'${contact_number}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-contact-number-input</arg>
+<arg>${contact_number}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.664301" elapsed="0.083031"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.747443" elapsed="0.019051"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:21.766987" level="INFO">Clicking element 'id=react-select-create-edit-report-sex-select-input'.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.766745" elapsed="0.080419"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:22.848016" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:21.847351" elapsed="1.000766"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:22.848520" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-sex-select-input element.</msg>
+<msg time="2025-11-28T18:11:23.126299" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:11:23.126354" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:22.848262" elapsed="0.282709"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:23.131347" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-sex-select-input element.</msg>
+<msg time="2025-11-28T18:11:23.407365" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:11:23.407444" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:23.131104" elapsed="0.286287"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:23.417909" level="INFO">Typing text '[E2E_TEST] This is a very long title that definitely exceeds one hundred characters and should test the maximum length validation for the title field in the form' into text field 'id=create-edit-report-title-input'.</msg>
+<arg>id=create-edit-report-title-input</arg>
+<arg>${report_title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:23.417773" elapsed="0.644487"/>
+</kw>
+<arg>'${report_title}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-title-input</arg>
+<arg>${report_title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:23.417542" elapsed="0.644793"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:24.062783" level="INFO">Typing text 'Short description.' into text field 'id=create-edit-report-description-textarea'.</msg>
+<arg>id=create-edit-report-description-textarea</arg>
+<arg>${report_description}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:24.062649" elapsed="0.174576"/>
+</kw>
+<arg>'${report_description}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-description-textarea</arg>
+<arg>${report_description}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:24.062450" elapsed="0.174863"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:24.237419" elapsed="0.014151"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:24.251957" level="INFO">Clicking element 'id=react-select-create-edit-report-language-select-input'.</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:24.251766" elapsed="0.054699"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:25.307220" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:24.306656" elapsed="1.000732"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:25.308104" level="INFO">Sending key(s) ('English',) to id=react-select-create-edit-report-language-select-input element.</msg>
+<msg time="2025-11-28T18:11:25.600594" level="INFO">Sending keys English</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>English</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:25.307637" elapsed="0.326227"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:26.134434" level="INFO">Slept 500 milliseconds.</msg>
+<arg>0.5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:25.633990" elapsed="0.500611"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:26.135440" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-language-select-input element.</msg>
+<msg time="2025-11-28T18:11:26.411221" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:11:26.411284" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:26.134848" elapsed="0.289422"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:26.424417" elapsed="0.009802"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:26.434477" level="INFO">Clicking element 'id=react-select-create-edit-report-therapy-type-select-input'.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:26.434350" elapsed="0.043896"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:27.479032" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:26.478388" elapsed="1.000734"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:27.479737" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-therapy-type-select-input element.</msg>
+<msg time="2025-11-28T18:11:27.763946" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:11:27.764000" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:27.479255" elapsed="0.292120"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:27.771842" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-therapy-type-select-input element.</msg>
+<msg time="2025-11-28T18:11:28.048222" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:11:28.048282" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:27.771562" elapsed="0.290947"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=.bn-inline-content</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:28.062945" elapsed="0.019348"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Wait Until Element Is Visible</arg>
+<arg>css=.bn-inline-content</arg>
+<arg>10s</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:28.062674" elapsed="0.019738"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:28.083067" level="INFO">Clicking element 'css=.bn-inline-content'.</msg>
+<arg>css=.bn-inline-content</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:28.082887" elapsed="0.078568"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Click Element</arg>
+<arg>css=.bn-inline-content</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:28.082587" elapsed="0.078962"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:29.162356" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:28.161948" elapsed="1.000516"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Sleep</arg>
+<arg>1s</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:28.161693" elapsed="1.000859"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:29.163156" level="INFO">Typing text 'Normal content.' into text field 'css=.bn-inline-content'.</msg>
+<arg>css=.bn-inline-content</arg>
+<arg>${report_content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:29.162975" elapsed="0.197175"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Input Text</arg>
+<arg>css=.bn-inline-content</arg>
+<arg>${report_content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:29.162705" elapsed="0.197568"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=create-edit-report-submit-btn</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:29.360442" elapsed="0.020122"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:29.380858" level="INFO">Clicking element 'id=create-edit-report-submit-btn'.</msg>
+<arg>id=create-edit-report-submit-btn</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:29.380710" elapsed="0.077065"/>
+</kw>
+<arg>John</arg>
+<arg>Doe</arg>
+<arg>01/15/1990</arg>
+<arg>1234567890</arg>
+<arg>[E2E_TEST] This is a very long title that definitely exceeds one hundred characters and should test the maximum length validation for the title field in the form</arg>
+<arg>Short description.</arg>
+<arg>Normal content.</arg>
+<status status="PASS" start="2025-11-28T18:11:19.749203" elapsed="9.708650"/>
+</kw>
+<kw name="Verify Report Created Successfully" owner="create_report_resource">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:32.458912" level="INFO">Slept 3 seconds.</msg>
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:29.458449" elapsed="3.000650"/>
+</kw>
+<kw name="Wait Until Page Does Not Contain" owner="SeleniumLibrary">
+<arg>Patient Details</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` disappears from the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:32.459480" elapsed="0.654713"/>
+</kw>
+<kw name="Wait Until Page Does Not Contain" owner="SeleniumLibrary">
+<arg>Report Details</arg>
+<arg>10s</arg>
+<doc>Waits until ``text`` disappears from the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:33.114356" elapsed="0.011584"/>
+</kw>
+<kw name="Wait Until Page Does Not Contain" owner="SeleniumLibrary">
+<arg>Report Content</arg>
+<arg>10s</arg>
+<doc>Waits until ``text`` disappears from the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:33.126137" elapsed="0.009677"/>
+</kw>
+<arg>This is a very long title that definitely exceeds one hundred characters and should test</arg>
+<status status="PASS" start="2025-11-28T18:11:29.458262" elapsed="3.677651"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:33.136203" elapsed="2.136276"/>
+</kw>
+<doc>This test creates a report with a title exceeding the 100 character limit</doc>
+<status status="PASS" start="2025-11-28T18:11:07.959878" elapsed="27.313398"/>
+</test>
+<test id="s1-t3" name="Create Report - Description Over 500 Characters" line="34">
+<kw name="Open Sharerapy Login Page" owner="create_report_resource">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:35.275736" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
+<arg>${URL}</arg>
+<arg>${BROWSER}</arg>
+<arg>options=add_argument("--headless");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--disable-gpu");add_argument("--window-size=1920,1080")</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-11-28T18:11:35.275367" elapsed="2.970871"/>
+</kw>
+<kw name="Set Window Size" owner="SeleniumLibrary">
+<arg>1920</arg>
+<arg>1080</arg>
+<doc>Sets current windows size to given ``width`` and ``height``.</doc>
+<status status="PASS" start="2025-11-28T18:11:38.246383" elapsed="0.004126"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:35.274922" elapsed="2.975666"/>
+</kw>
+<kw name="Login With Valid Credentials" owner="create_report_resource">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:38.251206" level="INFO">Typing text 'testuser@email.com' into text field 'css=input[type="email"]'.</msg>
+<arg>css=input[type="email"]</arg>
+<arg>${VALID_USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:38.251056" elapsed="0.067516"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:38.318941" level="INFO">Typing text 'testuserpw' into text field 'css=input[type="password"]'.</msg>
+<arg>css=input[type="password"]</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:38.318741" elapsed="0.046749"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:38.365756" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
+<arg>css=button[type="submit"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:38.365627" elapsed="0.046898"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:38.250850" elapsed="0.161791"/>
+</kw>
+<kw name="Should See Landing Page" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Share Knowledge</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:38.413160" elapsed="1.678294"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:38.412963" elapsed="1.678643"/>
+</kw>
+<kw name="Click Reports From Landing" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Reports</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:40.092668" elapsed="0.015761"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:43.109098" level="INFO">Slept 3 seconds.</msg>
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:40.108607" elapsed="3.000583"/>
+</kw>
+<kw name="Execute Javascript" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:43.109627" level="INFO">Executing JavaScript:
+document.getElementById('landing-reports-btn').click()
+Without any arguments.</msg>
+<arg>document.getElementById('landing-reports-btn').click()</arg>
+<doc>Executes the given JavaScript code with possible arguments.</doc>
+<status status="PASS" start="2025-11-28T18:11:43.109344" elapsed="0.011913"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:40.092216" elapsed="3.029169"/>
+</kw>
+<kw name="Should See Reports Page" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Create Report</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:11:43.121934" elapsed="1.503381"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:43.121741" elapsed="1.503770"/>
+</kw>
+<kw name="Click Create Report" owner="create_report_resource">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=sidebar-create-report-link</arg>
+<arg>30s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:44.626892" elapsed="0.024891"/>
+</kw>
+<kw name="Execute Javascript" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:44.652423" level="INFO">Executing JavaScript:
+document.getElementById('sidebar-create-report-link').click()
+Without any arguments.</msg>
+<arg>document.getElementById('sidebar-create-report-link').click()</arg>
+<doc>Executes the given JavaScript code with possible arguments.</doc>
+<status status="PASS" start="2025-11-28T18:11:44.652046" elapsed="0.005554"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:46.658336" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:44.657857" elapsed="2.000636"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:11:44.626365" elapsed="2.032268"/>
+</kw>
+<kw name="Input Report Details With Data" owner="create_report_resource">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:46.660548" elapsed="0.164706"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:46.825551" level="INFO">Clicking element 'id=react-select-create-edit-report-country-select-input'.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:46.825404" elapsed="0.063141"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:47.889945" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:46.888730" elapsed="1.001447"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:47.891310" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-country-select-input element.</msg>
+<msg time="2025-11-28T18:11:48.182560" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:11:48.182706" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:47.890554" elapsed="0.303888"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:48.194837" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-country-select-input element.</msg>
+<msg time="2025-11-28T18:11:48.473465" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:11:48.473562" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.194577" elapsed="0.290251"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:48.485293" level="INFO">Typing text 'John' into text field 'id=create-edit-report-first-name-input'.</msg>
+<arg>id=create-edit-report-first-name-input</arg>
+<arg>${first_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.485160" elapsed="0.083063"/>
+</kw>
+<arg>'${first_name}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-first-name-input</arg>
+<arg>${first_name}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.484965" elapsed="0.083364"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:48.568929" level="INFO">Typing text 'Doe' into text field 'id=create-edit-report-last-name-input'.</msg>
+<arg>id=create-edit-report-last-name-input</arg>
+<arg>${last_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.568742" elapsed="0.088979"/>
+</kw>
+<arg>'${last_name}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-last-name-input</arg>
+<arg>${last_name}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.568498" elapsed="0.089297"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:48.658241" level="INFO">Typing text '01/15/1990' into text field 'id=create-edit-report-birthday-input'.</msg>
+<arg>id=create-edit-report-birthday-input</arg>
+<arg>${birthdate}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.658110" elapsed="0.062136"/>
+</kw>
+<arg>'${birthdate}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-birthday-input</arg>
+<arg>${birthdate}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.657903" elapsed="0.062418"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:48.720773" level="INFO">Typing text '+1234567890' into text field 'id=create-edit-report-contact-number-input'.</msg>
+<arg>id=create-edit-report-contact-number-input</arg>
+<arg>${contact_number}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.720640" elapsed="0.087591"/>
+</kw>
+<arg>'${contact_number}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-contact-number-input</arg>
+<arg>${contact_number}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.720430" elapsed="0.087920"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.808498" elapsed="0.016012"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:48.824901" level="INFO">Clicking element 'id=react-select-create-edit-report-sex-select-input'.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.824724" elapsed="0.078743"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:49.904328" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:48.903651" elapsed="1.000814"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:49.905078" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-sex-select-input element.</msg>
+<msg time="2025-11-28T18:11:50.172439" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:11:50.172490" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:49.904666" elapsed="0.274207"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:50.179300" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-sex-select-input element.</msg>
+<msg time="2025-11-28T18:11:50.453051" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:11:50.453110" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:50.179041" elapsed="0.283028"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:50.462543" level="INFO">Typing text '[E2E_TEST] Normal Title' into text field 'id=create-edit-report-title-input'.</msg>
+<arg>id=create-edit-report-title-input</arg>
+<arg>${report_title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:50.462404" elapsed="0.151555"/>
+</kw>
+<arg>'${report_title}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-title-input</arg>
+<arg>${report_title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:50.462208" elapsed="0.151827"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:50.614542" level="INFO">Typing text 'This is an extremely long description that is designed to exceed the maximum character limit of five hundred characters for the description field. This description contains multiple sentences and goes on and on to test how the form handles input that exceeds the specified maximum length. The description continues with more text to ensure we definitely go over the limit and can observe the validation behavior of the form when users try to input too much text in this field.' into text field 'id=create-edit-report-description-textarea'.</msg>
+<arg>id=create-edit-report-description-textarea</arg>
+<arg>${report_description}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:50.614401" elapsed="2.350423"/>
+</kw>
+<arg>'${report_description}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-description-textarea</arg>
+<arg>${report_description}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:50.614144" elapsed="2.350815"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:52.965135" elapsed="0.037418"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:53.003188" level="INFO">Clicking element 'id=react-select-create-edit-report-language-select-input'.</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:53.002863" elapsed="0.073989"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:54.077551" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:53.076997" elapsed="1.000645"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:54.078049" level="INFO">Sending key(s) ('English',) to id=react-select-create-edit-report-language-select-input element.</msg>
+<msg time="2025-11-28T18:11:54.346751" level="INFO">Sending keys English</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>English</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:54.077785" elapsed="0.297110"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:54.875630" level="INFO">Slept 500 milliseconds.</msg>
+<arg>0.5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:54.375026" elapsed="0.500779"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:54.876643" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-language-select-input element.</msg>
+<msg time="2025-11-28T18:11:55.156234" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:11:55.156292" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:54.876083" elapsed="0.290109"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:55.166338" elapsed="0.011637"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:55.178290" level="INFO">Clicking element 'id=react-select-create-edit-report-therapy-type-select-input'.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:55.178129" elapsed="0.048734"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:56.227297" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:55.227004" elapsed="1.000409"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:56.227885" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-therapy-type-select-input element.</msg>
+<msg time="2025-11-28T18:11:56.505500" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:11:56.505645" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:56.227569" elapsed="0.290264"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:56.518285" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-therapy-type-select-input element.</msg>
+<msg time="2025-11-28T18:11:56.802578" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:11:56.802642" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:11:56.517999" elapsed="0.301005"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=.bn-inline-content</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:56.819719" elapsed="0.011093"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Wait Until Element Is Visible</arg>
+<arg>css=.bn-inline-content</arg>
+<arg>10s</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:56.819243" elapsed="0.011698"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:56.831698" level="INFO">Clicking element 'css=.bn-inline-content'.</msg>
+<arg>css=.bn-inline-content</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:56.831455" elapsed="0.049607"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Click Element</arg>
+<arg>css=.bn-inline-content</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:56.831134" elapsed="0.050011"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:11:57.882065" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:56.881466" elapsed="1.000737"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Sleep</arg>
+<arg>1s</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:56.881262" elapsed="1.001044"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:57.883132" level="INFO">Typing text 'Normal content.' into text field 'css=.bn-inline-content'.</msg>
+<arg>css=.bn-inline-content</arg>
+<arg>${report_content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:57.882878" elapsed="0.151876"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Input Text</arg>
+<arg>css=.bn-inline-content</arg>
+<arg>${report_content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:11:57.882528" elapsed="0.152330"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=create-edit-report-submit-btn</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:11:58.035010" elapsed="0.011119"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:11:58.046401" level="INFO">Clicking element 'id=create-edit-report-submit-btn'.</msg>
+<arg>id=create-edit-report-submit-btn</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:11:58.046260" elapsed="0.040822"/>
+</kw>
+<arg>John</arg>
+<arg>Doe</arg>
+<arg>01/15/1990</arg>
+<arg>+1234567890</arg>
+<arg>[E2E_TEST] Normal Title</arg>
+<arg>This is an extremely long description that is designed to exceed the maximum character limit of five hundred characters for the description field. This description contains multiple sentences and goes on and on to test how the form handles input that exceeds the specified maximum length. The description continues with more text to ensure we definitely go over the limit and can observe the validation behavior of the form when users try to input too much text in this field.</arg>
+<arg>Normal content.</arg>
+<status status="PASS" start="2025-11-28T18:11:46.659692" elapsed="11.427471"/>
+</kw>
+<kw name="Verify Report Created Successfully" owner="create_report_resource">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:12:01.088189" level="INFO">Slept 3 seconds.</msg>
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:11:58.087736" elapsed="3.000655"/>
+</kw>
+<kw name="Wait Until Page Does Not Contain" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:31.301904" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-5.png"&gt;&lt;img src="selenium-screenshot-5.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-11-28T18:12:31.302069" level="FAIL">Text 'Patient Details' did not disappear in 30 seconds.</msg>
+<arg>Patient Details</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` disappears from the current page.</doc>
+<status status="FAIL" start="2025-11-28T18:12:01.088732" elapsed="30.214983">Text 'Patient Details' did not disappear in 30 seconds.</status>
+</kw>
+<kw name="Wait Until Page Does Not Contain" owner="SeleniumLibrary">
+<arg>Report Details</arg>
+<arg>10s</arg>
+<doc>Waits until ``text`` disappears from the current page.</doc>
+<status status="NOT RUN" start="2025-11-28T18:12:31.303880" elapsed="0.000025"/>
+</kw>
+<kw name="Wait Until Page Does Not Contain" owner="SeleniumLibrary">
+<arg>Report Content</arg>
+<arg>10s</arg>
+<doc>Waits until ``text`` disappears from the current page.</doc>
+<status status="NOT RUN" start="2025-11-28T18:12:31.303990" elapsed="0.000018"/>
+</kw>
+<arg>Normal Title</arg>
+<status status="FAIL" start="2025-11-28T18:11:58.087513" elapsed="33.216594">Text 'Patient Details' did not disappear in 30 seconds.</status>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="NOT RUN" start="2025-11-28T18:12:31.304444" elapsed="0.000023"/>
+</kw>
+<doc>This test creates a report with a description exceeding the 500 character limit</doc>
+<status status="FAIL" start="2025-11-28T18:11:35.274234" elapsed="56.030915">Text 'Patient Details' did not disappear in 30 seconds.</status>
+</test>
+<test id="s1-t4" name="Create Report - Missing Required Field" line="48">
+<kw name="Open Sharerapy Login Page" owner="create_report_resource">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:31.306810" level="INFO">Opening browser 'Chrome' to base url 'https://sharerapy-staging.vercel.app/'.</msg>
+<arg>${URL}</arg>
+<arg>${BROWSER}</arg>
+<arg>options=add_argument("--headless");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--disable-gpu");add_argument("--window-size=1920,1080")</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-11-28T18:12:31.306642" elapsed="2.376993"/>
+</kw>
+<kw name="Set Window Size" owner="SeleniumLibrary">
+<arg>1920</arg>
+<arg>1080</arg>
+<doc>Sets current windows size to given ``width`` and ``height``.</doc>
+<status status="PASS" start="2025-11-28T18:12:33.683778" elapsed="0.003647"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:12:31.306461" elapsed="2.381154"/>
+</kw>
+<kw name="Login With Valid Credentials" owner="create_report_resource">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:33.688756" level="INFO">Typing text 'testuser@email.com' into text field 'css=input[type="email"]'.</msg>
+<arg>css=input[type="email"]</arg>
+<arg>${VALID_USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:33.688494" elapsed="0.095624"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:33.784437" level="INFO">Typing text 'testuserpw' into text field 'css=input[type="password"]'.</msg>
+<arg>css=input[type="password"]</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:33.784260" elapsed="0.054557"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:33.839100" level="INFO">Clicking element 'css=button[type="submit"]'.</msg>
+<arg>css=button[type="submit"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:33.838965" elapsed="0.038311"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:12:33.688145" elapsed="0.189226"/>
+</kw>
+<kw name="Should See Landing Page" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Share Knowledge</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:12:33.877825" elapsed="1.886370"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:12:33.877630" elapsed="1.886709"/>
+</kw>
+<kw name="Click Reports From Landing" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Reports</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:12:35.765038" elapsed="0.007750"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:12:38.773739" level="INFO">Slept 3 seconds.</msg>
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:12:35.772922" elapsed="3.000954"/>
+</kw>
+<kw name="Execute Javascript" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:38.774535" level="INFO">Executing JavaScript:
+document.getElementById('landing-reports-btn').click()
+Without any arguments.</msg>
+<arg>document.getElementById('landing-reports-btn').click()</arg>
+<doc>Executes the given JavaScript code with possible arguments.</doc>
+<status status="PASS" start="2025-11-28T18:12:38.774106" elapsed="0.009796"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:12:35.764729" elapsed="3.019258"/>
+</kw>
+<kw name="Should See Reports Page" owner="create_report_resource">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>Create Report</arg>
+<arg>30s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-11-28T18:12:38.784362" elapsed="1.656991"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:12:38.784194" elapsed="1.657273"/>
+</kw>
+<kw name="Click Create Report" owner="create_report_resource">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=sidebar-create-report-link</arg>
+<arg>30s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:12:40.442002" elapsed="0.011335"/>
+</kw>
+<kw name="Execute Javascript" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:40.453725" level="INFO">Executing JavaScript:
+document.getElementById('sidebar-create-report-link').click()
+Without any arguments.</msg>
+<arg>document.getElementById('sidebar-create-report-link').click()</arg>
+<doc>Executes the given JavaScript code with possible arguments.</doc>
+<status status="PASS" start="2025-11-28T18:12:40.453476" elapsed="0.004754"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:12:42.458718" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:12:40.458355" elapsed="2.000519"/>
+</kw>
+<status status="PASS" start="2025-11-28T18:12:40.441773" elapsed="2.017245"/>
+</kw>
+<kw name="Input Report Details With Data" owner="create_report_resource">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:12:42.460690" elapsed="0.011649"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:42.472595" level="INFO">Clicking element 'id=react-select-create-edit-report-country-select-input'.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:42.472467" elapsed="0.047041"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:12:43.520199" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:12:42.519708" elapsed="1.000601"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:43.520705" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-country-select-input element.</msg>
+<msg time="2025-11-28T18:12:43.791747" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:12:43.791806" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:12:43.520452" elapsed="0.277246"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:43.798081" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-country-select-input element.</msg>
+<msg time="2025-11-28T18:12:44.072257" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:12:44.072311" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-country-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:12:43.797835" elapsed="0.284564"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>'${first_name}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-first-name-input</arg>
+<arg>${first_name}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:12:44.082542" elapsed="0.000151"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:44.083028" level="INFO">Typing text 'Doe' into text field 'id=create-edit-report-last-name-input'.</msg>
+<arg>id=create-edit-report-last-name-input</arg>
+<arg>${last_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:44.082899" elapsed="0.059686"/>
+</kw>
+<arg>'${last_name}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-last-name-input</arg>
+<arg>${last_name}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:12:44.082775" elapsed="0.059893"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:44.143118" level="INFO">Typing text '01/15/1990' into text field 'id=create-edit-report-birthday-input'.</msg>
+<arg>id=create-edit-report-birthday-input</arg>
+<arg>${birthdate}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:44.142984" elapsed="0.089423"/>
+</kw>
+<arg>'${birthdate}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-birthday-input</arg>
+<arg>${birthdate}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:12:44.142782" elapsed="0.089702"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:44.232931" level="INFO">Typing text '1234567890' into text field 'id=create-edit-report-contact-number-input'.</msg>
+<arg>id=create-edit-report-contact-number-input</arg>
+<arg>${contact_number}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:44.232783" elapsed="0.075917"/>
+</kw>
+<arg>'${contact_number}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-contact-number-input</arg>
+<arg>${contact_number}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:12:44.232592" elapsed="0.076196"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:12:44.308909" elapsed="0.008823"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:44.317979" level="INFO">Clicking element 'id=react-select-create-edit-report-sex-select-input'.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:44.317858" elapsed="0.034025"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:12:45.352327" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:12:44.352013" elapsed="1.000399"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:45.352795" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-sex-select-input element.</msg>
+<msg time="2025-11-28T18:12:45.627161" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:12:45.627213" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:12:45.352549" elapsed="0.278978"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:45.631905" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-sex-select-input element.</msg>
+<msg time="2025-11-28T18:12:45.894367" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:12:45.894435" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-sex-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:12:45.631659" elapsed="0.272881"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:45.905011" level="INFO">Typing text '[E2E_TEST] Test Report Title' into text field 'id=create-edit-report-title-input'.</msg>
+<arg>id=create-edit-report-title-input</arg>
+<arg>${report_title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:45.904876" elapsed="0.162531"/>
+</kw>
+<arg>'${report_title}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-title-input</arg>
+<arg>${report_title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:12:45.904680" elapsed="0.162855"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:46.068250" level="INFO">Typing text 'Test description.' into text field 'id=create-edit-report-description-textarea'.</msg>
+<arg>id=create-edit-report-description-textarea</arg>
+<arg>${report_description}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:46.068055" elapsed="0.107978"/>
+</kw>
+<arg>'${report_description}' != ''</arg>
+<arg>Input Text</arg>
+<arg>id=create-edit-report-description-textarea</arg>
+<arg>${report_description}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:12:46.067718" elapsed="0.108386"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:12:46.176279" elapsed="0.009466"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:46.186006" level="INFO">Clicking element 'id=react-select-create-edit-report-language-select-input'.</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:46.185877" elapsed="0.046244"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:12:47.232717" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:12:46.232257" elapsed="1.000607"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:47.233583" level="INFO">Sending key(s) ('English',) to id=react-select-create-edit-report-language-select-input element.</msg>
+<msg time="2025-11-28T18:12:47.506722" level="INFO">Sending keys English</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>English</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:12:47.233089" elapsed="0.296666"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:12:48.030334" level="INFO">Slept 500 milliseconds.</msg>
+<arg>0.5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:12:47.529883" elapsed="0.500575"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:48.030944" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-language-select-input element.</msg>
+<msg time="2025-11-28T18:12:48.300269" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:12:48.300320" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-language-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:12:48.030607" elapsed="0.278985"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:12:48.309732" elapsed="0.010188"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:48.320205" level="INFO">Clicking element 'id=react-select-create-edit-report-therapy-type-select-input'.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:48.320066" elapsed="0.035869"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:12:49.357459" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:12:48.356063" elapsed="1.001613"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:49.358480" level="INFO">Sending key(s) ('ARROW_DOWN',) to id=react-select-create-edit-report-therapy-type-select-input element.</msg>
+<msg time="2025-11-28T18:12:49.635422" level="INFO">Pressing special key ARROW_DOWN to element.</msg>
+<msg time="2025-11-28T18:12:49.635494" level="INFO">Releasing special key ARROW_DOWN.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>ARROW_DOWN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:12:49.357963" elapsed="0.283468"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:49.641823" level="INFO">Sending key(s) ('RETURN',) to id=react-select-create-edit-report-therapy-type-select-input element.</msg>
+<msg time="2025-11-28T18:12:49.919361" level="INFO">Pressing special key RETURN to element.</msg>
+<msg time="2025-11-28T18:12:49.919411" level="INFO">Releasing special key RETURN.</msg>
+<arg>id=react-select-create-edit-report-therapy-type-select-input</arg>
+<arg>RETURN</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-11-28T18:12:49.641571" elapsed="0.287527"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=.bn-inline-content</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:12:49.929437" elapsed="0.009863"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Wait Until Element Is Visible</arg>
+<arg>css=.bn-inline-content</arg>
+<arg>10s</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:12:49.929236" elapsed="0.010133"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:49.939749" level="INFO">Clicking element 'css=.bn-inline-content'.</msg>
+<arg>css=.bn-inline-content</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:49.939643" elapsed="0.047618"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Click Element</arg>
+<arg>css=.bn-inline-content</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:12:49.939473" elapsed="0.047870"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-11-28T18:12:50.988313" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-11-28T18:12:49.987606" elapsed="1.000796"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Sleep</arg>
+<arg>1s</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:12:49.987442" elapsed="1.001021"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:50.988924" level="INFO">Typing text 'Test content.' into text field 'css=.bn-inline-content'.</msg>
+<arg>css=.bn-inline-content</arg>
+<arg>${report_content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:50.988772" elapsed="0.132873"/>
+</kw>
+<arg>'${report_content}' != ''</arg>
+<arg>Input Text</arg>
+<arg>css=.bn-inline-content</arg>
+<arg>${report_content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-11-28T18:12:50.988577" elapsed="0.133213"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=create-edit-report-submit-btn</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-11-28T18:12:51.121970" elapsed="0.017436"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T18:12:51.139692" level="INFO">Clicking element 'id=create-edit-report-submit-btn'.</msg>
+<arg>id=create-edit-report-submit-btn</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-11-28T18:12:51.139543" elapsed="0.050463"/>
+</kw>
+<arg>${EMPTY}</arg>
+<arg>Doe</arg>
+<arg>01/15/1990</arg>
+<arg>1234567890</arg>
+<arg>[E2E_TEST] Test Report Title</arg>
+<arg>Test description.</arg>
+<arg>Test content.</arg>
+<status status="PASS" start="2025-11-28T18:12:42.459681" elapsed="8.730404"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-11-28T18:12:51.190511" elapsed="2.129839"/>
+</kw>
+<doc>This test attempts to create a report with a missing required field (first name)</doc>
+<status status="PASS" start="2025-11-28T18:12:31.306013" elapsed="22.014899"/>
+</test>
+<doc>Test case for different inputs on create report to Sharerapy</doc>
+<status status="FAIL" start="2025-11-28T18:10:38.418799" elapsed="134.903383"/>
+</suite>
+<statistics>
+<total>
+<stat pass="3" fail="1" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="3" fail="1" skip="0" id="s1" name="Create Report Tests">Create Report Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
