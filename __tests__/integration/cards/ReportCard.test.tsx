@@ -41,9 +41,9 @@ jest.mock("@/lib/utils/storage", () => ({
 }));
 
 jest.mock("@/components/general/Tag", () => {
-  return function MockTag(props: { text: string; fontSize: string }) {
+  return function MockTag(props: { text: string; fontSize: string; therapyType?: string }) {
     return (
-      <span data-testid="tag" data-font-size={props.fontSize}>
+      <span data-testid="tag" data-font-size={props.fontSize} data-therapy-type={props.therapyType}>
         {props.text}
       </span>
     );
@@ -65,6 +65,88 @@ const deleteReportMock = jest.fn();
 jest.mock("@/lib/actions/reports", () => ({
   deleteReport: (...args: unknown[]) => deleteReportMock(...args),
 }));
+
+jest.mock("@/components/general/ConfirmationModal", () => {
+  return function MockConfirmationModal(props: {
+    isOpen: boolean;
+    title: string;
+    message: string;
+    confirmText: string;
+    cancelText: string;
+    onConfirm: () => void;
+    onCancel: () => void;
+    isLoading: boolean;
+  }) {
+    if (!props.isOpen) return null;
+    return (
+      <div data-testid="confirmation-modal">
+        <h2>{props.title}</h2>
+        <p>{props.message}</p>
+        <button onClick={props.onConfirm} disabled={props.isLoading}>
+          {props.confirmText}
+        </button>
+        <button onClick={props.onCancel}>{props.cancelText}</button>
+      </div>
+    );
+  };
+});
+
+jest.mock("@/components/general/Toast", () => {
+  return function MockToast(props: {
+    message: string;
+    type: "success" | "error" | "info";
+    isVisible: boolean;
+    onClose: () => void;
+  }) {
+    if (!props.isVisible) return null;
+    return (
+      <div data-testid="toast" data-type={props.type}>
+        {props.message}
+        <button onClick={props.onClose}>Close</button>
+      </div>
+    );
+  };
+});
+
+jest.mock("@/components/general/DropdownMenu", () => {
+  return function MockDropdownMenu(props: {
+    isOpen: boolean;
+    onClose: () => void;
+    items: Array<{ label: string; onClick: () => void; variant: string }>;
+    className?: string;
+  }) {
+    if (!props.isOpen) return null;
+    return (
+      <div data-testid="dropdown-menu">
+        {props.items.map((item, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              item.onClick();
+              props.onClose();
+            }}
+            data-variant={item.variant}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+    );
+  };
+});
+
+const mockPush = jest.fn();
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
+}));
+
+jest.mock("@mui/icons-material/MoreHoriz", () => {
+  return function MockMoreHorizIcon(props: { className?: string }) {
+    return <span data-testid="more-horiz-icon" className={props.className}>•••</span>;
+  };
+});
 
 import ReportCard from "../../../components/cards/ReportCard";
 
@@ -137,6 +219,76 @@ describe("ReportCard", () => {
       expect(img).toHaveAttribute("class", expect.stringContaining("h-8"));
       expect(img).toHaveAttribute("class", expect.stringContaining("w-8"));
     });
+
+    it("renders therapy type tag with correct therapy type key for speech", () => {
+      const reportWithSpeech = { ...baseReport, type: { type: "Speech Therapy" } };
+      render(<ReportCard report={reportWithSpeech} />);
+      const tags = screen.getAllByTestId("tag");
+      const therapyTag = tags.find((el) => el.textContent === "Speech Therapy");
+      expect(therapyTag).toHaveAttribute("data-therapy-type", "speech");
+    });
+
+    it("renders therapy type tag with correct therapy type key for occupational", () => {
+      const reportWithOccupational = { ...baseReport, type: { type: "Occupational Therapy" } };
+      render(<ReportCard report={reportWithOccupational} />);
+      const tags = screen.getAllByTestId("tag");
+      const therapyTag = tags.find((el) => el.textContent === "Occupational Therapy");
+      expect(therapyTag).toHaveAttribute("data-therapy-type", "occupational");
+    });
+
+    it("renders therapy type tag with correct therapy type key for sped", () => {
+      const reportWithSped = { ...baseReport, type: { type: "SPED" } };
+      render(<ReportCard report={reportWithSped} />);
+      const tags = screen.getAllByTestId("tag");
+      const therapyTag = tags.find((el) => el.textContent === "SPED");
+      expect(therapyTag).toHaveAttribute("data-therapy-type", "sped");
+    });
+
+    it("renders therapy type tag with correct therapy type key for special ed", () => {
+      const reportWithSpecialEd = { ...baseReport, type: { type: "Special Ed" } };
+      render(<ReportCard report={reportWithSpecialEd} />);
+      const tags = screen.getAllByTestId("tag");
+      const therapyTag = tags.find((el) => el.textContent === "Special Ed");
+      expect(therapyTag).toHaveAttribute("data-therapy-type", "sped");
+    });
+
+    it("renders therapy type tag with correct therapy type key for developmental", () => {
+      const reportWithDevelopmental = { ...baseReport, type: { type: "Developmental Therapy" } };
+      render(<ReportCard report={reportWithDevelopmental} />);
+      const tags = screen.getAllByTestId("tag");
+      const therapyTag = tags.find((el) => el.textContent === "Developmental Therapy");
+      expect(therapyTag).toHaveAttribute("data-therapy-type", "developmental");
+    });
+
+    it("renders therapy type tag with correct therapy type key for reading", () => {
+      const reportWithReading = { ...baseReport, type: { type: "Reading Support" } };
+      render(<ReportCard report={reportWithReading} />);
+      const tags = screen.getAllByTestId("tag");
+      const therapyTag = tags.find((el) => el.textContent === "Reading Support");
+      expect(therapyTag).toHaveAttribute("data-therapy-type", "reading");
+    });
+
+    it("renders confirmation modal when delete action is triggered", () => {
+      render(<ReportCard report={baseReport} showActions={true} />);
+      const moreButton = screen.getByLabelText("More options");
+      fireEvent.click(moreButton);
+      const deleteButton = screen.getByText("Delete");
+      fireEvent.click(deleteButton);
+      expect(screen.getByText("Delete Report")).toBeInTheDocument();
+      expect(screen.getByText("Are you sure you want to delete this report? This action cannot be undone.")).toBeInTheDocument();
+    });
+
+    it("renders toast when deletion fails", async () => {
+      const error = new Error("Network error");
+      deleteReportMock.mockRejectedValue(error);
+      render(<ReportCard report={baseReport} showActions={true} />);
+      fireEvent.click(screen.getByLabelText("More options"));
+      fireEvent.click(screen.getByText("Delete"));
+      const confirmButton = screen.getByRole("button", { name: "Delete" });
+      fireEvent.click(confirmButton);
+      await screen.findByTestId("toast");
+      expect(screen.getByText("Failed to delete report. Please try again.")).toBeInTheDocument();
+    });
   });
 
   describe("User Interaction", () => {
@@ -160,6 +312,64 @@ describe("ReportCard", () => {
 
       fireEvent.click(screen.getByText(baseReport.title));
       expect(handleClick).toHaveBeenCalledTimes(1);
+    });
+
+    it("opens dropdown menu when more options button is clicked", () => {
+      render(<ReportCard report={baseReport} showActions={true} />);
+      const moreButton = screen.getByLabelText("More options");
+      fireEvent.click(moreButton);
+      expect(screen.getByTestId("dropdown-menu")).toBeInTheDocument();
+      expect(screen.getByText("Edit")).toBeInTheDocument();
+      expect(screen.getByText("Delete")).toBeInTheDocument();
+    });
+
+    it("navigates to edit page when edit option is clicked", () => {
+      render(<ReportCard report={baseReport} showActions={true} />);
+      fireEvent.click(screen.getByLabelText("More options"));
+      fireEvent.click(screen.getByText("Edit"));
+      expect(mockPush).toHaveBeenCalledWith(`/reports/${baseReport.id}/edit`);
+    });
+
+    it("opens delete confirmation modal when delete option is clicked", () => {
+      render(<ReportCard report={baseReport} showActions={true} />);
+      fireEvent.click(screen.getByLabelText("More options"));
+      fireEvent.click(screen.getByText("Delete"));
+      expect(screen.getByTestId("confirmation-modal")).toBeInTheDocument();
+    });
+
+    it("calls deleteReport with correct id when delete is confirmed", async () => {
+      deleteReportMock.mockResolvedValue(undefined);
+      render(<ReportCard report={baseReport} showActions={true} />);
+      fireEvent.click(screen.getByLabelText("More options"));
+      fireEvent.click(screen.getByText("Delete"));
+      const confirmButton = screen.getByRole("button", { name: "Delete" });
+      fireEvent.click(confirmButton);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(deleteReportMock).toHaveBeenCalledWith("abc123");
+    });
+
+    it("closes modal when cancel is clicked", () => {
+      render(<ReportCard report={baseReport} showActions={true} />);
+      fireEvent.click(screen.getByLabelText("More options"));
+      fireEvent.click(screen.getByText("Delete"));
+      const cancelButton = screen.getByText("Cancel");
+      fireEvent.click(cancelButton);
+      expect(screen.queryByTestId("confirmation-modal")).not.toBeInTheDocument();
+    });
+
+
+    it("logs error to console when deletion fails", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+      const error = new Error("Database error");
+      deleteReportMock.mockRejectedValue(error);
+      render(<ReportCard report={baseReport} showActions={true} />);
+      fireEvent.click(screen.getByLabelText("More options"));
+      fireEvent.click(screen.getByText("Delete"));
+      const confirmButton = screen.getByRole("button", { name: "Delete" });
+      fireEvent.click(confirmButton);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Error deleting report:", error);
+      consoleErrorSpy.mockRestore();
     });
   });
 
@@ -202,5 +412,20 @@ describe("ReportCard", () => {
       expect(getPublicURLMock).toHaveBeenCalledWith("therapist_pictures", "jane.png");
     });
 
+    it("handles case-insensitive therapy type matching", () => {
+      const reportWithUpperCase = { ...baseReport, type: { type: "SPEECH THERAPY" } };
+      render(<ReportCard report={reportWithUpperCase} />);
+      const tags = screen.getAllByTestId("tag");
+      const therapyTag = tags.find((el) => el.textContent === "SPEECH THERAPY");
+      expect(therapyTag).toHaveAttribute("data-therapy-type", "speech");
+    });
+
+    it("handles therapy types with extra whitespace", () => {
+      const reportWithWhitespace = { ...baseReport, type: { type: "  Occupational  " } };
+      render(<ReportCard report={reportWithWhitespace} />);
+      const tags = screen.getAllByTestId("tag");
+      const therapyTag = tags.find((el) => el.textContent === "  Occupational  ");
+      expect(therapyTag).toHaveAttribute("data-therapy-type", "occupational");
+    });
   });
 });

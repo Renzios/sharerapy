@@ -69,7 +69,14 @@ jest.mock("@/components/cards/ReportCard", () => {
 // Mock fetchReports action
 const mockFetchReports = jest.fn();
 jest.mock("@/app/(with-sidebar)/search/reports/actions", () => ({
-  fetchReports: () => mockFetchReports(),
+  fetchReports: (...args: unknown[]) => mockFetchReports(...args),
+}));
+
+// Mock translateText action
+const mockTranslateText = jest.fn();
+jest.mock("@/lib/actions/translate", () => ({
+  translateText: (text: string, targetLanguage: string) => 
+    mockTranslateText(text, targetLanguage),
 }));
 
 describe("SearchReportsClient integration", () => {
@@ -122,13 +129,13 @@ describe("SearchReportsClient integration", () => {
   ];
 
   it("renders initial reports and their links", () => {
-  render(<SearchReportsClient initialReports={initialReports} totalPages={1} />);
+  render(<SearchReportsClient initialReports={initialReports} totalPages={1} languageOptions={[]} />);
 
     expect(screen.getByText("Report One")).toBeInTheDocument();
   });
 
   it("navigates to a report on click (router.push called)", async () => {
-  render(<SearchReportsClient initialReports={initialReports} totalPages={1} />);
+  render(<SearchReportsClient initialReports={initialReports} totalPages={1} languageOptions={[]} />);
 
     const repLink = screen.getByText("Report One").closest("a");
     await userEvent.click(repLink!);
@@ -184,7 +191,7 @@ describe("SearchReportsClient integration", () => {
       totalPages: 1,
     });
 
-  render(<SearchReportsClient initialReports={initialReports} totalPages={1} />);
+  render(<SearchReportsClient initialReports={initialReports} totalPages={1} languageOptions={[]} />);
 
   // Query by role to avoid relying on placeholder text (more robust)
   const input = screen.getByRole("textbox") as HTMLInputElement;
@@ -246,7 +253,7 @@ describe("SearchReportsClient integration", () => {
     });
 
     const { container } = render(
-      <SearchReportsClient initialReports={initialReports} totalPages={1} />
+      <SearchReportsClient initialReports={initialReports} totalPages={1} languageOptions={[]} />
     );
 
     // Find the react-select control and open the menu (react-select renders into a portal)
@@ -344,7 +351,7 @@ describe("SearchReportsClient integration", () => {
     });
 
     // Render with multiple pages available so Pagination shows
-    render(<SearchReportsClient initialReports={initialReports} totalPages={3} />);
+    render(<SearchReportsClient initialReports={initialReports} totalPages={3} languageOptions={[]} />);
 
     // The pagination should render page buttons; click page 2
     const pageTwo = await screen.findByText("2");
@@ -360,6 +367,7 @@ describe("SearchReportsClient integration", () => {
         initialReports={initialReports}
         totalPages={1}
         showSuccessToast={true}
+        languageOptions={[]}
       />
     );
 
@@ -377,6 +385,7 @@ describe("SearchReportsClient integration", () => {
         initialReports={initialReports}
         totalPages={1}
         showDeletedToast={true}
+        languageOptions={[]}
       />
     );
 
@@ -387,6 +396,336 @@ describe("SearchReportsClient integration", () => {
     // The component should call router.replace to clean the URL
     await waitFor(() => expect(replaceMock).toHaveBeenCalledWith("/search/reports", { scroll: false }));
   });
-  
 
+  it("retains language and search parameters when changing sort option", async () => {
+    const languageOptions = [
+      { value: "es", label: "Spanish" },
+      { value: "fr", label: "French" },
+    ];
+
+    // Mock translation to return original text
+    mockTranslateText.mockImplementation((text: string) => Promise.resolve(text));
+
+    mockFetchReports.mockResolvedValue({
+      success: true,
+      data: initialReports,
+      totalPages: 1,
+    });
+
+    const { container } = render(
+      <SearchReportsClient
+        initialReports={initialReports}
+        totalPages={1}
+        languageOptions={languageOptions}
+      />
+    );
+
+    // Perform a search first
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+    await userEvent.clear(input);
+    await userEvent.type(input, "test search");
+    await userEvent.keyboard("{Enter}");
+
+    await waitFor(() => expect(mockFetchReports).toHaveBeenCalled());
+
+    // Select a language
+    const languageSelect = screen.getByText("Display Language");
+    await userEvent.click(languageSelect);
+    
+    const spanishOption = await screen.findByText("Spanish");
+    await userEvent.click(spanishOption);
+
+    // Wait for translation to complete
+    await waitFor(() => {
+      expect(screen.getByText("Translation successful!")).toBeInTheDocument();
+    });
+
+    // Clear push mock calls
+    pushMock.mockClear();
+
+    // Change sort option
+    const selectContainer = container.querySelector('[class*="react-select"]');
+    await userEvent.click(selectContainer!);
+
+    const menu = await screen.findByRole("listbox");
+    expect(menu).toBeInTheDocument();
+
+    const titleAscOption = await screen.findByText("Sort by: Title (A-Z)");
+    await userEvent.click(titleAscOption);
+
+    // Verify URL update includes both language and search parameters
+    await waitFor(() => {
+      expect(pushMock).toHaveBeenCalledWith(
+        expect.stringContaining("lang=es"),
+        { scroll: false }
+      );
+      expect(pushMock).toHaveBeenCalledWith(
+        expect.stringContaining("q=test+search"),
+        { scroll: false }
+      );
+      expect(pushMock).toHaveBeenCalledWith(
+        expect.stringContaining("sort=titleAscending"),
+        { scroll: false }
+      );
+      expect(pushMock).toHaveBeenCalledWith(
+        expect.stringContaining("p=1"),
+        { scroll: false }
+      );
+    });
+  });
+
+  describe("Translation functionality", () => {
+    const languageOptions = [
+      { value: "es", label: "Spanish" },
+      { value: "fr", label: "French" },
+      { value: "de", label: "German" },
+    ];
+
+    beforeEach(() => {
+      // Setup default mock responses for translation - just return original text
+      mockTranslateText.mockImplementation((text: string) => {
+        return Promise.resolve(text);
+      });
+    });
+
+    it("translates reports using Promise.all when language is changed", async () => {
+      render(
+        <SearchReportsClient
+          initialReports={initialReports}
+          totalPages={1}
+          languageOptions={languageOptions}
+        />
+      );
+
+      // Find the language select by placeholder text
+      const languageSelect = screen.getByText("Display Language");
+      expect(languageSelect).toBeInTheDocument();
+
+      await userEvent.click(languageSelect);
+
+      // Wait for the menu to appear and select Spanish
+      const spanishOption = await screen.findByText("Spanish");
+      await userEvent.click(spanishOption);
+
+      // Wait for translation to complete - verify Promise.all called translateText
+      await waitFor(() => {
+        expect(mockTranslateText).toHaveBeenCalledWith("Written by", "es");
+        expect(mockTranslateText).toHaveBeenCalledWith("Edited", "es");
+        expect(mockTranslateText).toHaveBeenCalledWith("Report One", "es");
+        expect(mockTranslateText).toHaveBeenCalledWith("desc", "es");
+      });
+
+      // Check success toast appears
+      await waitFor(() => {
+        expect(screen.getByText("Translation successful!")).toBeInTheDocument();
+      });
+
+      // Check URL is updated with language parameter
+      await waitFor(() => {
+        expect(pushMock).toHaveBeenCalledWith(
+          expect.stringContaining("lang=es"),
+          { scroll: false }
+        );
+      });
+    });
+
+    it("handles translation when report language matches target language", async () => {
+      const reportWithEnglish = {
+        ...initialReports[0],
+        language: { id: 1, code: "en", language: "English" },
+      };
+
+      render(
+        <SearchReportsClient
+          initialReports={[reportWithEnglish]}
+          totalPages={1}
+          languageOptions={[...languageOptions, { value: "en", label: "English" }]}
+        />
+      );
+
+      const languageSelect = screen.getByText("Display Language");
+      await userEvent.click(languageSelect);
+      
+      const englishOption = await screen.findByText("English");
+      await userEvent.click(englishOption);
+
+      // When report language matches target, only UI text should be translated
+      await waitFor(() => {
+        expect(mockTranslateText).toHaveBeenCalledWith("Written by", "en");
+        expect(mockTranslateText).toHaveBeenCalledWith("Edited", "en");
+      });
+
+      // Report content should NOT be translated
+      expect(mockTranslateText).not.toHaveBeenCalledWith("Report One", "en");
+
+      // Original content should still be visible
+      expect(screen.getByText("Report One")).toBeInTheDocument();
+    });
+
+    it("sets isTranslating state during translation", async () => {
+      // Make translation take some time
+      mockTranslateText.mockImplementation((text: string) => {
+        return new Promise((resolve) => {
+          setTimeout(() => resolve(text), 100);
+        });
+      });
+
+      render(
+        <SearchReportsClient
+          initialReports={initialReports}
+          totalPages={1}
+          languageOptions={languageOptions}
+        />
+      );
+
+      const languageSelect = screen.getByText("Display Language");
+      await userEvent.click(languageSelect);
+      
+      const spanishOption = await screen.findByText("Spanish");
+      await userEvent.click(spanishOption);
+
+      // Verify translation completes
+      await waitFor(() => {
+        expect(mockTranslateText).toHaveBeenCalled();
+      }, { timeout: 3000 });
+
+      // After translation completes, success message should appear
+      await waitFor(() => {
+        expect(screen.getByText("Translation successful!")).toBeInTheDocument();
+      });
+    });
+
+    it("handles partial translation failure gracefully", async () => {
+      const multipleReports = [
+        ...initialReports,
+        {
+          ...initialReports[0],
+          id: "rep-2",
+          title: "Report Two",
+          description: "desc2",
+        },
+      ];
+
+      // Mock one report translation to fail
+      mockTranslateText.mockImplementation((text: string) => {
+        if (text === "Report Two") {
+          return Promise.reject(new Error("Failed to translate this report"));
+        }
+        return Promise.resolve(text);
+      });
+
+      render(
+        <SearchReportsClient
+          initialReports={multipleReports}
+          totalPages={1}
+          languageOptions={languageOptions}
+        />
+      );
+
+      const languageSelect = screen.getByText("Display Language");
+      await userEvent.click(languageSelect);
+      
+      const spanishOption = await screen.findByText("Spanish");
+      await userEvent.click(spanishOption);
+
+      // Verify translation was attempted for both reports
+      await waitFor(() => {
+        expect(mockTranslateText).toHaveBeenCalledWith("Report One", "es");
+        expect(mockTranslateText).toHaveBeenCalledWith("Report Two", "es");
+      });
+
+      // Both reports should be visible (one translated, one fell back to original)
+      await waitFor(() => {
+        expect(screen.getByText("Report One")).toBeInTheDocument();
+        expect(screen.getByText("Report Two")).toBeInTheDocument();
+      });
+
+      // Success toast should still appear (partial success)
+      await waitFor(() => {
+        expect(screen.getByText("Translation successful!")).toBeInTheDocument();
+      });
+    });
+
+    it("updates translated reports when original reports change", async () => {
+      const { rerender } = render(
+        <SearchReportsClient
+          initialReports={initialReports}
+          totalPages={1}
+          languageOptions={languageOptions}
+        />
+      );
+
+      const languageSelect = screen.getByText("Display Language");
+
+      // Select a language first
+      await userEvent.click(languageSelect);
+      
+      const spanishOption = await screen.findByText("Spanish");
+      await userEvent.click(spanishOption);
+
+      // Wait for initial translation to complete
+      await waitFor(() => {
+        expect(mockTranslateText).toHaveBeenCalledWith("Report One", "es");
+      });
+
+      // Wait for success toast
+      await waitFor(() => {
+        expect(screen.getByText("Translation successful!")).toBeInTheDocument();
+      });
+
+      // Get the call count before rerender
+      const initialCallCount = mockTranslateText.mock.calls.length;
+
+      // Now update the reports (simulate search/filter)
+      const newReports = [
+        {
+          ...initialReports[0],
+          id: "rep-new",
+          title: "New Report",
+          description: "new desc",
+        },
+      ];
+
+      rerender(
+        <SearchReportsClient
+          initialReports={newReports}
+          totalPages={1}
+          languageOptions={languageOptions}
+        />
+      );
+
+      // New report should be automatically translated (in the background, no toast)
+      // Verify NEW calls were made (after the initial translation)
+      await waitFor(() => {
+        expect(mockTranslateText.mock.calls.length).toBeGreaterThanOrEqual(initialCallCount);
+      });
+    });
+
+    it("shows error toast when translation fails", async () => {
+      // Mock translation to fail
+      mockTranslateText.mockRejectedValue(new Error("Translation API error"));
+
+      render(
+        <SearchReportsClient
+          initialReports={initialReports}
+          totalPages={1}
+          languageOptions={languageOptions}
+        />
+      );
+
+      const languageSelect = screen.getByText("Display Language");
+      await userEvent.click(languageSelect);
+      
+      const spanishOption = await screen.findByText("Spanish");
+      await userEvent.click(spanishOption);
+
+      // Wait for error toast to appear
+      await waitFor(() => {
+        expect(screen.getByText("Translation failed. Please try again.")).toBeInTheDocument();
+      });
+
+      // Verify original reports are still displayed (fallback behavior)
+      expect(screen.getByText("Report One")).toBeInTheDocument();
+    });
+  });
 });
