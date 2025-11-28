@@ -7,7 +7,34 @@
  */
 
 const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config({ path: '../../.env.local' });
+const path = require('path');
+
+// Try multiple paths for .env.local
+const possiblePaths = [
+  '.env.local',                    // From project root
+  '../../.env.local',              // From scripts directory  
+  path.join(__dirname, '../../.env.local'), // Absolute from current file
+];
+
+let envLoaded = false;
+for (const envPath of possiblePaths) {
+  try {
+    require('dotenv').config({ path: envPath });
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      console.log(`Environment loaded from: ${envPath}`);
+      envLoaded = true;
+      break;
+    }
+  } catch (err) {
+    // Continue trying other paths
+  }
+}
+
+if (!envLoaded) {
+  console.error('Could not load environment variables from any location');
+  console.error('Tried paths:', possiblePaths);
+  process.exit(1);
+}
 
 // Create Supabase client
 const supabase = createClient(
