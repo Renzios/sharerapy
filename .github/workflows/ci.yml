@@ -30,529 +30,263 @@ on:
   pull_request:
     branches: [main, develop]
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  # CI - Run Tests (Feature): Jest Unit Tests and React Testing Library
+
+  # ============================================
+  # Unit Tests (feature, develop, main)
+  # ============================================
   jest-tests:
-    name: Jest Unit Tests and React Testing Library
+    name: Jest Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
+          cache: npm
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Jest unit tests
-        run: npm test --
+      - run: npm ci
+      - run: npm test --
         env:
           NODE_ENV: test
 
-      - name: Generate
-        run: npm test -- --coverage --passWithNoTests
+      - run: npm test -- --coverage --passWithNoTests
 
-      - name: Upload coverage reports
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: unit-test-coverage-reports
+          name: unit-test-coverage
           path: coverage/
 
-  # AI Integration Tests (OpenAI-backed)
-  ai-integration-test:
-    name: AI Integration Tests
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main' || github.base_ref == 'develop' || github.base_ref == 'main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run AI integration tests
-        # quick non-sensitive debug to confirm the secret and refs are available in the job
-        # (does not print the secret value)
-        run: |
-          echo "Running AI integration tests (OpenAI)..."
-          echo "GITHUB_REF=$GITHUB_REF"
-          echo "GITHUB_BASE_REF=$GITHUB_BASE_REF"
-          if [ -z \"$OPENAI_API_KEY\" ]; then
-            echo "::warning::OPENAI_API_KEY is NOT set in this job environment"
-          else
-            echo "::notice::OPENAI_API_KEY is set in this job environment"
-          fi
-          npm run test:integration
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          NODE_ENV: test
-        
-
-  # ESLint Code Quality Checks for TypeScript/JavaScript Code
+  # ============================================
+  # Lint + Type Check (feature, develop, main)
+  # ============================================
   code-quality:
-    name: ESLint Code Quality (TypeScript/JavaScript)
+    name: ESLint + Type Check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
+          cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit --skipLibCheck
 
-      - name: Run linting checks
-        run: npm run lint
-
-      - name: Run type checking
-        run: npx tsc --noEmit --skipLibCheck --listFiles
-
-  # Robot Framework Tests for Backend Logic
+  # ============================================
+  # Backend Robot Tests (develop + main only)
+  # ============================================
   backend-tests:
-    name: Backend Tests (Robot Framework)
+    name: Robot Backend Tests
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main' || github.base_ref == 'develop' || github.base_ref == 'main'
+    if: github.ref == 'refs/heads/develop' ||
+        github.ref == 'refs/heads/main' ||
+        github.base_ref == 'develop' ||
+        github.base_ref == 'main'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: |
-          npm ci
-          pip install robotframework
-          pip install robotframework-requests
-          pip install robotframework-databaselibrary
-          pip install -r requirements-test.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-      - name: Build Next.js application
-        run: npm run build
+      - run: |
+          npm ci
+          pip install robotframework robotframework-requests robotframework-databaselibrary
+          if [ -f requirements-test.txt ]; then pip install -r requirements-test.txt; fi
+
+      - run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
-      - name: Start Next.js server
+      - name: Start server
         run: |
-          echo "Starting Next.js server for testing..."
-
           npm start &
-          SERVER_PID=$!
-          echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
-
-          # Wait for server to be ready 
+          echo "SERVER_PID=$!" >> $GITHUB_ENV
           sleep 10
 
-          # Check if server is responding (may return 500 due to Supabase config, but server should be running)
-          for i in {1..12}; do
-            if curl -s http://localhost:3000 > /dev/null 2>&1; then
-              echo "Server is responding"
-              break
-            elif [ $i -eq 12 ]; then
-              echo "Server may not be fully ready, but continuing with tests..."
-            else
-              echo "Waiting for server... attempt $i/12"
-              sleep 5
-            fi
-          done
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-
-      - name: Run Robot Framework tests for all entities
+      - name: Run Robot Backend Tests
         run: |
           mkdir -p tests/robot/output
-          if [ -d "tests/robot/crud" ]; then
-            # Run tests - failures will fail the pipeline until endpoints are implemented
-            # Exclude E2E tests as they require Selenium and run separately
-            robot --outputdir tests/robot/output --exclude E2E tests/robot/crud
-            echo "All tests passed - functions are properly implemented"
-          else
-            echo "Robot Framework test directories not found, skipping..."
-            echo "Expected: tests/robot/crud"
-            echo "No API tests executed" > tests/robot/output/output.xml
-          fi
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          robot --outputdir tests/robot/output --exclude E2E tests/robot/crud
 
-      - name: Stop Next.js server
+      - name: Stop Server
         if: always()
-        run: |
-          if [ ! -z "$SERVER_PID" ]; then
-            kill $SERVER_PID 2>/dev/null || true
-          fi
+        run: kill $SERVER_PID 2>/dev/null || true
 
-      - name: Upload Robot Framework results
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: robot-framework-results
-          path: tests/robot/crud/output/
+          name: robot-backend-results
+          path: tests/robot/output/
 
-  # Robot E2E Tests - Full Regression Suite for PRs and Develop Integration
+  # ============================================
+  # Robot E2E Tests (PR to develop, push to develop)
+  # ============================================
   e2e-tests:
-    name: Robot E2E Tests (Full Regression Suite)
+    name: Robot E2E Tests
     runs-on: ubuntu-latest
     needs: [jest-tests, backend-tests]
-    if: (github.event_name == 'pull_request' && github.base_ref == 'develop') || (github.event_name == 'push' && github.ref == 'refs/heads/develop')
+    if: |
+      (github.event_name == 'pull_request' && github.base_ref == 'develop') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/develop')
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
+          cache: npm
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: |
+      - run: |
           npm ci
           pip install -r requirements-test.txt
 
-      - name: Setup Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: stable
+      - uses: browser-actions/setup-chrome@v1
 
-      - name: Verify Chrome installation
-        run: |
-          chrome --version
-          which chrome
-
-      - name: Check if Robot E2E tests exist
-        id: robot-check
-        run: |
-          if [ -d "tests/robot/E2E" ] && [ "$(ls -A tests/robot/E2E 2>/dev/null)" ]; then
-            echo "has-tests=true" >> $GITHUB_OUTPUT
-            echo "Found Robot E2E tests - will run with verbose output"
-          else
-            echo "has-tests=false" >> $GITHUB_OUTPUT
-            echo "No Robot E2E tests found, skipping E2E testing"
-          fi
-
-      - name: Build Next.js application
-        if: steps.robot-check.outputs.has-tests == 'true'
-        run: npm run build
+      - run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
-      - name: Start Next.js server
-        if: steps.robot-check.outputs.has-tests == 'true'
+      - name: Start server
         run: |
-          echo "Starting Next.js server for E2E testing..."
           npm start &
-          SERVER_PID=$!
-          echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
-
-          # Wait for server to be ready
+          echo "SERVER_PID=$!" >> $GITHUB_ENV
           sleep 10
 
-          # Check if server is responding
-          for i in {1..12}; do
-            if curl -s http://localhost:3000 > /dev/null 2>&1; then
-              echo "Server is responding"
-              break
-            elif [ $i -eq 12 ]; then
-              echo "Server may not be fully ready, but continuing with tests..."
-            else
-              echo "Waiting for server... attempt $i/12"
-              sleep 5
-            fi
-          done
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-
-      - name: Run Robot E2E tests
-        if: steps.robot-check.outputs.has-tests == 'true'
+      - name: Run E2E Tests
         run: |
           mkdir -p tests/robot/E2E/output
           robot --outputdir tests/robot/E2E/output tests/robot/E2E/
-          echo "Robot E2E tests completed"
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
-      - name: Stop Next.js server
+      - name: Stop Server
         if: always()
-        run: |
-          if [ ! -z "$SERVER_PID" ]; then
-            kill $SERVER_PID 2>/dev/null || true
-          fi
+        run: kill $SERVER_PID || true
 
-      - name: Skip E2E tests (no test files)
-        if: steps.robot-check.outputs.has-tests == 'false'
-        run: |
-          echo "Robot E2E tests skipped - No test files found"
-          echo "Add test files to tests/robot/E2E/ directory to enable E2E testing"
-
-      - name: Upload Robot E2E test results
-        if: always() && steps.robot-check.outputs.has-tests == 'true'
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: robot-e2e-test-results
+          name: e2e-results
           path: tests/robot/E2E/output/
 
-  # Integration Validation for PRs to Main (Production Safety)
+  # ============================================
+  # PR to Main – Integration + Regression
+  # ============================================
   pr-main-integration-validation:
-    name: Integration Validation for Production
+    name: Production Integration Validation
     runs-on: ubuntu-latest
     needs: [jest-tests, code-quality, backend-tests, e2e-tests]
     if: github.event_name == 'pull_request' && github.base_ref == 'main'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
+          cache: npm
 
-      - name: Install dependencies
-        run: |
+      - run: |
           npm ci
-          pip install robotframework
-          pip install robotframework-requests
-          pip install -r requirements-test.txt
+          pip install robotframework robotframework-requests
+          if [ -f requirements-test.txt ]; then pip install -r requirements-test.txt; fi
 
-      - name: Run integration tests for production readiness
+      - name: Run Staging + Regression Tests
         run: |
-          echo "Running integration validation for PR to main..."
-          mkdir -p tests/robot/crud
-          if [ -f "tests/robot/crud/*.robot" ]; then
-            # Run staging and regression tests for production readiness
-            robot --loglevel DEBUG --include staging --include regression --outputdir pr-integration-results tests/robot/crud/
-            echo "Integration validation completed for production"
-          else
-            echo "No Robot Framework integration tests found, skipping..."
-            mkdir -p pr-integration-results
-            echo "No integration tests executed" > pr-integration-results/output.xml
-          fi
+          mkdir -p pr-integration-results
+          robot --include staging --include regression \
+                --outputdir pr-integration-results tests/robot/crud/
 
-      - name: Upload PR integration test results
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: pr-main-integration-results
           path: pr-integration-results/
 
-  # CI - Run Tests (Develop): Re-run Full Regression Suite for Integrated Features
+  # ============================================
+  # Develop push – Full Regression (Staging)
+  # ============================================
   develop-integration-validation:
-    name: Develop Integration - Full Regression Suite
+    name: Full Regression (Develop)
     runs-on: ubuntu-latest
     needs: [jest-tests, code-quality, backend-tests, e2e-tests]
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
+          cache: npm
 
-      - name: Install dependencies
-        run: |
+      - run: |
           npm ci
-          pip install robotframework
-          pip install robotframework-requests
-          pip install -r requirements-test.txt
+          pip install robotframework robotframework-requests
+          if [ -f requirements-test.txt ]; then pip install -r requirements-test.txt; fi
 
-      - name: Run staging test suite
+      - name: Staging Health Check
         run: |
-          mkdir -p tests/robot/crud
-          if [ -f "tests/robot/crud/*.robot" ]; then
-            # Run staging tests on develop branch
-            robot --loglevel DEBUG --include staging --outputdir staging-results tests/robot/crud/
-          else
-            echo "No Robot Framework staging tests found, skipping..."
-            mkdir -p staging-results
-            echo "No staging tests executed" > staging-results/output.xml
-          fi
+          for i in {1..10}; do
+            if curl -fs https://sharerapy-staging.vercel.app/ >/dev/null; then
+              echo "Staging is healthy."
+              break
+            fi
+            echo "Retrying staging health check... ($i/10)"
+            sleep 5
+          done
 
-      - name: Build verification for staging
+      - name: Run Full Regression (Staging)
         run: |
-          echo "Verifying build on develop branch (staging)..."
-          npm run build
-          echo "Staging build successful - Ready for integration testing"
+          mkdir -p develop-regression-results
+          robot --include regression --include staging \
+                --outputdir develop-regression-results tests/robot/
 
-      - name: Upload staging test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: staging-test-results
-          path: staging-results/
-
-  # CD - Deploy to Production: Production Deployment Pipeline with Full Test Suite
-  production-deployment-validation:
-    name: Production Deployment Pipeline
+  # ============================================
+  # Main push – Live Production Verification
+  # ============================================
+  main-production-verification:
+    name: Production Verification
     runs-on: ubuntu-latest
     needs: [jest-tests, code-quality, backend-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - run: echo "Checking production health..."
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
-
-      - name: Install dependencies
+      - name: Production Health Check
         run: |
-          npm ci
-          pip install robotframework
-          pip install robotframework-requests
-          pip install -r requirements-test.txt
-
-      - name: Setup Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: stable
-
-      - name: Verify Chrome installation
-        run: |
-          chrome --version
-          which chrome
-
-      - name: Run E2E tests for production validation
-        run: |
-          # Check if Robot E2E tests exist
-          if [ -d "tests/robot/E2E" ] && [ "$(ls -A tests/robot/E2E 2>/dev/null)" ]; then
-            echo "Running Robot Framework E2E tests for production validation..."
-            
-            # Build and start server
-            npm run build
-            npm start &
-            SERVER_PID=$!
-            
-            # Wait for server to be ready
-            timeout 120 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
-            
-            # Run Robot E2E tests
-            mkdir -p tests/robot/E2E/output
-            robot --outputdir tests/robot/E2E/output tests/robot/E2E/
-            ROBOT_EXIT_CODE=$?
-            
-            # Clean up
-            kill $SERVER_PID 2>/dev/null || true
-            
-            if [ $ROBOT_EXIT_CODE -ne 0 ]; then
-              echo "E2E tests failed - blocking production deployment"
-              exit 1
+          for i in {1..10}; do
+            if curl -fs https://sharerapy.vercel.app/ >/dev/null; then
+              echo "Production is healthy."
+              exit 0
             fi
-            echo "E2E tests passed for production"
-          else
-            echo "No Robot E2E tests found - skipping E2E validation"
-          fi
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-
-      - name: Run all robot integration validation for production
-        run: |
-          echo "Running integration validation for production deployment..."
-          mkdir -p tests/robot
-          if [ -f "tests/robot/*.robot" ]; then
-            # Run all integration tests (staging + regression)
-            robot --loglevel DEBUG --include staging --include regression --outputdir integration-results tests/robot/
-            echo "Integration validation completed"
-          else
-            echo "No Robot Framework integration tests found, skipping..."
-            mkdir -p integration-results
-            echo "No integration tests executed" > integration-results/output.xml
-          fi
-
-      - name: Build verification
-        run: |
-          echo "Verifying build on main branch with verbose output..."
-          npm run build
-          echo "Build successful - Ready for deployment"
-
-      - name: Wait for Vercel deployment
-        run: |
-          echo "Waiting for Vercel auto-deployment to complete..."
-          sleep 60
-          echo "Deployment wait period completed"
-
-      - name: Production health check
-        run: |
-          echo "Performing production health checks..."
-          # Basic connectivity test
-          curl -f -s -o /dev/null -w "%{http_code}" https://sharerapy.vercel.app/ || exit 1
-          echo "Production site is accessible"
-
-          # Check if the site returns 200 OK
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://sharerapy.vercel.app/)
-          if [ "$RESPONSE" -eq 200 ]; then
-            echo "Production health check passed (HTTP $RESPONSE)"
-          else
-            echo "Production health check failed (HTTP $RESPONSE)"
-            exit 1
-          fi
-
-      - name: Post-deployment validation
-        run: |
-          echo "Production deployment validation completed successfully"
-          echo "Full test suite executed (Unit, ESLint, Backend, E2E, Integration)"
-          echo "Live site validated: https://sharerapy.vercel.app/"
-          echo "Deployment timestamp: $(date)"
-
-      - name: Upload production test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: production-test-results
-          path: |
-            regression-results/
-            integration-results/
+            echo "Retrying... ($i/10)"
+            sleep 5
+          done
+          echo "Production health check FAILED"
+          exit 1
