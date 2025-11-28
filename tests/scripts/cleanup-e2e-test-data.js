@@ -1,13 +1,43 @@
-/**
- * Simple E2E Test Data Cleanup Script (No TypeScript dependencies)
- * 
- * This script removes all test data from Supabase that contains test identifiers
- * 
- * Usage: node scripts/cleanup-e2e-test-data.js
- */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config({ path: '../../.env.local' });
+const path = require('path');
+
+// Try to load environment variables from .env.local files (for local development)
+// In GitHub Actions, these variables are already in process.env
+const possiblePaths = [
+  '.env.local',                    // From project root
+  '../../.env.local',              // From scripts directory  
+  path.join(__dirname, '../../.env.local'), // Absolute from current file
+];
+
+let envLoaded = false;
+
+// First check if environment variables are already available (GitHub Actions case)
+if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.log('Environment variables already available (likely GitHub Actions)');
+  envLoaded = true;
+} else {
+  // Try loading from .env.local files (local development)
+  for (const envPath of possiblePaths) {
+    try {
+      require('dotenv').config({ path: envPath });
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        console.log(`Environment loaded from: ${envPath}`);
+        envLoaded = true;
+        break;
+      }
+    } catch {
+    }
+  }
+}
+
+if (!envLoaded) {
+  console.error('Could not load environment variables from any location');
+  console.error('Tried paths:', possiblePaths);
+  process.exit(1);
+}
 
 // Create Supabase client
 const supabase = createClient(
