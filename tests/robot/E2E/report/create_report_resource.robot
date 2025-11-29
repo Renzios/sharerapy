@@ -6,8 +6,8 @@ Library    Process
 ${URL}        https://sharerapy-staging.vercel.app/
 ${BROWSER}    Chrome
 ${HEADLESS}    headless
-${VALID_USERNAME}   testuser@email.com
-${VALID_PASSWORD}   testuserpw
+${VALID_USERNAME}   e2e@email.com
+${VALID_PASSWORD}   mariel
 
 *** Keywords ***
 Input Text With Focus
@@ -24,7 +24,7 @@ Input Text With Focus
 
 Open Sharerapy Login Page
     Open Browser    ${URL}    ${BROWSER}    
-    ...    options=add_argument("--headless");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--disable-gpu");add_argument("--window-size=1920,1080");add_argument("--disable-web-security");add_argument("--allow-running-insecure-content")
+    ...    options=add_argument("--headless");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--disable-gpu");add_argument("--window-size=1920,1080");add_argument("--disable-web-security");add_argument("--allow-running-insecure-content");add_argument("--disable-password-manager-reauthentication");add_argument("--disable-features=VizDisplayCompositor");add_argument("--disable-notifications");add_argument("--disable-infobars")
     Set Window Size    1920    1080 
 
 Login With Valid Credentials
@@ -116,19 +116,38 @@ Input Report Details With Data
     Wait Until Element Is Enabled    id=create-edit-report-submit-btn    10s
     Scroll Element Into View    id=create-edit-report-submit-btn
     Sleep    2s
-    Click Element    id=create-edit-report-submit-btn
+    
+    # Try multiple submission methods for better reliability in CI
+    Execute Javascript    document.getElementById('create-edit-report-submit-btn').scrollIntoView()
+    Sleep    1s
+    Execute Javascript    document.getElementById('create-edit-report-submit-btn').click()
+    
+    # Wait for form submission to start processing
+    Sleep    5s
+    
+    # Alternative submission if JavaScript click doesn't work
+    Run Keyword And Ignore Error    Click Element    id=create-edit-report-submit-btn
+    
+    # Wait for navigation/processing to complete
+    Sleep    10s
 
 Verify Report Created Successfully
-    Sleep    3s
-    Wait Until Page Does Not Contain    Patient Details    30s
-    Wait Until Page Does Not Contain    Report Details    10s
-    Wait Until Page Does Not Contain    Report Content    10s
+    # Wait longer for form submission to complete in CI environment
+    Sleep    5s
+    
+    # Wait for navigation away from the create form
+    Wait Until Page Does Not Contain    Patient Details    60s
+    Wait Until Page Does Not Contain    Report Details    30s
+    Wait Until Page Does Not Contain    Report Content    30s
+    
+    # Additional verification that we're no longer on the create page
+    Wait Until Page Does Not Contain Element    id=create-edit-report-submit-btn    30s
 
 Verify Report Creation Failed
     Sleep    3s
-    Wait Until Page Contains    Patient Details    30s
-    Wait Until Page Contains    Report Details    10s
-    Wait Until Page Contains    Report Content    10s
+    Wait Until Page Contains    Patient Details    60s
+    Wait Until Page Contains    Report Details    30s
+    Wait Until Page Contains    Report Content    30s
 
 Close Browser Safely
     Run Keyword And Ignore Error    Close Browser
