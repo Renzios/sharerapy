@@ -36,7 +36,8 @@ export async function translateText(text: string, targetLanguage: string) {
 
     return translatedText;
     
-  } catch (error: any) {
-    throw new Error(error.message || "Failed to translate text");
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to translate text";
+    throw new Error(message);
   }
 }
