@@ -10,6 +10,18 @@ ${VALID_USERNAME}   testuser@email.com
 ${VALID_PASSWORD}   testuserpw
 
 *** Keywords ***
+Input Text With Focus
+    [Arguments]    ${locator}    ${text}
+    [Documentation]    Input text with explicit focus and clearing for better reliability in CI
+    Wait Until Element Is Visible    ${locator}    30s
+    Wait Until Element Is Enabled    ${locator}    10s
+    Click Element    ${locator}
+    Sleep    0.5s
+    Clear Element Text    ${locator}
+    Sleep    0.5s
+    Input Text    ${locator}    ${text}
+    Sleep    0.5s
+
 Open Sharerapy Login Page
     Open Browser    ${URL}    ${BROWSER}    
     ...    options=add_argument("--headless");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--disable-gpu");add_argument("--window-size=1920,1080");add_argument("--disable-web-security");add_argument("--allow-running-insecure-content")
@@ -40,54 +52,70 @@ Input Report Details With Data
     [Arguments]    ${first_name}    ${last_name}    ${birthdate}    ${contact_number}    ${report_title}    ${report_description}    ${report_content}
     # Wait for the form to be fully loaded
     Wait Until Page Contains    Patient Details    30s
-    Sleep    2s
+    Sleep    3s
     
-    # Country selection
-    Wait Until Element Is Visible    id=react-select-create-edit-report-country-select-input    10s
+    # Country selection with enhanced waiting
+    Wait Until Element Is Visible    id=react-select-create-edit-report-country-select-input    30s
+    Wait Until Element Is Enabled    id=react-select-create-edit-report-country-select-input    10s
     Click Element    id=react-select-create-edit-report-country-select-input
-    Sleep    1s
+    Sleep    2s
     Press Keys    id=react-select-create-edit-report-country-select-input    ARROW_DOWN
+    Sleep    1s
     Press Keys    id=react-select-create-edit-report-country-select-input    RETURN
+    Sleep    1s
     
-    # Only input fields if they are not empty
-    Run Keyword If    '${first_name}' != ''    Input Text    id=create-edit-report-first-name-input    ${first_name}
-    Run Keyword If    '${last_name}' != ''    Input Text    id=create-edit-report-last-name-input    ${last_name}
-    Run Keyword If    '${birthdate}' != ''    Input Text    id=create-edit-report-birthday-input    ${birthdate}
-    Run Keyword If    '${contact_number}' != ''    Input Text    id=create-edit-report-contact-number-input    ${contact_number}
+    # Input fields with focus and clearing
+    Run Keyword If    '${first_name}' != ''    Input Text With Focus    id=create-edit-report-first-name-input    ${first_name}
+    Run Keyword If    '${last_name}' != ''    Input Text With Focus    id=create-edit-report-last-name-input    ${last_name}
+    Run Keyword If    '${birthdate}' != ''    Input Text With Focus    id=create-edit-report-birthday-input    ${birthdate}
+    Run Keyword If    '${contact_number}' != ''    Input Text With Focus    id=create-edit-report-contact-number-input    ${contact_number}
     
-    # Select sex (first option)
-    Wait Until Element Is Visible    id=react-select-create-edit-report-sex-select-input    10s
+    # Sex selection with enhanced waiting
+    Wait Until Element Is Visible    id=react-select-create-edit-report-sex-select-input    30s
+    Wait Until Element Is Enabled    id=react-select-create-edit-report-sex-select-input    10s
     Click Element    id=react-select-create-edit-report-sex-select-input
-    Sleep    1s
+    Sleep    2s
     Press Keys    id=react-select-create-edit-report-sex-select-input    ARROW_DOWN
+    Sleep    1s
     Press Keys    id=react-select-create-edit-report-sex-select-input    RETURN
+    Sleep    1s
     
-    Run Keyword If    '${report_title}' != ''    Input Text    id=create-edit-report-title-input    ${report_title}
-    Run Keyword If    '${report_description}' != ''    Input Text    id=create-edit-report-description-textarea    ${report_description}
+    Run Keyword If    '${report_title}' != ''    Input Text With Focus    id=create-edit-report-title-input    ${report_title}
+    Run Keyword If    '${report_description}' != ''    Input Text With Focus    id=create-edit-report-description-textarea    ${report_description}
     
-    # Select language (English)
-    Wait Until Element Is Visible    id=react-select-create-edit-report-language-select-input    10s
+    # Language selection with enhanced waiting
+    Wait Until Element Is Visible    id=react-select-create-edit-report-language-select-input    30s
+    Wait Until Element Is Enabled    id=react-select-create-edit-report-language-select-input    10s
     Click Element    id=react-select-create-edit-report-language-select-input
-    Sleep    1s
+    Sleep    2s
     Press Keys    id=react-select-create-edit-report-language-select-input    English
-    Sleep    0.5s
-    Press Keys    id=react-select-create-edit-report-language-select-input    RETURN
-    
-    # Select therapy type (first option)
-    Wait Until Element Is Visible    id=react-select-create-edit-report-therapy-type-select-input    10s
-    Click Element    id=react-select-create-edit-report-therapy-type-select-input
     Sleep    1s
+    Press Keys    id=react-select-create-edit-report-language-select-input    RETURN
+    Sleep    1s
+    
+    # Therapy type selection with enhanced waiting
+    Wait Until Element Is Visible    id=react-select-create-edit-report-therapy-type-select-input    30s
+    Wait Until Element Is Enabled    id=react-select-create-edit-report-therapy-type-select-input    10s
+    Click Element    id=react-select-create-edit-report-therapy-type-select-input
+    Sleep    2s
     Press Keys    id=react-select-create-edit-report-therapy-type-select-input    ARROW_DOWN
+    Sleep    1s
     Press Keys    id=react-select-create-edit-report-therapy-type-select-input    RETURN
+    Sleep    1s
     
-    # Add report content to rich text editor if not empty
-    Run Keyword If    '${report_content}' != ''    Wait Until Element Is Visible    css=.bn-inline-content    10s
+    # Rich text editor with enhanced waiting
+    Run Keyword If    '${report_content}' != ''    Wait Until Element Is Visible    css=.bn-inline-content    30s
+    Run Keyword If    '${report_content}' != ''    Wait Until Element Is Enabled    css=.bn-inline-content    10s
     Run Keyword If    '${report_content}' != ''    Click Element    css=.bn-inline-content
-    Run Keyword If    '${report_content}' != ''    Sleep    1s
+    Run Keyword If    '${report_content}' != ''    Sleep    2s
     Run Keyword If    '${report_content}' != ''    Input Text    css=.bn-inline-content    ${report_content}
+    Run Keyword If    '${report_content}' != ''    Sleep    1s
     
-    # Submit the report
-    Wait Until Element Is Visible    id=create-edit-report-submit-btn    10s
+    # Submit with enhanced waiting and validation
+    Wait Until Element Is Visible    id=create-edit-report-submit-btn    30s
+    Wait Until Element Is Enabled    id=create-edit-report-submit-btn    10s
+    Scroll Element Into View    id=create-edit-report-submit-btn
+    Sleep    2s
     Click Element    id=create-edit-report-submit-btn
 
 Verify Report Created Successfully
