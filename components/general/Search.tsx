@@ -11,6 +11,7 @@ interface SearchProps {
   id?: string;
   aiMode?: boolean;
   placeholder?: string;
+  icon?: React.ReactNode;
 }
 
 export default function Search({
@@ -22,6 +23,7 @@ export default function Search({
   id,
   aiMode = false,
   placeholder = "Search...",
+  icon = <SearchIcon className="w-5 h-5 hover:cursor-pointer" />,
 }: SearchProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -65,7 +67,7 @@ export default function Search({
         "
         aria-label="Search"
       >
-        <SearchIcon className="w-5 h-5 hover:cursor-pointer" />
+        {icon}
       </button>
 
       <input
@@ -79,10 +81,10 @@ export default function Search({
         className={`
           w-full h-full
           pl-12 
-          ${aiMode ? "pr-28" : "pr-4"} /* Dynamic padding if button exists */
+          ${aiMode ? "pr-28" : "pr-4"} 
           bg-white border border-bordergray
           rounded-full
-          text-sm 
+          text-base 
           focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
           transition-colors duration-200
         `}

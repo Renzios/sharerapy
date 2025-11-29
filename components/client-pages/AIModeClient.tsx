@@ -13,6 +13,9 @@ import { generateAnswer } from "@/lib/actions/chatbot";
 /* Contexts */
 import { useTherapistProfile } from "@/app/contexts/TherapistProfileContext";
 
+/* Icons */
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+
 /* Others */
 import { readStreamableValue } from "@ai-sdk/rsc";
 
@@ -133,7 +136,7 @@ export default function AIModePage() {
               }`}
             >
               <div
-                className={`p-5 rounded-2xl max-w-[95%] md:max-w-[80%] text-base leading-relaxed whitespace-pre-wrap font-Noto-Sans ${
+                className={`px-5 py-3 rounded-4xl max-w-[95%] md:max-w-[80%] text-base leading-relaxed whitespace-pre-wrap font-Noto-Sans ${
                   msg.role === "user"
                     ? "bg-primary text-white rounded-br-sm"
                     : "bg-bordergray text-gray-800 rounded-bl-sm"
@@ -177,6 +180,7 @@ export default function AIModePage() {
             aiMode={false}
             placeholder="Ask a question..."
             id="ai-mode-search-input"
+            icon={<AutoAwesomeIcon className="w-5 h-5 hover:cursor-pointer" />}
           />
         </div>
       </div>
