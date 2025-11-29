@@ -28,6 +28,7 @@ const customJestConfig = {
     "<rootDir>/tests/robot/",
     "<rootDir>/tests/server-actions/",
     "<rootDir>/__tests__/ai-integration/",
+    "<rootDir>/__tests__/integration/",
   ],
   // Ensure proper handling of ES modules and async/await
   transformIgnorePatterns: [
