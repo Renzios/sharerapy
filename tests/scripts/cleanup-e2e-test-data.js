@@ -4,7 +4,8 @@
 const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
 
-// Try multiple paths for .env.local
+// Try to load environment variables from .env.local files (for local development)
+// In GitHub Actions, these variables are already in process.env
 const possiblePaths = [
   '.env.local',                    // From project root
   '../../.env.local',              // From scripts directory  
@@ -12,16 +13,23 @@ const possiblePaths = [
 ];
 
 let envLoaded = false;
-for (const envPath of possiblePaths) {
-  try {
-    require('dotenv').config({ path: envPath });
-    if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
-      console.log(`Environment loaded from: ${envPath}`);
-      envLoaded = true;
-      break;
+
+// First check if environment variables are already available (GitHub Actions case)
+if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.log('Environment variables already available (likely GitHub Actions)');
+  envLoaded = true;
+} else {
+  // Try loading from .env.local files (local development)
+  for (const envPath of possiblePaths) {
+    try {
+      require('dotenv').config({ path: envPath });
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        console.log(`Environment loaded from: ${envPath}`);
+        envLoaded = true;
+        break;
+      }
+    } catch {
     }
-  } catch (err) {
-    console.error(`Failed to load .env from ${envPath}: ${err.message}`);
   }
 }
 
