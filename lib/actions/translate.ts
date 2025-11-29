@@ -1,28 +1,43 @@
 'use server'
 
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 export async function translateText(text: string, targetLanguage: string) {
-    const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
-    if (!apiKey) throw new Error("Missing Google Translate API key");
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("Missing OpenAI API key");
+  }
 
-    const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
-
-    const res = await fetch(url, {
-        method: "POST",
-        headers: {
-        "Content-Type": "application/json",
+  try {
+    const response = await openai.responses.create({
+      model: "gpt-5-nano",
+      reasoning:{"effort": "low"},
+      input: [
+        {
+          role: "system",
+          content: `You are a professional translator. Translate the following text into ${targetLanguage}. Do not add any conversational filler, just return the translated text.`,
         },
-        body: JSON.stringify({
-        q: text,
-        target: targetLanguage,
-        format: "text",
-        }),
+        {
+          role: "user",
+          content: text,
+        },
+      ],
+      temperature: 1,
     });
 
-    const data = await res.json();
+    const translatedText = response.output_text
 
-    if (data.error) {
-        throw new Error(data.error.message);
+    if (!translatedText) {
+      throw new Error("No translation returned from OpenAI");
     }
 
-    return data.data.translations[0].translatedText;
+    return translatedText;
+    
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to translate text";
+    throw new Error(message);
+  }
 }
