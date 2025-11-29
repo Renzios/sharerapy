@@ -39,7 +39,7 @@ jobs:
   # ============================================
   # Unit Tests (feature, develop, main)
   # ============================================
-  jest-tests:
+  jest-unit-tests:
     name: Jest Unit Tests
     runs-on: ubuntu-latest
     steps:
@@ -82,7 +82,7 @@ jobs:
   # ============================================
   # Frontend Integration Tests (develop + main only)
   # ============================================
-  jest-frontend-integration:
+  frontend-integration-tests:
     name: Jest Frontend Integration Tests
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop' ||
@@ -97,7 +97,7 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npm run test:frontend-integration
+      - run: npm run test:frontend-integration-tests
         env:
           NODE_ENV: test
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -105,7 +105,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: frontend-integration-test-results
+          name: frontend-integration-tests-test-results
           path: coverage/
 
   # ============================================
@@ -176,7 +176,7 @@ jobs:
   e2e-tests:
     name: Robot E2E Tests
     runs-on: ubuntu-latest
-    needs: [jest-tests, jest-frontend-integration, backend-tests]
+    needs: [jest-unit-tests, frontend-integration-tests, backend-tests]
     if: |
       (github.event_name == 'pull_request' && github.base_ref == 'develop') ||
       (github.event_name == 'push' && github.ref == 'refs/heads/develop')
@@ -222,7 +222,7 @@ jobs:
   pr-main-integration-validation:
     name: Production Integration Validation
     runs-on: ubuntu-latest
-    needs: [jest-tests, code-quality, jest-frontend-integration, backend-tests, e2e-tests]
+    needs: [jest-unit-tests, code-quality, frontend-integration-tests, backend-tests, e2e-tests]
     if: github.event_name == 'pull_request' && github.base_ref == 'main'
     steps:
       - uses: actions/checkout@v4
@@ -259,7 +259,7 @@ jobs:
   develop-integration-validation:
     name: Full Regression (Develop)
     runs-on: ubuntu-latest
-    needs: [jest-tests, code-quality, jest-frontend-integration, backend-tests, e2e-tests]
+    needs: [jest-unit-tests, code-quality, frontend-integration-tests, backend-tests, e2e-tests]
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
@@ -301,7 +301,7 @@ jobs:
   main-production-verification:
     name: Production Verification
     runs-on: ubuntu-latest
-    needs: [jest-tests, code-quality, backend-tests]
+    needs: [jest-unit-tests, code-quality, backend-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - run: echo "Checking production health..."
