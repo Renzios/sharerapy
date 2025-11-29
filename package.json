@@ -8,11 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest --passWithNoTests --testPathIgnorePatterns=__tests__/ai-integration/",
-    "test:integration": "jest --testPathPattern='(__tests__/ai-integration|__tests__/integration/pages)' -i --runInBand",
+    "test:ai-integration": "jest __tests__/ai-integration -i --runInBand --testPathIgnorePatterns='node_modules' --testPathIgnorePatterns='.next'",
     "test:watch": "jest --watch --passWithNoTests",
-    "test:coverage": "jest --coverage --passWithNoTests",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "test:coverage": "jest --coverage --passWithNoTests"
   },
   "dependencies": {
     "@blocknote/core": "^0.41.1",
@@ -45,6 +43,7 @@
     "@types/node": "^20",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "baseline-browser-mapping": "^2.8.32",
     "cypress": "^13.15.2",
     "dotenv": "^17.2.3",
     "eslint": "^9",

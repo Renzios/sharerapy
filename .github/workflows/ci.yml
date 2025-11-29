@@ -80,7 +80,7 @@ jobs:
       - run: npx tsc --noEmit --skipLibCheck
 
   # ============================================
-  # Backend Robot Tests (develop + main only)
+  # Backend Robot + Jest Tests (develop + main only)
   # ============================================
   backend-tests:
     name: Robot/Jest Backend Integration Tests
@@ -126,7 +126,7 @@ jobs:
           robot --outputdir tests/robot/output --exclude E2E tests/robot/crud
 
       - name: Run AI Integration Tests
-        run: npm run test:integration
+        run: npm run test:ai-integration
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           NODE_ENV: test
