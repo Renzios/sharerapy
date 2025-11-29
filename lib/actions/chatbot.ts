@@ -43,7 +43,7 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
             throw new Error("Failed to retrieve documents");
         }
 
-        const uniqueReportIds = Array.from(new Set((documents || []).map((doc: any) => doc.report_id)));
+        const uniqueReportIds = Array.from(new Set((documents || []).map((doc: any) => doc.report_id))); //
 
         const reports = await Promise.all(
             uniqueReportIds.map((id) => readReport(id as string))
@@ -51,7 +51,7 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
 
         const reportsMap = new Map(reports.map((r) => [r.id, r]));
 
-        const sources = (documents || []).map((doc: any) => ({
+        const sources = (documents || []).map((doc: any) => ({ //
             ...doc,
             report: reportsMap.get(doc.report_id) || null,
         }));
@@ -59,7 +59,7 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
         let contextText = "";
 
         if (sources.length > 0) {
-            contextText = sources.map((doc: any) => doc.text).join("\n---\n");
+            contextText = sources.map((doc: any) => doc.text).join("\n---\n"); //
         } else {
             contextText = "No relevant documentation found for this query.";
         }
@@ -105,7 +105,7 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
             output: stream.value,
         };
 
-    } catch (error: any) {
+    } catch (error: any) { //
         return { success: false, error: error.message };
     }
 }
