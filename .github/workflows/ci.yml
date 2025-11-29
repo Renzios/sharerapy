@@ -34,6 +34,10 @@ defaults:
   run:
     shell: bash
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
 
   # ============================================
@@ -97,7 +101,7 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npm run test:frontend-integration-tests
+      - run: npm run test:frontend-integration
         env:
           NODE_ENV: test
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -105,7 +109,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: frontend-integration-tests-test-results
+          name: frontend-integration-test-results
           path: coverage/
 
   # ============================================
