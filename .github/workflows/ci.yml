@@ -22,7 +22,7 @@ name: Sharerapy CI/CD Pipeline
 # PRODUCTION DEPLOYMENT (main branch):
 # - Complete test suite (Unit, ESLint, Backend, E2E, Integration)
 # - Build verification + Vercel auto-deployment monitoring
-# - Live production health checks (https://sharerapy.vercel.app/)
+# - Live production deployment health checks (https://sharerapy.vercel.app/)
 
 on:
   push:
@@ -219,43 +219,6 @@ jobs:
           path: tests/robot/E2E/output/
 
   # ============================================
-  # PR to Main – Integration + Regression
-  # ============================================
-  pr-main-integration-validation:
-    name: Production Integration Validation
-    runs-on: ubuntu-latest
-    needs: [jest-unit-tests, code-quality, frontend-integration-tests, backend-tests, e2e-tests]
-    if: github.event_name == 'pull_request' && github.base_ref == 'main'
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: |
-          npm ci
-          pip install robotframework robotframework-requests
-          if [ -f requirements-test.txt ]; then pip install -r requirements-test.txt; fi
-
-      - name: Run Staging + Regression Tests
-        run: |
-          mkdir -p pr-integration-results
-          robot --include staging --include regression \
-                --outputdir pr-integration-results tests/robot/crud/
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: pr-main-integration-results
-          path: pr-integration-results/
-
-  # ============================================
   # Develop push – Full Regression (Staging)
   # ============================================
   develop-integration-validation:
@@ -296,27 +259,101 @@ jobs:
           mkdir -p develop-regression-results
           robot --include regression --include staging \
                 --outputdir develop-regression-results tests/robot/
+                
+  # ============================================
+  # PR to Main – Integration + Regression
+  # ============================================
+  pr-main-integration-validation:
+    name: Production Integration Validation
+    runs-on: ubuntu-latest
+    needs: [jest-unit-tests, code-quality, frontend-integration-tests, backend-tests, e2e-tests]
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: |
+          npm ci
+          pip install robotframework robotframework-requests
+          if [ -f requirements-test.txt ]; then pip install -r requirements-test.txt; fi
+
+      - name: Run Staging + Regression Tests
+        run: |
+          mkdir -p pr-integration-results
+          robot --include staging --include regression \
+                --outputdir pr-integration-results tests/robot/crud/
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pr-main-integration-results
+          path: pr-integration-results/
 
   # ============================================
-  # Main push – Live Production Verification
-  # ============================================
-  main-production-verification:
-    name: Production Verification
+  # Main push – Pre-Deployment Regression Validation
+  # ============================================ 
+  main-regression-validation:
+    name: Pre-Deployment Regression Validation
     runs-on: ubuntu-latest
     needs: [jest-unit-tests, code-quality, frontend-integration-tests, backend-tests, e2e-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - run: echo "Checking production health..."
+      - uses: actions/checkout@v4
 
-      - name: Production Health Check
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: |
+          npm ci
+          pip install robotframework robotframework-requests
+          if [ -f requirements-test.txt ]; then pip install -r requirements-test.txt; fi
+
+      - name: Run Pre-Deployment Regression Tests
+        run: |
+          mkdir -p main-regression-results
+          robot --include staging --include regression \
+                --outputdir main-regression-results tests/robot/crud/
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: main-regression-results
+          path: main-regression-results/
+
+  # ============================================
+  # Main push – Live Production Deployment Verification
+  # ============================================
+  main-production-deployment-verification:
+    name: Production Deployment Verification
+    runs-on: ubuntu-latest
+    needs: [main-regression-validation]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - run: echo "Verifying production deployment health..."
+
+      - name: Production Deployment Health Check
         run: |
           for i in {1..10}; do
             if curl -fs https://sharerapy.vercel.app/ >/dev/null; then
-              echo "Production is healthy."
+              echo "Production deployment is healthy and responding."
               exit 0
             fi
             echo "Retrying... ($i/10)"
             sleep 5
           done
-          echo "Production health check FAILED"
+          echo "Production deployment health check FAILED"
           exit 1
