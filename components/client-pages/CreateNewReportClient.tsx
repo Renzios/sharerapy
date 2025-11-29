@@ -23,6 +23,9 @@ import { createReport, updateReport } from "@/lib/actions/reports";
 import { createPatient } from "@/lib/actions/patients";
 import { parseFile } from "@/lib/actions/parse";
 
+/* Contexts */
+import { useAuth } from "@/app/contexts/AuthContext";
+
 // TEMPORARY: Convert to markdown
 import { BlockNoteEditor } from "@blocknote/core";
 
