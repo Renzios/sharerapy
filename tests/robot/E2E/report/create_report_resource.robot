@@ -1,6 +1,7 @@
 *** Settings ***
 Library    SeleniumLibrary
 Library    Process
+Library    OperatingSystem
 
 *** Variables ***
 ${URL}        https://sharerapy-staging.vercel.app/
@@ -186,6 +187,11 @@ Cleanup All E2E Test Data
     Log    Starting E2E test data cleanup...
     ${script_path}=    Set Variable    ${CURDIR}${/}..${/}..${/}..${/}scripts${/}cleanup-e2e-test-data.js
     ${workspace_path}=    Set Variable    ${CURDIR}${/}..${/}..${/}..${/}..
+    
+    # Set environment variables for the cleanup script
+    Set Environment Variable    NEXT_PUBLIC_SUPABASE_URL    %{NEXT_PUBLIC_SUPABASE_URL}
+    Set Environment Variable    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY    %{NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}
+    
     ${result}=    Run Process    node    ${script_path}    cwd=${workspace_path}    shell=True
     Log    Cleanup script output: ${result.stdout}
     Run Keyword If    ${result.rc} != 0    Log    Cleanup script failed with exit code ${result.rc}. Error: ${result.stderr}    WARN

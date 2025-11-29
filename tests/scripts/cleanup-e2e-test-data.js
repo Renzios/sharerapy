@@ -15,7 +15,7 @@ const possiblePaths = [
 let envLoaded = false;
 
 // First check if environment variables are already available (GitHub Actions case)
-if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
   console.log('Environment variables already available (likely GitHub Actions)');
   envLoaded = true;
 } else {
