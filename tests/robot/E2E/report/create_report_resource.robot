@@ -188,11 +188,13 @@ Cleanup All E2E Test Data
     ${script_path}=    Set Variable    ${CURDIR}${/}..${/}..${/}..${/}scripts${/}cleanup-e2e-test-data.js
     ${workspace_path}=    Set Variable    ${CURDIR}${/}..${/}..${/}..${/}..
     
-    # Set environment variables for the cleanup script
-    Set Environment Variable    NEXT_PUBLIC_SUPABASE_URL    %{NEXT_PUBLIC_SUPABASE_URL}
-    Set Environment Variable    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY    %{NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}
+    # Get environment variables (will be passed from CI environment)
+    ${supabase_url}=    Get Environment Variable    NEXT_PUBLIC_SUPABASE_URL    default_value=
+    ${supabase_key}=    Get Environment Variable    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY    default_value=
     
-    ${result}=    Run Process    node    ${script_path}    cwd=${workspace_path}    shell=True
+    # Run cleanup script with environment variables
+    &{env_vars}=    Create Dictionary    NEXT_PUBLIC_SUPABASE_URL=${supabase_url}    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${supabase_key}
+    ${result}=    Run Process    node    ${script_path}    cwd=${workspace_path}    env=&{env_vars}    shell=True
     Log    Cleanup script output: ${result.stdout}
     Run Keyword If    ${result.rc} != 0    Log    Cleanup script failed with exit code ${result.rc}. Error: ${result.stderr}    WARN
     Run Keyword If    ${result.rc} != 0    Log    Continuing test execution despite cleanup failure...    WARN
