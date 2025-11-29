@@ -2,6 +2,8 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import * as nextNav from "next/navigation";
 
+
+jest.mock('openai');
 // Mocks must be defined before importing the components that use them
 jest.mock("next/navigation", () => {
   const actual = jest.requireActual("next/navigation");
