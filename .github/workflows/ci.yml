@@ -176,7 +176,7 @@ jobs:
   e2e-tests:
     name: Robot E2E Tests
     runs-on: ubuntu-latest
-    needs: [jest-unit-tests, frontend-integration-tests, backend-tests]
+    needs: [jest-unit-tests, frontend-integration-tests, backend-tests, code-quality]
     if: |
       (github.event_name == 'pull_request' && github.base_ref == 'develop') ||
       (github.event_name == 'push' && github.ref == 'refs/heads/develop')
@@ -301,7 +301,7 @@ jobs:
   main-production-verification:
     name: Production Verification
     runs-on: ubuntu-latest
-    needs: [jest-unit-tests, code-quality, backend-tests]
+    needs: [jest-unit-tests, code-quality, frontend-integration-tests, backend-tests, e2e-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - run: echo "Checking production health..."
