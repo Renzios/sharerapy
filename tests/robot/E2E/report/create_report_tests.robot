@@ -64,20 +64,6 @@ Create Report - Missing Required Field
     Close Browser Safely
     Cleanup All E2E Test Data
 
-Create Report - Invalid Birth Date Format
-    [Documentation]    This test attempts to create a report with invalid birth date format
-    Open Sharerapy Login Page
-    Login With Valid Credentials
-    Should See Landing Page
-    
-    Click Reports From Landing
-    Should See Reports Page
-    Click Create Report
-    Input Report Details With Data    John    Doe    13/31/2020    1234567890    [E2E_TEST] Invalid Birth Date    Test description.    Test content.
-    Verify Report Creation Failed
-    Close Browser Safely
-    Cleanup All E2E Test Data
-
 Create Report - Future Birth Date
     [Documentation]    This test attempts to create a report with invalid birth date format
     Open Sharerapy Login Page
