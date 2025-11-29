@@ -435,7 +435,25 @@ export type Database = {
       };
     };
     Functions: {
-      [_ in never]: never;
+      match_documents: {
+        Args: {
+          query_embedding: string | number[]
+          match_threshold: number
+          match_count: number
+        }
+        Returns: {
+          id: string
+          report_id: string
+          text: string
+          similarity: number
+        }[]
+      },
+      search_reports_ranked: {
+        Args: {
+          search_term: string
+        }
+        Returns: Database["public"]["Tables"]["reports"]["Row"][]
+      }
     };
     Enums: {
       sex: "Male" | "Female";
