@@ -5,8 +5,8 @@ Library    SeleniumLibrary
 ${URL}        https://sharerapy-staging.vercel.app/
 ${BROWSER}    Chrome
 ${HEADLESS}    headless
-${VALID_USERNAME}   testuser@email.com
-${VALID_PASSWORD}   testuserpw
+${VALID_USERNAME}   e2e@email.com
+${VALID_PASSWORD}   mariel
 ${INVALID_USERNAME}     test@email.com
 ${INVALID_PASSWORD}     testtesttest
 
