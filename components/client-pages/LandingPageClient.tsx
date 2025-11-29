@@ -132,6 +132,7 @@ export default function LandingPageClient() {
             value={searchTerm}
             onChange={setSearchTerm}
             onSearch={handleSearch}
+            aiMode={true}
           />
         </div>
         <div className="mt-6 flex flex-col items-center gap-y-30">
