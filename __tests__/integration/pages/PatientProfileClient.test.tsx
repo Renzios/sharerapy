@@ -5,6 +5,8 @@ import type { Tables } from "@/lib/types/database.types";
 import { fetchReports as mockFetchReports } from "@/app/(with-sidebar)/search/reports/actions";
 import * as nextNav from "next/navigation";
 
+jest.mock('openai');
+
 jest.mock("next/navigation", () => {
 	const actual = jest.requireActual("next/navigation");
 	return {
