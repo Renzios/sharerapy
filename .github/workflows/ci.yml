@@ -83,7 +83,7 @@ jobs:
   # Backend Robot Tests (develop + main only)
   # ============================================
   backend-tests:
-    name: Robot/Jest Backend Tests
+    name: Robot/Jest Backend Integration Tests
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop' ||
         github.ref == 'refs/heads/main' ||

@@ -27,6 +27,7 @@ const customJestConfig = {
     "<rootDir>/cypress/",
     "<rootDir>/tests/robot/",
     "<rootDir>/tests/server-actions/",
+    "<rootDir>/__tests__/ai-integration/",
   ],
   // Ensure proper handling of ES modules and async/await
   transformIgnorePatterns: [
