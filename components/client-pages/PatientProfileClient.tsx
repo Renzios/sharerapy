@@ -7,6 +7,7 @@ import { Tables } from "@/lib/types/database.types";
 import PatientProfile from "../layout/PatientProfile";
 import SearchPageHeader from "../layout/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
+import ReportCardSkeleton from "@/components/skeletons/ReportCardSkeleton"; // <--- Import Skeleton
 import Pagination from "@/components/general/Pagination";
 
 type ReportWithRelations = Tables<"reports"> & {
@@ -110,31 +111,29 @@ export default function PatientProfileClient({
         sortOptions={reportSortOptions}
         sortValue={sortOption}
         onSortChange={handleSortChange}
+        advancedFiltersDisabled={true}
       />
 
       <div className="flex flex-col gap-4">
-        <div
-          className={`flex flex-col gap-4 transition-opacity duration-200 ${
-            isPending ? "opacity-50" : "opacity-100"
-          }`}
-        >
-          {initialReports.length > 0 ? (
-            initialReports.map((report) => (
-              <ReportCard
-                key={report.id}
-                report={report}
-                disabled={isPending}
-              />
-            ))
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-darkgray">No reports found</p>
-            </div>
-          )}
-        </div>
+        {isPending ? (
+          // Show 5 skeletons while loading
+          Array.from({ length: 5 }).map((_, index) => (
+            <ReportCardSkeleton key={`skeleton-${index}`} />
+          ))
+        ) : initialReports.length > 0 ? (
+          // Show Data
+          initialReports.map((report) => (
+            <ReportCard key={report.id} report={report} disabled={isPending} />
+          ))
+        ) : (
+          // Empty State
+          <div className="text-center py-8">
+            <p className="text-darkgray">No reports found</p>
+          </div>
+        )}
       </div>
 
-      {initialReports.length > 0 && totalPages > 1 && (
+      {!isPending && initialReports.length > 0 && totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
