@@ -5,68 +5,23 @@ import Settings from "@mui/icons-material/Settings";
 import Link from "next/link";
 import Select, { SingleValue } from "react-select";
 
-/**
- * Option interface for React Select components
- */
 interface SelectOption {
-  /** The value of the option (used programmatically) */
   value: string;
-  /** The display label of the option (shown to users) */
   label: string;
 }
 
-/**
- * Props interface for the SearchPageHeader component
- */
 interface SearchPageHeaderProps {
-  // Search functionality
-  /** Current value of the search input */
   searchValue?: string;
-  /** Callback fired when search input value changes */
   onSearchChange?: (value: string) => void;
-  /** Callback fired when search is executed */
   onSearch?: (value: string) => void;
-
-  // Navigation buttons (All, Patients, Reports, Therapist)
-  /** Currently active page/tab for navigation highlighting */
   currentPage?: "all" | "patients" | "reports" | "therapists";
-  /**
-   * Whether to show the navigation buttons (All, Patients, etc.)
-   * @default true
-   */
   showNavButtons?: boolean;
-
-  // Mobile advanced filters popup (age, sex, upload date, etc.)
-  /** Callback fired when advanced filters button is clicked (mobile only) */
   onAdvancedFiltersClick?: () => void;
-  /** Whether the advanced filters button is disabled */
   advancedFiltersDisabled?: boolean;
-
-  // Mobile settings popup (contains sort/view options)
-  /** Callback fired when mobile settings button is clicked (mobile only) */
-  onMobileSettingsClick?: () => void;
-  /** Whether the mobile settings button is disabled */
-  mobileSettingsDisabled?: boolean;
-
-  // Desktop sort/view selects (visible on desktop, hidden in mobile settings popup)
-  /** Available sort options for the sort dropdown */
   sortOptions?: SelectOption[];
-  /** Currently selected sort option */
   sortValue?: SelectOption;
-  /** Callback fired when sort option changes */
   onSortChange?: (option: SingleValue<SelectOption>) => void;
-  /** Whether the sort dropdown is disabled */
   sortDisabled?: boolean;
-
-  // Language select (always present)
-  /** Available language options for the language dropdown */
-  languageOptions?: SelectOption[];
-  /** Currently selected language option */
-  languageValue?: SelectOption | null;
-  /** Callback fired when language option changes */
-  onLanguageChange?: (option: SingleValue<SelectOption>) => void;
-  /** Whether the language dropdown is disabled */
-  languageDisabled?: boolean;
   ids?: {
     searchInputId?: string;
     mobileFiltersButtonId?: string;
@@ -95,19 +50,10 @@ export default function SearchPageHeader({
   showNavButtons = true, // <-- Default value is set here
   onAdvancedFiltersClick,
   advancedFiltersDisabled = false,
-  onMobileSettingsClick,
-  mobileSettingsDisabled = false,
   sortOptions,
   sortValue,
   onSortChange,
   sortDisabled = false,
-  languageOptions = [
-    { value: "en", label: "English" },
-    { value: "fl", label: "Filipino" },
-  ],
-  languageValue,
-  onLanguageChange,
-  languageDisabled = false,
   ids,
 }: SearchPageHeaderProps) {
   /**
@@ -224,25 +170,6 @@ export default function SearchPageHeader({
         >
           <Filter />
         </button>
-
-        <button
-          id={ids?.mobileSettingsButtonId}
-          onClick={onMobileSettingsClick}
-          disabled={mobileSettingsDisabled}
-          className={`
-            w-10 h-10 sm:w-12 sm:h-11.25
-            bg-white border border-bordergray
-            rounded-full
-            flex items-center justify-center
-            text-darkgray hover:bg-bordergray/30
-            transition-colors duration-200
-            shrink-0
-            lg:hidden
-            ${mobileSettingsDisabled ? "opacity-50 cursor-not-allowed" : ""}
-          `}
-        >
-          <Settings />
-        </button>
       </div>
 
       <div className="h-1/2 w-full flex items-center gap-2 lg:gap-4 min-w-0 overflow-hidden">
@@ -335,25 +262,6 @@ export default function SearchPageHeader({
               className="w-28 lg:w-32 xl:w-40 2xl:w-47.5 min-w-28 shrink"
               classNamePrefix="react-select"
               styles={selectStyles(sortDisabled)}
-              menuPortalTarget={
-                typeof document !== "undefined" ? document.body : null
-              }
-              menuPosition="fixed"
-            />
-          )}
-
-          {!languageDisabled && (
-            <Select
-              id={ids?.languageSelectId}
-              instanceId={ids?.languageSelectId ?? ""}
-              options={languageOptions}
-              value={languageValue}
-              onChange={onLanguageChange}
-              isDisabled={languageDisabled}
-              placeholder="Display Language"
-              className="w-28 lg:w-32 xl:w-40 2xl:w-47.5 min-w-28 shrink"
-              classNamePrefix="react-select"
-              styles={selectStyles(languageDisabled)}
               menuPortalTarget={
                 typeof document !== "undefined" ? document.body : null
               }
