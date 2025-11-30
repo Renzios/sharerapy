@@ -184,6 +184,7 @@ jobs:
     needs: [jest-unit-tests, frontend-integration-tests, backend-tests, code-quality]
     if: |
       (github.event_name == 'pull_request' && github.base_ref == 'develop') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'main') ||
       (github.event_name == 'push' && github.ref == 'refs/heads/develop')
     steps:
       - uses: actions/checkout@v4
