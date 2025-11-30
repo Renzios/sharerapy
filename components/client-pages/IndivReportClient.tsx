@@ -7,7 +7,7 @@ import Link from "next/link";
 
 /* Components */
 import Button from "@/components/general/Button";
-import Select from "@/components/general/Select";
+import Select, { Option } from "@/components/general/Select";
 import Toast from "@/components/general/Toast";
 import ConfirmationModal from "@/components/general/ConfirmationModal";
 import DropdownMenu from "@/components/general/DropdownMenu";
@@ -16,6 +16,7 @@ import PDFViewer from "@/components/blocknote/PDFViewer";
 
 /* Types */
 import { Tables } from "@/lib/types/database.types";
+import { SingleValue, MultiValue } from "react-select";
 
 /* Utilities */
 import { formatDate } from "@/lib/utils/frontendHelpers";
@@ -36,11 +37,6 @@ import { translateText } from "@/lib/actions/translate";
 /* Others */
 import { BlockNoteEditor } from "@blocknote/core";
 
-interface SelectOption {
-  value: string;
-  label: string;
-}
-
 type ReportWithRelations = Tables<"reports"> & {
   therapist: Tables<"therapists"> & {
     clinic: Tables<"clinics"> & {
@@ -57,7 +53,7 @@ type ReportWithRelations = Tables<"reports"> & {
 
 interface IndivReportClientProps {
   report: ReportWithRelations;
-  languageOptions: SelectOption[];
+  languageOptions: Option[];
 }
 
 export default function IndivReportClient({
@@ -79,7 +75,7 @@ export default function IndivReportClient({
   const [toastType, setToastType] = useState<"success" | "error" | "info">(
     "info"
   );
-  const [selectedLanguage, setSelectedLanguage] = useState<SelectOption | null>(
+  const [selectedLanguage, setSelectedLanguage] = useState<Option | null>(
     () => {
       return (
         languageOptions.find((opt) => opt.value === report.language.code) ||
@@ -140,7 +136,11 @@ export default function IndivReportClient({
     return undefined;
   };
 
-  const handleLanguageChange = async (option: SelectOption | null) => {
+  const handleLanguageChange = async (
+    newValue: SingleValue<Option> | MultiValue<Option>
+  ) => {
+    const option = newValue as Option | null;
+
     setSelectedLanguage(option);
     if (option) {
       /* If option selected is the original Language of the report, don't translate content but still translate UI text */
@@ -414,12 +414,21 @@ export default function IndivReportClient({
         </div>
 
         {/* PDF */}
-        <PDFViewer
-          key={translatedContent ? "translated" : "original"}
-          content={translatedContent ? translatedContent : report.content}
-          title={translatedTitle || report.title}
-          therapistName={report.therapist.name}
-        />
+        {isTranslating ? (
+          <div className="w-full h-[600px] flex flex-col items-center justify-center gap-y-4 bg-gray-50/50 border border-bordergray rounded-lg animate-pulse">
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-primary rounded-full animate-spin"></div>
+            <p className="font-Noto-Sans text-darkgray text-sm font-medium">
+              Translating report content...
+            </p>
+          </div>
+        ) : (
+          <PDFViewer
+            key={translatedContent ? "translated" : "original"}
+            content={translatedContent ? translatedContent : report.content}
+            title={translatedTitle || report.title}
+            therapistName={report.therapist.name}
+          />
+        )}
       </div>
 
       {/* Modal rendered outside the page container */}
