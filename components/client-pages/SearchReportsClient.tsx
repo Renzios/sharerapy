@@ -7,6 +7,7 @@ import { SingleValue } from "react-select";
 /* Components */
 import SearchPageHeader from "@/components/layout/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
+import ReportCardSkeleton from "@/components/skeletons/ReportCardSkeleton"; // <--- Import Skeleton
 import Pagination from "@/components/general/Pagination";
 import Toast from "@/components/general/Toast";
 import Modal from "@/components/general/Modal";
@@ -125,7 +126,6 @@ export default function SearchReportsClient({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Toast Logic
   useEffect(() => {
     if (showSuccessToast) {
       setToastMessage("Report created successfully!");
@@ -186,28 +186,33 @@ export default function SearchReportsClient({
       </Modal>
 
       <div className="mt-6">
-        <div
-          className={`grid grid-cols-1 gap-4 transition-opacity duration-200 ${
-            isPending ? "opacity-50" : "opacity-100"
-          }`}
-        >
-          {initialReports.map((report) => (
-            <ReportCard
-              id={`search-report-${report.id}`}
-              key={report.id}
-              report={report}
-              disabled={isPending}
-            />
-          ))}
+        {/* Conditional Rendering based on isPending */}
+        <div className="grid grid-cols-1 gap-4">
+          {isPending ? (
+            // Show 5 Skeletons while loading
+            Array.from({ length: 5 }).map((_, index) => (
+              <ReportCardSkeleton key={`skeleton-${index}`} />
+            ))
+          ) : initialReports.length > 0 ? (
+            // Show Actual Data
+            initialReports.map((report) => (
+              <ReportCard
+                id={`search-report-${report.id}`}
+                key={report.id}
+                report={report}
+                // Removed disabled={isPending} because we are using skeletons now
+              />
+            ))
+          ) : (
+            // Empty State
+            <div className="text-center py-8">
+              <p className="text-darkgray">No reports found</p>
+            </div>
+          )}
         </div>
 
-        {initialReports.length === 0 && (
-          <div className="text-center py-8">
-            <p className="text-darkgray">No reports found</p>
-          </div>
-        )}
-
-        {initialReports.length > 0 && totalPages > 1 && (
+        {/* Hide Pagination while loading or empty */}
+        {!isPending && initialReports.length > 0 && totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
