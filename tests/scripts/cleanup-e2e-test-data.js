@@ -16,7 +16,7 @@ let envLoaded = false;
 
 // First check if environment variables are already available (GitHub Actions case)
 if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
-  console.log('Environment variables already available (likely GitHub Actions)');
+  console.log('Environment variables already available (GitHub Actions)');
   envLoaded = true;
 } else {
   // Try loading from .env.local files (local development)
@@ -34,9 +34,9 @@ if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUB
 }
 
 if (!envLoaded) {
-  console.error('Could not load environment variables from any location');
-  console.error('Tried paths:', possiblePaths);
-  process.exit(1);
+  console.warn('WARNING: Could not load environment variables from any location. Cleanup will be skipped.');
+  console.warn('Tried paths:', possiblePaths);
+  return;
 }
 
 // Create Supabase client
