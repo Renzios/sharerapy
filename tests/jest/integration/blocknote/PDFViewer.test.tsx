@@ -76,7 +76,7 @@ function setMatchMedia(matches: boolean) {
 }
 
 // Import the component after mocks are configured
-import PDFViewer from "../../../components/blocknote/PDFViewer";
+import PDFViewer from "../../../../components/blocknote/PDFViewer";
 
 describe("PDFViewer component", () => {
   beforeEach(() => {
