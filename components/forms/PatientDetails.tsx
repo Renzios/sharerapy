@@ -23,6 +23,14 @@ interface PatientDetailsProps {
   selectedSex: SelectOption | null;
   setSelectedSex: (value: SelectOption | null) => void;
   disabled?: boolean;
+  ids?: {
+    firstNameInputId?: string;
+    lastNameInputId?: string;
+    countrySelectId?: string;
+    birthdayInputId?: string;
+    sexSelectId?: string;
+    contactNumberInputId?: string;
+  };
 }
 
 export default function PatientDetails({
@@ -40,6 +48,7 @@ export default function PatientDetails({
   selectedSex,
   setSelectedSex,
   disabled = false,
+  ids,
 }: PatientDetailsProps) {
   const sexOptions: SelectOption[] = [
     { value: "Male", label: "Male" },
@@ -59,6 +68,7 @@ export default function PatientDetails({
           required={true}
           name="first_name"
           disabled={disabled}
+          id={ids?.firstNameInputId}
         />
         <Input
           label="Last Name"
@@ -69,6 +79,7 @@ export default function PatientDetails({
           required={true}
           name="last_name"
           disabled={disabled}
+          id={ids?.lastNameInputId}
         />
       </div>
 
@@ -84,6 +95,7 @@ export default function PatientDetails({
           required={true}
           name="country_id"
           disabled={disabled}
+          id={ids?.countrySelectId}
         />
         <Input
           label="Birthday"
@@ -93,6 +105,7 @@ export default function PatientDetails({
           required={true}
           name="birthdate"
           disabled={disabled}
+          id={ids?.birthdayInputId}
         />
       </div>
 
@@ -100,7 +113,8 @@ export default function PatientDetails({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           label="Sex"
-          instanceId="sex-select"
+          id={ids?.sexSelectId}
+          instanceId={ids?.sexSelectId || "sex-select"}
           options={sexOptions}
           value={selectedSex}
           onChange={(option) => setSelectedSex(option)}
@@ -118,6 +132,7 @@ export default function PatientDetails({
           required={true}
           name="contact_number"
           disabled={disabled}
+          id={ids?.contactNumberInputId}
         />
       </div>
     </div>

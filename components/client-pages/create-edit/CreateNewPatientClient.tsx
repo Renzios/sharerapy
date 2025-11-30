@@ -213,6 +213,14 @@ export default function CreateNewPatientClient({
             selectedSex={selectedSex}
             setSelectedSex={setSelectedSex}
             disabled={isSubmitting}
+            ids={{
+              firstNameInputId: "create-patient-first-name-input",
+              lastNameInputId: "create-patient-last-name-input",
+              countrySelectId: "create-patient-country-select",
+              birthdayInputId: "create-patient-birthday-input",
+              sexSelectId: "create-patient-sex-select",
+              contactNumberInputId: "create-patient-contact-number-input",
+            }}
           />
 
           <div className="flex gap-x-4 justify-end">

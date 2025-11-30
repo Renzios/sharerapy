@@ -345,6 +345,7 @@ export default function CreateNewReportClient({
                 placeholder="Search for a patient..."
                 disabled={mode === "edit"}
                 required
+                id="create-edit-report-patient-select"
               />
             </div>
             <PatientDetails
@@ -362,6 +363,15 @@ export default function CreateNewReportClient({
               selectedSex={selectedSex}
               setSelectedSex={setSelectedSex}
               disabled={true}
+              ids={{
+                firstNameInputId: "create-edit-report-patient-first-name-input",
+                lastNameInputId: "create-edit-report-patient-last-name-input",
+                countrySelectId: "create-edit-report-patient-country-select",
+                birthdayInputId: "create-edit-report-patient-birthday-input",
+                sexSelectId: "create-edit-report-patient-sex-select",
+                contactNumberInputId:
+                  "create-edit-report-patient-contact-number-input",
+              }}
             />
           </div>
 
