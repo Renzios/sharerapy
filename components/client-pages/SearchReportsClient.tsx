@@ -1,18 +1,19 @@
 "use client";
 
-/* React Hooks & NextJS Utilities */
 import { useState, useTransition, useEffect, useCallback } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { SingleValue } from "react-select";
 
 /* Components */
 import SearchPageHeader from "@/components/layout/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
 import Pagination from "@/components/general/Pagination";
 import Toast from "@/components/general/Toast";
+import Modal from "@/components/general/Modal";
+import ReportFilters from "@/components/filters/ReportFilters";
 
 /* Types */
 import { Tables } from "@/lib/types/database.types";
-import { SingleValue } from "react-select";
 
 type ReportWithRelations = Tables<"reports"> & {
   therapist: Tables<"therapists"> & {
@@ -28,13 +29,23 @@ type ReportWithRelations = Tables<"reports"> & {
   };
 };
 
+interface Option {
+  value: string;
+  label: string;
+}
+
 interface SearchReportsClientProps {
   initialReports: ReportWithRelations[];
   totalPages: number;
   initialSearchTerm?: string;
   showSuccessToast?: boolean;
   showDeletedToast?: boolean;
-  // Removed languageOptions from props
+  languageOptions: Option[];
+  countryOptions: Option[];
+  clinicOptions: Option[];
+  typeOptions: Option[];
+  therapistOptions: Option[];
+  patientOptions: Option[];
 }
 
 const reportSortOptions = [
@@ -44,18 +55,25 @@ const reportSortOptions = [
   { value: "dateDescending", label: "Sort by: Date (Newest First)" },
 ];
 
-export default function SearchReportsPage({
+export default function SearchReportsClient({
   initialReports,
   totalPages,
   initialSearchTerm = "",
   showSuccessToast = false,
   showDeletedToast = false,
+  languageOptions,
+  countryOptions,
+  clinicOptions,
+  typeOptions,
+  therapistOptions,
+  patientOptions,
 }: SearchReportsClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const currentSortParam = searchParams.get("sort");
   const sortOption =
@@ -63,9 +81,6 @@ export default function SearchReportsPage({
     reportSortOptions[3];
 
   const currentPage = Number(searchParams.get("p")) || 1;
-
-  // Removed translatedReports state, isTranslating state, and language logic
-
   const [isPending, startFetchTransition] = useTransition();
 
   const [toastVisible, setToastVisible] = useState(false);
@@ -93,8 +108,6 @@ export default function SearchReportsPage({
     [searchParams, pathname, router]
   );
 
-  // Removed the translation useEffect entirely
-
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     updateURLParams({ q: value, p: 1 });
@@ -106,8 +119,6 @@ export default function SearchReportsPage({
     if (!option) return;
     updateURLParams({ sort: option.value, p: 1 });
   };
-
-  // Removed handleLanguageChange
 
   const handlePageChange = (page: number) => {
     updateURLParams({ p: page });
@@ -143,9 +154,7 @@ export default function SearchReportsPage({
         sortOptions={reportSortOptions}
         sortValue={sortOption}
         onSortChange={handleSortChange}
-        onAdvancedFiltersClick={() =>
-          console.log("Open advanced report filters")
-        }
+        onAdvancedFiltersClick={() => setIsFilterModalOpen(true)}
         ids={{
           searchInputId: "search-reports-input",
           mobileFiltersButtonId: "search-reports-mobile-filters-button",
@@ -159,8 +168,24 @@ export default function SearchReportsPage({
         }}
       />
 
+      <Modal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        title="Filter Reports"
+      >
+        <ReportFilters
+          onClose={() => setIsFilterModalOpen(false)}
+          onUpdateParams={updateURLParams}
+          languageOptions={languageOptions}
+          countryOptions={countryOptions}
+          clinicOptions={clinicOptions}
+          typeOptions={typeOptions}
+          therapistOptions={therapistOptions}
+          patientOptions={patientOptions}
+        />
+      </Modal>
+
       <div className="mt-6">
-        {/* Directly using initialReports now */}
         <div
           className={`grid grid-cols-1 gap-4 transition-opacity duration-200 ${
             isPending ? "opacity-50" : "opacity-100"
