@@ -116,11 +116,11 @@ export default function AIModePage() {
       `}
     >
       {!hasStarted && (
-        <div className="flex flex-col gap-2 items-center mb-6 text-center px-4">
-          <h1 className="text-3xl md:text-5xl font-Noto-Sans font-semibold bg-clip-text text-transparent bg-[linear-gradient(270deg,#77A5EE_0%,#1859C1_50%,#77A5EE_100%)]">
+        <div className="flex flex-col items-center mb-6 text-center px-4">
+          <h1 className="py-2 text-3xl md:text-5xl font-Noto-Sans font-semibold bg-clip-text text-transparent bg-[linear-gradient(270deg,#77A5EE_0%,#1859C1_50%,#77A5EE_100%)]">
             Hello, {therapist?.first_name || "Therapist"}
           </h1>
-          <p className="text-darkgray font-Noto-Sans mt-2 text-base md:text-lg">
+          <p className="text-darkgray font-Noto-Sans mt-1 text-base md:text-lg">
             Ask questions about your reports and patient history.
           </p>
         </div>
