@@ -1,4 +1,12 @@
-export default function SearchPageHeaderSkeleton() {
+interface SearchPageHeaderSkeletonProps {
+  withFilters?: boolean;
+  withSort?: boolean;
+}
+
+export default function SearchPageHeaderSkeleton({
+  withFilters = true,
+  withSort = true,
+}: SearchPageHeaderSkeletonProps) {
   return (
     <div className="flex flex-col items-center gap-y-3 w-full animate-pulse">
       {/* Top Row: Search Input & Mobile Filter */}
@@ -26,9 +34,13 @@ export default function SearchPageHeaderSkeleton() {
         {/* Desktop Filter & Sort (Right - Hidden on Mobile) */}
         <div className="hidden lg:flex items-center gap-1 lg:gap-2 min-w-0 shrink ml-auto">
           {/* Filter Button */}
-          <div className="h-7.5 w-28 lg:w-32 bg-gray-200 rounded-lg" />
+          {withFilters && (
+            <div className="h-7.5 w-28 lg:w-32 bg-gray-200 rounded-lg" />
+          )}
           {/* Sort Select */}
-          <div className="h-7.5 w-28 lg:w-32 bg-gray-200 rounded-lg" />
+          {withSort && (
+            <div className="h-7.5 w-28 lg:w-32 bg-gray-200 rounded-lg" />
+          )}
         </div>
       </div>
     </div>

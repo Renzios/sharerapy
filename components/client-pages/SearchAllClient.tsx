@@ -94,9 +94,6 @@ export default function SearchAllClient({
         sortOptions={disabledSortOption}
         sortValue={disabledSortOption[0]}
         sortDisabled={true}
-        onAdvancedFiltersClick={() => {
-          console.log("Filters disabled on main search page");
-        }}
         advancedFiltersDisabled={true}
       />
 

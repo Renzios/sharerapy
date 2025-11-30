@@ -236,21 +236,23 @@ export default function SearchPageHeader({
         )}
 
         <div className="hidden lg:flex items-center gap-1 lg:gap-2 min-w-0 shrink ml-auto">
-          <Button
-            variant="outline"
-            height="1.875rem"
-            fontSize="text-[0.6875rem]"
-            onClick={onAdvancedFiltersClick}
-            disabled={advancedFiltersDisabled}
-            className={`
+          {!advancedFiltersDisabled && (
+            <Button
+              variant="outline"
+              height="1.875rem"
+              fontSize="text-[0.6875rem]"
+              onClick={onAdvancedFiltersClick}
+              disabled={advancedFiltersDisabled}
+              className={`
                w-28 lg:w-32 xl:w-40 2xl:w-47.5 min-w-28 shrink
                border-bordergray
                flex items-center justify-between px-2
                ${advancedFiltersDisabled ? "opacity-50 cursor-not-allowed" : ""}
             `}
-          >
-            <span>Filters</span>
-          </Button>
+            >
+              <span>Filters</span>
+            </Button>
+          )}
 
           {!sortDisabled && (
             <Select
