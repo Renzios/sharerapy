@@ -16,17 +16,17 @@ const customJestConfig = {
     "!app/**/*.d.ts",
     "!lib/**/*.d.ts",
   ],
-  testMatch: ["<rootDir>/__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}"],
+  testMatch: ["<rootDir>/tests/jest/**/*.{test,spec}.{js,jsx,ts,tsx}"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
-    "^@tests/(.*)$": "<rootDir>/__tests__/$1",
+    "^@tests/(.*)$": "<rootDir>/tests/jest/$1",
   },
   testPathIgnorePatterns: [
     "<rootDir>/.next/",
     "<rootDir>/node_modules/",
     "<rootDir>/tests/robot/",
     "<rootDir>/tests/server-actions/",
-    "<rootDir>/__tests__/ai-integration/",
+    "<rootDir>/tests/jest/ai-integration/",
   ],
   // Ensure proper handling of ES modules and async/await
   transformIgnorePatterns: [
@@ -41,7 +41,7 @@ const customJestConfig = {
   // Use separate TypeScript config for tests to avoid conflicts
   globals: {
     "ts-jest": {
-      tsconfig: "__tests__/tsconfig.json",
+      tsconfig: "tests/jest/tsconfig.json",
     },
   },
 };

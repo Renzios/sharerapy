@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "jest --passWithNoTests --testPathIgnorePatterns=__tests__/ai-integration/ --testPathIgnorePatterns=__tests__/integration/",
-    "test:ai-integration": "jest __tests__/ai-integration -i --runInBand --testPathIgnorePatterns='node_modules' --testPathIgnorePatterns='.next'",
-    "test:frontend-integration": "jest __tests__/integration --passWithNoTests",
+    "test": "jest --passWithNoTests --testPathIgnorePatterns=tests/jest/ai-integration/ --testPathIgnorePatterns=tests/jest/integration/",
+    "test:ai-integration": "jest tests/jest/ai-integration -i --runInBand --testPathIgnorePatterns='node_modules' --testPathIgnorePatterns='.next'",
+    "test:frontend-integration": "jest tests/jest/integration --passWithNoTests",
     "test:watch": "jest --watch --passWithNoTests",
     "test:coverage": "jest --coverage --passWithNoTests"
   },
