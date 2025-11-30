@@ -1,6 +1,6 @@
 import { readTherapists } from "@/lib/data/therapists";
-import { readClinics } from "@/lib/data/clinics"; // <--- Import
-import { readCountries } from "@/lib/data/countries"; // <--- Import
+import { readClinics } from "@/lib/data/clinics";
+import { readCountries } from "@/lib/data/countries";
 import SearchTherapistClient from "@/components/client-pages/SearchTherapistClient";
 
 const THERAPISTS_PER_PAGE = 20;
@@ -21,20 +21,17 @@ export default async function SearchTherapistsPage({
   const currentPage = Number(params.p) || 1;
   const sortQuery = params.sort || "nameAscending";
 
-  // Filter Params
   const clinicFilter = params.clinic || undefined;
   const countryFilter = params.country || undefined;
 
   const isAscending = sortQuery === "nameAscending";
 
-  // Fetch Data in Parallel
   const [{ data, count }, clinics, countries] = await Promise.all([
     readTherapists({
       search: searchQuery,
       page: currentPage - 1,
       pageSize: THERAPISTS_PER_PAGE,
       ascending: isAscending,
-      // Pass filters to data fetcher
       clinicID: clinicFilter ? Number(clinicFilter) : undefined,
       countryID: countryFilter ? Number(countryFilter) : undefined,
     }),
@@ -44,7 +41,6 @@ export default async function SearchTherapistsPage({
 
   const totalPages = Math.ceil((count || 0) / THERAPISTS_PER_PAGE);
 
-  // Format Options
   const clinicOptions = clinics.map((c) => ({
     value: String(c.id),
     label: c.clinic,

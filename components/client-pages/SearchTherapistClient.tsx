@@ -9,9 +9,10 @@ import SearchPageHeader from "@/components/layout/SearchPageHeader";
 import TherapistCard, {
   TherapistCardData,
 } from "@/components/cards/TherapistCard";
+import TherapistCardSkeleton from "@/components/skeletons/TherapistCardSkeleton";
 import Pagination from "@/components/general/Pagination";
-import Modal from "@/components/general/Modal"; // <--- Import
-import TherapistFilters from "@/components/filters/TherapistFilters"; // <--- Import
+import Modal from "@/components/general/Modal";
+import TherapistFilters from "@/components/filters/TherapistFilters";
 
 interface Option {
   value: string;
@@ -22,8 +23,8 @@ interface SearchTherapistClientProps {
   initialTherapists: TherapistCardData[];
   totalPages: number;
   initialSearchTerm?: string;
-  clinicOptions: Option[]; // <--- New Prop
-  countryOptions: Option[]; // <--- New Prop
+  clinicOptions: Option[];
+  countryOptions: Option[];
 }
 
 const therapistSortOptions = [
@@ -44,7 +45,7 @@ export default function SearchTherapistClient({
 
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [isPending, startTransition] = useTransition();
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false); // <--- Modal State
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const currentSortParam = searchParams.get("sort");
   const sortOption =
@@ -99,10 +100,9 @@ export default function SearchTherapistClient({
         sortOptions={therapistSortOptions}
         sortValue={sortOption}
         onSortChange={handleSortChange}
-        onAdvancedFiltersClick={() => setIsFilterModalOpen(true)} // <--- Open Modal
+        onAdvancedFiltersClick={() => setIsFilterModalOpen(true)}
       />
 
-      {/* Render Modal */}
       <Modal
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}
@@ -117,23 +117,27 @@ export default function SearchTherapistClient({
       </Modal>
 
       <div className="mt-6">
-        <div
-          className={`grid grid-cols-2 gap-3 lg:gap-6 lg:grid-cols-5 transition-opacity duration-200 ${
-            isPending ? "opacity-50" : "opacity-100"
-          }`}
-        >
-          {initialTherapists.map((therapist) => (
-            <TherapistCard key={therapist.id} therapist={therapist} />
-          ))}
+        <div className="grid grid-cols-2 gap-3 lg:gap-6 lg:grid-cols-5">
+          {/* Conditional Loading Logic */}
+          {isPending ? (
+            // Show 15 skeletons (3 rows of 5 on desktop)
+            Array.from({ length: 15 }).map((_, index) => (
+              <TherapistCardSkeleton key={`skeleton-${index}`} />
+            ))
+          ) : initialTherapists.length > 0 ? (
+            // Show Data
+            initialTherapists.map((therapist) => (
+              <TherapistCard key={therapist.id} therapist={therapist} />
+            ))
+          ) : (
+            // Empty State
+            <div className="col-span-2 lg:col-span-5 text-center py-8">
+              <p className="text-darkgray">No therapists found</p>
+            </div>
+          )}
         </div>
 
-        {initialTherapists.length === 0 && (
-          <div className="text-center py-8">
-            <p className="text-darkgray">No therapists found</p>
-          </div>
-        )}
-
-        {initialTherapists.length > 0 && totalPages > 1 && (
+        {!isPending && initialTherapists.length > 0 && totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
