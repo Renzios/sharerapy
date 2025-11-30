@@ -7,6 +7,7 @@ import { SingleValue } from "react-select";
 /* Components */
 import SearchPageHeader from "@/components/layout/SearchPageHeader";
 import PatientCard, { PatientCardData } from "@/components/cards/PatientCard";
+import PatientCardSkeleton from "@/components/skeletons/PatientCardSkeleton";
 import Pagination from "@/components/general/Pagination";
 import Modal from "@/components/general/Modal";
 import PatientFilters from "@/components/filters/PatientFilters";
@@ -110,23 +111,28 @@ export default function SearchPatientsClient({
       </Modal>
 
       <div className="mt-6">
-        <div
-          className={`grid grid-cols-1 gap-4 lg:grid-cols-4 transition-opacity duration-200 ${
-            isPending ? "opacity-50" : "opacity-100"
-          }`}
-        >
-          {initialPatients.map((patient) => (
-            <PatientCard key={patient.id} patient={patient} />
-          ))}
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+          {/* Conditional Rendering logic */}
+          {isPending ? (
+            // Show 12 Skeletons (4 columns x 3 rows looks good)
+            Array.from({ length: 12 }).map((_, index) => (
+              <PatientCardSkeleton key={`skeleton-${index}`} />
+            ))
+          ) : initialPatients.length > 0 ? (
+            // Show Data
+            initialPatients.map((patient) => (
+              <PatientCard key={patient.id} patient={patient} />
+            ))
+          ) : (
+            // Empty State (Full Width)
+            <div className="col-span-1 lg:col-span-4 text-center py-8">
+              <p className="text-darkgray">No patients found</p>
+            </div>
+          )}
         </div>
 
-        {initialPatients.length === 0 && (
-          <div className="text-center py-8">
-            <p className="text-darkgray">No patients found</p>
-          </div>
-        )}
-
-        {initialPatients.length > 0 && totalPages > 1 && (
+        {/* Hide Pagination while loading or empty */}
+        {!isPending && initialPatients.length > 0 && totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
