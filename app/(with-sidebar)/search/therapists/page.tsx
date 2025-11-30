@@ -1,5 +1,5 @@
 import { readTherapists } from "@/lib/data/therapists";
-import SearchTherapistsClient from "@/components/client-pages/SearchTherapistClient";
+import SearchTherapistClient from "@/components/client-pages/SearchTherapistClient";
 
 const THERAPISTS_PER_PAGE = 20;
 
@@ -15,7 +15,7 @@ export default async function SearchTherapistsPage({
   const params = await searchParams;
   const searchQuery = params.q || "";
   const currentPage = Number(params.p) || 1;
-  const sortQuery = params.sort || "nameAscending"; // Default sort
+  const sortQuery = params.sort || "nameAscending";
 
   const isAscending = sortQuery === "nameAscending";
 
@@ -29,7 +29,7 @@ export default async function SearchTherapistsPage({
   const totalPages = Math.ceil((count || 0) / THERAPISTS_PER_PAGE);
 
   return (
-    <SearchTherapistsClient
+    <SearchTherapistClient
       initialTherapists={data || []}
       totalPages={totalPages}
       initialSearchTerm={searchQuery}
