@@ -2,7 +2,7 @@ import { readPatients } from "@/lib/data/patients";
 import { readCountries } from "@/lib/data/countries";
 import { readLanguages } from "@/lib/data/languages";
 import { readTypes } from "@/lib/data/types";
-import CreateNewReportClient from "@/components/client-pages/CreateNewReportClient";
+import CreateNewReportClient from "@/components/client-pages/create-edit/CreateNewReportClient";
 
 /**
  * This is the server component for the Create New Report page.

@@ -1,5 +1,5 @@
 import { readPatients } from "@/lib/data/patients";
-import SearchPatientsClient from "@/components/client-pages/SearchPatientsClient";
+import SearchPatientsClient from "@/components/client-pages/search/SearchPatientsClient";
 
 const PATIENTS_PER_PAGE = 20;
 

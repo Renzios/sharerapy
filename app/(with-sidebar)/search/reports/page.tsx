@@ -1,6 +1,6 @@
 import { readReports } from "@/lib/data/reports";
 import { readLanguages } from "@/lib/data/languages";
-import SearchReportsClient from "@/components/client-pages/SearchReportsClient";
+import SearchReportsClient from "@/components/client-pages/search/SearchReportsClient";
 
 const REPORTS_PER_PAGE = 10;
 
