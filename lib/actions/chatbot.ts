@@ -28,7 +28,10 @@ type ChatMessage = {
   content: string;
 };
 
-export async function generateAnswer(userQuery: string, history: ChatMessage[] = []) {
+export async function generateAnswer(
+  userQuery: string,
+  history: ChatMessage[] = []
+) {
   if (!userQuery) {
     return { error: "Query is required" };
   }
@@ -42,11 +45,14 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
     const queryVector = embeddingResponse.data[0].embedding;
     const supabase = await createClient();
 
-    const { data: rpcData, error: matchError } = await supabase.rpc("match_documents", {
+    const { data: rpcData, error: matchError } = await supabase.rpc(
+      "match_documents",
+      {
         query_embedding: queryVector,
         match_threshold: 0.3,
         match_count: 5,
-    });
+      }
+    );
 
     if (matchError) {
       throw new Error("Failed to retrieve documents");
@@ -63,7 +69,7 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
     );
 
     const reportsMap = new Map<string, Report>(
-        reports.map((r) => [r.id, r as Report])
+      reports.map((r) => [r.id, r as Report])
     );
 
     const sources = (documents || []).map((doc) => ({
@@ -84,7 +90,7 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
             
             Instructions:
             1. Answer the user's question based ONLY on the provided Context.
-            2. If the answer is not in the Context, explicitly state "I cannot find that information in the reports."
+            2. If the answer is not in the Context, explicitly state "I cannot find sufficient information in the reports."
             
             Context:
             ${contextText}
@@ -99,7 +105,7 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
 
     (async () => {
       const { textStream } = await streamText({
-        model: openaiProvider("gpt-4o"), 
+        model: openaiProvider("gpt-4o"),
         messages: [
           { role: "system", content: systemPrompt },
           ...recentHistory,
@@ -119,9 +125,9 @@ export async function generateAnswer(userQuery: string, history: ChatMessage[] =
       sources,
       output: stream.value,
     };
-
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    const errorMessage =
+      error instanceof Error ? error.message : "An unknown error occurred";
     return { success: false, error: errorMessage };
   }
 }
