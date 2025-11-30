@@ -1,6 +1,9 @@
+import LandingPageClient from "@/components/client-pages/LandingPageClient";
+
 /**
- * Landing page for the app, either the login page or search default page depending on if logged in.
+ * Landing page for the app, shows search interface for authenticated users.
+ * Route protection is handled by middleware such that only authenticated users reach this page.
  */
 export default function LandingPage() {
-  return <div></div>;
+  return <LandingPageClient />;
 }

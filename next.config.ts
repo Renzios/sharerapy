@@ -1,14 +1,30 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  outputFileTracingRoot: __dirname,
+  outputFileTracingRoot: process.cwd(),
+
   serverExternalPackages: ["@supabase/supabase-js"],
-  experimental: {},
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb", // Increase limit for photo uploads
+    },
+    useCache: true,
+  },
   turbopack: {
-    root: __dirname,
+    root: process.cwd(),
   },
   devIndicators: {
     position: "bottom-right",
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        port: "",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
   },
 };
 

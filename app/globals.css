@@ -11,4 +11,68 @@
   --color-black: hsl(0, 0, 12);
 
   --font-Noto-Sans: "Noto Sans", sans-serif;
+
+  /* Toast animation */
+  --animate-slideIn: slideIn 0.3s ease-out;
+
+  /* Loading color swap animation */
+  --animate-color-swap: color-swap 1.5s ease-in-out infinite;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes color-swap {
+  0%,
+  100% {
+    color: hsl(0, 0, 40%); /* darkgray */
+  }
+  50% {
+    color: hsl(217, 78, 35); /* primary */
+  }
+}
+
+/* Scrollbar Styling */
+/* For Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(0, 0, 96%);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(217, 78%, 35%); /* Your primary color */
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(217, 78%, 25%); /* Darker on hover */
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(217, 78%, 35%) hsl(0, 0, 96%);
 }

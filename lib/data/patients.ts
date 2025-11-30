@@ -1,80 +1,71 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from "@/lib/supabase/server";
+import { ReadParameters } from "@/lib/types/types";
 
-/**
- * Fetches all patients from the database along with their associated country.
- * It calculates the age of each patient in years and months.
- * @returns A promise that resolves to an array of patients, each with an `age` object and `country` data.
- * @throws Will throw an error if the database query fails.
- */
-export async function getPatients() {
-    const supabase = await createClient();
+export async function readPatients({
+  search,
+  ascending = true,
+  countryID,
+  sex,
+  page = 0,
+  pageSize = 20,
+}: ReadParameters = {}) {
+  const supabase = await createClient();
 
-    const { data, error } = await supabase
-        .from('patients')
-        .select('*, country:countries(*)');
-    
-    if (error) {
-        console.error(error);
-        throw error;
-    }
+  const query = supabase
+    .from("patients")
+    .select("*, country:countries(*), reports(type: types(type))", {
+      count: "exact",
+    })
+    .order("name", { ascending })
+    .range(page * pageSize, page * pageSize + pageSize - 1);
 
-    const patients = data.map((patient) => {
-        const today = new Date();
-        const birthdate = new Date(patient.birthdate);
+  if (countryID) query.eq("country_id", countryID);
+  if (sex) query.eq("sex", sex);
 
-        let years = today.getFullYear() - birthdate.getFullYear();
-        let months = today.getMonth() - birthdate.getMonth();
+  if (search) query.ilike("name", `%${search}%`);
 
-        if (months < 0 || (months === 0 && today.getDate() < birthdate.getDate())) {
-            years--;
-            months += 12;
-        }
-        
-        return { ...patient, age: { years, months } };
+  const { data, error, count } = await query;
+  if (error) throw error;
+
+  const deduped = data.map((patient) => {
+    const seen = new Set();
+    const uniqueReports = (patient.reports ?? []).filter((report) => {
+      const t = report.type?.type;
+      if (!t || seen.has(t)) return false;
+      seen.add(t);
+      return true;
     });
+    return { ...patient, reports: uniqueReports };
+  });
 
-    return patients;
+  return { data: deduped, count };
 }
 
-/**
- * Fetches a single patient from the database by their UUID.
- *
- * This function retrieves a specific patient record from the `patients` table,
- * joins the associated `countries` data, and calculates the patient's age.
- *
- * @param id - The UUID of the patient to fetch.
- * @returns A promise that resolves to a single patient object with age and country,
- *          or `null` if no patient is found with the given ID.
- * @throws Will throw an error if the Supabase query fails.
- */
-export async function getPatient(id: string) {
-    const supabase = await createClient();
+export async function readPatient(id: string) {
+  const supabase = await createClient();
 
-    const { data, error } = await supabase
-        .from('patients')
-        .select('*, country:countries(*)')
-        .eq('id', id)
-        .single();
+  const { data, error } = await supabase
+    .from("patients")
+    .select(
+      "*, country:countries(*), reports(*, therapist:therapists(*, clinic:clinics(*, country:countries(*))), type:types(*), language:languages(*))"
+    )
+    .eq("id", id)
+    .single();
 
-    if (error) {
-        console.error(error);
-        throw error;
+  if (error) throw error;
+  if (data?.birthdate) {
+    const birth = new Date(data.birthdate);
+    const now = new Date();
+
+    let years = now.getFullYear() - birth.getFullYear();
+    let months = now.getMonth() - birth.getMonth();
+
+    if (months < 0) {
+      years--;
+      months += 12;
     }
 
-    if (!data) {
-        return null;
-    }
-
-    const today = new Date();
-    const birthdate = new Date(data.birthdate);
-
-    let years = today.getFullYear() - birthdate.getFullYear();
-    let months = today.getMonth() - birthdate.getMonth();
-
-    if (months < 0 || (months === 0 && today.getDate() < birthdate.getDate())) {
-        years--;
-        months += 12;
-    }
-
-    return { ...data, age: { years, months } };
+    data.age = `${years} years ${months} months`;
+  }
+  return data;
 }

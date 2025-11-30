@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { AuthProvider } from "@/app/contexts/AuthContext";
+import { TherapistProfileProvider } from "./contexts/TherapistProfileContext";
+import ClarityProvider from "@/app/clarity";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -6,10 +9,8 @@ export const metadata: Metadata = {
   description: "",
 };
 
-/**
- * Root layout component that wraps all pages. This is empty.
- * @param children - The page content to be rendered
- */
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -17,7 +18,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {/* Nesting Order Strategy:
+           1. AuthProvider (Top level: Handles who the user is)
+           2. TherapistProfileProvider (Needs Auth data to load the profile)
+           3. ClarityProvider (Analytics tool, usually sits alongside content)
+        */}
+        <AuthProvider>
+          <TherapistProfileProvider>
+            <ClarityProvider />
+            {children}
+          </TherapistProfileProvider>
+        </AuthProvider>
+      </body>
     </html>
   );
 }

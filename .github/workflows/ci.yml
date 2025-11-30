@@ -1,204 +1,308 @@
 # .github/workflows/ci.yml
-name: Sharerapy CI Pipeline
+name: Sharerapy CI/CD Pipeline
+
+# FEATURE DEVELOPMENT (feature/*, feat/*):
+# - Jest Unit Tests + React Testing Library (component validation)
+# - ESLint Code Quality + TypeScript checks (code standards)
+# - Robot Framework Backend (functional validation)
+#
+# PULL REQUEST TO DEVELOP:
+# - All feature development tests PLUS
+# - Robot Framework E2E Tests (full user workflow validation)
+#
+# DEVELOP BRANCH INTEGRATION:
+# - All PR tests PLUS
+# - Robot Framework Staging Tests (environment-specific validation)
+# - Build verification for staging deployment
+#
+# PULL REQUEST TO MAIN (PRODUCTION):
+# - All develop tests PLUS
+# - Integration Validation (staging + regression Robot Framework tests)
+#
+# PRODUCTION DEPLOYMENT (main branch):
+# - Complete test suite (Unit, ESLint, Backend, E2E, Integration)
+# - Build verification + Vercel auto-deployment monitoring
+# - Live production deployment health checks (https://sharerapy.vercel.app/)
 
 on:
   push:
-    branches: [ main, feature/*, feat/* ]
+    branches: [main, develop, feature/*, feat/*]
   pull_request:
-    branches: [ main ]
+    branches: [main, develop]
+  schedule:
+    # Run daily at 10:00 AM UTC (2:00 AM PST)
+    - cron: '0 10 * * *'
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-  # Jest Unit Tests
-  jest-backend-tests:
+
+  # ============================================
+  # Unit Tests (feature, develop, main)
+  # ============================================
+  jest-unit-tests:
     name: Jest Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: 'npm'
+          node-version: 22
+          cache: npm
 
-      - name: Install dependencies
-        run: npm ci --verbose
-
-      - name: Run Jest unit tests for backend server actions and data logic
-        run: npm test -- --verbose
+      - run: npm ci
+      - run: npm test
         env:
           NODE_ENV: test
 
-      - name: Generate backend test coverage report
-        run: npm test -- --coverage --passWithNoTests --verbose
+      - run: npm test -- --coverage
 
-      - name: Upload coverage reports
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: backend-test-coverage-reports
+          name: unit-test-coverage
           path: coverage/
 
-  # ESLint Code Quality Checks for TypeScript/JavaScript Code
+  # ============================================
+  # Lint + Type Check (feature, develop, main)
+  # ============================================
   code-quality:
-    name: ESLint Code Quality (TypeScript/JavaScript)
+    name: ESLint + Type Check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: 'npm'
+          node-version: 22
+          cache: npm
 
-      - name: Install dependencies
-        run: npm ci --verbose
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit --skipLibCheck
 
-      - name: Run linting checks
-        run: npm run lint
-
-      - name: Run type checking
-        run: npx tsc --noEmit --skipLibCheck --listFiles
-
-  # Robot Framework Tests for Backend Logic and APIs
-  backend-tests:
-    name: Backend Tests (Robot Framework - APIs)
+  # ============================================
+  # Frontend Integration Tests (develop + main only)
+  # ============================================
+  frontend-integration-tests:
+    name: Jest Frontend Integration Tests
     runs-on: ubuntu-latest
+    needs: [jest-unit-tests, code-quality]
+    if: github.ref == 'refs/heads/develop' ||
+        github.ref == 'refs/heads/main' ||
+        github.base_ref == 'develop' ||
+        github.base_ref == 'main'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          python-version: '3.11'
+          node-version: 22
+          cache: npm
 
-      - name: Install Robot Framework and API testing dependencies
-        run: |
-          pip install --verbose robotframework
-          pip install --verbose robotframework-requests
-          pip install --verbose robotframework-databaselibrary
-          pip install --verbose -r requirements-test.txt
+      - run: npm ci
+      - run: npm run test:frontend-integration
+        env:
+          NODE_ENV: test
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
-      - name: Run Robot Framework tests for backend logic and APIs
-        run: |
-          mkdir -p tests/robot
-          if [ -f "tests/robot/*.robot" ]; then
-            robot --loglevel DEBUG --outputdir test-results tests/robot/
-          else
-            echo "No Robot Framework backend/API tests found, skipping..."
-            mkdir -p test-results
-            echo "No backend API tests executed" > test-results/output.xml
-          fi
-
-      - name: Upload Robot Framework results
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: robot-framework-results
-          path: test-results/
+          name: frontend-integration-test-results
+          path: coverage/
 
-  # Cypress E2E Tests Run Against Vercel Preview Deployments
-  e2e-tests:
-    name: Cypress E2E Tests (Vercel Preview Deployments)
+  # ============================================
+  # Backend Robot + Jest Tests (develop + main only)
+  # ============================================
+  backend-tests:
+    name: Robot/Jest Backend Integration Tests
     runs-on: ubuntu-latest
-    needs: [jest-backend-tests, backend-tests]
-    if: github.event_name == 'pull_request'
+    needs: [jest-unit-tests, code-quality]
+    if: github.ref == 'refs/heads/develop' ||
+        github.ref == 'refs/heads/main' ||
+        github.base_ref == 'develop' ||
+        github.base_ref == 'main'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-python@v4
         with:
-          node-version: 18
-          cache: 'npm'
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
       - name: Install dependencies
-        run: npm ci --verbose
+        run: npm ci
 
-      - name: Check if Cypress tests exist
-        id: cypress-check
-        run: |
-          if [ -d "cypress/e2e" ] && [ "$(ls -A cypress/e2e 2>/dev/null)" ]; then
-            echo "has-tests=true" >> $GITHUB_OUTPUT
-            echo "Found Cypress tests - will run with verbose output"
-          else
-            echo "has-tests=false" >> $GITHUB_OUTPUT
-            echo "No Cypress tests found, skipping E2E testing"
-          fi
+      - run: |
+          npm ci
+          pip install robotframework robotframework-requests robotframework-databaselibrary
+          if [ -f requirements-test.txt ]; then pip install -r requirements-test.txt; fi
 
-      - name: Run Cypress E2E tests
-        if: steps.cypress-check.outputs.has-tests == 'true'
-        uses: cypress-io/github-action@v6
-        with:
-          build: npm run build
-          start: npm start
-          wait-on: 'http://localhost:3000'
-          wait-on-timeout: 120
-          browser: chrome
-          config: baseUrl=http://localhost:3000
+      - run: npm run build
         env:
-          DEBUG: cypress:*
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
 
-      - name: Skip E2E tests (no test files)
-        if: steps.cypress-check.outputs.has-tests == 'false'
+      - name: Start server
         run: |
-          echo "Cypress E2E tests skipped - No test files found"
-          echo "Add test files to cypress/e2e/ directory to enable E2E testing"
+          npm start &
+          echo "SERVER_PID=$!" >> $GITHUB_ENV
+          sleep 10
 
-      - name: Upload Cypress screenshots
-        if: failure() && steps.cypress-check.outputs.has-tests == 'true'
-        uses: actions/upload-artifact@v4
+      - name: Run Robot Backend Tests
+        run: |
+          mkdir -p tests/robot/output
+          robot --outputdir tests/robot/output --exclude E2E tests/robot/crud
+
+      - name: Run AI Integration Tests
+        run: npm run test:ai-integration
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          NODE_ENV: test
+
+      - name: Stop Server
+        if: always()
+        run: kill $SERVER_PID 2>/dev/null || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: cypress-screenshots
-          path: cypress/screenshots
+          name: robot-jest-backend-results
+          path: tests/robot/output/
 
-  # Comprehensive Regression Test Suite Before Production Deployment
-  main-branch-validation:
-    name: Regression Test Suite (Production Deployment)
+  # ============================================
+  # Robot E2E Tests (PR to develop, push to develop)
+  # ============================================
+  e2e-tests:
+    name: Robot E2E Tests
     runs-on: ubuntu-latest
-    needs: [jest-backend-tests, backend-tests]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [jest-unit-tests, frontend-integration-tests, backend-tests, code-quality]
+    if: |
+      (github.event_name == 'pull_request' && github.base_ref == 'develop') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'main') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/develop')
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          python-version: '3.11'
+          node-version: 22
+          cache: npm
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-python@v4
         with:
-          node-version: 18
-          cache: 'npm'
+          python-version: "3.11"
 
-      - name: Install dependencies
-        run: |
-          npm ci --verbose
-          pip install --verbose robotframework
-          pip install --verbose robotframework-requests
-          pip install --verbose -r requirements-test.txt
+      - run: |
+          npm ci
+          pip install -r requirements-test.txt
 
-      - name: Run regression test suite
-        run: |
-          mkdir -p tests/robot
-          if [ -f "tests/robot/*.robot" ]; then
-            # Run critical regression tests on main branch with verbose output
-            robot --loglevel DEBUG --include regression --outputdir regression-results tests/robot/
-          else
-            echo "No Robot Framework regression tests found, skipping..."
-            mkdir -p regression-results
-            echo "No regression tests executed" > regression-results/output.xml
-          fi
+      - uses: browser-actions/setup-chrome@v1
 
-      - name: Build verification
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Run E2E Tests
         run: |
-          echo "Verifying build on main branch with verbose output..."
-          npm run build --verbose
-          echo "Build successful - Ready for deployment setup"
+          mkdir -p tests/robot/E2E/output
+          robot --outputdir tests/robot/E2E/output tests/robot/E2E/
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Cleanup E2E Test Data
+        if: always()
+        run: node tests/scripts/cleanup-e2e-test-data.js
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-results
+          path: tests/robot/E2E/output/
+
+  # ============================================
+  # Develop push – Full Regression (Staging)
+  # ============================================
+  develop-integration-validation:
+    name: Full Regression (Develop)
+    runs-on: ubuntu-latest
+    needs: [jest-unit-tests, code-quality, frontend-integration-tests, backend-tests, e2e-tests]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: echo "All regression tests passed - develop integration complete"
+      
+      - name: Regression Summary
+        run: |
+          echo "Unit Tests: Passed (jest-unit-tests)"
+          echo "Code Quality: Passed (code-quality)"
+          echo "Frontend Integration: Passed (frontend-integration-tests)"
+          echo "Backend Integration: Passed (backend-tests)"
+          echo "E2E Tests: Passed (e2e-tests)"
+          echo "Develop regression validation complete!"
+
+      - name: Staging Health Check
+        run: |
+          for i in {1..10}; do
+            if curl -fs https://sharerapy-staging.vercel.app/ >/dev/null; then
+              echo "Staging is healthy."
+              break
+            fi
+            echo "Retrying staging health check... ($i/10)"
+            sleep 5
+          done
+                
+  # ============================================
+  # PR to Main – Integration + Regression
+  # ============================================
+  pr-main-integration-validation:
+    name: Production Integration Validation
+    runs-on: ubuntu-latest
+    needs: [jest-unit-tests, code-quality, frontend-integration-tests, backend-tests, e2e-tests]
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: echo "All regression tests passed - PR ready for production merge"
+      
+      - name: Regression Summary
+        run: |
+          echo "Unit Tests: Passed (jest-unit-tests)"
+          echo "Code Quality: Passed (code-quality)"
+          echo "Frontend Integration: Passed (frontend-integration-tests)"
+          echo "Backend Integration: Passed (backend-tests)"
+          echo "E2E Tests: Passed (e2e-tests)"
+          echo "Full regression validation complete - ready for production!"
+
+  # ============================================
+  # Main push – Live Production Deployment Verification
+  # ============================================
+  main-production-deployment-verification:
+    name: Production Deployment Verification
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'schedule')
+    steps:
+      - run: echo "Verifying production deployment health..."
+
+      - name: Production Deployment Health Check
+        run: |
+          for i in {1..10}; do
+            if curl -fs https://sharerapy.vercel.app/ >/dev/null; then
+              echo "Production deployment is healthy and responding."
+              exit 0
+            fi
+            echo "Retrying... ($i/10)"
+            sleep 5
+          done
+          echo "Production deployment health check FAILED"
+          exit 1

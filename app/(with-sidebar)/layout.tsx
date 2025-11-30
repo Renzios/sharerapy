@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
+import Header from "@/components/layout/Header";
+import Sidebar from "@/components/layout/Sidebar";
 
 /**
  * Layout component that wraps all pages the have the sidebar/header.
@@ -22,7 +22,7 @@ export default function WithSidebarLayout({
       <div className="flex-1 flex flex-col bg-background">
         <Header onMenuClick={() => setIsOpen(!isOpen)} />
 
-        <main className="flex-1 overflow-y-auto py-9 px-5 lg:px-2 xl:px-9">
+        <main className="flex-1 overflow-y-scroll py-9 px-5 lg:px-2 xl:px-9">
           {children}
         </main>
       </div>
