@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import Input from "@/components/general/Input";
 import Select from "@/components/general/Select";
-import { Tables } from "@/lib/types/database.types";
 
 interface SelectOption {
   value: string;
@@ -11,222 +9,116 @@ interface SelectOption {
 }
 
 interface PatientDetailsProps {
-  patients: Tables<"patients">[];
-  patientOptions: SelectOption[];
   countryOptions: SelectOption[];
-  selectedPatient: SelectOption | null;
-  setSelectedPatient: (value: SelectOption | null) => void;
-  selectedCountry: SelectOption | null;
-  setSelectedCountry: (value: SelectOption | null) => void;
   firstName: string;
   setFirstName: (value: string) => void;
   lastName: string;
   setLastName: (value: string) => void;
   birthday: string;
   setBirthday: (value: string) => void;
-  selectedSex: SelectOption | null;
-  setSelectedSex: (value: SelectOption | null) => void;
   contactNumber: string;
   setContactNumber: (value: string) => void;
-  disabled?: boolean; // New prop to disable all fields (for edit mode)
-  ids?: {
-    patientSelectId?: string;
-    countrySelectId?: string;
-    firstNameInputId?: string;
-    lastNameInputId?: string;
-    birthdayInputId?: string;
-    sexSelectId?: string;
-    contactNumberInputId?: string;
-  };
+  selectedCountry: SelectOption | null;
+  setSelectedCountry: (value: SelectOption | null) => void;
+  selectedSex: SelectOption | null;
+  setSelectedSex: (value: SelectOption | null) => void;
+  disabled?: boolean;
 }
 
-/**
- * The Patient Details component is the form for creating a new Patient.
- * It has two behaviors, it autofills information if an existing patient is chosen.
- * Otherwise, it allows the user to input new patient information.
- * All fields are required except the choose patient field.
- *
- * @param props - The patient details props
- */
 export default function PatientDetails({
-  patients,
-  patientOptions,
   countryOptions,
-  selectedPatient,
-  setSelectedPatient,
-  selectedCountry,
-  setSelectedCountry,
   firstName,
   setFirstName,
   lastName,
   setLastName,
   birthday,
   setBirthday,
-  selectedSex,
-  setSelectedSex,
   contactNumber,
   setContactNumber,
-  disabled = false, // Default to false (editable)
-  ids,
+  selectedCountry,
+  setSelectedCountry,
+  selectedSex,
+  setSelectedSex,
+  disabled = false,
 }: PatientDetailsProps) {
   const sexOptions: SelectOption[] = [
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
   ];
 
-  // Add "New Patient" option at the beginning of patient options
-  const patientOptionsWithNew = [
-    { value: "new", label: "New Patient" },
-    ...patientOptions,
-  ];
-
-  // Check if an existing patient is selected (not "New Patient")
-  const isExistingPatientSelected = Boolean(
-    selectedPatient && selectedPatient.value !== "new"
-  );
-
-  // Determine if fields should be disabled
-  const fieldsDisabled = disabled || isExistingPatientSelected;
-
-  // Auto-fill patient details when a patient is selected
-  useEffect(() => {
-    if (selectedPatient && selectedPatient.value !== "new") {
-      const patient = patients.find((p) => p.id === selectedPatient.value);
-      if (patient) {
-        setFirstName(patient.first_name || "");
-        setLastName(patient.last_name || "");
-        setBirthday(patient.birthdate || "");
-        setSelectedSex(
-          patient.sex ? { value: patient.sex, label: patient.sex } : null
-        );
-        setContactNumber(patient.contact_number || "");
-        setSelectedCountry(
-          patient.country_id
-            ? countryOptions.find(
-                (c) => c.value === patient.country_id.toString()
-              ) || null
-            : null
-        );
-      }
-    } else if (selectedPatient?.value === "new" || !selectedPatient) {
-      // Clear fields when "New Patient" is selected or nothing is selected
-      setFirstName("");
-      setLastName("");
-      setBirthday("");
-      setSelectedSex(null);
-      setContactNumber("");
-      setSelectedCountry(null);
-    }
-  }, [
-    selectedPatient,
-    patients,
-    countryOptions,
-    setFirstName,
-    setLastName,
-    setBirthday,
-    setSelectedSex,
-    setContactNumber,
-    setSelectedCountry,
-  ]);
-
   return (
-    <div className="flex flex-col gap-y-4">
-      <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
-        Patient Details
-      </h1>
+    <div className="flex flex-col gap-y-10">
+      {/* Row 1: Names */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Input
+          label="First Name"
+          type="text"
+          placeholder="Enter first name"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          required={true}
+          name="first_name"
+          disabled={disabled}
+        />
+        <Input
+          label="Last Name"
+          type="text"
+          placeholder="Enter last name"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          required={true}
+          name="last_name"
+          disabled={disabled}
+        />
+      </div>
 
-      <div className="flex flex-col gap-y-8">
-        {/* Row 1: Choose Patient and Country */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Select
-            id={ids?.patientSelectId}
-            label="Choose Patient"
-            instanceId={ids?.patientSelectId ?? ""}
-            options={patientOptionsWithNew}
-            value={selectedPatient}
-            onChange={(option) => setSelectedPatient(option)}
-            placeholder="Select patient..."
-            name="patient_id"
-            disabled={disabled}
-          />
-          <Select
-            id={ids?.countrySelectId}
-            label="Country"
-            instanceId={ids?.countrySelectId ?? ""}
-            options={countryOptions}
-            value={selectedCountry}
-            onChange={(option) => setSelectedCountry(option)}
-            placeholder="Select country..."
-            required={true}
-            name="country_id"
-            disabled={fieldsDisabled}
-          />
-        </div>
+      {/* Row 2: Country & Birthday */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Select
+          label="Country"
+          instanceId="country-select"
+          options={countryOptions}
+          value={selectedCountry}
+          onChange={(option) => setSelectedCountry(option)}
+          placeholder="Select country..."
+          required={true}
+          name="country_id"
+          disabled={disabled}
+        />
+        <Input
+          label="Birthday"
+          type="date"
+          value={birthday}
+          onChange={(e) => setBirthday(e.target.value)}
+          required={true}
+          name="birthdate"
+          disabled={disabled}
+        />
+      </div>
 
-        {/* Row 2: First Name and Last Name */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            label="First Name"
-            type="text"
-            placeholder="Enter first name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required={true}
-            name="first_name"
-            id={ids?.firstNameInputId}
-            disabled={fieldsDisabled}
-          />
-          <Input
-            label="Last Name"
-            type="text"
-            placeholder="Enter last name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required={true}
-            name="last_name"
-            id={ids?.lastNameInputId}
-            disabled={fieldsDisabled}
-          />
-        </div>
-
-        {/* Row 3: Birthday (spans 2 cols), Sex, and Contact Number */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Birthday"
-              type="date"
-              value={birthday}
-              onChange={(e) => setBirthday(e.target.value)}
-              required={true}
-              name="birthdate"
-              id={ids?.birthdayInputId}
-              disabled={fieldsDisabled}
-            />
-            <Select
-              id={ids?.sexSelectId}
-              label="Sex"
-              instanceId={ids?.sexSelectId ?? ""}
-              options={sexOptions}
-              value={selectedSex}
-              onChange={(option) => setSelectedSex(option)}
-              placeholder="Sex"
-              required={true}
-              name="sex"
-              disabled={fieldsDisabled}
-            />
-          </div>
-          <Input
-            label="Contact Number"
-            type="tel"
-            placeholder="Enter contact number"
-            value={contactNumber}
-            onChange={(e) => setContactNumber(e.target.value)}
-            required={true}
-            name="contact_number"
-            id={ids?.contactNumberInputId}
-            disabled={fieldsDisabled}
-          />
-        </div>
+      {/* Row 3: Sex & Contact */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Select
+          label="Sex"
+          instanceId="sex-select"
+          options={sexOptions}
+          value={selectedSex}
+          onChange={(option) => setSelectedSex(option)}
+          placeholder="Sex"
+          required={true}
+          name="sex"
+          disabled={disabled}
+        />
+        <Input
+          label="Contact Number"
+          type="tel"
+          placeholder="Enter contact number"
+          value={contactNumber}
+          onChange={(e) => setContactNumber(e.target.value)}
+          required={true}
+          name="contact_number"
+          disabled={disabled}
+        />
       </div>
     </div>
   );
