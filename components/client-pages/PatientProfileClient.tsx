@@ -111,6 +111,15 @@ export default function PatientProfileClient({
     "info"
   );
 
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setToastMessage("Patient created successfully!");
+      setToastType("success");
+      setToastVisible(true);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [searchParams]);
+
   // Update translated reports when reports change
   useEffect(() => {
     if (selectedLanguage && shouldTranslateRef.current) {

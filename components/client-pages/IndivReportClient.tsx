@@ -10,7 +10,6 @@ import Button from "@/components/general/Button";
 import Select from "@/components/general/Select";
 import Toast from "@/components/general/Toast";
 import ConfirmationModal from "@/components/general/ConfirmationModal";
-import DropdownMenu from "@/components/general/DropdownMenu";
 import Tag from "@/components/general/Tag";
 import PDFViewer from "@/components/blocknote/PDFViewer";
 
@@ -27,7 +26,6 @@ import { useBackNavigation } from "@/app/hooks/useBackNavigation";
 import { useTherapistProfile } from "@/app/contexts/TherapistProfileContext";
 
 /* Icons */
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 /* Actions */
@@ -71,7 +69,6 @@ export default function IndivReportClient({
   const { therapist } = useTherapistProfile();
   const { handleBackClick } = useBackNavigation("/search/reports");
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
@@ -107,6 +104,15 @@ export default function IndivReportClient({
   const clinic = report.therapist.clinic.clinic;
   const therapyType = report.type.type;
   const language = report.language.language;
+
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setToastMessage("Report created successfully!");
+      setToastType("success");
+      setToastVisible(true);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (searchParams.get("updated") === "true") {
