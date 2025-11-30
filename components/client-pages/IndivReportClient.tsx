@@ -280,15 +280,17 @@ export default function IndivReportClient({
             <h1 className="font-Noto-Sans text-xl md:text-3xl text-black font-semibold">
               {translatedTitle || report.title}
             </h1>
-            <button
-              id="indiv-report-delete-icon-btn"
-              aria-label="Delete Report"
-            >
-              <DeleteIcon
-                className="text-darkgray hover:text-red-600 cursor-pointer"
-                onClick={() => setIsDeleteModalOpen(true)}
-              />
-            </button>
+            {therapist?.id === report.therapist_id && (
+              <button
+                id="indiv-report-delete-icon-btn"
+                aria-label="Delete Report"
+              >
+                <DeleteIcon
+                  className="text-darkgray hover:text-red-600 cursor-pointer"
+                  onClick={() => setIsDeleteModalOpen(true)}
+                />
+              </button>
+            )}
             <div className="ml-auto mb-auto flex flex-col sm:flex-row items-center gap-2">
               {therapist?.id === report.therapist_id && (
                 <Button
