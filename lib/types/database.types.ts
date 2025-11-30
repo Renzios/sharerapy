@@ -451,6 +451,12 @@ export type Database = {
           text: string
           similarity: number
         }[]
+      },
+      search_reports_ranked: {
+        Args: {
+          search_term: string
+        }
+        Returns: Database["public"]["Tables"]["reports"]["Row"][]
       }
     };
     Enums: {

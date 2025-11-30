@@ -18,14 +18,15 @@ export async function readReports({
 }: ReadParameters = {}) {
   const supabase = await createClient();
 
-  const query = supabase
-    .from("reports")
-    .select(
-      "*, therapist:therapists(*, clinic:clinics(*, country:countries(*))), type:types(*), language:languages(*), patient:patients(*, country:countries(*))",
-      { count: "exact" }
-    )
-    .order(column, { ascending })
-    .range(page * pageSize, page * pageSize + pageSize - 1);
+  let query;
+
+  if (search) query = supabase.rpc("search_reports_ranked", { search_term: search });
+  else query = supabase.from("reports");
+
+  query = query.select("*, therapist:therapists(*, clinic:clinics(*, country:countries(*))), type:types(*), language:languages(*), patient:patients(*, country:countries(*))", { count: "exact" })
+  
+  const sortColumn = column || (search ? undefined : "title");
+  if (sortColumn) query.order(sortColumn, { ascending });
 
   if (languageID) query.eq("language_id", languageID);
   if (countryID) query.eq("therapist.clinic.country_id", countryID);
@@ -36,7 +37,7 @@ export async function readReports({
   if (therapistID) query.eq("therapist_id", therapistID);
   if (patientID) query.eq("patient_id", patientID);
 
-  if (search) query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+  query.range(page * pageSize, page * pageSize + pageSize - 1);
 
   const { data, error, count } = await query;
   if (error) throw error;
