@@ -10,11 +10,20 @@ import TherapistCard, {
   TherapistCardData,
 } from "@/components/cards/TherapistCard";
 import Pagination from "@/components/general/Pagination";
+import Modal from "@/components/general/Modal"; // <--- Import
+import TherapistFilters from "@/components/filters/TherapistFilters"; // <--- Import
+
+interface Option {
+  value: string;
+  label: string;
+}
 
 interface SearchTherapistClientProps {
   initialTherapists: TherapistCardData[];
   totalPages: number;
   initialSearchTerm?: string;
+  clinicOptions: Option[]; // <--- New Prop
+  countryOptions: Option[]; // <--- New Prop
 }
 
 const therapistSortOptions = [
@@ -26,6 +35,8 @@ export default function SearchTherapistClient({
   initialTherapists,
   totalPages,
   initialSearchTerm = "",
+  clinicOptions,
+  countryOptions,
 }: SearchTherapistClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -33,6 +44,7 @@ export default function SearchTherapistClient({
 
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [isPending, startTransition] = useTransition();
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false); // <--- Modal State
 
   const currentSortParam = searchParams.get("sort");
   const sortOption =
@@ -87,10 +99,22 @@ export default function SearchTherapistClient({
         sortOptions={therapistSortOptions}
         sortValue={sortOption}
         onSortChange={handleSortChange}
-        onAdvancedFiltersClick={() => {
-          console.log("Open advanced therapist filters popup");
-        }}
+        onAdvancedFiltersClick={() => setIsFilterModalOpen(true)} // <--- Open Modal
       />
+
+      {/* Render Modal */}
+      <Modal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        title="Filter Therapists"
+      >
+        <TherapistFilters
+          clinicOptions={clinicOptions}
+          countryOptions={countryOptions}
+          onClose={() => setIsFilterModalOpen(false)}
+          onUpdateParams={updateURLParams}
+        />
+      </Modal>
 
       <div className="mt-6">
         <div
