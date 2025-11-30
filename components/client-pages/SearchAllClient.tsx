@@ -1,28 +1,36 @@
 "use client";
 
+import { useState, useTransition, useCallback } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+
+/* Components */
 import SearchPageHeader from "@/components/layout/SearchPageHeader";
-import PatientCard from "@/components/cards/PatientCard";
+import PatientCard, { PatientCardData } from "@/components/cards/PatientCard";
 import ReportCard from "@/components/cards/ReportCard";
-import TherapistCard from "@/components/cards/TherapistCard";
-import { useState, useTransition } from "react";
-import { fetchPatients } from "@/app/(with-sidebar)/search/patients/actions";
-import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
-import { fetchTherapists } from "@/app/(with-sidebar)/search/therapists/actions";
+import TherapistCard, {
+  TherapistCardData,
+} from "@/components/cards/TherapistCard";
 
-// Extract types from the fetch functions
-type PatientsData = Awaited<ReturnType<typeof fetchPatients>>["data"];
-type Patient = NonNullable<PatientsData>[number];
-
-type ReportsData = Awaited<ReturnType<typeof fetchReports>>["data"];
-type Report = NonNullable<ReportsData>[number];
-
-type TherapistsData = Awaited<ReturnType<typeof fetchTherapists>>["data"];
-type Therapist = NonNullable<TherapistsData>[number];
+// Using the tables type for ReportCard until/unless ReportCard exports a specific type
+import { Tables } from "@/lib/types/database.types";
+type Report = Tables<"reports"> & {
+  therapist: Tables<"therapists"> & {
+    clinic: Tables<"clinics"> & {
+      country: Tables<"countries">;
+    };
+  };
+  type: Tables<"types">;
+  language: Tables<"languages">;
+  patient: Tables<"patients"> & {
+    country: Tables<"countries"> | null;
+    age?: string;
+  };
+};
 
 interface SearchAllClientProps {
-  initialPatients: Patient[];
+  initialPatients: PatientCardData[];
   initialReports: Report[];
-  initialTherapists: Therapist[];
+  initialTherapists: TherapistCardData[];
   initialSearchTerm?: string;
 }
 
@@ -30,7 +38,6 @@ interface SearchAllClientProps {
  * This is the client component for the main Search page.
  * It displays a fixed number of patients (4), reports (2), and therapists (5).
  * No pagination, sorting, or advanced filters on this page.
- * @param props - The initial data from the server component
  */
 export default function SearchAllClient({
   initialPatients,
@@ -38,15 +45,11 @@ export default function SearchAllClient({
   initialTherapists,
   initialSearchTerm = "",
 }: SearchAllClientProps) {
-  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-  const [languageOption, setLanguageOption] = useState({
-    value: "en",
-    label: "English",
-  });
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const [patients, setPatients] = useState(initialPatients);
-  const [reports, setReports] = useState(initialReports);
-  const [therapists, setTherapists] = useState(initialTherapists);
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [isPending, startTransition] = useTransition();
 
   const disabledSortOption = [
@@ -56,26 +59,29 @@ export default function SearchAllClient({
     },
   ];
 
+  // URL Update Helper
+  const updateURLParams = useCallback(
+    (changes: { [key: string]: string | number | null }) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      Object.entries(changes).forEach(([key, value]) => {
+        if (value === null || value === "") {
+          params.delete(key);
+        } else {
+          params.set(key, String(value));
+        }
+      });
+
+      startTransition(() => {
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+      });
+    },
+    [searchParams, pathname, router]
+  );
+
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-
-    startTransition(async () => {
-      // Fetch from all three resources in parallel
-      const [patientsResult, reportsResult, therapistsResult] =
-        await Promise.all([
-          fetchPatients({ search: value, page: 1 }),
-          fetchReports({ search: value, page: 1 }),
-          fetchTherapists({ search: value, page: 1 }),
-        ]);
-
-      // Limit to specific counts: 4 patients, 2 reports, 5 therapists
-      if (patientsResult.success)
-        setPatients((patientsResult.data || []).slice(0, 4));
-      if (reportsResult.success)
-        setReports((reportsResult.data || []).slice(0, 2));
-      if (therapistsResult.success)
-        setTherapists((therapistsResult.data || []).slice(0, 5));
-    });
+    updateURLParams({ q: value });
   };
 
   return (
@@ -85,39 +91,31 @@ export default function SearchAllClient({
         onSearchChange={setSearchTerm}
         onSearch={handleSearch}
         currentPage="all"
-        // Remove sort options since sorting is disabled
         sortOptions={disabledSortOption}
         sortValue={disabledSortOption[0]}
-        onSortChange={undefined}
         sortDisabled={true}
-        // Language selector (uses component defaults)
-        languageValue={languageOption}
-        onLanguageChange={(option) => {
-          if (option) {
-            setLanguageOption(option);
-          }
-        }}
         onAdvancedFiltersClick={() => {
           console.log("Filters disabled on main search page");
         }}
         advancedFiltersDisabled={true}
-        onMobileSettingsClick={() => {
-          console.log("Open mobile settings popup (language option only)");
-        }}
       />
 
-      <div className="mt-6 flex flex-col gap-4">
+      <div
+        className={`mt-6 flex flex-col gap-4 transition-opacity duration-200 ${
+          isPending ? "opacity-50" : "opacity-100"
+        }`}
+      >
         {/* Patients Section */}
         <h2 className="text-lg font-medium font-Noto-Sans text-darkgray">
           Patients
         </h2>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-          {patients.map((patient) => (
+          {initialPatients.map((patient) => (
             <PatientCard key={patient.id} patient={patient} />
           ))}
         </div>
 
-        {patients.length === 0 && (
+        {initialPatients.length === 0 && (
           <div className="text-center py-4">
             <p className="text-darkgray">No patients found</p>
           </div>
@@ -128,12 +126,12 @@ export default function SearchAllClient({
           Reports
         </h2>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {reports.map((report) => (
+          {initialReports.map((report) => (
             <ReportCard key={report.id} report={report} />
           ))}
         </div>
 
-        {reports.length === 0 && (
+        {initialReports.length === 0 && (
           <div className="text-center py-4">
             <p className="text-darkgray">No reports found</p>
           </div>
@@ -144,7 +142,7 @@ export default function SearchAllClient({
           Therapists
         </h2>
         <div className="grid grid-cols-2 gap-3 lg:gap-6 lg:grid-cols-5">
-          {therapists.map((therapist, index) =>
+          {initialTherapists.map((therapist, index) =>
             index === 4 ? (
               <div
                 key={therapist.id}
@@ -158,7 +156,7 @@ export default function SearchAllClient({
           )}
         </div>
 
-        {therapists.length === 0 && (
+        {initialTherapists.length === 0 && (
           <div className="text-center py-4">
             <p className="text-darkgray">No therapists found</p>
           </div>
