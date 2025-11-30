@@ -1,6 +1,6 @@
 {
   "name": "sharerapy",
-  "version": "0.1.0",
+  "version": "2025.11.30-beta",
   "private": true,
   "scripts": {
     "dev": "next dev",
