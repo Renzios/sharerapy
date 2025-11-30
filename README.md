@@ -1,13 +1,16 @@
 ![sharerapy.](https://i.imgur.com/Qn9D2Il.png)
-<h2 align="center">sharerapy.</h2>
+<h2 align="center">Share Knowledge. Share Healing.</h2>
 <p align="center">
   a medical knowledge base of <b>speech</b>, <b>occupational</b>, <b>developmental</b>, <b>reading</b>, and <b>SPED</b> therapy records.
+</p>
+<p align="center">
+  <b>v2025.11.30-beta</b>
 </p>
 
 ## About sharerapy.
 Sharerapy is a **global medical knowledge-sharing platform** built for **speech, occupational, developmental, reading, and SPED therapists**. It empowers professionals to **manage, share, and learn** from one another’s therapy records in one secure, **AI-powered space**. Designed to **bridge gaps in collaboration, language, and access**, Sharerapy centralizes clinical knowledge from around the world, making it easier for therapists to **discover insights, translate research instantly, and streamline record management**. Through smart search, translation, and an integrated AI research assistant, Sharerapy helps therapists save time, connect across borders, and deliver more **effective, evidence-based care** while turning isolated expertise into a c**ollective global resource**.
 
-![Sharerapy All Search](https://i.imgur.com/wZTLqzR.png)
+<img width="1919" height="915" alt="image" src="https://github.com/user-attachments/assets/2c5abaa6-2ae4-4735-80de-de728cfca8a6" />
 
 ## Key Features
 - Centralized Record Management: Therapists can create, update, and organize their records in one secure platform, building a growing shared knowledge base.

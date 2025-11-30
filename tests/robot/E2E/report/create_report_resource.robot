@@ -1,6 +1,7 @@
 *** Settings ***
 Library    SeleniumLibrary
 Library    Process
+Library    OperatingSystem
 
 *** Variables ***
 ${URL}        https://sharerapy-staging.vercel.app/
@@ -180,3 +181,20 @@ Verify Report Created And View It
     # Verify we're on the report view page with E2E_TEST title and description
     Wait Until Page Contains    [E2E_TEST]    30s
     Wait Until Page Contains    description    30s
+
+Cleanup All E2E Test Data
+    [Documentation]    Run the Node.js cleanup script to remove all E2E test data from Supabase
+    Log    Starting E2E test data cleanup...
+    ${script_path}=    Set Variable    ${CURDIR}${/}..${/}..${/}..${/}scripts${/}cleanup-e2e-test-data.js
+    ${workspace_path}=    Set Variable    ${CURDIR}${/}..${/}..${/}..${/}..
+    
+    # Get environment variables (will be passed from CI environment)
+    ${supabase_url}=    Get Environment Variable    NEXT_PUBLIC_SUPABASE_URL    default_value=
+    ${supabase_key}=    Get Environment Variable    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY    default_value=
+    
+    # Run cleanup script with environment variables
+    &{env_vars}=    Create Dictionary    NEXT_PUBLIC_SUPABASE_URL=${supabase_url}    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${supabase_key}
+    ${result}=    Run Process    node    ${script_path}    cwd=${workspace_path}    env=&{env_vars}    shell=True
+    Log    Cleanup script output: ${result.stdout}
+    Run Keyword If    ${result.rc} != 0    Log    Cleanup script failed with exit code ${result.rc}. Error: ${result.stderr}    WARN
+    Run Keyword If    ${result.rc} != 0    Log    Continuing test execution despite cleanup failure...    WARN

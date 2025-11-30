@@ -26,6 +26,9 @@ import { parseFile } from "@/lib/actions/parse";
 /* Contexts */
 import { useAuth } from "@/app/contexts/AuthContext";
 
+// TEMPORARY: Convert to markdown
+import { BlockNoteEditor } from "@blocknote/core";
+
 interface SelectOption {
   value: string;
   label: string;
@@ -362,6 +365,11 @@ export default function CreateNewReportClient({
         );
         reportFormData.append("type_id", formData.get("type_id") as string);
         reportFormData.append("content", editorContent);
+        
+        // TEMPORARY: Convert to markdown
+        const editor = BlockNoteEditor.create();
+        const markdown = await editor.blocksToMarkdownLossy(JSON.parse(editorContent));
+        reportFormData.append("markdown", markdown)
 
         // updateReport will redirect on success
         await updateReport(reportId, reportFormData);
@@ -413,6 +421,11 @@ export default function CreateNewReportClient({
 
         // Editor content is guaranteed to be valid by client-side validation
         reportFormData.append("content", editorContent);
+
+        // TEMPORARY: Convert to markdown
+        const editor = BlockNoteEditor.create();
+        const markdown = await editor.blocksToMarkdownLossy(JSON.parse(editorContent));
+        reportFormData.append("markdown", markdown)
 
         // Use authenticated user's ID as therapist_id
         reportFormData.append("therapist_id", user!.id);

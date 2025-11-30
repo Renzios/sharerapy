@@ -27,7 +27,7 @@ export function TherapistProfileProvider({
 }: {
   children: ReactNode;
 }) {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const [therapist, setTherapist] = useState<Tables<"therapists"> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refetchTrigger, setRefetchTrigger] = useState(0);
@@ -38,8 +38,12 @@ export function TherapistProfileProvider({
 
   useEffect(() => {
     const loadTherapist = async () => {
-      /* If not authenticated, don't try to fetch */
+      if (isAuthLoading) {
+        setIsLoading(true);
+        return;
+      }
       if (!isAuthenticated) {
+        /* If not authenticated, don't try to fetch */
         setTherapist(null);
         setIsLoading(false);
         return;
@@ -64,7 +68,7 @@ export function TherapistProfileProvider({
     };
 
     loadTherapist();
-  }, [user?.id, isAuthenticated, refetchTrigger]);
+  }, [user?.id, isAuthenticated, refetchTrigger, isAuthLoading]);
 
   return (
     <TherapistProfileContext.Provider value={{ therapist, isLoading, refetch }}>

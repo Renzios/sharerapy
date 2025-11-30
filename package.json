@@ -1,6 +1,6 @@
 {
   "name": "sharerapy",
-  "version": "0.1.0",
+  "version": "2025.11.30-beta",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -14,6 +14,8 @@
     "test:coverage": "jest --coverage --passWithNoTests"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.73",
+    "@ai-sdk/rsc": "^1.0.103",
     "@blocknote/core": "^0.41.1",
     "@blocknote/mantine": "^0.41.1",
     "@blocknote/react": "^0.41.1",
@@ -27,6 +29,7 @@
     "@react-pdf/renderer": "^4.3.1",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.58.0",
+    "ai": "^5.0.104",
     "date-fns": "^4.1.0",
     "openai": "^6.8.1",
     "react-dropzone": "^14.3.8",

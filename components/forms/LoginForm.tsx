@@ -1,3 +1,5 @@
+"use client";
+
 import Input from "@/components/general/Input";
 import Button from "@/components/general/Button";
 import Toast from "@/components/general/Toast";
@@ -5,8 +7,10 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { login } from "@/lib/actions/auth";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/contexts/AuthContext"; // Import useAuth
 
 export default function LoginForm() {
+  const { checkSession } = useAuth(); // Destructure checkSession
   const greetings = ["Hello!", "Kamusta!", "안녕하세요!"];
   const [currentGreeting, setCurrentGreeting] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
@@ -42,7 +46,9 @@ export default function LoginForm() {
       formData.append("password", password);
 
       await login(formData);
-      // so the toast can show success true, it uses the loginSuccess param
+
+      await checkSession();
+
       router.push("/?loginSuccess=true");
       router.refresh();
     } catch (error) {
@@ -68,13 +74,13 @@ export default function LoginForm() {
 
       <div className="bg-background h-screen w-full grid grid-cols-1 lg:grid-cols-2">
         <div className="h-full w-full flex flex-col">
-          <div className="flex items-center h-auto px-5 lg:px-8 py-4 lg:h-[5.3125rem]">
+          <div className="flex items-center h-auto px-5 lg:px-8 py-4 lg:h-21.25">
             <Image
               src="/logo.png"
               alt="Sharerapy Logo"
               width={40}
               height={40}
-              className="w-10 h-10 lg:w-[2.5rem] lg:h-[2.5rem] hover:cursor-pointer"
+              className="w-10 h-10 lg:w-10 lg:h-10 hover:cursor-pointer"
             />
             <h1 className="hidden lg:block font-Noto-Sans text-[1.5rem] font-black ml-2.5">
               <span className="text-primary">share</span>rapy.
@@ -135,7 +141,7 @@ export default function LoginForm() {
             quality={90}
           />
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-secondary/30 from-[26%] to-primary/80 to-[86%]" />
+          <div className="absolute inset-0 bg-linear-to-b from-secondary/30 from-[26%] to-primary/80 to-[86%]" />
 
           {/* Text content */}
           <div className="absolute inset-0 flex flex-col justify-end text-white px-16 pb-8">
