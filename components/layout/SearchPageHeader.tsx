@@ -1,7 +1,6 @@
 import Search from "@/components/general/Search";
 import Button from "@/components/general/Button";
 import Filter from "@mui/icons-material/Tune";
-import Settings from "@mui/icons-material/Settings";
 import Link from "next/link";
 import Select, { SingleValue } from "react-select";
 
@@ -35,19 +34,12 @@ interface SearchPageHeaderProps {
   };
 }
 
-/**
- * The SearchPageHeader component is the header for the search pages (all, patients, reports, therapists).
- * It contains the search bar, filter and display options, as well as navigation buttons.
- * The layout adapts responsively between mobile and desktop views.
- *
- * @param props - The search page header props
- */
 export default function SearchPageHeader({
   searchValue = "",
   onSearchChange,
   onSearch,
   currentPage = "all",
-  showNavButtons = true, // <-- Default value is set here
+  showNavButtons = true,
   onAdvancedFiltersClick,
   advancedFiltersDisabled = false,
   sortOptions,
@@ -56,27 +48,20 @@ export default function SearchPageHeader({
   sortDisabled = false,
   ids,
 }: SearchPageHeaderProps) {
-  /**
-   * Custom styling function for React Select components.
-   * Provides consistent design that matches the application's design system.
-   *
-   * @param isDisabled - Whether the select should appear disabled
-   * @returns Styling object for React Select components
-   */
   const selectStyles = (isDisabled: boolean) => ({
     control: (base: object) => ({
       ...base,
       minWidth: "7rem",
       width: "100%",
-      minHeight: "1.875rem",
+      minHeight: "1.875rem", // Matching this height
       height: "1.875rem",
       fontFamily: "'Noto Sans', sans-serif",
-      fontSize: "0.6875rem",
+      fontSize: "0.6875rem", // Matching this font size
       backgroundColor: isDisabled ? "#f9fafb" : "white",
       border: `1px solid var(--border-bordergray, ${
         isDisabled ? "#d1d5db" : "#e5e7eb"
       })`,
-      borderRadius: "0.5rem",
+      borderRadius: "0.5rem", // Matching this radius
       boxShadow: "none",
       cursor: isDisabled ? "not-allowed" : "pointer",
       "&:hover": {
@@ -152,6 +137,7 @@ export default function SearchPageHeader({
           />
         </div>
 
+        {/* Mobile Filter Button */}
         <button
           id={ids?.mobileFiltersButtonId}
           onClick={onAdvancedFiltersClick}
@@ -173,7 +159,6 @@ export default function SearchPageHeader({
       </div>
 
       <div className="h-1/2 w-full flex items-center gap-2 lg:gap-4 min-w-0 overflow-hidden">
-        {/* --- Conditional Rendering Wrapper --- */}
         {showNavButtons && (
           <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
             <Link
@@ -251,6 +236,22 @@ export default function SearchPageHeader({
         )}
 
         <div className="hidden lg:flex items-center gap-1 lg:gap-2 min-w-0 shrink ml-auto">
+          <Button
+            variant="outline"
+            height="1.875rem"
+            fontSize="text-[0.6875rem]"
+            onClick={onAdvancedFiltersClick}
+            disabled={advancedFiltersDisabled}
+            className={`
+               w-28 lg:w-32 xl:w-40 2xl:w-47.5 min-w-28 shrink
+               border-bordergray
+               flex items-center justify-between px-2
+               ${advancedFiltersDisabled ? "opacity-50 cursor-not-allowed" : ""}
+            `}
+          >
+            <span>Filters</span>
+          </Button>
+
           {!sortDisabled && (
             <Select
               id={ids?.sortSelectId}

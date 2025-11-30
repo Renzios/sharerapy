@@ -1,21 +1,26 @@
 "use client";
 
-/* React Hooks & NextJS Utilities */
 import { useState, useTransition, useCallback } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { SingleValue } from "react-select";
 
 /* Components */
 import SearchPageHeader from "@/components/layout/SearchPageHeader";
 import PatientCard, { PatientCardData } from "@/components/cards/PatientCard";
 import Pagination from "@/components/general/Pagination";
+import Modal from "@/components/general/Modal";
+import PatientFilters from "@/components/filters/PatientFilters";
 
-/* Types */
-import { SingleValue } from "react-select";
+interface Option {
+  value: string;
+  label: string;
+}
 
 interface SearchPatientsClientProps {
   initialPatients: PatientCardData[];
   totalPages: number;
   initialSearchTerm?: string;
+  countryOptions: Option[];
 }
 
 const patientSortOptions = [
@@ -27,6 +32,7 @@ export default function SearchPatientsClient({
   initialPatients,
   totalPages,
   initialSearchTerm = "",
+  countryOptions,
 }: SearchPatientsClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -34,6 +40,8 @@ export default function SearchPatientsClient({
 
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [isPending, startTransition] = useTransition();
+
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const currentSortParam = searchParams.get("sort");
   const sortOption =
@@ -45,7 +53,6 @@ export default function SearchPatientsClient({
   const updateURLParams = useCallback(
     (changes: { [key: string]: string | number | null }) => {
       const params = new URLSearchParams(searchParams.toString());
-
       Object.entries(changes).forEach(([key, value]) => {
         if (value === null || value === "") {
           params.delete(key);
@@ -53,7 +60,6 @@ export default function SearchPatientsClient({
           params.set(key, String(value));
         }
       });
-
       startTransition(() => {
         router.push(`${pathname}?${params.toString()}`, { scroll: false });
       });
@@ -88,10 +94,20 @@ export default function SearchPatientsClient({
         sortOptions={patientSortOptions}
         sortValue={sortOption}
         onSortChange={handleSortChange}
-        onAdvancedFiltersClick={() => {
-          console.log("Open advanced patient filters popup");
-        }}
+        onAdvancedFiltersClick={() => setIsFilterModalOpen(true)}
       />
+
+      <Modal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        title="Filter Patients"
+      >
+        <PatientFilters
+          countryOptions={countryOptions}
+          onClose={() => setIsFilterModalOpen(false)}
+          onUpdateParams={updateURLParams}
+        />
+      </Modal>
 
       <div className="mt-6">
         <div
