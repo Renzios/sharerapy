@@ -34,7 +34,6 @@ export default async function SearchReportsPage({
 }) {
   const params = await searchParams;
   const searchQuery = params.q || "";
-  const showSuccessToast = params.success === "true";
   const showDeletedToast = params.deleted === "true";
   const currentPage = Number(params.p) || 1;
   const sortQuery = params.sort || "dateDescending";
@@ -49,12 +48,6 @@ export default async function SearchReportsPage({
     ascending: ascending,
   });
 
-  const languages = await readLanguages();
-  const languageOptions = languages.map((language) => ({
-    value: language.code,
-    label: language.language,
-  }));
-
   const totalPages = Math.ceil((count || 0) / REPORTS_PER_PAGE);
 
   return (
@@ -62,9 +55,7 @@ export default async function SearchReportsPage({
       initialReports={data || []}
       totalPages={totalPages}
       initialSearchTerm={searchQuery}
-      showSuccessToast={showSuccessToast}
       showDeletedToast={showDeletedToast}
-      languageOptions={languageOptions}
     />
   );
 }
