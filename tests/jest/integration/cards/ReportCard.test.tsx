@@ -148,7 +148,7 @@ jest.mock("@mui/icons-material/MoreHoriz", () => {
   };
 });
 
-import ReportCard from "../../../components/cards/ReportCard";
+import ReportCard from "../../../../components/cards/ReportCard";
 
 describe("ReportCard", () => {
   beforeEach(() => {

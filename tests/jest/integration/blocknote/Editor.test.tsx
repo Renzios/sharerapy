@@ -59,7 +59,7 @@ jest.mock("@blocknote/mantine", () => ({
 jest.mock("@blocknote/core/fonts/inter.css", () => ({}));
 jest.mock("@blocknote/mantine/style.css", () => ({}));
 
-import Editor, { EditorRef } from "../../../components/blocknote/Editor";
+import Editor, { EditorRef } from "../../../../components/blocknote/Editor";
 
 describe("Editor", () => {
   beforeEach(() => {
