@@ -1,4 +1,6 @@
+import Link from "next/link";
 import SearchIcon from "@mui/icons-material/Search";
+import Button from "@/components/general/Button";
 
 interface SearchProps {
   size?: "full" | string;
@@ -7,6 +9,9 @@ interface SearchProps {
   onSearch?: (value: string) => void;
   className?: string;
   id?: string;
+  aiMode?: boolean;
+  placeholder?: string;
+  icon?: React.ReactNode;
 }
 
 export default function Search({
@@ -16,6 +21,9 @@ export default function Search({
   onSearch,
   className = "",
   id,
+  aiMode = false,
+  placeholder = "Search...",
+  icon = <SearchIcon className="w-5 h-5 hover:cursor-pointer" />,
 }: SearchProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -53,12 +61,13 @@ export default function Search({
           absolute left-3
           flex items-center justify-center
           w-6 h-6
-          text-gray-400 hover:text-primary
+          text-darkgray hover:text-primary
           transition-colors duration-200
+          z-10
         "
         aria-label="Search"
       >
-        <SearchIcon className="w-5 h-5 hover:cursor-pointer" />
+        {icon}
       </button>
 
       <input
@@ -68,17 +77,34 @@ export default function Search({
         value={value}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        placeholder="Search"
-        className="
+        placeholder={placeholder}
+        className={`
           w-full h-full
-          pl-12 pr-4
+          pl-12 
+          ${aiMode ? "pr-28" : "pr-4"} 
           bg-white border border-bordergray
           rounded-full
-          text-sm 
+          text-base 
           focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
           transition-colors duration-200
-        "
+        `}
       />
+
+      {aiMode && (
+        <div className="absolute right-1.5 top-1/2 -translate-y-1/2 z-10">
+          <Link href="/ai-mode">
+            <Button
+              variant="outline"
+              className="text-xs h-8 px-3"
+              shape="pill"
+              aiMode={true}
+              onClick={() => onSearch?.(value || "")}
+            >
+              AI Mode
+            </Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
