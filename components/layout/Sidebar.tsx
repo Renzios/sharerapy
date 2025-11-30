@@ -19,7 +19,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import PatientIcon from "@mui/icons-material/PersonalInjury";
 import ReportIcon from "@mui/icons-material/Article";
 import TherapistIcon from "@mui/icons-material/People";
+import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
+import UploadIcon from "@mui/icons-material/Upload";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -62,7 +64,21 @@ export default function Sidebar({
     {
       title: "Workspace",
       items: [
-        { name: "Create Report", href: "/reports/new", icon: <CreateIcon /> },
+        {
+          name: "Create Patient",
+          href: "/profile/patient/new",
+          icon: <AddIcon />,
+        },
+        {
+          name: "Create Report",
+          href: "/reports/new/create",
+          icon: <CreateIcon />,
+        },
+        {
+          name: "Upload Report",
+          href: "/reports/new/upload",
+          icon: <UploadIcon />,
+        },
         { name: "AI Mode", href: "/ai-mode", icon: <AutoAwesomeIcon /> },
       ],
     },
