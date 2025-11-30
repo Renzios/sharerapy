@@ -1,7 +1,7 @@
 "use client";
 
 /* React Hooks & NextJS Utilities */
-import { useState, useRef, useTransition, useEffect } from "react";
+import { useState, useRef, useEffect, useTransition } from "react";
 
 /* Components */
 import Button from "@/components/general/Button";
@@ -9,7 +9,7 @@ import Toast from "@/components/general/Toast";
 import FileUpload from "@/components/forms/FileUpload";
 import PatientDetails from "@/components/forms/PatientDetails";
 import ReportDetails from "@/components/forms/ReportDetails";
-import Select from "@/components/general/Select"; // Added Select for choosing patient
+import Select from "@/components/general/Select";
 import { Editor } from "@/components/blocknote/DynamicEditor";
 import { EditorRef } from "@/components/blocknote/Editor";
 
@@ -59,14 +59,6 @@ export default function CreateNewReportClient({
   languageOptions,
   typeOptions,
 }: CreateNewReportClientProps) {
-  // Find the existing patient data if in edit mode
-  const existingPatient =
-    mode === "edit" && existingReport
-      ? patients.find((p) => p.id === existingReport.patient_id)
-      : null;
-
-  // --- Patient State ---
-  // In Create mode, we select a patient. In Edit mode, it's pre-filled.
   const [selectedPatient, setSelectedPatient] = useState<SelectOption | null>(
     mode === "edit" && existingReport
       ? patientOptions.find((p) => p.value === existingReport.patient_id) ||
@@ -74,7 +66,6 @@ export default function CreateNewReportClient({
       : null
   );
 
-  // Patient Detail States (Controlled by selectedPatient)
   const [selectedCountry, setSelectedCountry] = useState<SelectOption | null>(
     null
   );
@@ -84,7 +75,6 @@ export default function CreateNewReportClient({
   const [selectedSex, setSelectedSex] = useState<SelectOption | null>(null);
   const [contactNumber, setContactNumber] = useState("");
 
-  // --- Report Details State ---
   const [title, setTitle] = useState(existingReport?.title || "");
   const [description, setDescription] = useState(
     existingReport?.description || ""
@@ -105,7 +95,6 @@ export default function CreateNewReportClient({
         : null
     );
 
-  // --- Editor & Form State ---
   const [editorContent, setEditorContent] = useState(
     existingReport?.content ? JSON.stringify(existingReport.content) : ""
   );
@@ -114,7 +103,6 @@ export default function CreateNewReportClient({
   const formRef = useRef<HTMLFormElement>(null);
   const editorRef = useRef<EditorRef>(null);
 
-  // --- Toast State ---
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error" | "info">(
@@ -122,8 +110,6 @@ export default function CreateNewReportClient({
   );
 
   const { user } = useAuth();
-
-  // --- Hydration Fix State ---
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -138,50 +124,6 @@ export default function CreateNewReportClient({
     setToastType(type);
     setToastVisible(true);
   };
-
-  // --- Effects ---
-
-  // Auto-fill patient details whenever selectedPatient changes
-  useEffect(() => {
-    if (selectedPatient) {
-      const patient = patients.find((p) => p.id === selectedPatient.value);
-      if (patient) {
-        setFirstName(patient.first_name || "");
-        setLastName(patient.last_name || "");
-        setBirthday(patient.birthdate || "");
-        setContactNumber(patient.contact_number || "");
-
-        // Map Sex
-        setSelectedSex(
-          patient.sex ? { value: patient.sex, label: patient.sex } : null
-        );
-
-        // Map Country
-        const countryOpt = patient.country_id
-          ? countryOptions.find(
-              (c) => c.value === patient.country_id!.toString()
-            )
-          : null;
-        setSelectedCountry(countryOpt || null);
-      }
-    } else {
-      // Clear fields if no patient is selected (only in create mode usually)
-      if (mode === "create") {
-        setFirstName("");
-        setLastName("");
-        setBirthday("");
-        setContactNumber("");
-        setSelectedSex(null);
-        setSelectedCountry(null);
-      }
-    }
-    // Dependency array includes patients and options to ensure updates if data loads late
-  }, [selectedPatient, patients, countryOptions, mode]);
-
-  // Initial load for Edit mode is handled by the initial state of selectedPatient,
-  // which triggers the useEffect above.
-
-  // --- Handlers ---
 
   const handleFileUpload = async (file: File) => {
     startTransition(async () => {
@@ -199,14 +141,41 @@ export default function CreateNewReportClient({
     });
   };
 
+  useEffect(() => {
+    if (selectedPatient) {
+      const patient = patients.find((p) => p.id === selectedPatient.value);
+      if (patient) {
+        setFirstName(patient.first_name || "");
+        setLastName(patient.last_name || "");
+        setBirthday(patient.birthdate || "");
+        setContactNumber(patient.contact_number || "");
+        setSelectedSex(
+          patient.sex ? { value: patient.sex, label: patient.sex } : null
+        );
+        const countryOpt = patient.country_id
+          ? countryOptions.find(
+              (c) => c.value === patient.country_id!.toString()
+            )
+          : null;
+        setSelectedCountry(countryOpt || null);
+      }
+    } else {
+      if (mode === "create") {
+        setFirstName("");
+        setLastName("");
+        setBirthday("");
+        setContactNumber("");
+        setSelectedSex(null);
+        setSelectedCountry(null);
+      }
+    }
+  }, [selectedPatient, patients, countryOptions, mode]);
+
   const validateForm = (): boolean => {
-    // 1. Patient Validation
     if (!selectedPatient) {
       showToast("Please choose a patient", "error");
       return false;
     }
-
-    // 2. Report Details Validation
     if (!title.trim()) {
       showToast("Please enter report title", "error");
       return false;
@@ -223,8 +192,6 @@ export default function CreateNewReportClient({
       showToast("Please select therapy type", "error");
       return false;
     }
-
-    // 3. Content Validation
     if (
       !editorContent ||
       editorContent.trim() === "" ||
@@ -234,12 +201,13 @@ export default function CreateNewReportClient({
       return false;
     }
 
-    // Helper to check for empty blocks
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const isBlockNotEmpty = (block: any): boolean => {
       if (["table", "divider", "image", "file"].includes(block.type))
         return true;
       if (block.content) {
         if (Array.isArray(block.content)) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           return block.content.some((item: any) => {
             if (item.type === "link") return true;
             return item.text && item.text.trim().length > 0;
@@ -252,10 +220,10 @@ export default function CreateNewReportClient({
     };
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const parsedContent = JSON.parse(editorContent) as Array<any>;
       if (Array.isArray(parsedContent)) {
-        const hasContent = parsedContent.some(isBlockNotEmpty);
-        if (!hasContent) {
+        if (!parsedContent.some(isBlockNotEmpty)) {
           showToast("Please enter report content", "error");
           return false;
         }
@@ -274,7 +242,6 @@ export default function CreateNewReportClient({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!validateForm()) return;
     if (mode === "create" && !user?.id) {
       showToast("You must be logged in to create a report", "error");
@@ -285,7 +252,6 @@ export default function CreateNewReportClient({
     const formData = new FormData(e.currentTarget);
 
     try {
-      // Prepare common data
       const reportFormData = new FormData();
       reportFormData.append("title", formData.get("title") as string);
       reportFormData.append(
@@ -299,7 +265,6 @@ export default function CreateNewReportClient({
       reportFormData.append("type_id", formData.get("type_id") as string);
       reportFormData.append("content", editorContent);
 
-      // Generate markdown
       const editor = BlockNoteEditor.create();
       const markdown = await editor.blocksToMarkdownLossy(
         JSON.parse(editorContent)
@@ -307,11 +272,8 @@ export default function CreateNewReportClient({
       reportFormData.append("markdown", markdown);
 
       if (mode === "edit" && reportId) {
-        // Update
         await updateReport(reportId, reportFormData);
       } else {
-        // Create
-        // We guarantee selectedPatient is not null due to validateForm
         reportFormData.append("patient_id", selectedPatient!.value);
         reportFormData.append("therapist_id", user!.id);
         await createReport(reportFormData);
@@ -321,7 +283,6 @@ export default function CreateNewReportClient({
         const digest = (error as { digest?: string }).digest;
         if (digest?.startsWith("NEXT_REDIRECT")) throw error;
       }
-
       console.error("Error submitting form:", error);
       showToast(
         `Error processing report: ${
@@ -335,7 +296,7 @@ export default function CreateNewReportClient({
 
   const handleClearForm = () => {
     if (mode === "create") {
-      setSelectedPatient(null); // This triggers useEffect to clear patient fields
+      setSelectedPatient(null);
     }
     setTitle("");
     setDescription("");
@@ -345,18 +306,21 @@ export default function CreateNewReportClient({
     formRef.current?.reset();
   };
 
-  // Prevent hydration error from react-select by not rendering until mounted
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
     <div className="flex flex-col gap-y-8 mb-30">
-      {/* File Upload */}
       <div className="flex flex-col gap-y-4">
-        <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
-          Upload
-        </h1>
+        <div className="flex flex-col gap-y-2">
+          {" "}
+          <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
+            Upload
+          </h1>
+          <p className="font-Noto-Sans text-sm text-darkgray">
+            You may upload an existing report in PDF format to autofill the
+            report content section.{" "}
+          </p>
+        </div>
         <FileUpload
           id="create-edit-report-file-upload"
           onFileUpload={handleFileUpload}
@@ -366,16 +330,11 @@ export default function CreateNewReportClient({
 
       <form ref={formRef} onSubmit={handleSubmit} noValidate>
         <div className="flex flex-col gap-y-8">
-          {/* Patient Details Section */}
+          {/* Patient Details */}
           <div className="flex flex-col gap-y-4">
-            <div className="flex items-center justify-between">
-              <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
-                Patient Details
-              </h1>
-              {/* Optional: Add a link to create new patient if needed */}
-            </div>
-
-            {/* Patient Selector - Outside PatientDetails component */}
+            <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
+              Patient Details
+            </h1>
             <div className="w-full">
               <Select
                 label="Choose Patient"
@@ -384,12 +343,10 @@ export default function CreateNewReportClient({
                 value={selectedPatient}
                 onChange={setSelectedPatient}
                 placeholder="Search for a patient..."
-                disabled={mode === "edit"} // Disabled in edit mode? Usually you can't change patient of existing report
+                disabled={mode === "edit"}
                 required
               />
             </div>
-
-            {/* Read-Only Details */}
             <PatientDetails
               countryOptions={countryOptions}
               firstName={firstName}
@@ -404,11 +361,10 @@ export default function CreateNewReportClient({
               setSelectedCountry={setSelectedCountry}
               selectedSex={selectedSex}
               setSelectedSex={setSelectedSex}
-              disabled={true} // Always disabled here as we populate from selection
+              disabled={true}
             />
           </div>
 
-          {/* Report Details */}
           <ReportDetails
             languageOptions={languageOptions}
             typeOptions={typeOptions}
@@ -428,7 +384,6 @@ export default function CreateNewReportClient({
             }}
           />
 
-          {/* Content Editor */}
           <div className="flex flex-col gap-y-4">
             <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
               Report Content
@@ -440,8 +395,6 @@ export default function CreateNewReportClient({
               value={editorContent}
             />
           </div>
-
-          {/* Action Buttons */}
           <div className="flex gap-x-4 justify-end">
             {mode === "create" && (
               <Button
