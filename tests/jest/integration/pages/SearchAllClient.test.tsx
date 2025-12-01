@@ -6,6 +6,8 @@ import userEvent from "@testing-library/user-event";
 const pushMock = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
+  usePathname: () => "/search",
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 // Mock next/link to call the pushMock when clicked (no require(), typed props)
@@ -93,22 +95,7 @@ jest.mock("@/components/cards/TherapistCard", () => {
   return Component;
 });
 
-// Mock fetch actions used by the component so handleSearch is deterministic
-const mockFetchPatients = jest.fn();
-const mockFetchReports = jest.fn();
-const mockFetchTherapists = jest.fn();
 
-jest.mock("@/app/(with-sidebar)/search/patients/actions", () => ({
-  fetchPatients: () => mockFetchPatients(),
-}));
-
-jest.mock("@/app/(with-sidebar)/search/reports/actions", () => ({
-  fetchReports: () => mockFetchReports(),
-}));
-
-jest.mock("@/app/(with-sidebar)/search/therapists/actions", () => ({
-  fetchTherapists: () => mockFetchTherapists(),
-}));
 
 describe("SearchAllClient integration", () => {
   beforeEach(() => {
@@ -230,95 +217,7 @@ describe("SearchAllClient integration", () => {
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/reports/rep-1"));
   });
 
-  it("performs search and updates lists using the fetch actions", async () => {
-    // Prepare mocked fetch results
-    mockFetchPatients.mockResolvedValueOnce({
-      success: true,
-      data: [
-        {
-          id: "pat-2",
-          name: "Alice S",
-          first_name: "Alice",
-          last_name: "S",
-          contact_number: "",
-          country_id: 2,
-          country: { country: "Y" },
-          sex: "Female",
-          birthdate: "1990-01-01",
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          reports: [{ type: { id: 2, type: "TypeA" } }],
-        },
-      ],
-    });
-
-    mockFetchReports.mockResolvedValueOnce({
-      success: true,
-      data: [
-        {
-          id: "rep-2",
-          title: "Report Two",
-          description: "d",
-          content: [],
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          language_id: 1,
-          patient_id: "pat-2",
-          therapist_id: "ther-2",
-          type_id: 2,
-          therapist: {
-            id: "ther-2",
-            name: "Therapist Two",
-            first_name: "X",
-            last_name: "Y",
-            picture: "",
-            bio: "",
-            age: 35,
-            clinic_id: 2,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            clinic: { clinic: "C", country_id: 2, id: 2, country: { country: "Y", id: 2 } },
-          },
-          type: { id: 2, type: "Type" },
-          language: { id: 1, code: "en", language: "English" },
-          patient: {
-            id: "pat-2",
-            name: "Alice S",
-            first_name: "Alice",
-            last_name: "S",
-            contact_number: "",
-            country_id: 2,
-            country: { country: "Y", id: 2 },
-            sex: "Female" as const,
-            birthdate: "1990-01-01",
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            reports: [{ type: { id: 2, type: "TypeA" } }],
-          },
-        },
-      ],
-    });
-
-    mockFetchTherapists.mockResolvedValueOnce({
-      success: true,
-      data: [
-        {
-          id: "ther-2",
-          name: "Therapist Two",
-          first_name: "Therapist",
-          last_name: "Two",
-          picture: "",
-          bio: "Bio",
-          age: 35,
-          clinic_id: 2,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          clinic: { clinic: "Z", country_id: 2, id: 2, country: { country: "Y", id: 2 } },
-          reports: [],
-        },
-      ],
-    });
-
+  it("performs search and updates URL with search query", async () => {
     render(
       <SearchAllClient
         initialPatients={initialPatients}
@@ -328,17 +227,18 @@ describe("SearchAllClient integration", () => {
     );
 
     // Use the Search input in the header
-  // Query by role to avoid relying on placeholder text (more robust)
-  const input = screen.getByRole("textbox") as HTMLInputElement;
+    // Query by role to avoid relying on placeholder text (more robust)
+    const input = screen.getByRole("textbox") as HTMLInputElement;
     await userEvent.clear(input);
     await userEvent.type(input, "Alice");
     // Press Enter to trigger onSearch
     await userEvent.keyboard("{Enter}");
 
-    // The mocked fetches should be invoked and new items rendered
-    await waitFor(() => expect(mockFetchPatients).toHaveBeenCalled());
-    await waitFor(() => expect(screen.getByText("Alice S")).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText("Report Two")).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText("Therapist Two")).toBeInTheDocument());
+    // Verify router.push was called with the search query parameter
+    await waitFor(() => {
+      expect(pushMock).toHaveBeenCalled();
+      const lastCall = pushMock.mock.calls[pushMock.mock.calls.length - 1][0];
+      expect(lastCall).toContain("q=Alice");
+    });
   });
 });

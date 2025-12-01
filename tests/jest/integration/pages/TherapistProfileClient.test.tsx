@@ -15,10 +15,6 @@ jest.mock("next/navigation", () => {
   };
 });
 
-jest.mock("@/app/(with-sidebar)/search/reports/actions", () => ({
-  fetchReports: jest.fn(),
-}));
-
 jest.mock("@/lib/supabase/client", () => ({
   createClient: jest.fn(() => ({
     auth: {
@@ -36,7 +32,6 @@ jest.mock("@/lib/client/therapists", () => ({
 
 // Now import the components after mocks are set up
 import TherapistProfileClient from "@/components/client-pages/TherapistProfileClient";
-import { fetchReports as mockFetchReports } from "@/app/(with-sidebar)/search/reports/actions";
 import { AuthProvider } from "@/app/contexts/AuthContext";
 import { TherapistProfileProvider } from "@/app/contexts/TherapistProfileContext";
 
@@ -379,12 +374,6 @@ describe("TherapistProfileClient integration", () => {
       toString: () => searchParams.toString(),
     });
 
-    (mockFetchReports as jest.Mock).mockResolvedValue({
-      success: true,
-      data: initialReports,
-      totalPages: 2,
-    });
-
     // avoid scroll side-effects
     (window as unknown as { scrollTo?: jest.Mock }).scrollTo = jest.fn();
   });
@@ -411,45 +400,8 @@ describe("TherapistProfileClient integration", () => {
     expect(screen.getByTestId("pagination")).toBeInTheDocument();
   });
 
-  it("performs a search: updates reports via fetchReports and updates URL via router.push", async () => {
-    const newReports: ReportMinimal[] = [
-      {
-        id: "r-new",
-        title: "New Report",
-        content: {},
-        created_at: "2022-01-01",
-        description: "New description",
-        language_id: 1,
-        patient_id: "p3",
-        therapist_id: "ther-1",
-        type_id: 1,
-        updated_at: "2022-01-01",
-        therapist,
-        type: { id: 1, type: "Type" },
-        language: { id: 1, language: "English", code: "en" },
-        patient: {
-          id: "p3",
-          first_name: "Patient",
-          last_name: "Three",
-          name: "Patient Three",
-          birthdate: "2000-01-01",
-          contact_number: "1234567890",
-          country_id: 1,
-          created_at: "2020-01-01",
-          updated_at: "2020-01-01",
-          sex: "Male",
-          country: { country: "Test Country", id: 1 },
-        },
-      },
-    ];
-
-    (mockFetchReports as jest.Mock).mockResolvedValueOnce({
-      success: true,
-      data: newReports,
-      totalPages: 1,
-    });
-  
-  render(
+  it("performs a search: updates URL via router.push", async () => {
+    render(
       <TestWrapper>
         <TherapistProfileClient
           therapist={therapist}
@@ -465,18 +417,14 @@ describe("TherapistProfileClient integration", () => {
     fireEvent.click(screen.getByTestId("search-btn"));
 
     await waitFor(() => {
-      // fetchReports should have been called
-      expect(mockFetchReports).toHaveBeenCalled();
+      expect(pushMock).toHaveBeenCalled();
+      const lastCall = pushMock.mock.calls[pushMock.mock.calls.length - 1][0];
+      expect(lastCall).toContain("q=searched-term");
+      expect(lastCall).toContain("p=1");
     });
-
-    // new report appears
-    await waitFor(() => expect(screen.getByTestId("report-r-new")).toBeInTheDocument());
   });
 
-  it("changes sort and page: triggers fetch and updates list", async () => {
-    // build a sorted copy of initial reports for the mocked response
-    const sortedReports = [...initialReports].sort((a, b) => a.title.localeCompare(b.title));
-
+  it("changes sort and page: updates URL via router.push", async () => {
     render(
       <TestWrapper>
         <TherapistProfileClient
@@ -489,47 +437,32 @@ describe("TherapistProfileClient integration", () => {
       </TestWrapper>
     );
 
-    // change sort
-    // when the user changes sort the component will call fetchReports; prepare the mock response
-    (mockFetchReports as jest.Mock).mockResolvedValueOnce({
-      success: true,
-      data: sortedReports,
-      totalPages: 2,
-    });
-
     // change sort via mocked select
     fireEvent.change(screen.getByTestId("mock-sort-select"), {
       target: { value: "titleAscending" },
     });
 
-    await waitFor(() => expect(mockFetchReports).toHaveBeenCalled());
-
-    // change page using mocked Pagination component
-    (mockFetchReports as jest.Mock).mockResolvedValueOnce({
-      success: true,
-      data: [initialReports[0]],
-      totalPages: 2,
+    await waitFor(() => {
+      expect(pushMock).toHaveBeenCalled();
+      const lastCall = pushMock.mock.calls[pushMock.mock.calls.length - 1][0];
+      expect(lastCall).toContain("sort=titleAscending");
+      expect(lastCall).toContain("p=1");
     });
 
-  // wait for our mocked Pagination button to be present, then click it
-  await waitFor(() => expect(screen.getByTestId("page-1")).toBeInTheDocument());
-  fireEvent.click(screen.getByTestId("page-1"));
+    // wait for our mocked Pagination button to be present, then click it
+    await waitFor(() => expect(screen.getByTestId("page-1")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("page-1"));
 
-  await waitFor(() => expect(mockFetchReports).toHaveBeenCalled());
-  // scrollTo should be called when page changes
-  expect((window as unknown as { scrollTo?: jest.Mock }).scrollTo).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(pushMock).toHaveBeenCalled();
+      const lastCall = pushMock.mock.calls[pushMock.mock.calls.length - 1][0];
+      expect(lastCall).toContain("p=1");
+    });
+    // scrollTo should be called when page changes
+    expect((window as unknown as { scrollTo?: jest.Mock }).scrollTo).toHaveBeenCalled();
   });
 
-  it ("changes language: triggers fetch and updates list", async () => {
-    const langReports = [
-      { ...initialReports[0], id: "r-lang" }, // ensure deterministic content
-    ];
-    (mockFetchReports as jest.Mock).mockResolvedValueOnce({
-        success: true,
-        data: langReports,
-        totalPages: 1,
-    }); 
-
+  it ("changes language: updates select value", async () => {
     render(
       <TestWrapper>
         <TherapistProfileClient
@@ -547,36 +480,26 @@ describe("TherapistProfileClient integration", () => {
       target: { value: "es" },
     });
 
-      // the select's value should update; the component does not call fetchReports on language change
-      await waitFor(() =>
-        expect((screen.getByTestId("mock-language-select") as HTMLSelectElement).value).toBe("es")
-      );
+    // the select's value should update
+    await waitFor(() =>
+      expect((screen.getByTestId("mock-language-select") as HTMLSelectElement).value).toBe("es")
+    );
 
     // existing reports should remain rendered
     expect(screen.getByTestId("report-r-alpha")).toBeInTheDocument();
     expect(screen.getByTestId("report-r-zulu")).toBeInTheDocument();
   });
 
-  it("getSortParams cases map to correct fetch parameters", async () => {
-    const cases: Record<
-      string,
-      { column: "title" | "created_at"; ascending: boolean }
-    > = {
-      titleAscending: { column: "title", ascending: true },
-      titleDescending: { column: "title", ascending: false },
-      dateAscending: { column: "created_at", ascending: true },
-      dateDescending: { column: "created_at", ascending: false },
-    };
+  it("sort options update URL with correct sort parameter", async () => {
+    const sortValues = [
+      "titleAscending",
+      "titleDescending",
+      "dateAscending",
+      "dateDescending",
+    ];
 
-    for (const [value, expected] of Object.entries(cases)) {
-      // prepare a mock response for each change
-      (mockFetchReports as jest.Mock).mockResolvedValueOnce({
-        success: true,
-        data: initialReports,
-        totalPages: 2,
-      });
-
-  const { unmount } = render(
+    for (const value of sortValues) {
+      const { unmount } = render(
         <TestWrapper>
           <TherapistProfileClient
             therapist={therapist}
@@ -592,43 +515,15 @@ describe("TherapistProfileClient integration", () => {
         target: { value },
       });
 
-      await waitFor(() => expect(mockFetchReports).toHaveBeenCalled());
-
-      const lastCall = (mockFetchReports as jest.Mock).mock.calls.pop();
-      const params = lastCall ? lastCall[0] : undefined;
-      expect(params).toBeDefined();
-      expect(params.column).toBe(expected.column);
-      expect(params.ascending).toBe(expected.ascending);
+      await waitFor(() => {
+        expect(pushMock).toHaveBeenCalled();
+        const lastCall = pushMock.mock.calls[pushMock.mock.calls.length - 1][0];
+        expect(lastCall).toContain(`sort=${value}`);
+      });
 
       unmount();
+      jest.clearAllMocks();
     }
 
-    // default case: unknown option should fall back to dateDescending (created_at, ascending: false)
-    (mockFetchReports as jest.Mock).mockResolvedValueOnce({
-      success: true,
-      data: initialReports,
-      totalPages: 2,
-    });
-  const { unmount: u2 } = render(
-      <TestWrapper>
-        <TherapistProfileClient
-          therapist={therapist}
-          initialReports={initialReports}
-          totalPages={2}
-          initialSearchTerm="initial"
-          languageOptions={languageOptions}
-        />
-      </TestWrapper>
-    );
-    fireEvent.change(screen.getByTestId("mock-sort-select"), {
-      target: { value: "unknown-option" },
-    });
-    await waitFor(() => expect(mockFetchReports).toHaveBeenCalled());
-    const lastCall2 = (mockFetchReports as jest.Mock).mock.calls.pop();
-    const params2 = lastCall2 ? lastCall2[0] : undefined;
-    expect(params2).toBeDefined();
-    expect(params2.column).toBe("created_at");
-    expect(params2.ascending).toBe(false);
-    u2();
   });
 });
