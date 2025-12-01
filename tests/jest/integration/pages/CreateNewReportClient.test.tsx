@@ -340,7 +340,7 @@ describe("CreateNewReportClient integration", () => {
     fireEvent.click(screen.getByTestId("set-editor"));
 
     // Submit the form without selecting a patient
-    const submitBtn = screen.getByText(/submit/i);
+    const submitBtn = screen.getByRole("button", { name: /create/i });
     fireEvent.click(submitBtn);
 
     // Should show error toast about choosing a patient
@@ -389,7 +389,7 @@ describe("CreateNewReportClient integration", () => {
     fireEvent.click(screen.getByTestId("set-editor"));
 
     // Submit the form
-    const submitBtn = screen.getByText(/submit/i);
+    const submitBtn = screen.getByRole("button", { name: /create/i });
     fireEvent.click(submitBtn);
     // Wait for createReport to be called (createPatient should not be called)
     expect(createPatient).not.toHaveBeenCalled();
@@ -436,7 +436,7 @@ describe("CreateNewReportClient integration", () => {
     // Set editor content using mock helper
     fireEvent.click(screen.getByTestId("set-editor"));
     // Submit the form
-    const submitBtn = screen.getByText(/submit/i);
+    const submitBtn = screen.getByRole("button", { name: /create/i });
     fireEvent.click(submitBtn);
     // Wait for createReport to be called (createPatient should not be called)
     await waitFor(() => expect(createReport).toHaveBeenCalled());
@@ -478,7 +478,7 @@ describe("CreateNewReportClient integration", () => {
     renderDefault();
     fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["title"]);
-    fireEvent.click(screen.getByText(/submit/i));
+    fireEvent.click(screen.getByRole("button", { name: /create/i }));
     const toast = await screen.findByTestId("toast");
     expect(toast).toHaveAttribute("data-visible", "true");
     expect(toast).toHaveTextContent("Please enter report title");
@@ -490,7 +490,7 @@ describe("CreateNewReportClient integration", () => {
     renderDefault();
     fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["description"]);
-    fireEvent.click(screen.getByText(/submit/i));
+    fireEvent.click(screen.getByRole("button", { name: /create/i }));
     const toast = await screen.findByTestId("toast");
     expect(toast).toHaveAttribute("data-visible", "true");
     expect(toast).toHaveTextContent("Please enter report description");
@@ -502,7 +502,7 @@ describe("CreateNewReportClient integration", () => {
     renderDefault();
     fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["language-select"]);
-    fireEvent.click(screen.getByText(/submit/i));
+    fireEvent.click(screen.getByRole("button", { name: /create/i }));
     const toast = await screen.findByTestId("toast");
     expect(toast).toHaveAttribute("data-visible", "true");
     expect(toast).toHaveTextContent("Please select report language");
@@ -514,7 +514,7 @@ describe("CreateNewReportClient integration", () => {
     renderDefault();
     fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["type-select"]);
-    fireEvent.click(screen.getByText(/submit/i));
+    fireEvent.click(screen.getByRole("button", { name: /create/i }));
     const toast = await screen.findByTestId("toast");
     expect(toast).toHaveAttribute("data-visible", "true");
     expect(toast).toHaveTextContent("Please select therapy type");
@@ -527,7 +527,7 @@ describe("CreateNewReportClient integration", () => {
     fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["editor"]);
 
-    fireEvent.click(screen.getByText(/submit/i));
+    fireEvent.click(screen.getByRole("button", { name: /create/i }));
 
     const toast = await screen.findByTestId("toast");
 
@@ -546,7 +546,7 @@ describe("CreateNewReportClient integration", () => {
     // set editor to invalid JSON
     fireEvent.change(screen.getByTestId("editor"), { target: { value: "not-a-json" } });
 
-    fireEvent.click(screen.getByText(/submit/i));
+    fireEvent.click(screen.getByRole("button", { name: /create/i }));
 
     const toast = await screen.findByTestId("toast");
     expect(toast).toHaveAttribute("data-visible", "true");
@@ -564,7 +564,7 @@ describe("CreateNewReportClient integration", () => {
     // JSON that parses but is not an array
     fireEvent.change(screen.getByTestId("editor"), { target: { value: JSON.stringify({ foo: "bar" }) } });
 
-    fireEvent.click(screen.getByText(/submit/i));
+    fireEvent.click(screen.getByRole("button", { name: /create/i }));
 
     const toast = await screen.findByTestId("toast");
     expect(toast).toHaveAttribute("data-visible", "true");
@@ -585,7 +585,7 @@ describe("CreateNewReportClient integration", () => {
 
     fireEvent.change(screen.getByTestId("editor"), { target: { value: emptyBlocks } });
 
-    fireEvent.click(screen.getByText(/submit/i));
+    fireEvent.click(screen.getByRole("button", { name: /create/i }));
 
     const toast = await screen.findByTestId("toast");
     expect(toast).toHaveAttribute("data-visible", "true");
@@ -644,7 +644,7 @@ describe("CreateNewReportClient integration", () => {
     );
 
     // Submit the form
-    const submitBtn = screen.getByText(/submit/i);
+    const submitBtn = screen.getByRole("button", { name: /create/i });
     fireEvent.click(submitBtn);
 
     await waitFor(() => expect(createReport).toHaveBeenCalled());
@@ -720,7 +720,7 @@ describe("CreateNewReportClient integration", () => {
     expect(screen.getByTestId("editor")).toHaveValue(JSON.stringify(existingReport.content));
 
     // Submit button should show Update and Clear Form should not be present in edit mode
-    expect(screen.getByText(/update/i)).toBeTruthy();
+    expect(screen.getByRole("button", { name: /update/i })).toBeInTheDocument();
     expect(screen.queryByText(/clear form/i)).toBeNull();
 
     // Update report details
@@ -739,7 +739,7 @@ describe("CreateNewReportClient integration", () => {
     );
 
     // Submit the form
-    fireEvent.click(screen.getByText(/update/i));
+    fireEvent.click(screen.getByRole("button", { name: /update/i }));
 
 
     // Ensure no patient creation or createReport was invoked in edit mode
