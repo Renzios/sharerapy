@@ -57,7 +57,7 @@ export default function ReportDetails({
             placeholder="Enter report title"
             value={title}
             required={true}
-            maxLength={100}
+            maxLength={60}
             onChange={(e) => setTitle(e.target.value)}
             name="title"
             id={ids?.titleInputId}
