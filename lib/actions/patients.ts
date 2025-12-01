@@ -53,8 +53,8 @@ export async function updatePatient(id: string, formData: FormData) {
     throw error;
   }
 
-  revalidatePath("");
-  redirect("");
+  revalidatePath(`/profile/patient/${id}`);
+  redirect(`/profile/patient/${id}?updated=true`);
 }
 
 export async function deletePatient(id: string) {
@@ -67,6 +67,6 @@ export async function deletePatient(id: string) {
     throw error;
   }
 
-  revalidatePath("");
-  redirect("");
+  revalidatePath("/search/patients");
+  redirect("/search/patients?deleted=true");
 }

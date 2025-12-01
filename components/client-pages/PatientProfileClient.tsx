@@ -111,6 +111,11 @@ export default function PatientProfileClient({
       setToastType("success");
       setToastVisible(true);
       window.history.replaceState({}, "", window.location.pathname);
+    } else if (searchParams.get("updated") === "true") {
+      setToastMessage("Patient updated successfully!");
+      setToastType("success");
+      setToastVisible(true);
+      window.history.replaceState({}, "", window.location.pathname);
     }
   }, [searchParams]);
 

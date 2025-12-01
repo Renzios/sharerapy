@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useCallback } from "react";
+import { useState, useTransition, useCallback, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { SingleValue } from "react-select";
 
@@ -11,6 +11,7 @@ import PatientCardSkeleton from "@/components/skeletons/PatientCardSkeleton";
 import Pagination from "@/components/general/Pagination";
 import Modal from "@/components/general/Modal";
 import PatientFilters from "@/components/filters/PatientFilters";
+import Toast from "@/components/general/Toast";
 
 interface Option {
   value: string;
@@ -43,6 +44,25 @@ export default function SearchPatientsClient({
   const [isPending, startTransition] = useTransition();
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error" | "info">(
+    "info"
+  );
+
+  useEffect(() => {
+    if (searchParams.get("deleted") === "true") {
+      setToastMessage("Patient deleted successfully.");
+      setToastType("success");
+      setToastVisible(true);
+
+      // Remove the query param but keep others (like search/sort)
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.delete("deleted");
+      router.replace(`${pathname}?${newParams.toString()}`, { scroll: false });
+    }
+  }, [searchParams, pathname, router]);
 
   const currentSortParam = searchParams.get("sort");
   const sortOption =
@@ -141,6 +161,13 @@ export default function SearchPatientsClient({
           />
         )}
       </div>
+
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+      />
     </div>
   );
 }
