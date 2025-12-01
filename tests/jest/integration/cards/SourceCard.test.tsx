@@ -407,7 +407,7 @@ describe("SourceList", () => {
       const source = makeSource({
         report: {
           ...makeSource().report!,
-          therapist: {} as any,
+          therapist: {} as NonNullable<Source["report"]>["therapist"],
         },
       });
       render(<SourceList sources={[source]} />);

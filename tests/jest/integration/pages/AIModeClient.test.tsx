@@ -74,7 +74,7 @@ jest.mock("@/components/general/Search", () => {
 
 // Mock SourceCard component
 jest.mock("@/components/cards/SourceCard", () => ({
-  SourceList: ({ sources }: { sources: any[] }) => (
+  SourceList: ({ sources }: { sources: Array<{ id: string; report_id: string; text: string; similarity: number; title?: string }> }) => (
     <div data-testid="source-list">
       {sources.map((source, idx) => (
         <div key={idx} data-testid={`source-${idx}`}>
@@ -139,7 +139,7 @@ describe("AIModeClient", () => {
     });
 
     it("handles missing therapist name gracefully", () => {
-      const { useTherapistProfile } = require("@/app/contexts/TherapistProfileContext");
+      const { useTherapistProfile } = jest.requireMock<typeof import("@/app/contexts/TherapistProfileContext")>("@/app/contexts/TherapistProfileContext");
       useTherapistProfile.mockReturnValueOnce({ therapist: null });
 
       render(<AIModeClient />);

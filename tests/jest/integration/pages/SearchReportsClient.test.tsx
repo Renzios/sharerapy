@@ -11,7 +11,7 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock, replace: replaceMock }),
   usePathname: () => "/search/reports",
   useSearchParams: () => ({
-    get: (_: string) => null,
+    get: () => null,
     toString: () => "",
   }),
 }));
@@ -286,7 +286,7 @@ describe("SearchReportsClient integration", () => {
     const mockToString = jest.fn(() => mockSearchParams.toString());
     
     // Temporarily override the useSearchParams mock for this test
-    const nextNav = require("next/navigation");
+    const nextNav = jest.requireMock<typeof import("next/navigation")>("next/navigation");
     const originalUseSearchParams = nextNav.useSearchParams;
     nextNav.useSearchParams = jest.fn(() => ({
       get: mockGet,

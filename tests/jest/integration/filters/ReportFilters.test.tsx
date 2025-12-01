@@ -51,7 +51,7 @@ jest.mock("@/components/general/Select", () => {
     instanceId?: string;
     options?: Array<{ value: string; label: string }>;
     value?: { value: string; label: string } | Array<{ value: string; label: string }> | null;
-    onChange?: (val: any) => void;
+    onChange?: (val: { value: string; label: string } | Array<{ value: string; label: string }> | null) => void;
     placeholder?: string;
     isMulti?: boolean;
   }) => (

@@ -140,7 +140,27 @@ jest.mock("@/components/forms/PatientDetails", () => {
     setSelectedSex,
     disabled,
     ids,
-  }: any) => (
+  }: {
+    firstName: string;
+    setFirstName: (val: string) => void;
+    lastName: string;
+    setLastName: (val: string) => void;
+    contactNumber: string;
+    setContactNumber: (val: string) => void;
+    countryOptions: Array<{ value: string; label: string }>;
+    selectedCountry: { value: string; label: string } | null;
+    setSelectedCountry: (val: { value: string; label: string } | null) => void;
+    selectedSex: { value: string; label: string } | null;
+    setSelectedSex: (val: { value: string; label: string } | null) => void;
+    disabled?: boolean;
+    ids?: {
+      firstNameInputId?: string;
+      lastNameInputId?: string;
+      contactNumberInputId?: string;
+      countrySelectId?: string;
+      sexSelectId?: string;
+    };
+  }) => (
     <div data-testid="patient-details-form">
       <input
         data-testid="first-name-input"
@@ -185,14 +205,14 @@ jest.mock("@/components/forms/PatientDetails", () => {
         value={selectedCountry?.value || ""}
         onChange={(e) => {
           const option = countryOptions.find(
-            (opt: any) => opt.value === e.target.value
+            (opt) => opt.value === e.target.value
           );
           setSelectedCountry(option || null);
         }}
         disabled={disabled}
       >
         <option value="">Select Country</option>
-        {countryOptions.map((opt: any) => (
+        {countryOptions.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
