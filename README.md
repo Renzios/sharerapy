@@ -4,7 +4,7 @@
   a medical knowledge base of <b>speech</b>, <b>occupational</b>, <b>developmental</b>, <b>reading</b>, and <b>SPED</b> therapy records.
 </p>
 <p align="center">
-  <b>v2025.11.30-beta</b>
+  <b>v2025.11.30.1-beta</b>
 </p>
 
 ## About sharerapy.

@@ -1,15 +1,10 @@
 "use client";
 
 import Input from "@/components/general/Input";
-import Select from "@/components/general/Select";
-
-interface SelectOption {
-  value: string;
-  label: string;
-}
+import Select, { Option } from "@/components/general/Select";
 
 interface PatientDetailsProps {
-  countryOptions: SelectOption[];
+  countryOptions: Option[];
   firstName: string;
   setFirstName: (value: string) => void;
   lastName: string;
@@ -18,10 +13,10 @@ interface PatientDetailsProps {
   setBirthday: (value: string) => void;
   contactNumber: string;
   setContactNumber: (value: string) => void;
-  selectedCountry: SelectOption | null;
-  setSelectedCountry: (value: SelectOption | null) => void;
-  selectedSex: SelectOption | null;
-  setSelectedSex: (value: SelectOption | null) => void;
+  selectedCountry: Option | null;
+  setSelectedCountry: (value: Option | null) => void;
+  selectedSex: Option | null;
+  setSelectedSex: (value: Option | null) => void;
   disabled?: boolean;
   ids?: {
     firstNameInputId?: string;
@@ -50,7 +45,7 @@ export default function PatientDetails({
   disabled = false,
   ids,
 }: PatientDetailsProps) {
-  const sexOptions: SelectOption[] = [
+  const sexOptions: Option[] = [
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
   ];
@@ -90,7 +85,7 @@ export default function PatientDetails({
           instanceId="country-select"
           options={countryOptions}
           value={selectedCountry}
-          onChange={(option) => setSelectedCountry(option)}
+          onChange={(option) => setSelectedCountry(option as Option | null)}
           placeholder="Select country..."
           required={true}
           name="country_id"
@@ -117,7 +112,7 @@ export default function PatientDetails({
           instanceId={ids?.sexSelectId || "sex-select"}
           options={sexOptions}
           value={selectedSex}
-          onChange={(option) => setSelectedSex(option)}
+          onChange={(option) => setSelectedSex(option as Option | null)}
           placeholder="Sex"
           required={true}
           name="sex"

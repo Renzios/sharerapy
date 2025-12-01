@@ -1,72 +1,26 @@
 import Search from "@/components/general/Search";
 import Button from "@/components/general/Button";
 import Filter from "@mui/icons-material/Tune";
-import Settings from "@mui/icons-material/Settings";
 import Link from "next/link";
 import Select, { SingleValue } from "react-select";
 
-/**
- * Option interface for React Select components
- */
 interface SelectOption {
-  /** The value of the option (used programmatically) */
   value: string;
-  /** The display label of the option (shown to users) */
   label: string;
 }
 
-/**
- * Props interface for the SearchPageHeader component
- */
 interface SearchPageHeaderProps {
-  // Search functionality
-  /** Current value of the search input */
   searchValue?: string;
-  /** Callback fired when search input value changes */
   onSearchChange?: (value: string) => void;
-  /** Callback fired when search is executed */
   onSearch?: (value: string) => void;
-
-  // Navigation buttons (All, Patients, Reports, Therapist)
-  /** Currently active page/tab for navigation highlighting */
   currentPage?: "all" | "patients" | "reports" | "therapists";
-  /**
-   * Whether to show the navigation buttons (All, Patients, etc.)
-   * @default true
-   */
   showNavButtons?: boolean;
-
-  // Mobile advanced filters popup (age, sex, upload date, etc.)
-  /** Callback fired when advanced filters button is clicked (mobile only) */
   onAdvancedFiltersClick?: () => void;
-  /** Whether the advanced filters button is disabled */
   advancedFiltersDisabled?: boolean;
-
-  // Mobile settings popup (contains sort/view options)
-  /** Callback fired when mobile settings button is clicked (mobile only) */
-  onMobileSettingsClick?: () => void;
-  /** Whether the mobile settings button is disabled */
-  mobileSettingsDisabled?: boolean;
-
-  // Desktop sort/view selects (visible on desktop, hidden in mobile settings popup)
-  /** Available sort options for the sort dropdown */
   sortOptions?: SelectOption[];
-  /** Currently selected sort option */
   sortValue?: SelectOption;
-  /** Callback fired when sort option changes */
   onSortChange?: (option: SingleValue<SelectOption>) => void;
-  /** Whether the sort dropdown is disabled */
   sortDisabled?: boolean;
-
-  // Language select (always present)
-  /** Available language options for the language dropdown */
-  languageOptions?: SelectOption[];
-  /** Currently selected language option */
-  languageValue?: SelectOption | null;
-  /** Callback fired when language option changes */
-  onLanguageChange?: (option: SingleValue<SelectOption>) => void;
-  /** Whether the language dropdown is disabled */
-  languageDisabled?: boolean;
   ids?: {
     searchInputId?: string;
     mobileFiltersButtonId?: string;
@@ -80,57 +34,34 @@ interface SearchPageHeaderProps {
   };
 }
 
-/**
- * The SearchPageHeader component is the header for the search pages (all, patients, reports, therapists).
- * It contains the search bar, filter and display options, as well as navigation buttons.
- * The layout adapts responsively between mobile and desktop views.
- *
- * @param props - The search page header props
- */
 export default function SearchPageHeader({
   searchValue = "",
   onSearchChange,
   onSearch,
   currentPage = "all",
-  showNavButtons = true, // <-- Default value is set here
+  showNavButtons = true,
   onAdvancedFiltersClick,
   advancedFiltersDisabled = false,
-  onMobileSettingsClick,
-  mobileSettingsDisabled = false,
   sortOptions,
   sortValue,
   onSortChange,
   sortDisabled = false,
-  languageOptions = [
-    { value: "en", label: "English" },
-    { value: "fl", label: "Filipino" },
-  ],
-  languageValue,
-  onLanguageChange,
-  languageDisabled = false,
   ids,
 }: SearchPageHeaderProps) {
-  /**
-   * Custom styling function for React Select components.
-   * Provides consistent design that matches the application's design system.
-   *
-   * @param isDisabled - Whether the select should appear disabled
-   * @returns Styling object for React Select components
-   */
   const selectStyles = (isDisabled: boolean) => ({
     control: (base: object) => ({
       ...base,
       minWidth: "7rem",
       width: "100%",
-      minHeight: "1.875rem",
+      minHeight: "1.875rem", // Matching this height
       height: "1.875rem",
       fontFamily: "'Noto Sans', sans-serif",
-      fontSize: "0.6875rem",
+      fontSize: "0.6875rem", // Matching this font size
       backgroundColor: isDisabled ? "#f9fafb" : "white",
       border: `1px solid var(--border-bordergray, ${
         isDisabled ? "#d1d5db" : "#e5e7eb"
       })`,
-      borderRadius: "0.5rem",
+      borderRadius: "0.5rem", // Matching this radius
       boxShadow: "none",
       cursor: isDisabled ? "not-allowed" : "pointer",
       "&:hover": {
@@ -206,6 +137,7 @@ export default function SearchPageHeader({
           />
         </div>
 
+        {/* Mobile Filter Button */}
         <button
           id={ids?.mobileFiltersButtonId}
           onClick={onAdvancedFiltersClick}
@@ -224,29 +156,9 @@ export default function SearchPageHeader({
         >
           <Filter />
         </button>
-
-        <button
-          id={ids?.mobileSettingsButtonId}
-          onClick={onMobileSettingsClick}
-          disabled={mobileSettingsDisabled}
-          className={`
-            w-10 h-10 sm:w-12 sm:h-11.25
-            bg-white border border-bordergray
-            rounded-full
-            flex items-center justify-center
-            text-darkgray hover:bg-bordergray/30
-            transition-colors duration-200
-            shrink-0
-            lg:hidden
-            ${mobileSettingsDisabled ? "opacity-50 cursor-not-allowed" : ""}
-          `}
-        >
-          <Settings />
-        </button>
       </div>
 
       <div className="h-1/2 w-full flex items-center gap-2 lg:gap-4 min-w-0 overflow-hidden">
-        {/* --- Conditional Rendering Wrapper --- */}
         {showNavButtons && (
           <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
             <Link
@@ -324,6 +236,24 @@ export default function SearchPageHeader({
         )}
 
         <div className="hidden lg:flex items-center gap-1 lg:gap-2 min-w-0 shrink ml-auto">
+          {!advancedFiltersDisabled && (
+            <Button
+              variant="outline"
+              height="1.875rem"
+              fontSize="text-[0.6875rem]"
+              onClick={onAdvancedFiltersClick}
+              disabled={advancedFiltersDisabled}
+              className={`
+               w-28 lg:w-32 xl:w-40 2xl:w-47.5 min-w-28 shrink
+               border-bordergray
+               flex items-center justify-between px-2
+               ${advancedFiltersDisabled ? "opacity-50 cursor-not-allowed" : ""}
+            `}
+            >
+              <span>Filters</span>
+            </Button>
+          )}
+
           {!sortDisabled && (
             <Select
               id={ids?.sortSelectId}
@@ -335,25 +265,6 @@ export default function SearchPageHeader({
               className="w-28 lg:w-32 xl:w-40 2xl:w-47.5 min-w-28 shrink"
               classNamePrefix="react-select"
               styles={selectStyles(sortDisabled)}
-              menuPortalTarget={
-                typeof document !== "undefined" ? document.body : null
-              }
-              menuPosition="fixed"
-            />
-          )}
-
-          {!languageDisabled && (
-            <Select
-              id={ids?.languageSelectId}
-              instanceId={ids?.languageSelectId ?? ""}
-              options={languageOptions}
-              value={languageValue}
-              onChange={onLanguageChange}
-              isDisabled={languageDisabled}
-              placeholder="Display Language"
-              className="w-28 lg:w-32 xl:w-40 2xl:w-47.5 min-w-28 shrink"
-              classNamePrefix="react-select"
-              styles={selectStyles(languageDisabled)}
               menuPortalTarget={
                 typeof document !== "undefined" ? document.body : null
               }

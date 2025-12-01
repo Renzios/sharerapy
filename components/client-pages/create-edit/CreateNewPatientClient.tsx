@@ -7,9 +7,11 @@ import { useState, useRef } from "react";
 import Button from "@/components/general/Button";
 import Toast from "@/components/general/Toast";
 import PatientDetails from "@/components/forms/PatientDetails";
+import ConfirmationModal from "@/components/general/ConfirmationModal";
+import { Option } from "@/components/general/Select";
 
 /* Actions */
-import { createPatient } from "@/lib/actions/patients";
+import { createPatient, updatePatient } from "@/lib/actions/patients";
 
 /* Utilities */
 import { validateContactNumber } from "@/lib/utils/frontendHelpers";
@@ -17,37 +19,81 @@ import { validateContactNumber } from "@/lib/utils/frontendHelpers";
 /* Custom Hooks */
 import { useBackNavigation } from "@/app/hooks/useBackNavigation";
 
-interface Option {
-  value: string;
-  label: string;
-}
-
 interface CreateNewPatientClientProps {
   countryOptions: Option[];
   mode?: "create" | "edit"; // Added mode prop
+  initialData?: {
+    firstName: string;
+    lastName: string;
+    birthday: string;
+    contactNumber: string;
+    countryId: string;
+    sex: string;
+  };
+  patientId?: string;
 }
 
 export default function CreateNewPatientClient({
   countryOptions,
   mode = "create", // Default to create
+  initialData,
+  patientId,
 }: CreateNewPatientClientProps) {
   // Navigation Logic
   // Fallback to /search/patients or /dashboard if history is empty
   const { handleBackClick } = useBackNavigation("/search/patients");
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+
+  const hasUnsavedChanges = () => {
+    // Edit mode: check if current values differ from initialData
+    if (!initialData) return false;
+
+    const currentCountryId = selectedCountry?.value;
+    const currentSex = selectedSex?.value;
+
+    return (
+      firstName !== initialData.firstName ||
+      lastName !== initialData.lastName ||
+      birthday !== initialData.birthday ||
+      contactNumber !== initialData.contactNumber ||
+      currentCountryId !== initialData.countryId ||
+      currentSex !== initialData.sex
+    );
+  };
 
   const enhancedHandleBackClick = () => {
+    if (hasUnsavedChanges()) {
+      setIsLeaveModalOpen(true);
+    } else {
+      setIsNavigating(true);
+      handleBackClick();
+    }
+  };
+
+  const confirmLeave = () => {
+    setIsLeaveModalOpen(false);
     setIsNavigating(true);
     handleBackClick();
   };
 
   // Form State
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState<Option | null>(null);
-  const [selectedSex, setSelectedSex] = useState<Option | null>(null);
+  const [firstName, setFirstName] = useState(initialData?.firstName || "");
+  const [lastName, setLastName] = useState(initialData?.lastName || "");
+  const [birthday, setBirthday] = useState(initialData?.birthday || "");
+  const [contactNumber, setContactNumber] = useState(
+    initialData?.contactNumber || ""
+  );
+  const [selectedCountry, setSelectedCountry] = useState<Option | null>(
+    initialData
+      ? countryOptions.find(
+          (opt) => opt.value === initialData.countryId.toString()
+        ) || null
+      : null
+  );
+  const [selectedSex, setSelectedSex] = useState<Option | null>(
+    initialData ? { value: initialData.sex, label: initialData.sex } : null
+  );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -137,7 +183,11 @@ export default function CreateNewPatientClient({
     const formData = new FormData(e.currentTarget);
 
     try {
-      await createPatient(formData);
+      if (mode === "edit" && patientId) {
+        await updatePatient(patientId, formData);
+      } else {
+        await createPatient(formData);
+      }
     } catch (error) {
       if (error && typeof error === "object" && "digest" in error) {
         const digest = (error as { digest?: string }).digest;
@@ -146,9 +196,12 @@ export default function CreateNewPatientClient({
         }
       }
 
-      console.error("Error creating patient:", error);
+      console.error(
+        `Error ${mode === "edit" ? "updating" : "creating"} patient:`,
+        error
+      );
       showToast(
-        `Error creating patient: ${
+        `Error ${mode === "edit" ? "updating" : "creating"} patient: ${
           error instanceof Error ? error.message : "Unknown error"
         }`,
         "error"
@@ -241,13 +294,7 @@ export default function CreateNewPatientClient({
               className="w-30"
               disabled={isSubmitting}
             >
-              {isSubmitting
-                ? mode === "edit"
-                  ? "Updating..."
-                  : "Creating..."
-                : mode === "edit"
-                ? "Update"
-                : "Create"}
+              {mode === "edit" ? "Update" : "Create"}
             </Button>
           </div>
         </div>
@@ -258,6 +305,18 @@ export default function CreateNewPatientClient({
         type={toastType}
         isVisible={toastVisible}
         onClose={() => setToastVisible(false)}
+      />
+
+      <ConfirmationModal
+        isOpen={isLeaveModalOpen}
+        title="Unsaved Changes"
+        message="You have unsaved changes. Are you sure you want to leave? Your changes will be lost."
+        confirmText="Leave"
+        cancelText="Stay"
+        onConfirm={confirmLeave}
+        onCancel={() => setIsLeaveModalOpen(false)}
+        confirmButtonID="create-patient-confirm-leave-btn"
+        cancelButtonID="create-patient-cancel-leave-btn"
       />
     </div>
   );

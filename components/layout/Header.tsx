@@ -15,9 +15,9 @@ export default function Header({ onMenuClick }: HeaderProps) {
       className="
         sticky top-0 z-30
         flex items-center
-        h-[3.75rem] p-4 gap-3 
+        h-15 p-4 gap-3 
         border-b border-bordergray bg-white
-        lg:h-[5.3125rem] 
+        lg:h-21.25 
       "
     >
       <button

@@ -1,24 +1,18 @@
 "use client";
+
 import Link from "next/link";
 import Tag from "@/components/general/Tag";
+import { Tables } from "@/lib/types/database.types";
 
-/**
- * Props for the PatientCard component
- */
+export type PatientCardData = Tables<"patients"> & {
+  country: Tables<"countries"> | null;
+  reports: {
+    type: { type: string } | Tables<"types"> | null;
+  }[];
+};
+
 interface PatientCardProps {
-  patient: {
-    id: string;
-    name: string;
-    contact_number: string;
-    country: { id: number; country: string };
-    sex: string;
-    // 2. Add the reports array to the type
-    reports: Array<{
-      type: {
-        type: string | null;
-      } | null;
-    }>;
-  };
+  patient: PatientCardData;
 }
 
 /**
@@ -54,7 +48,7 @@ export default function PatientCard({ patient }: PatientCardProps) {
       className="
         group
         flex flex-col gap-y-2
-        bg-white rounded-[0.5rem] p-6
+        bg-white rounded-lg p-6
         border border-bordergray
         hover:bg-bordergray/30 hover:cursor-pointer
         transition-transform duration-200 ease-in-out

@@ -7,7 +7,6 @@ import SearchAllClient from "@/components/client-pages/search/SearchAllClient";
  * This is the server component for the main Search page.
  * It fetches a fixed number of patients (4), reports (2), and therapists (5)
  * and passes them to the client component for rendering.
- * If a search query is provided via URL parameter (?q=...), it will be passed to the client.
  */
 export default async function SearchPage({
   searchParams,
@@ -17,24 +16,27 @@ export default async function SearchPage({
   const params = await searchParams;
   const searchQuery = params.q || "";
 
-  // Fetch initial data (optionally with search)
-  const { data: patientsData } = await readPatients({
-    page: 0,
-    pageSize: 4,
-    search: searchQuery,
-  });
-
-  const { data: reportsData } = await readReports({
-    page: 0,
-    pageSize: 2,
-    search: searchQuery,
-  });
-
-  const { data: therapistsData } = await readTherapists({
-    page: 0,
-    pageSize: 5,
-    search: searchQuery,
-  });
+  const [
+    { data: patientsData },
+    { data: reportsData },
+    { data: therapistsData },
+  ] = await Promise.all([
+    readPatients({
+      page: 0,
+      pageSize: 4,
+      search: searchQuery,
+    }),
+    readReports({
+      page: 0,
+      pageSize: 2,
+      search: searchQuery,
+    }),
+    readTherapists({
+      page: 0,
+      pageSize: 5,
+      search: searchQuery,
+    }),
+  ]);
 
   return (
     <SearchAllClient

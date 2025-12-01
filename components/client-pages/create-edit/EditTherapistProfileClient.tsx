@@ -10,6 +10,7 @@ import Button from "@/components/general/Button";
 import Input from "@/components/general/Input";
 import TextArea from "@/components/general/TextArea";
 import Toast from "@/components/general/Toast";
+import ConfirmationModal from "@/components/general/ConfirmationModal";
 
 /* Types */
 import { Tables } from "@/lib/types/database.types";
@@ -47,6 +48,8 @@ export default function EditTherapistProfileClient({
   const { handleBackClick } = useBackNavigation(
     `/profile/therapist/${therapist.id}`
   );
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
 
   /* Form States */
   const [firstName, setFirstName] = useState(therapist.first_name || "");
@@ -56,6 +59,31 @@ export default function EditTherapistProfileClient({
   const [picture, setPicture] = useState(therapist.picture || "");
   const [newPhotoFile, setNewPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
+  const hasUnsavedChanges = () => {
+    return (
+      firstName !== (therapist.first_name || "") ||
+      lastName !== (therapist.last_name || "") ||
+      bio !== (therapist.bio || "") ||
+      age !== (therapist.age?.toString() || "") ||
+      newPhotoFile !== null
+    );
+  };
+
+  const enhancedHandleBackClick = () => {
+    if (hasUnsavedChanges()) {
+      setIsLeaveModalOpen(true);
+    } else {
+      setIsNavigating(true);
+      handleBackClick();
+    }
+  };
+
+  const confirmLeave = () => {
+    setIsLeaveModalOpen(false);
+    setIsNavigating(true);
+    handleBackClick();
+  };
 
   /* UI States */
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -183,8 +211,8 @@ export default function EditTherapistProfileClient({
             <Button
               variant="filled"
               className="w-auto text-xs md:text-base md:w-24"
-              onClick={handleBackClick}
-              disabled={isSubmitting}
+              onClick={enhancedHandleBackClick}
+              disabled={isSubmitting || isNavigating}
             >
               Back
             </Button>
@@ -204,7 +232,7 @@ export default function EditTherapistProfileClient({
             alt="Therapist Profile Picture"
             width={300}
             height={300}
-            className="rounded-full object-cover w-[7rem] h-[7rem] md:h-[14rem] md:w-[14rem]"
+            className="rounded-full object-cover w-28 h-28 md:h-56 md:w-56"
           />
 
           <div className="flex flex-col gap-y-2">
@@ -350,6 +378,18 @@ export default function EditTherapistProfileClient({
         type={toastType}
         isVisible={toastVisible}
         onClose={() => setToastVisible(false)}
+      />
+
+      <ConfirmationModal
+        isOpen={isLeaveModalOpen}
+        title="Unsaved Changes"
+        message="You have unsaved changes. Are you sure you want to leave? Your changes will be lost."
+        confirmText="Leave"
+        cancelText="Stay"
+        onConfirm={confirmLeave}
+        onCancel={() => setIsLeaveModalOpen(false)}
+        confirmButtonID="edit-therapist-confirm-leave-btn"
+        cancelButtonID="edit-therapist-cancel-leave-btn"
       />
     </div>
   );

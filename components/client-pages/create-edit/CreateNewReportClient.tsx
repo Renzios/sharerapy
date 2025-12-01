@@ -6,10 +6,11 @@ import { useState, useRef, useEffect, useTransition } from "react";
 /* Components */
 import Button from "@/components/general/Button";
 import Toast from "@/components/general/Toast";
+import ConfirmationModal from "@/components/general/ConfirmationModal";
 import FileUpload from "@/components/forms/FileUpload";
 import PatientDetails from "@/components/forms/PatientDetails";
 import ReportDetails from "@/components/forms/ReportDetails";
-import Select from "@/components/general/Select";
+import Select, { Option } from "@/components/general/Select";
 import { Editor } from "@/components/blocknote/DynamicEditor";
 import { EditorRef } from "@/components/blocknote/Editor";
 
@@ -23,13 +24,11 @@ import { parseFile } from "@/lib/actions/parse";
 /* Contexts */
 import { useAuth } from "@/app/contexts/AuthContext";
 
+/* Custom Hooks */
+import { useBackNavigation } from "@/app/hooks/useBackNavigation";
+
 // TEMPORARY: Convert to markdown
 import { BlockNoteEditor } from "@blocknote/core";
-
-interface SelectOption {
-  value: string;
-  label: string;
-}
 
 interface CreateNewReportClientProps {
   mode?: "create" | "edit";
@@ -43,10 +42,10 @@ interface CreateNewReportClientProps {
     patient_id: string;
   };
   patients: Tables<"patients">[];
-  patientOptions: SelectOption[];
-  countryOptions: SelectOption[];
-  languageOptions: SelectOption[];
-  typeOptions: SelectOption[];
+  patientOptions: Option[];
+  countryOptions: Option[];
+  languageOptions: Option[];
+  typeOptions: Option[];
 }
 
 export default function CreateNewReportClient({
@@ -59,41 +58,38 @@ export default function CreateNewReportClient({
   languageOptions,
   typeOptions,
 }: CreateNewReportClientProps) {
-  const [selectedPatient, setSelectedPatient] = useState<SelectOption | null>(
+  const [selectedPatient, setSelectedPatient] = useState<Option | null>(
     mode === "edit" && existingReport
       ? patientOptions.find((p) => p.value === existingReport.patient_id) ||
           null
       : null
   );
 
-  const [selectedCountry, setSelectedCountry] = useState<SelectOption | null>(
-    null
-  );
+  const [selectedCountry, setSelectedCountry] = useState<Option | null>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthday, setBirthday] = useState("");
-  const [selectedSex, setSelectedSex] = useState<SelectOption | null>(null);
+  const [selectedSex, setSelectedSex] = useState<Option | null>(null);
   const [contactNumber, setContactNumber] = useState("");
 
   const [title, setTitle] = useState(existingReport?.title || "");
   const [description, setDescription] = useState(
     existingReport?.description || ""
   );
-  const [selectedLanguage, setSelectedLanguage] = useState<SelectOption | null>(
+  const [selectedLanguage, setSelectedLanguage] = useState<Option | null>(
     mode === "edit" && existingReport
       ? languageOptions.find(
           (l) => l.value === existingReport.language_id.toString()
         ) || null
       : null
   );
-  const [selectedTherapyType, setSelectedTherapyType] =
-    useState<SelectOption | null>(
-      mode === "edit" && existingReport
-        ? typeOptions.find(
-            (t) => t.value === existingReport.type_id.toString()
-          ) || null
-        : null
-    );
+  const [selectedTherapyType, setSelectedTherapyType] = useState<Option | null>(
+    mode === "edit" && existingReport
+      ? typeOptions.find(
+          (t) => t.value === existingReport.type_id.toString()
+        ) || null
+      : null
+  );
 
   const [editorContent, setEditorContent] = useState(
     existingReport?.content ? JSON.stringify(existingReport.content) : ""
@@ -109,8 +105,55 @@ export default function CreateNewReportClient({
     "info"
   );
 
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+
   const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
+
+  // Navigation Logic
+  const { handleBackClick } = useBackNavigation("/search/reports");
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  const hasUnsavedChanges = () => {
+    // Edit mode: check if current values differ from existingReport
+    if (!existingReport) return false;
+
+    const currentPatientId = selectedPatient?.value;
+    const originalPatientId = existingReport.patient_id;
+
+    const currentLanguageId = selectedLanguage?.value;
+    const originalLanguageId = existingReport.language_id.toString();
+
+    const currentTypeId = selectedTherapyType?.value;
+    const originalTypeId = existingReport.type_id.toString();
+
+    const currentContent = editorContent;
+    const originalContent = JSON.stringify(existingReport.content);
+
+    return (
+      currentPatientId !== originalPatientId ||
+      title !== existingReport.title ||
+      description !== existingReport.description ||
+      currentLanguageId !== originalLanguageId ||
+      currentTypeId !== originalTypeId ||
+      currentContent !== originalContent
+    );
+  };
+
+  const enhancedHandleBackClick = () => {
+    if (hasUnsavedChanges()) {
+      setIsLeaveModalOpen(true);
+    } else {
+      setIsNavigating(true);
+      handleBackClick();
+    }
+  };
+
+  const confirmLeave = () => {
+    setIsLeaveModalOpen(false);
+    setIsNavigating(true);
+    handleBackClick();
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -310,6 +353,33 @@ export default function CreateNewReportClient({
 
   return (
     <div className="flex flex-col gap-y-8 mb-30">
+      {/* Header with Back Button */}
+      <div className="flex flex-col gap-y-1">
+        <div className="flex items-center gap-2">
+          <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
+            {mode === "edit" ? "Edit Report" : "Create New Report"}
+          </h1>
+          <div className="ml-auto mb-auto flex flex-col sm:flex-row items-center gap-2">
+            {mode === "edit" && (
+              <Button
+                id="create-report-back-btn"
+                variant="filled"
+                className="w-auto text-xs md:text-base md:w-24"
+                onClick={enhancedHandleBackClick}
+                disabled={isNavigating || isSubmitting}
+              >
+                Back
+              </Button>
+            )}
+          </div>
+        </div>
+        <p className="text-darkgray font-Noto-Sans">
+          {mode === "edit"
+            ? "Update report details below."
+            : "Enter details to create a report."}
+        </p>
+      </div>
+
       <div className="flex flex-col gap-y-4">
         <div className="flex flex-col gap-y-2">
           {" "}
@@ -341,7 +411,9 @@ export default function CreateNewReportClient({
                 instanceId="report-patient-select"
                 options={patientOptions}
                 value={selectedPatient}
-                onChange={setSelectedPatient}
+                onChange={(option) =>
+                  setSelectedPatient(option as Option | null)
+                }
                 placeholder="Search for a patient..."
                 disabled={mode === "edit"}
                 required
@@ -425,7 +497,7 @@ export default function CreateNewReportClient({
               className="w-30"
               disabled={isSubmitting}
             >
-              {mode === "edit" ? "Update" : "Submit"}
+              {mode === "edit" ? "Update" : "Create"}
             </Button>
           </div>
         </div>
@@ -436,6 +508,18 @@ export default function CreateNewReportClient({
         type={toastType}
         isVisible={toastVisible}
         onClose={() => setToastVisible(false)}
+      />
+
+      <ConfirmationModal
+        isOpen={isLeaveModalOpen}
+        title="Unsaved Changes"
+        message="You have unsaved changes. Are you sure you want to leave? Your changes will be lost."
+        confirmText="Leave"
+        cancelText="Stay"
+        onConfirm={confirmLeave}
+        onCancel={() => setIsLeaveModalOpen(false)}
+        confirmButtonID="create-report-confirm-leave-btn"
+        cancelButtonID="create-report-cancel-leave-btn"
       />
     </div>
   );

@@ -1,37 +1,53 @@
 "use client";
 
-/* React Hooks & NextJS Utilities */
-import { useState, useTransition, useEffect, useRef } from "react";
+import { useState, useTransition, useEffect, useCallback } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { SingleValue } from "react-select";
 
 /* Components */
 import SearchPageHeader from "@/components/layout/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
+import ReportCardSkeleton from "@/components/skeletons/ReportCardSkeleton"; // <--- Import Skeleton
 import Pagination from "@/components/general/Pagination";
 import Toast from "@/components/general/Toast";
+import Modal from "@/components/general/Modal";
+import ReportFilters from "@/components/filters/ReportFilters";
 
 /* Types */
-import { SingleValue } from "react-select";
-type ReportsData = Awaited<ReturnType<typeof fetchReports>>["data"];
-type Report = NonNullable<ReportsData>[number];
+import { Tables } from "@/lib/types/database.types";
 
-interface SelectOption {
+type ReportWithRelations = Tables<"reports"> & {
+  therapist: Tables<"therapists"> & {
+    clinic: Tables<"clinics"> & {
+      country: Tables<"countries">;
+    };
+  };
+  type: Tables<"types">;
+  language: Tables<"languages">;
+  patient: Tables<"patients"> & {
+    country: Tables<"countries"> | null;
+    age?: string;
+  };
+};
+
+interface Option {
   value: string;
   label: string;
 }
 
 interface SearchReportsClientProps {
-  initialReports: Report[];
+  initialReports: ReportWithRelations[];
   totalPages: number;
   initialSearchTerm?: string;
   showSuccessToast?: boolean;
   showDeletedToast?: boolean;
-  languageOptions: SelectOption[];
+  languageOptions: Option[];
+  countryOptions: Option[];
+  clinicOptions: Option[];
+  typeOptions: Option[];
+  therapistOptions: Option[];
+  patientOptions: Option[];
 }
-
-/* Actions */
-import { fetchReports } from "@/app/(with-sidebar)/search/reports/actions";
-import { translateText } from "@/lib/actions/translate";
 
 const reportSortOptions = [
   { value: "titleAscending", label: "Sort by: Title (A-Z)" },
@@ -40,84 +56,86 @@ const reportSortOptions = [
   { value: "dateDescending", label: "Sort by: Date (Newest First)" },
 ];
 
-const getSortParams = (
-  optionValue: string
-): { column: "title" | "created_at"; ascending: boolean } => {
-  switch (optionValue) {
-    case "titleAscending":
-      return { column: "title", ascending: true };
-    case "titleDescending":
-      return { column: "title", ascending: false };
-    case "dateAscending":
-      return { column: "created_at", ascending: true };
-    case "dateDescending":
-      return { column: "created_at", ascending: false };
-    default:
-      return { column: "created_at", ascending: false };
-  }
-};
-
-export default function SearchReportsPage({
+export default function SearchReportsClient({
   initialReports,
   totalPages,
   initialSearchTerm = "",
   showSuccessToast = false,
   showDeletedToast = false,
   languageOptions,
+  countryOptions,
+  clinicOptions,
+  typeOptions,
+  therapistOptions,
+  patientOptions,
 }: SearchReportsClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-  const [sortOption, setSortOption] = useState(() => {
-    const sortParam = searchParams.get("sort");
-    return (
-      reportSortOptions.find((o) => o.value === sortParam) ||
-      reportSortOptions[3]
-    );
-  });
-  const [currentPage, setCurrentPage] = useState(() => {
-    return Number(searchParams.get("p")) || 1;
-  });
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
-  const [selectedLanguage, setSelectedLanguage] = useState<{
-    value: string;
-    label: string;
-  } | null>(() => {
-    const langParam = searchParams.get("lang");
-    if (langParam) {
-      return languageOptions.find((opt) => opt.value === langParam) || null;
-    }
-    return null;
-  });
+  const currentSortParam = searchParams.get("sort");
+  const sortOption =
+    reportSortOptions.find((o) => o.value === currentSortParam) ||
+    reportSortOptions[3];
 
-  const [reports, setReports] = useState(initialReports);
-  const [currentTotalPages, setCurrentTotalPages] = useState(totalPages);
+  const currentPage = Number(searchParams.get("p")) || 1;
   const [isPending, startFetchTransition] = useTransition();
-  const [translatedReports, setTranslatedReports] =
-    useState<Report[]>(initialReports);
-  const [isTranslating, setIsTranslating] = useState(false);
-  const shouldTranslateRef = useRef(false);
 
-  // Toast State
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error" | "info">(
     "info"
   );
 
-  // Show success toast after report creation
+  const updateURLParams = useCallback(
+    (changes: { [key: string]: string | number | null }) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      Object.entries(changes).forEach(([key, value]) => {
+        if (value === null || value === "") {
+          params.delete(key);
+        } else {
+          params.set(key, String(value));
+        }
+      });
+
+      startFetchTransition(() => {
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+      });
+    },
+    [searchParams, pathname, router]
+  );
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    updateURLParams({ q: value, p: 1 });
+  };
+
+  const handleSortChange = (
+    option: SingleValue<{ value: string; label: string }>
+  ) => {
+    if (!option) return;
+    updateURLParams({ sort: option.value, p: 1 });
+  };
+
+  const handlePageChange = (page: number) => {
+    updateURLParams({ p: page });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   useEffect(() => {
     if (showSuccessToast) {
       setToastMessage("Report created successfully!");
       setToastType("success");
       setToastVisible(true);
       router.replace(pathname, { scroll: false });
+      router.replace(pathname, { scroll: false });
     }
   }, [showSuccessToast, router, pathname]);
 
-  // Show success toast after report deletion
   useEffect(() => {
     if (showDeletedToast) {
       setToastMessage("Report deleted successfully!");
@@ -126,227 +144,6 @@ export default function SearchReportsPage({
       router.replace(pathname, { scroll: false });
     }
   }, [showDeletedToast, router, pathname]);
-
-  // Update translated reports when reports change
-  useEffect(() => {
-    // If a language is selected and we should translate, re-translate
-    if (selectedLanguage && shouldTranslateRef.current) {
-      translateReports(selectedLanguage);
-    } else {
-      setTranslatedReports(reports);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reports]);
-
-  const updateURLParams = (params: { [key: string]: string | number }) => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    Object.entries(params).forEach(([key, value]) => {
-      newParams.set(key, String(value));
-    });
-    // We use router.push to add to history, so "back" works
-    router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
-  };
-
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-
-    // Update URL immediately with all parameters
-    const params: { [key: string]: string | number } = { q: value, p: 1 };
-    if (selectedLanguage) {
-      params.lang = selectedLanguage.value;
-    }
-    if (sortOption) {
-      params.sort = sortOption.value;
-    }
-    updateURLParams(params);
-
-    const { column, ascending } = getSortParams(sortOption.value);
-
-    startFetchTransition(async () => {
-      const result = await fetchReports({
-        column,
-        ascending,
-        page: 1,
-        search: value,
-      });
-      if (result.success && result.data) {
-        setReports(result.data);
-        setCurrentTotalPages(result.totalPages);
-      }
-    });
-  };
-
-  const handleSortChange = (
-    option: SingleValue<{ value: string; label: string }>
-  ) => {
-    if (!option) return;
-
-    setSortOption(option);
-    // Reset to page 1 when sort changes
-    setCurrentPage(1);
-    const params: { [key: string]: string | number } = {
-      sort: option.value,
-      p: 1,
-    };
-    if (searchTerm) {
-      params.q = searchTerm;
-    }
-    if (selectedLanguage) {
-      params.lang = selectedLanguage.value;
-    }
-    updateURLParams(params); // Update URL
-
-    const { column, ascending } = getSortParams(option.value);
-
-    startFetchTransition(async () => {
-      const result = await fetchReports({
-        column,
-        ascending,
-        page: 1, // Fetch page 1
-        search: searchTerm,
-      });
-      if (result.success && result.data) {
-        setReports(result.data);
-        setCurrentTotalPages(result.totalPages);
-      }
-    });
-  };
-
-  const translateReports = async (
-    option: SelectOption,
-    showLoading = false
-  ) => {
-    if (showLoading) {
-      setIsTranslating(true);
-    }
-
-    try {
-      // Translate "Written by" and "Edited" text once for all reports
-      const [writtenByText, editedText] = await Promise.all([
-        translateText("Written by", option.value),
-        translateText("Edited", option.value),
-      ]);
-
-      // Translate all reports
-      const translationPromises = reports.map(async (report) => {
-        // If report's original language matches selected language, don't translate content but still add UI text
-        if (report.language.code === option.value) {
-          return {
-            ...report,
-            writtenByText,
-            editedText,
-          };
-        }
-
-        // Otherwise, translate title and description
-        try {
-          const [translatedTitle, translatedDescription] = await Promise.all([
-            translateText(report.title, option.value),
-            translateText(report.description, option.value),
-          ]);
-
-          return {
-            ...report,
-            title: translatedTitle,
-            description: translatedDescription,
-            writtenByText,
-            editedText,
-          };
-        } catch (error) {
-          console.error(`Failed to translate report ${report.id}:`, error);
-          // Return original content but still add translated UI text
-          return {
-            ...report,
-            writtenByText,
-            editedText,
-          };
-        }
-      });
-
-      const translated = await Promise.all(translationPromises);
-      setTranslatedReports(translated);
-
-      // Return success status
-      return true;
-    } catch (error) {
-      console.error("Translation error:", error);
-      if (showLoading) {
-        setToastMessage("Translation failed. Please try again.");
-        setToastType("error");
-        setToastVisible(true);
-      }
-      // Reset to original on error
-      setTranslatedReports(reports);
-      return false;
-    } finally {
-      if (showLoading) {
-        setIsTranslating(false);
-      }
-    }
-  };
-
-  const handleLanguageChange = async (option: SelectOption | null) => {
-    setSelectedLanguage(option);
-
-    // Update URL with language parameter
-    const newParams = new URLSearchParams(searchParams.toString());
-    if (option) {
-      newParams.set("lang", option.value);
-      shouldTranslateRef.current = true; // Enable translation for this language
-    } else {
-      newParams.delete("lang");
-      shouldTranslateRef.current = false; // Disable translation
-    }
-    router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
-
-    if (!option) {
-      // Reset to original content if no language selected
-      setTranslatedReports(reports);
-      setIsTranslating(false);
-      return;
-    }
-
-    // Show loading and toast only on manual language selection
-    const success = await translateReports(option, true);
-    if (success) {
-      setToastMessage("Translation successful!");
-      setToastType("success");
-      setToastVisible(true);
-    }
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    const params: { [key: string]: string | number } = { p: page };
-    if (searchTerm) {
-      params.q = searchTerm;
-    }
-    if (sortOption) {
-      params.sort = sortOption.value;
-    }
-    if (selectedLanguage) {
-      params.lang = selectedLanguage.value;
-    }
-    updateURLParams(params); // Update URL
-    const { column, ascending } = getSortParams(sortOption.value);
-
-    startFetchTransition(async () => {
-      const result = await fetchReports({
-        column,
-        ascending,
-        page,
-        search: searchTerm,
-      });
-
-      if (result.success && result.data) {
-        setReports(result.data);
-        setCurrentTotalPages(result.totalPages);
-      }
-    });
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   return (
     <div>
@@ -358,15 +155,7 @@ export default function SearchReportsPage({
         sortOptions={reportSortOptions}
         sortValue={sortOption}
         onSortChange={handleSortChange}
-        languageValue={selectedLanguage}
-        onLanguageChange={handleLanguageChange}
-        languageOptions={languageOptions}
-        onAdvancedFiltersClick={() => {
-          console.log("Open advanced report filters");
-        }}
-        onMobileSettingsClick={() => {
-          console.log("Open mobile settings popup");
-        }}
+        onAdvancedFiltersClick={() => setIsFilterModalOpen(true)}
         ids={{
           searchInputId: "search-reports-input",
           mobileFiltersButtonId: "search-reports-mobile-filters-button",
@@ -380,28 +169,54 @@ export default function SearchReportsPage({
         }}
       />
 
+      <Modal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        title="Filter Reports"
+      >
+        <ReportFilters
+          onClose={() => setIsFilterModalOpen(false)}
+          onUpdateParams={updateURLParams}
+          languageOptions={languageOptions}
+          countryOptions={countryOptions}
+          clinicOptions={clinicOptions}
+          typeOptions={typeOptions}
+          therapistOptions={therapistOptions}
+          patientOptions={patientOptions}
+        />
+      </Modal>
+
       <div className="mt-6">
+        {/* Conditional Rendering based on isPending */}
         <div className="grid grid-cols-1 gap-4">
-          {translatedReports.map((report) => (
-            <ReportCard
-              id={`search-report-${report.id}`}
-              key={report.id}
-              report={report}
-              disabled={isPending || isTranslating}
-            />
-          ))}
+          {isPending ? (
+            // Show 5 Skeletons while loading
+            Array.from({ length: 5 }).map((_, index) => (
+              <ReportCardSkeleton key={`skeleton-${index}`} />
+            ))
+          ) : initialReports.length > 0 ? (
+            // Show Actual Data
+            initialReports.map((report) => (
+              <ReportCard
+                id={`search-report-${report.id}`}
+                key={report.id}
+                report={report}
+                // Removed disabled={isPending} because we are using skeletons now
+              />
+            ))
+          ) : (
+            // Empty State
+            <div className="text-center py-8">
+              <p className="text-darkgray">No reports found</p>
+            </div>
+          )}
         </div>
 
-        {translatedReports.length === 0 && (
-          <div className="text-center py-8">
-            <p className="text-darkgray">No reports found</p>
-          </div>
-        )}
-
-        {translatedReports.length > 0 && currentTotalPages > 1 && (
+        {/* Hide Pagination while loading or empty */}
+        {!isPending && initialReports.length > 0 && totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
-            totalPages={currentTotalPages}
+            totalPages={totalPages}
             onPageChange={handlePageChange}
             isPending={isPending}
           />

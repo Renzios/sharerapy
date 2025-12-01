@@ -1,21 +1,28 @@
 "use client";
 
-import SearchPageHeader from "@/components/layout/SearchPageHeader";
-import PatientCard from "@/components/cards/PatientCard";
-import Pagination from "@/components/general/Pagination";
-import { useState, useTransition } from "react";
-import { fetchPatients } from "@/app/(with-sidebar)/search/patients/actions";
+import { useState, useTransition, useCallback, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { SingleValue } from "react-select";
 
-// Extract the type from what fetchPatients returns
-type PatientsData = Awaited<ReturnType<typeof fetchPatients>>["data"];
-type Patient = NonNullable<PatientsData>[number];
+/* Components */
+import SearchPageHeader from "@/components/layout/SearchPageHeader";
+import PatientCard, { PatientCardData } from "@/components/cards/PatientCard";
+import PatientCardSkeleton from "@/components/skeletons/PatientCardSkeleton";
+import Pagination from "@/components/general/Pagination";
+import Modal from "@/components/general/Modal";
+import PatientFilters from "@/components/filters/PatientFilters";
+import Toast from "@/components/general/Toast";
+
+interface Option {
+  value: string;
+  label: string;
+}
 
 interface SearchPatientsClientProps {
-  initialPatients: Patient[];
+  initialPatients: PatientCardData[];
   totalPages: number;
   initialSearchTerm?: string;
+  countryOptions: Option[];
 }
 
 const patientSortOptions = [
@@ -27,100 +34,74 @@ export default function SearchPatientsClient({
   initialPatients,
   totalPages,
   initialSearchTerm = "",
+  countryOptions,
 }: SearchPatientsClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-  const [sortOption, setSortOption] = useState(() => {
-    const sortParam = searchParams.get("sort");
-    return (
-      patientSortOptions.find((o) => o.value === sortParam) ||
-      patientSortOptions[0]
-    );
-  });
-  const [currentPage, setCurrentPage] = useState(() => {
-    return Number(searchParams.get("p")) || 1;
-  });
-
-  const [languageOption, setLanguageOption] = useState({
-    value: "en",
-    label: "English",
-  });
-
-  const [patients, setPatients] = useState(initialPatients);
-  const [currentTotalPages, setCurrentTotalPages] = useState(totalPages);
   const [isPending, startTransition] = useTransition();
 
-  const updateURLParams = (params: { [key: string]: string | number }) => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    Object.entries(params).forEach(([key, value]) => {
-      newParams.set(key, String(value));
-    });
-    router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
-  };
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error" | "info">(
+    "info"
+  );
+
+  useEffect(() => {
+    if (searchParams.get("deleted") === "true") {
+      setToastMessage("Patient deleted successfully.");
+      setToastType("success");
+      setToastVisible(true);
+
+      // Remove the query param but keep others (like search/sort)
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.delete("deleted");
+      router.replace(`${pathname}?${newParams.toString()}`, { scroll: false });
+    }
+  }, [searchParams, pathname, router]);
+
+  const currentSortParam = searchParams.get("sort");
+  const sortOption =
+    patientSortOptions.find((o) => o.value === currentSortParam) ||
+    patientSortOptions[0];
+
+  const currentPage = Number(searchParams.get("p")) || 1;
+
+  const updateURLParams = useCallback(
+    (changes: { [key: string]: string | number | null }) => {
+      const params = new URLSearchParams(searchParams.toString());
+      Object.entries(changes).forEach(([key, value]) => {
+        if (value === null || value === "") {
+          params.delete(key);
+        } else {
+          params.set(key, String(value));
+        }
+      });
+      startTransition(() => {
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+      });
+    },
+    [searchParams, pathname, router]
+  );
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1);
     updateURLParams({ q: value, p: 1 });
-
-    startTransition(async () => {
-      const result = await fetchPatients({
-        search: value,
-        ascending: sortOption.value === "nameAscending",
-        page: 1,
-      });
-
-      if (result.success && result.data) {
-        setPatients(result.data);
-        setCurrentTotalPages(result.totalPages);
-      }
-    });
   };
 
   const handleSortChange = (
     option: SingleValue<{ value: string; label: string }>
   ) => {
     if (!option) return;
-
-    setSortOption(option);
-    setCurrentPage(1); // Reset to page 1
     updateURLParams({ sort: option.value, p: 1 });
-
-    const isAscending = option.value === "nameAscending";
-
-    startTransition(async () => {
-      const result = await fetchPatients({
-        search: searchTerm,
-        ascending: isAscending,
-        page: 1, // Fetch page 1
-      });
-      if (result.success && result.data) {
-        setPatients(result.data);
-        setCurrentTotalPages(result.totalPages);
-      }
-    });
   };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
     updateURLParams({ p: page });
-
-    startTransition(async () => {
-      const result = await fetchPatients({
-        search: searchTerm,
-        ascending: sortOption.value === "nameAscending",
-        page,
-      });
-
-      if (result.success && result.data) {
-        setPatients(result.data);
-        setCurrentTotalPages(result.totalPages);
-      }
-    });
-
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -134,42 +115,59 @@ export default function SearchPatientsClient({
         sortOptions={patientSortOptions}
         sortValue={sortOption}
         onSortChange={handleSortChange}
-        languageValue={languageOption}
-        onLanguageChange={(option) => {
-          if (option) {
-            setLanguageOption(option);
-          }
-        }}
-        onAdvancedFiltersClick={() => {
-          console.log("Open advanced patient filters popup");
-        }}
-        onMobileSettingsClick={() => {
-          console.log("Open mobile settings popup");
-        }}
+        onAdvancedFiltersClick={() => setIsFilterModalOpen(true)}
       />
+
+      <Modal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        title="Filter Patients"
+      >
+        <PatientFilters
+          countryOptions={countryOptions}
+          onClose={() => setIsFilterModalOpen(false)}
+          onUpdateParams={updateURLParams}
+        />
+      </Modal>
 
       <div className="mt-6">
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-          {patients.map((patient) => (
-            <PatientCard key={patient.id} patient={patient} />
-          ))}
+          {/* Conditional Rendering logic */}
+          {isPending ? (
+            // Show 12 Skeletons (4 columns x 3 rows looks good)
+            Array.from({ length: 12 }).map((_, index) => (
+              <PatientCardSkeleton key={`skeleton-${index}`} />
+            ))
+          ) : initialPatients.length > 0 ? (
+            // Show Data
+            initialPatients.map((patient) => (
+              <PatientCard key={patient.id} patient={patient} />
+            ))
+          ) : (
+            // Empty State (Full Width)
+            <div className="col-span-1 lg:col-span-4 text-center py-8">
+              <p className="text-darkgray">No patients found</p>
+            </div>
+          )}
         </div>
 
-        {patients.length === 0 && (
-          <div className="text-center py-8">
-            <p className="text-darkgray">No patients found</p>
-          </div>
-        )}
-
-        {patients.length > 0 && currentTotalPages > 1 && (
+        {/* Hide Pagination while loading or empty */}
+        {!isPending && initialPatients.length > 0 && totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
-            totalPages={currentTotalPages}
+            totalPages={totalPages}
             onPageChange={handlePageChange}
             isPending={isPending}
           />
         )}
       </div>
+
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+      />
     </div>
   );
 }
