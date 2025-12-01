@@ -6,6 +6,7 @@ import { useState, useRef, useEffect, useTransition } from "react";
 /* Components */
 import Button from "@/components/general/Button";
 import Toast from "@/components/general/Toast";
+import ConfirmationModal from "@/components/general/ConfirmationModal";
 import FileUpload from "@/components/forms/FileUpload";
 import PatientDetails from "@/components/forms/PatientDetails";
 import ReportDetails from "@/components/forms/ReportDetails";
@@ -22,6 +23,9 @@ import { parseFile } from "@/lib/actions/parse";
 
 /* Contexts */
 import { useAuth } from "@/app/contexts/AuthContext";
+
+/* Custom Hooks */
+import { useBackNavigation } from "@/app/hooks/useBackNavigation";
 
 // TEMPORARY: Convert to markdown
 import { BlockNoteEditor } from "@blocknote/core";
@@ -101,8 +105,55 @@ export default function CreateNewReportClient({
     "info"
   );
 
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+
   const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
+
+  // Navigation Logic
+  const { handleBackClick } = useBackNavigation("/search/reports");
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  const hasUnsavedChanges = () => {
+    // Edit mode: check if current values differ from existingReport
+    if (!existingReport) return false;
+
+    const currentPatientId = selectedPatient?.value;
+    const originalPatientId = existingReport.patient_id;
+
+    const currentLanguageId = selectedLanguage?.value;
+    const originalLanguageId = existingReport.language_id.toString();
+
+    const currentTypeId = selectedTherapyType?.value;
+    const originalTypeId = existingReport.type_id.toString();
+
+    const currentContent = editorContent;
+    const originalContent = JSON.stringify(existingReport.content);
+
+    return (
+      currentPatientId !== originalPatientId ||
+      title !== existingReport.title ||
+      description !== existingReport.description ||
+      currentLanguageId !== originalLanguageId ||
+      currentTypeId !== originalTypeId ||
+      currentContent !== originalContent
+    );
+  };
+
+  const enhancedHandleBackClick = () => {
+    if (hasUnsavedChanges()) {
+      setIsLeaveModalOpen(true);
+    } else {
+      setIsNavigating(true);
+      handleBackClick();
+    }
+  };
+
+  const confirmLeave = () => {
+    setIsLeaveModalOpen(false);
+    setIsNavigating(true);
+    handleBackClick();
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -302,6 +353,33 @@ export default function CreateNewReportClient({
 
   return (
     <div className="flex flex-col gap-y-8 mb-30">
+      {/* Header with Back Button */}
+      <div className="flex flex-col gap-y-1">
+        <div className="flex items-center gap-2">
+          <h1 className="font-Noto-Sans text-2xl font-semibold text-black">
+            {mode === "edit" ? "Edit Report" : "Create New Report"}
+          </h1>
+          <div className="ml-auto mb-auto flex flex-col sm:flex-row items-center gap-2">
+            {mode === "edit" && (
+              <Button
+                id="create-report-back-btn"
+                variant="filled"
+                className="w-auto text-xs md:text-base md:w-24"
+                onClick={enhancedHandleBackClick}
+                disabled={isNavigating || isSubmitting}
+              >
+                Back
+              </Button>
+            )}
+          </div>
+        </div>
+        <p className="text-darkgray font-Noto-Sans">
+          {mode === "edit"
+            ? "Update report details below."
+            : "Enter details to create a report."}
+        </p>
+      </div>
+
       <div className="flex flex-col gap-y-4">
         <div className="flex flex-col gap-y-2">
           {" "}
@@ -430,6 +508,18 @@ export default function CreateNewReportClient({
         type={toastType}
         isVisible={toastVisible}
         onClose={() => setToastVisible(false)}
+      />
+
+      <ConfirmationModal
+        isOpen={isLeaveModalOpen}
+        title="Unsaved Changes"
+        message="You have unsaved changes. Are you sure you want to leave? Your changes will be lost."
+        confirmText="Leave"
+        cancelText="Stay"
+        onConfirm={confirmLeave}
+        onCancel={() => setIsLeaveModalOpen(false)}
+        confirmButtonID="create-report-confirm-leave-btn"
+        cancelButtonID="create-report-cancel-leave-btn"
       />
     </div>
   );

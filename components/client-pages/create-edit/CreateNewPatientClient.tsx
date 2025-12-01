@@ -7,6 +7,7 @@ import { useState, useRef } from "react";
 import Button from "@/components/general/Button";
 import Toast from "@/components/general/Toast";
 import PatientDetails from "@/components/forms/PatientDetails";
+import ConfirmationModal from "@/components/general/ConfirmationModal";
 import { Option } from "@/components/general/Select";
 
 /* Actions */
@@ -42,8 +43,36 @@ export default function CreateNewPatientClient({
   // Fallback to /search/patients or /dashboard if history is empty
   const { handleBackClick } = useBackNavigation("/search/patients");
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+
+  const hasUnsavedChanges = () => {
+    // Edit mode: check if current values differ from initialData
+    if (!initialData) return false;
+
+    const currentCountryId = selectedCountry?.value;
+    const currentSex = selectedSex?.value;
+
+    return (
+      firstName !== initialData.firstName ||
+      lastName !== initialData.lastName ||
+      birthday !== initialData.birthday ||
+      contactNumber !== initialData.contactNumber ||
+      currentCountryId !== initialData.countryId ||
+      currentSex !== initialData.sex
+    );
+  };
 
   const enhancedHandleBackClick = () => {
+    if (hasUnsavedChanges()) {
+      setIsLeaveModalOpen(true);
+    } else {
+      setIsNavigating(true);
+      handleBackClick();
+    }
+  };
+
+  const confirmLeave = () => {
+    setIsLeaveModalOpen(false);
     setIsNavigating(true);
     handleBackClick();
   };
@@ -276,6 +305,18 @@ export default function CreateNewPatientClient({
         type={toastType}
         isVisible={toastVisible}
         onClose={() => setToastVisible(false)}
+      />
+
+      <ConfirmationModal
+        isOpen={isLeaveModalOpen}
+        title="Unsaved Changes"
+        message="You have unsaved changes. Are you sure you want to leave? Your changes will be lost."
+        confirmText="Leave"
+        cancelText="Stay"
+        onConfirm={confirmLeave}
+        onCancel={() => setIsLeaveModalOpen(false)}
+        confirmButtonID="create-patient-confirm-leave-btn"
+        cancelButtonID="create-patient-cancel-leave-btn"
       />
     </div>
   );
