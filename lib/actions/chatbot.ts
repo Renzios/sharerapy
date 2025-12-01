@@ -49,7 +49,7 @@ export async function generateAnswer(
       "match_documents",
       {
         query_embedding: queryVector,
-        match_threshold: 0.3,
+        match_threshold: 0.4,
         match_count: 5,
       }
     );
