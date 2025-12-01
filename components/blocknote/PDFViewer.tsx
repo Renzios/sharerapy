@@ -295,7 +295,7 @@ export default function PDFViewer({
         <div
           className="
             flex flex-col gap-y-4
-            bg-white rounded-[0.5rem] p-6
+            bg-white rounded-lg p-6
             border border-bordergray
             transition-transform duration-200 ease-in-out
           "
@@ -325,7 +325,7 @@ export default function PDFViewer({
         <div
           className="
             flex flex-col gap-y-4 items-center justify-center
-            bg-white rounded-[0.5rem] p-12
+            bg-white rounded-lg p-12
             border border-bordergray
             transition-transform duration-200 ease-in-out
             min-h-[400px]
@@ -350,7 +350,7 @@ export default function PDFViewer({
             <div
               className="
                 flex flex-col items-center justify-center 
-                bg-white rounded-[0.5rem] p-12 
+                bg-white rounded-lg p-12 
                 border border-bordergray
                 min-h-[350px]
               "
@@ -382,15 +382,28 @@ export default function PDFViewer({
             </div>
           ) : (
             // --- ON DESKTOP: Show the embedded viewer ---
-            <div className="w-full h-screen bg-background rounded-lg border border-bordergray">
-              <ReactPDFViewer
-                width="100%"
-                height="100%"
-                showToolbar={true}
-                className="rounded-lg"
-              >
-                {pdfDocument as any}
-              </ReactPDFViewer>
+            <div className="w-full flex flex-col gap-4">
+              <div className="w-full h-screen bg-background rounded-lg border border-bordergray">
+                <ReactPDFViewer
+                  width="100%"
+                  height="100%"
+                  showToolbar={true}
+                  className="rounded-lg"
+                >
+                  {pdfDocument as any}
+                </ReactPDFViewer>
+              </div>
+              <div className="flex justify-end">
+                <PDFDownloadLink
+                  document={pdfDocument as any}
+                  fileName={`${title || "therapy-report"}.pdf`}
+                  className="flex items-center gap-2 px-4 py-2 bg-primary font-Noto-Sans text-white rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  {({ loading }) => (
+                    <>{loading ? "Preparing..." : "Download"}</>
+                  )}
+                </PDFDownloadLink>
+              </div>
             </div>
           )}
         </>
