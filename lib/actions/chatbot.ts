@@ -187,11 +187,7 @@ export async function generateAnswer(
     let contextText = "";
     if (sources.length > 0) {
       contextText = sources.map((doc) => {
-         // @ts-ignore
-         const date = doc.report?.created_at ? new Date(doc.report.created_at).toLocaleDateString() : 'Unknown';
-         // @ts-ignore
-         const type = doc.report?.type || 'Report';
-         return `[${date} | ${type}]: ${doc.text}`;
+         return `${doc.text}`;
       }).join("\n---\n");
     } else {
       contextText = "No relevant documentation found for this query.";
