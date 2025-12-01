@@ -1,7 +1,7 @@
 import React from "react";
 import type { Tables } from "@/lib/types/database.types";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import SearchPatientsClient from "@/components/client-pages/SearchPatientsClient";
+import SearchPatientsClient from "@/components/client-pages/search/SearchPatientsClient";
 import { fetchPatients as mockFetchPatients } from "@/app/(with-sidebar)/search/patients/actions";
 import * as nextNav from "next/navigation";
 

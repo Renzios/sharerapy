@@ -24,6 +24,7 @@ interface SearchReportsClientProps {
   initialReports: Report[];
   totalPages: number;
   initialSearchTerm?: string;
+  showSuccessToast?: boolean;
   showDeletedToast?: boolean;
   languageOptions: SelectOption[];
 }
@@ -60,6 +61,7 @@ export default function SearchReportsPage({
   initialReports,
   totalPages,
   initialSearchTerm = "",
+  showSuccessToast = false,
   showDeletedToast = false,
   languageOptions,
 }: SearchReportsClientProps) {
@@ -104,6 +106,16 @@ export default function SearchReportsPage({
   const [toastType, setToastType] = useState<"success" | "error" | "info">(
     "info"
   );
+
+  // Show success toast after report creation
+  useEffect(() => {
+    if (showSuccessToast) {
+      setToastMessage("Report created successfully!");
+      setToastType("success");
+      setToastVisible(true);
+      router.replace(pathname, { scroll: false });
+    }
+  }, [showSuccessToast, router, pathname]);
 
   // Show success toast after report deletion
   useEffect(() => {

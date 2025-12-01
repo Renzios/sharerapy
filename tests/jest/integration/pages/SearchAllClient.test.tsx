@@ -36,7 +36,8 @@ jest.mock("next/link", () => {
   };
 });
 
-import SearchAllClient from "@/components/client-pages/SearchAllClient";
+import SearchAllClient from "@/components/client-pages/search/SearchAllClient";
+
 
 // Minimal test-only types for mocked components (avoid using `any`)
 type PatientLike = { id: string; name: string };

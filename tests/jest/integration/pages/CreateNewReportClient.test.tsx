@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import CreateNewReportClient from "@/components/client-pages/CreateNewReportClient";
+import CreateNewReportClient from "@/components/client-pages/create-edit/CreateNewReportClient";
 import type { Tables } from "@/lib/types/database.types";
 import { createReport } from "@/lib/actions/reports";
 import { createPatient } from "@/lib/actions/patients";
@@ -50,6 +50,11 @@ const mockEditor = {
 jest.mock("@blocknote/core", () => ({
   BlockNoteSchema: {
     create: jest.fn(() => ({ custom: "schema" })),
+  },
+  BlockNoteEditor: {
+    create: jest.fn(() => ({
+      blocksToMarkdownLossy: jest.fn().mockResolvedValue("# Mock Markdown"),
+    })),
   },
   defaultBlockSpecs: {
     paragraph: { type: "paragraph" },
@@ -122,11 +127,42 @@ jest.mock("@/app/contexts/AuthContext", () => ({
   useAuth: () => ({ user: { id: "test-user-id" } }),
 }));
 
+// Mock Select component to make patient selection testable
+jest.mock("@/components/general/Select", () => {
+  const Component = (props: any) => {
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const value = e.target.value;
+      const selectedOption = props.options?.find((opt: any) => opt.value === value);
+      props.onChange?.(selectedOption || null);
+    };
+
+    const currentValue = props.value?.value || "";
+
+    return (
+      <select
+        data-testid={`select-${props.id || props.instanceId || "select"}`}
+        value={currentValue}
+        onChange={handleChange}
+        disabled={props.disabled}
+      >
+        <option value="">{props.placeholder || "Select..."}</option>
+        {props.options?.map((opt: any) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    );
+  };
+  Component.displayName = "Select";
+  return Component;
+});
+
 // Mock child components used by the CreateNewReportClient to keep tests deterministic
 jest.mock("@/components/forms/PatientDetails", () => {
   // mock implementation keeps an internal selected value and exposes a hidden input
   const Component = (props: PatientDetailsMockProps) => {
-    const [selectedValue, setSelectedValue] = React.useState("new");
+    const [selectedValue, setSelectedValue] = React.useState("");
 
     return (
       <div data-testid="patient-details">
@@ -143,7 +179,7 @@ jest.mock("@/components/forms/PatientDetails", () => {
             props.setSelectedPatient?.({ value: v, label: v });
           }}
         >
-          <option value="new">Create New</option>
+          <option value="">-- Select a patient --</option>
           <option value="pat-1">pat-1</option>
         </select>
 
@@ -265,9 +301,22 @@ describe("CreateNewReportClient integration", () => {
     }
   };
 
-  it("submits when creating a new patient and a report", async () => {
-  const patients: Tables<"patients">[] = [];
-    const patientOptions = [{ value: "new", label: "Create New" }];
+  it("shows error when no patient is selected", async () => {
+    const patients: Tables<"patients">[] = [
+      {
+        id: "pat-1",
+        first_name: "Existing",
+        last_name: "Patient",
+        name: "Existing Patient",
+        birthdate: "1990-05-05",
+        contact_number: "09170000000",
+        country_id: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        sex: "Male",
+      },
+    ];
+    const patientOptions = [{ value: "pat-1", label: "Existing Patient" }];
     const countryOptions = [{ value: "country1", label: "Country1" }];
     const languageOptions = [{ value: "1", label: "English" }];
     const typeOptions = [{ value: "2", label: "Assessment" }];
@@ -282,15 +331,7 @@ describe("CreateNewReportClient integration", () => {
       />
     );
 
-    // Fill patient details (select 'new' is default but we still set fields)
-    fireEvent.change(screen.getByTestId("country-select"), { target: { value: "country1" } });
-    fireEvent.change(screen.getByTestId("first-name"), { target: { value: "John" } });
-    fireEvent.change(screen.getByTestId("last-name"), { target: { value: "Doe" } });
-    fireEvent.change(screen.getByTestId("birthdate"), { target: { value: "2000-01-01" } });
-    fireEvent.change(screen.getByTestId("sex-select"), { target: { value: "M" } });
-    fireEvent.change(screen.getByTestId("contact-number"), { target: { value: "09171234567" } });
-
-    // Fill report details
+    // Fill report details without selecting a patient
     fireEvent.change(screen.getByTestId("title"), { target: { value: "My Report" } });
     fireEvent.change(screen.getByTestId("description"), { target: { value: "Short desc" } });
     fireEvent.change(screen.getByTestId("language-select"), { target: { value: "1" } });
@@ -299,12 +340,14 @@ describe("CreateNewReportClient integration", () => {
     // Set editor content using mock helper
     fireEvent.click(screen.getByTestId("set-editor"));
 
-    // Submit the form by clicking the Submit button rendered by the real Button component
+    // Submit the form without selecting a patient
     const submitBtn = screen.getByText(/submit/i);
     fireEvent.click(submitBtn);
 
-    // Wait for createPatient and createReport to be called
-    () => expect(createPatient).toHaveBeenCalled();
+    // Should show error toast about choosing a patient
+    const toast = await screen.findByTestId("toast");
+    expect(toast).toHaveAttribute("data-visible", "true");
+    expect(toast).toHaveTextContent("Please choose a patient");
   
   });
 
@@ -337,7 +380,7 @@ describe("CreateNewReportClient integration", () => {
       />
     );
     // Select existing patient
-    fireEvent.change(screen.getByTestId("patient-select"), { target: { value: "pat-1" } });
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     // Fill report details
     fireEvent.change(screen.getByTestId("title"), { target: { value: "Report for Existing" } });
     fireEvent.change(screen.getByTestId("description"), { target: { value: "Existing patient report" } });
@@ -355,9 +398,22 @@ describe("CreateNewReportClient integration", () => {
 
     });
 
-    it("supports non-latin characters in patient and report details", async () => {
-    const patients: Tables<"patients">[] = [];
-    const patientOptions = [{ value: "new", label: "Create New" }];
+    it("supports non-latin characters in report details with existing patient", async () => {
+    const patients: Tables<"patients">[] = [
+      {
+        id: "pat-1",
+        first_name: "Existing",
+        last_name: "Patient",
+        name: "Existing Patient",
+        birthdate: "1990-05-05",
+        contact_number: "09170000000",
+        country_id: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        sex: "Male",
+      },
+    ];
+    const patientOptions = [{ value: "pat-1", label: "Existing Patient" }];
     const countryOptions = [{ value: "country1", label: "Country1" }];
     const languageOptions = [{ value: "1", label: "English" }];
     const typeOptions = [{ value: "2", label: "Assessment" }];
@@ -370,14 +426,8 @@ describe("CreateNewReportClient integration", () => {
         typeOptions={typeOptions}
       />
     );
-    // Fill patient details with non-latin characters
-    fireEvent.change(screen.getByTestId("first-name"), { target: { value: "张伟" } });
-    fireEvent.change(screen.getByTestId("last-name"), { target: { value: "李" } });
-    fireEvent.change(screen.getByTestId("contact-number"), { target: { value: "09179876543" } });
-    fireEvent.change(screen.getByTestId("country-select"), { target: { value: "country1" } });
-    fireEvent.change(screen.getByTestId("birthdate"), { target: { value: "2000-01-01" } });
-    fireEvent.change(screen.getByTestId("sex-select"), { target: { value: "M" } });
-    
+    // Select existing patient
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
 
     // Fill report details with non-latin characters
     fireEvent.change(screen.getByTestId("title"), { target: { value: "报告标题" } });
@@ -389,19 +439,34 @@ describe("CreateNewReportClient integration", () => {
     // Submit the form
     const submitBtn = screen.getByText(/submit/i);
     fireEvent.click(submitBtn);
-    // Wait for createPatient and createReport to be called
-    await waitFor(() => expect(createPatient).toHaveBeenCalled());
+    // Wait for createReport to be called (createPatient should not be called)
+    await waitFor(() => expect(createReport).toHaveBeenCalled());
+    expect(createPatient).not.toHaveBeenCalled();
   });
 
   // Validation toast tests for missing required fields
   const renderDefault = (patients: Tables<"patients">[] = []) => {
-    const patientOptions = [{ value: "new", label: "Create New" }];
+    const defaultPatients: Tables<"patients">[] = patients.length > 0 ? patients : [
+      {
+        id: "pat-1",
+        first_name: "Existing",
+        last_name: "Patient",
+        name: "Existing Patient",
+        birthdate: "1990-05-05",
+        contact_number: "09170000000",
+        country_id: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        sex: "Male",
+      },
+    ];
+    const patientOptions = defaultPatients.map(p => ({ value: p.id, label: p.name }));
     const countryOptions = [{ value: "country1", label: "Country1" }];
     const languageOptions = [{ value: "1", label: "English" }];
     const typeOptions = [{ value: "2", label: "Assessment" }];
     render(
       <CreateNewReportClient
-        patients={patients}
+        patients={defaultPatients}
         patientOptions={patientOptions}
         countryOptions={countryOptions}
         languageOptions={languageOptions}
@@ -410,74 +475,9 @@ describe("CreateNewReportClient integration", () => {
     );
   };
 
-  it("shows country required toast when country is missing", async () => {
-    renderDefault();
-    await fillRequired(["country-select"]);
-    fireEvent.click(screen.getByText(/submit/i));
-    const toast = await screen.findByTestId("toast");
-    expect(toast).toHaveAttribute("data-visible", "true");
-    expect(toast).toHaveTextContent("Please select patient's country");
-
-    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
-  });
-
-  it("shows first name required toast when missing", async () => {
-    renderDefault();
-    await fillRequired(["first-name"]);
-    fireEvent.click(screen.getByText(/submit/i));
-    const toast = await screen.findByTestId("toast");
-    expect(toast).toHaveAttribute("data-visible", "true");
-    expect(toast).toHaveTextContent("Please enter patient's first name");
-
-    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
-  });
-
-  it("shows last name required toast when missing", async () => {
-    renderDefault();
-    await fillRequired(["last-name"]);
-    fireEvent.click(screen.getByText(/submit/i));
-    const toast = await screen.findByTestId("toast");
-    expect(toast).toHaveAttribute("data-visible", "true");
-    expect(toast).toHaveTextContent("Please enter patient's last name");
-
-    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
-  });
-
-  it("shows birthday required toast when missing", async () => {
-    renderDefault();
-    await fillRequired(["birthdate"]);
-    fireEvent.click(screen.getByText(/submit/i));
-    const toast = await screen.findByTestId("toast");
-    expect(toast).toHaveAttribute("data-visible", "true");
-    expect(toast).toHaveTextContent("Please select patient's birthday");
-
-    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
-  });
-
-  it("shows sex required toast when missing", async () => {
-    renderDefault();
-    await fillRequired(["sex-select"]);
-    fireEvent.click(screen.getByText(/submit/i));
-    const toast = await screen.findByTestId("toast");
-    expect(toast).toHaveAttribute("data-visible", "true");
-    expect(toast).toHaveTextContent("Please select patient's sex");
-
-    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
-  });
-
-  it("shows contact number required toast when missing", async () => {
-    renderDefault();
-    await fillRequired(["contact-number"]);
-    fireEvent.click(screen.getByText(/submit/i));
-    const toast = await screen.findByTestId("toast");
-    expect(toast).toHaveAttribute("data-visible", "true");
-    expect(toast).toHaveTextContent("Please enter patient's contact number");
-
-    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
-  });
-
   it("shows report title required toast when missing", async () => {
     renderDefault();
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["title"]);
     fireEvent.click(screen.getByText(/submit/i));
     const toast = await screen.findByTestId("toast");
@@ -489,6 +489,7 @@ describe("CreateNewReportClient integration", () => {
 
   it("shows report description required toast when missing", async () => {
     renderDefault();
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["description"]);
     fireEvent.click(screen.getByText(/submit/i));
     const toast = await screen.findByTestId("toast");
@@ -500,6 +501,7 @@ describe("CreateNewReportClient integration", () => {
 
   it("shows language required toast when missing", async () => {
     renderDefault();
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["language-select"]);
     fireEvent.click(screen.getByText(/submit/i));
     const toast = await screen.findByTestId("toast");
@@ -511,6 +513,7 @@ describe("CreateNewReportClient integration", () => {
 
   it("shows therapy type required toast when missing", async () => {
     renderDefault();
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["type-select"]);
     fireEvent.click(screen.getByText(/submit/i));
     const toast = await screen.findByTestId("toast");
@@ -522,6 +525,7 @@ describe("CreateNewReportClient integration", () => {
 
   it("shows editor content required toast when content is empty", async () => {
     renderDefault();
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["editor"]);
 
     fireEvent.click(screen.getByText(/submit/i));
@@ -536,6 +540,7 @@ describe("CreateNewReportClient integration", () => {
 
   it("shows toast when editor content is invalid JSON", async () => {
     renderDefault();
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     // fill other required fields but leave editor so we can set an invalid value
     await fillRequired(["editor"]);
 
@@ -554,6 +559,7 @@ describe("CreateNewReportClient integration", () => {
 
   it("shows invalid format toast when editor JSON is not an array", async () => {
     renderDefault();
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["editor"]);
 
     // JSON that parses but is not an array
@@ -570,6 +576,7 @@ describe("CreateNewReportClient integration", () => {
 
   it("shows toast when editor JSON is an array but contains only empty blocks", async () => {
     renderDefault();
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired(["editor"]);
 
     const emptyBlocks = JSON.stringify([
@@ -588,9 +595,22 @@ describe("CreateNewReportClient integration", () => {
     await waitFor(() => expect(createReport).not.toHaveBeenCalled());
   });
 
-  it("calls createReport on successful submission and does not show a local success/error toast (redirects)", async () => {
-    const patients: Tables<"patients">[] = [];
-    const patientOptions = [{ value: "new", label: "Create New" }];
+  it("calls createReport on successful submission with existing patient", async () => {
+    const patients: Tables<"patients">[] = [
+      {
+        id: "pat-1",
+        first_name: "Existing",
+        last_name: "Patient",
+        name: "Existing Patient",
+        birthdate: "1990-05-05",
+        contact_number: "09170000000",
+        country_id: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        sex: "Male",
+      },
+    ];
+    const patientOptions = [{ value: "pat-1", label: "Existing Patient" }];
     const countryOptions = [{ value: "country1", label: "Country1" }];
     const languageOptions = [{ value: "1", label: "English" }];
     const typeOptions = [{ value: "2", label: "Assessment" }];
@@ -604,14 +624,10 @@ describe("CreateNewReportClient integration", () => {
       />
     );
 
-    // Fill minimal required fields
-    fireEvent.change(screen.getByTestId("first-name"), { target: { value: "John" } });
-    fireEvent.change(screen.getByTestId("last-name"), { target: { value: "Doe" } });
-    fireEvent.change(screen.getByTestId("birthdate"), { target: { value: "2000-01-01" } });
-    fireEvent.change(screen.getByTestId("sex-select"), { target: { value: "M" } });
-    fireEvent.change(screen.getByTestId("contact-number"), { target: { value: "09171234567" } });
-    fireEvent.change(screen.getByTestId("country-select"), { target: { value: "country1" } });
+    // Select existing patient
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
 
+    // Fill minimal required fields
     fireEvent.change(screen.getByTestId("title"), { target: { value: "My Report" } });
     fireEvent.change(screen.getByTestId("description"), { target: { value: "Short desc" } });
     fireEvent.change(screen.getByTestId("language-select"), { target: { value: "1" } });
@@ -632,43 +648,19 @@ describe("CreateNewReportClient integration", () => {
     const submitBtn = screen.getByText(/submit/i);
     fireEvent.click(submitBtn);
 
-  });
-
-  it("shows an error toast when birthdate is in the future", async () => {
-    renderDefault();
-    await fillRequired();
-    // Set birthdate to a future date
-    const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + 1);
-    const futureDateStr = futureDate.toISOString().split("T")[0];
-    fireEvent.change(screen.getByTestId("birthdate"), { target: { value: futureDateStr } });
-    fireEvent.click(screen.getByText(/submit/i));
-    const toast = await screen.findByTestId("toast");
-    expect(toast).toHaveAttribute("data-visible", "true");
-    expect(toast).toHaveTextContent("Birthday cannot be in the future");
-
-    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
-  });
-
-  it("should not create a report when the contact number is not a number", async () => {
-    renderDefault();
-    await fillRequired();
-    // Set contact number to a non-numeric value
-    fireEvent.change(screen.getByTestId("contact-number"), { target: { value: "invalid-number" } });
-    fireEvent.click(screen.getByText(/submit/i));
-    const toast = await screen.findByTestId("toast");
-
-    await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+    await waitFor(() => expect(createReport).toHaveBeenCalled());
+    expect(createPatient).not.toHaveBeenCalled();
   });
 
   it("clears the forms when Clear Form button is clicked", async () => {
     renderDefault();
+    fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     await fillRequired();
     // Click the Clear Form button
     const clearBtn = screen.getByText(/clear form/i);
     fireEvent.click(clearBtn);
     // Assert all fields are reset
-    expect(screen.getByTestId("patient-select")).toHaveValue("new");
+    expect(screen.getByTestId("select-create-edit-report-patient-select")).toHaveValue("");
     expect(screen.getByTestId("country-select")).toHaveValue("");
     expect(screen.getByTestId("first-name")).toHaveValue("");
     expect(screen.getByTestId("last-name")).toHaveValue("");
@@ -694,7 +686,7 @@ describe("CreateNewReportClient integration", () => {
         country_id: 1,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-  sex: "Male",
+        sex: "Male",
       },
     ];
 

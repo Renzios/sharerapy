@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import SearchTherapistsClient from "@/components/client-pages/SearchTherapistClient";
+import SearchTherapistsClient from "@/components/client-pages/search/SearchTherapistClient";
 import { fetchTherapists as mockFetchTherapists } from "@/app/(with-sidebar)/search/therapists/actions";
 import * as nextNav from "next/navigation";
 
