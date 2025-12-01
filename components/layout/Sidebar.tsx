@@ -151,7 +151,7 @@ export default function Sidebar({
               alt="Profile Picture"
               width={150}
               height={150}
-              className="h-17.5 w-17.5 rounded-full"
+              className="h-17.5 w-17.5 rounded-full object-cover"
             />
           )}
 
@@ -278,7 +278,7 @@ export default function Sidebar({
                   alt="Profile Picture"
                   width={150}
                   height={150}
-                  className="h-17.5 w-17.5 rounded-full"
+                  className="h-17.5 w-17.5 rounded-full object-cover"
                 />
               )}
               <div className="flex-1 text-left">
