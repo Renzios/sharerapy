@@ -132,6 +132,7 @@ export default function SearchReportsClient({
       setToastType("success");
       setToastVisible(true);
       router.replace(pathname, { scroll: false });
+      router.replace(pathname, { scroll: false });
     }
   }, [showSuccessToast, router, pathname]);
 

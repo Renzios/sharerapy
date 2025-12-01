@@ -1,6 +1,6 @@
 import { readPatients } from "@/lib/data/patients";
-import { readCountries } from "@/lib/data/countries"; // <--- Import this
-import SearchPatientsClient from "@/components/client-pages/SearchPatientsClient";
+import { readCountries } from "@/lib/data/countries";
+import SearchPatientsClient from "@/components/client-pages/search/SearchPatientsClient";
 
 const PATIENTS_PER_PAGE = 20;
 

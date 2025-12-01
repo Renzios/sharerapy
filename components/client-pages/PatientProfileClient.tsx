@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useTransition, useCallback } from "react";
+import { useState, useTransition, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { SingleValue } from "react-select";
 import { Tables } from "@/lib/types/database.types";
 import PatientProfile from "../layout/PatientProfile";
 import SearchPageHeader from "../layout/SearchPageHeader";
 import ReportCard from "@/components/cards/ReportCard";
-import ReportCardSkeleton from "@/components/skeletons/ReportCardSkeleton"; // <--- Import Skeleton
+import ReportCardSkeleton from "@/components/skeletons/ReportCardSkeleton";
 import Pagination from "@/components/general/Pagination";
+import Toast from "@/components/general/Toast";
 
 type ReportWithRelations = Tables<"reports"> & {
   therapist: Tables<"therapists"> & {
@@ -52,6 +53,12 @@ export default function PatientProfileClient({
 
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [isPending, startTransition] = useTransition();
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error" | "info">(
+    "info"
+  );
 
   // Derived state from URL
   const currentSortParam = searchParams.get("sort");
@@ -98,6 +105,15 @@ export default function PatientProfileClient({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setToastMessage("Patient created successfully!");
+      setToastType("success");
+      setToastVisible(true);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [searchParams]);
+
   return (
     <div className="flex flex-col gap-y-8">
       <PatientProfile patient={patient} />
@@ -141,6 +157,12 @@ export default function PatientProfileClient({
           isPending={isPending}
         />
       )}
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+      />
     </div>
   );
 }

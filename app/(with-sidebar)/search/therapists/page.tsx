@@ -1,7 +1,7 @@
 import { readTherapists } from "@/lib/data/therapists";
 import { readClinics } from "@/lib/data/clinics";
 import { readCountries } from "@/lib/data/countries";
-import SearchTherapistClient from "@/components/client-pages/SearchTherapistClient";
+import SearchTherapistClient from "@/components/client-pages/search/SearchTherapistClient";
 
 const THERAPISTS_PER_PAGE = 20;
 

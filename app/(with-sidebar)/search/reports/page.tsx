@@ -5,7 +5,7 @@ import { readClinics } from "@/lib/data/clinics";
 import { readTypes } from "@/lib/data/types";
 import { readTherapists } from "@/lib/data/therapists";
 import { readPatients } from "@/lib/data/patients";
-import SearchReportsClient from "@/components/client-pages/SearchReportsClient";
+import SearchReportsClient from "@/components/client-pages/search/SearchReportsClient";
 
 const REPORTS_PER_PAGE = 10;
 

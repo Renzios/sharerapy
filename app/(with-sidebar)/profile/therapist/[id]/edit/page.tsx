@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { readTherapist } from "@/lib/data/therapists";
 
 /* Components */
-import EditTherapistProfileClient from "@/components/client-pages/EditTherapistProfileClient";
+import EditTherapistProfileClient from "@/components/client-pages/create-edit/EditTherapistProfileClient";
 
 export default async function TherapistEditPage({
   params,

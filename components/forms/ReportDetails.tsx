@@ -2,24 +2,19 @@
 
 import Input from "@/components/general/Input";
 import TextArea from "@/components/general/TextArea";
-import Select from "@/components/general/Select";
-
-interface SelectOption {
-  value: string;
-  label: string;
-}
+import Select, { Option } from "@/components/general/Select";
 
 interface ReportDetailsProps {
-  languageOptions: SelectOption[];
-  typeOptions: SelectOption[];
+  languageOptions: Option[];
+  typeOptions: Option[];
   title: string;
   setTitle: (value: string) => void;
   description: string;
   setDescription: (value: string) => void;
-  selectedLanguage: SelectOption | null;
-  setSelectedLanguage: (value: SelectOption | null) => void;
-  selectedTherapyType: SelectOption | null;
-  setSelectedTherapyType: (value: SelectOption | null) => void;
+  selectedLanguage: Option | null;
+  setSelectedLanguage: (value: Option | null) => void;
+  selectedTherapyType: Option | null;
+  setSelectedTherapyType: (value: Option | null) => void;
   ids?: {
     titleInputId?: string;
     descriptionTextAreaId?: string;
@@ -92,7 +87,7 @@ export default function ReportDetails({
             instanceId={ids?.languageSelectId ?? ""}
             options={languageOptions}
             value={selectedLanguage}
-            onChange={(option) => setSelectedLanguage(option)}
+            onChange={(option) => setSelectedLanguage(option as Option | null)}
             placeholder="Select language..."
             required={true}
             name="language_id"
@@ -103,7 +98,9 @@ export default function ReportDetails({
             instanceId={ids?.therapyTypeSelectId ?? ""}
             options={typeOptions}
             value={selectedTherapyType}
-            onChange={(option) => setSelectedTherapyType(option)}
+            onChange={(option) =>
+              setSelectedTherapyType(option as Option | null)
+            }
             placeholder="Select therapy type..."
             required={true}
             name="type_id"
