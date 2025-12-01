@@ -70,7 +70,6 @@ jest.mock("@blocknote/core", () => ({
 }));
 
 // Mock BlockNote hooks and components
-import * as BlockNoteReact from "@blocknote/react";
 jest.mock("@blocknote/react", () => ({
   useCreateBlockNote: jest.fn(() => mockEditor),
 }));
@@ -129,10 +128,10 @@ jest.mock("@/app/contexts/AuthContext", () => ({
 
 // Mock Select component to make patient selection testable
 jest.mock("@/components/general/Select", () => {
-  const Component = (props: any) => {
+  const Component = (props: { options?: Option[]; value?: Option; placeholder?: string; disabled?: boolean; id?: string; instanceId?: string; onChange?: (opt: Option | null) => void }) => {
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       const value = e.target.value;
-      const selectedOption = props.options?.find((opt: any) => opt.value === value);
+      const selectedOption = props.options?.find((opt: Option) => opt.value === value);
       props.onChange?.(selectedOption || null);
     };
 
@@ -146,7 +145,7 @@ jest.mock("@/components/general/Select", () => {
         disabled={props.disabled}
       >
         <option value="">{props.placeholder || "Select..."}</option>
-        {props.options?.map((opt: any) => (
+        {props.options?.map((opt: Option) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
@@ -243,7 +242,7 @@ jest.mock("@/components/blocknote/DynamicEditor", () => ({
 }));
 
 jest.mock("@/components/forms/FileUpload", () => {
-  const Component = (_props: unknown) => <div data-testid="file-upload">file-upload</div>;
+  const Component = () => <div data-testid="file-upload">file-upload</div>;
   Component.displayName = "FileUpload";
   return Component;
 });
