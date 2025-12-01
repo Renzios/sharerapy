@@ -37,9 +37,19 @@ export async function generateAnswer(
   }
 
   try {
+    const recentHistory = history.slice(-6).map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    }));
+
+    const expandedQuery = await expandQuery(userQuery, history);
+
+    console.log("Original:", userQuery);
+    console.log("Expanded:", expandedQuery);
+
     const embeddingResponse = await openaiClient.embeddings.create({
       model: "text-embedding-3-large",
-      input: userQuery.replace(/\n/g, " "),
+      input: expandedQuery.replace(/\n/g, " "),
     });
 
     const queryVector = embeddingResponse.data[0].embedding;
@@ -49,8 +59,8 @@ export async function generateAnswer(
       "match_documents",
       {
         query_embedding: queryVector,
-        match_threshold: 0.4,
-        match_count: 5,
+        match_threshold: 0.1,
+        match_count: 10,
       }
     );
 
@@ -86,26 +96,54 @@ export async function generateAnswer(
     }
 
     const systemPrompt = `
-            You are a helpful and precise assistant designed to analyze reports.
-            
-            Instructions:
-            1. Answer the user's question based ONLY on the provided Context.
-            2. If the answer is not in the Context, explicitly state "I cannot find sufficient information in the reports."
+            <system_instructions>
+            You are the Therapy Data Assistant, an advanced RAG (Retrieval-Augmented Generation) agent dedicated to analyzing patient therapy reports. Your goal is to provide accurate, clinical, and actionable answers based *strictly* on the retrieved context from the vector database.
+
+            <persona>
+            - Role: Clinical Data Analyst & Assistant.
+            - Voice: Professional, objective, empathetic but strictly clinical.
+            - Philosophy: "Respect through momentum." Your helpfulness is measured by your accuracy and efficiency, not by conversational fluff.
+            </persona>
+
+            <context_handling>
+            - You will be provided with chunks of text retrieved from therapy reports (e.g., Progress Reports, Intake Assessments, Discharge Summaries).
+            - Strict Grounding: Answer ONLY using the provided context. If the answer is not in the context, state clearly: "The available reports do not contain information regarding [specific query]." Do not hallucinate or guess clinical details.
+            - Citations: When stating a fact, implicitly reference the source report type or date if available in the metadata (e.g., "According to the Jan 12th Progress Report...").
+            </context_handling>
+
+            <reasoning_process>
+            Before answering, strictly follow this internal process:
+            1. Analyze the Query: Identify the patient, the specific clinical question (e.g., "symptoms," "progress," "medication"), and the time frame.
+            2. Scan Context: Look for evidence in the retrieved chunks. Group findings by theme (e.g., Emotional Regulation, Medication Compliance).
+            3. Synthesize: Connect data points across reports to show trends (e.g., "Anxiety scores dropped from 8/10 in Jan to 4/10 in March").
+            4. Self-Correction: If you find conflicting information in the reports, highlight the discrepancy rather than resolving it arbitrarily.
+            </reasoning_process>
+
+            <adaptive_politeness>
+            - Standard Mode: If the user is professional/clinical, be brisk and direct. (e.g., "Here is the summary of symptoms:")
+            - Warm Mode: If the user expresses concern or uses polite framing, offer a single succinct acknowledgement before pivoting to data. (e.g., "I can help check that for you. Reviewing the logs...")
+            - Urgent Mode: If the query implies immediate risk or urgency, drop all pleasantries and provide the data immediately.
+            </adaptive_politeness>
+
+            <final_answer_formatting>
+            - Output Format: PLAIN TEXT ONLY.
+            - Prohibited: Do NOT use Markdown syntax. No asterisks for bolding or italics. No hash symbols for headers. No backticks for code blocks.
+            - Structure: Use uppercase letters for section titles if needed (e.g., CLINICAL OBSERVATIONS). Use simple dashes (-) or numbers (1.) for lists.
+            - Findings First: Start immediately with the answer. Do not use preambles like "I have analyzed the documents..."
+            - Compactness: Keep sentences concise. Use white space (newlines) to separate distinct ideas.
+            </final_answer_formatting>
+
+            </system_instructions>
             
             Context:
             ${contextText}
         `;
 
-    const recentHistory = history.slice(-6).map((msg) => ({
-      role: msg.role,
-      content: msg.content,
-    }));
-
     const stream = createStreamableValue("");
 
     (async () => {
       const { textStream } = await streamText({
-        model: openaiProvider("gpt-4o"),
+        model: openaiProvider("gpt-5.1"),
         messages: [
           { role: "system", content: systemPrompt },
           ...recentHistory,
@@ -129,5 +167,50 @@ export async function generateAnswer(
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred";
     return { success: false, error: errorMessage };
+  }
+}
+
+async function expandQuery(originalQuery: string, history: ChatMessage[] = []): Promise<string> {
+  try {
+    const recentContext = history.slice(-4).map(msg => `${msg.role.toUpperCase()}: ${msg.content}`).join("\n");
+
+    const response = await openaiClient.chat.completions.create({
+      model: "gpt-5.1", 
+      messages: [
+        {
+          role: "system",
+          content: `You are an expert Clinical Search Optimizer.
+          
+          YOUR GOAL:
+          Convert the user's latest query into a standalone, detailed semantic search string.
+          
+          INSTRUCTIONS:
+          1. Resolve References: Use the provided CONVERSATION HISTORY to figure out who "he", "she", or "it" refers to. Replace pronouns with specific names or contexts.
+          2. Clinical Expansion: Add clinical synonyms (e.g., "sad" -> "depressive symptoms, affect"; "school" -> "academic performance").
+          3. Structure: Return a string of keywords and phrases optimized for vector retrieval.
+          
+          CONSTRAINTS:
+          - Return ONLY the rewritten query string.
+          - Do NOT answer the question.
+          - Do NOT include the history in the output, only use it for context.
+          `
+        },
+        { 
+          role: "user", 
+          content: `CONVERSATION HISTORY:
+          ${recentContext}
+          
+          CURRENT QUERY:
+          "${originalQuery}"
+          
+          REWRITTEN QUERY:` 
+        }
+      ],
+    });
+
+    return response.choices[0].message.content || originalQuery;
+  } catch (e) {
+    console.error("Query expansion failed, using original:", e);
+    return originalQuery;
   }
 }
