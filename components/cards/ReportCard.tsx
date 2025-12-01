@@ -181,7 +181,11 @@ export default function ReportCard({
         </div>
 
         {/* Link only wraps the main card content */}
-        <Link href={`/reports/${report.id}`} className="block" id={id}>
+        <Link
+          href={`/reports/${report.id}`}
+          className={`block ${showActions ? "pr-8" : ""}`}
+          id={id}
+        >
           <div className="flex items-center gap-x-2 mb-2">
             <Image
               src={getPublicURL(
@@ -191,9 +195,9 @@ export default function ReportCard({
               alt="Therapist Profile Picture"
               width={100}
               height={100}
-              className="rounded-full object-cover h-8 w-8"
+              className="rounded-full object-cover h-8 w-8 shrink-0"
             />
-            <div className="flex gap-x-2">
+            <div className="flex flex-wrap gap-x-2 items-center">
               <p className="font-Noto-Sans text-sm text-darkgray font-medium">
                 {report.writtenByText || "Written by"} {therapistName}
               </p>
@@ -226,7 +230,7 @@ export default function ReportCard({
           </div>
 
           <div className="mt-3 mb-3">
-            <p className="font-Noto-Sans text-sm text-darkgray line-clamp-2">
+            <p className="font-Noto-Sans text-sm text-darkgray line-clamp-4">
               {report.description}
             </p>
           </div>
