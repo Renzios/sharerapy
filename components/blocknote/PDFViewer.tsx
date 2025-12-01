@@ -29,10 +29,25 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "#14499E",
   },
+  logo: {
+    width: 220,
+    height: 45,
+    flexShrink: 0,
+  },
+  titleContainer: {
+    flex: 1,
+    marginLeft: 20,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    maxWidth: "70%",
+  },
   reportTitle: {
     fontSize: 14,
     color: "#1E1E1E",
     fontFamily: "Helvetica-Bold",
+    textAlign: "right",
+    wordBreak: "break-word",
   },
   footer: {
     marginTop: 20,
@@ -225,8 +240,12 @@ export default function PDFViewer({
         // Build PDF header with ShareRapy branding and report title
         const header = (
           <View style={styles.header}>
-            <Image src="/logowordmark.png" style={{ width: 220, height: 45 }} />
-            <Text style={styles.reportTitle}>{title || "Therapy Report"}</Text>
+            <Image src="/logowordmark.png" style={styles.logo} />
+            <View style={styles.titleContainer}>
+              <Text style={styles.reportTitle}>
+                {title || "Therapy Report"}
+              </Text>
+            </View>
           </View>
         );
 
