@@ -312,16 +312,19 @@ export default function IndivReportClient({
               </Button>
             </div>
           </div>
-          <p className="font-Noto-Sans text-[0.6875rem] md:text-sm font-medium text-darkgray ml-0.5">
-            {isEdited
-              ? `${translatedEditedText || "Edited on"} ${formatDate(
-                  report.updated_at
-                )}`
-              : `${translatedCreatedText || "Created on"} ${formatDate(
-                  report.created_at
-                )}`}
-          </p>
+
+          <div className="flex items-center gap-2 mt-1">
+            <p className="font-Noto-Sans text-[0.6875rem] md:text-sm font-medium text-darkgray ml-0.5">
+              {`${translatedCreatedText || "Created on"} ${formatDate(
+                report.created_at
+              )}`}
+            </p>
+          </div>
+
           <div className="flex flex-wrap gap-2 mt-2">
+            {isEdited && (
+              <Tag text="Edited" fontSize="text-xs" variant="edited" />
+            )}
             <Tag
               text={therapyType}
               fontSize="text-xs"

@@ -10,6 +10,7 @@ interface TagProps {
     | "sped"
     | "developmental"
     | "reading";
+  variant?: "default" | "edited";
 }
 
 export default function Tag({
@@ -17,6 +18,7 @@ export default function Tag({
   fontSize = "text-sm",
   className = "",
   therapyType,
+  variant = "default",
 }: TagProps) {
   const therapyColors = {
     speech: "bg-emerald-100 text-emerald-700 group-hover:bg-emerald-200",
@@ -26,13 +28,18 @@ export default function Tag({
     reading: "bg-cyan-100 text-cyan-700 group-hover:bg-cyan-200",
   };
 
+  const variantColors = {
+    default: "bg-gray-100 text-black group-hover:bg-white",
+    edited: "bg-blue-100 text-blue-700 group-hover:bg-blue-200 italic",
+  };
+
   const baseClasses =
     "flex items-center justify-center rounded-full px-3 py-1 font-Noto-Sans font-medium transition-colors duration-200";
 
-  // use therapy type colors if provided, otherwise use default gray
+  // use therapy type colors if provided, otherwise use variant color
   const colorClasses = therapyType
     ? therapyColors[therapyType]
-    : "bg-gray-100 text-black group-hover:bg-white";
+    : variantColors[variant];
 
   const combinedClasses = [baseClasses, colorClasses, fontSize, className]
     .join(" ")
