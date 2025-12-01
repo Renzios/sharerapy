@@ -1,7 +1,7 @@
 import { readPatients } from "@/lib/data/patients";
 import { readReports } from "@/lib/data/reports";
 import { readTherapists } from "@/lib/data/therapists";
-import SearchAllClient from "@/components/client-pages/SearchAllClient";
+import SearchAllClient from "@/components/client-pages/search/SearchAllClient";
 
 /**
  * This is the server component for the main Search page.

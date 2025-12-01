@@ -107,14 +107,13 @@ export default function SearchReportsPage({
     "info"
   );
 
-  // Show success toast on mount if needed, then clean URL
+  // Show success toast after report creation
   useEffect(() => {
     if (showSuccessToast) {
       setToastMessage("Report created successfully!");
       setToastType("success");
       setToastVisible(true);
-      // Clean the URL to remove the success parameter
-      router.replace(pathname, { scroll: false }); // Use pathname
+      router.replace(pathname, { scroll: false });
     }
   }, [showSuccessToast, router, pathname]);
 

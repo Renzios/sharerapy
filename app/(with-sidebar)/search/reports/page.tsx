@@ -1,6 +1,6 @@
 import { readReports } from "@/lib/data/reports";
 import { readLanguages } from "@/lib/data/languages";
-import SearchReportsClient from "@/components/client-pages/SearchReportsClient";
+import SearchReportsClient from "@/components/client-pages/search/SearchReportsClient";
 
 const REPORTS_PER_PAGE = 10;
 
@@ -34,7 +34,6 @@ export default async function SearchReportsPage({
 }) {
   const params = await searchParams;
   const searchQuery = params.q || "";
-  const showSuccessToast = params.success === "true";
   const showDeletedToast = params.deleted === "true";
   const currentPage = Number(params.p) || 1;
   const sortQuery = params.sort || "dateDescending";
@@ -62,7 +61,6 @@ export default async function SearchReportsPage({
       initialReports={data || []}
       totalPages={totalPages}
       initialSearchTerm={searchQuery}
-      showSuccessToast={showSuccessToast}
       showDeletedToast={showDeletedToast}
       languageOptions={languageOptions}
     />

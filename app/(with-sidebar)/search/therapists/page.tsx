@@ -1,5 +1,5 @@
 import { readTherapists } from "@/lib/data/therapists";
-import SearchTherapistsClient from "@/components/client-pages/SearchTherapistClient";
+import SearchTherapistsClient from "@/components/client-pages/search/SearchTherapistClient";
 
 const THERAPISTS_PER_PAGE = 20;
 

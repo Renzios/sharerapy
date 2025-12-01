@@ -10,7 +10,6 @@ import Button from "@/components/general/Button";
 import Select from "@/components/general/Select";
 import Toast from "@/components/general/Toast";
 import ConfirmationModal from "@/components/general/ConfirmationModal";
-import DropdownMenu from "@/components/general/DropdownMenu";
 import Tag from "@/components/general/Tag";
 import PDFViewer from "@/components/blocknote/PDFViewer";
 
@@ -27,7 +26,7 @@ import { useBackNavigation } from "@/app/hooks/useBackNavigation";
 import { useTherapistProfile } from "@/app/contexts/TherapistProfileContext";
 
 /* Icons */
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 /* Actions */
 import { deleteReport } from "@/lib/actions/reports";
@@ -70,7 +69,6 @@ export default function IndivReportClient({
   const { therapist } = useTherapistProfile();
   const { handleBackClick } = useBackNavigation("/search/reports");
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
@@ -106,6 +104,15 @@ export default function IndivReportClient({
   const clinic = report.therapist.clinic.clinic;
   const therapyType = report.type.type;
   const language = report.language.language;
+
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setToastMessage("Report created successfully!");
+      setToastType("success");
+      setToastVisible(true);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (searchParams.get("updated") === "true") {
@@ -264,21 +271,6 @@ export default function IndivReportClient({
     }
   };
 
-  const dropdownItems = [
-    {
-      label: "Edit",
-      onClick: () => router.push(`/reports/${report.id}/edit`),
-      variant: "default" as const,
-      id: "indiv-report-edit-btn",
-    },
-    {
-      label: "Delete",
-      onClick: () => setIsDeleteModalOpen(true),
-      variant: "danger" as const,
-      id: "indiv-report-delete-btn",
-    },
-  ];
-
   return (
     <>
       <div className="flex flex-col gap-y-8">
@@ -288,36 +280,26 @@ export default function IndivReportClient({
             <h1 className="font-Noto-Sans text-xl md:text-3xl text-black font-semibold">
               {translatedTitle || report.title}
             </h1>
-            <div className="ml-auto flex items-center gap-2">
+            {therapist?.id === report.therapist_id && (
+              <button
+                id="indiv-report-delete-icon-btn"
+                aria-label="Delete Report"
+              >
+                <DeleteIcon
+                  className="text-darkgray hover:text-red-600 cursor-pointer"
+                  onClick={() => setIsDeleteModalOpen(true)}
+                />
+              </button>
+            )}
+            <div className="ml-auto mb-auto flex flex-col sm:flex-row items-center gap-2">
               {therapist?.id === report.therapist_id && (
-                <div className="relative">
-                  <button
-                    id="indiv-report-dropdown-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsDropdownOpen((prev) => !prev);
-                    }}
-                    className="
-                      bg-transparent border border-primary text-primary
-                      hover:bg-primary/5 hover:cursor-pointer
-                      active:bg-primary active:text-white
-                      rounded-lg
-                      font-Noto-Sans font-semibold
-                      px-3 lg:px-4 py-2
-                      flex items-center justify-center
-                      transition-colors duration-200
-                    "
-                    aria-label="More options"
-                  >
-                    <MoreHorizIcon className="text-xl" />
-                  </button>
-                  <DropdownMenu
-                    isOpen={isDropdownOpen}
-                    onClose={() => setIsDropdownOpen(false)}
-                    items={dropdownItems}
-                    className="top-full mt-1 right-0"
-                  />
-                </div>
+                <Button
+                  variant="outline"
+                  className="w-12 sm:w-auto text-xs md:text-base md:w-24"
+                  onClick={() => router.push(`/reports/${report.id}/edit`)}
+                >
+                  Edit
+                </Button>
               )}
               <Button
                 id="indiv-report-back-btn"

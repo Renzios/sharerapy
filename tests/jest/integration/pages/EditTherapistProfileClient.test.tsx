@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import EditTherapistProfileClient from "@/components/client-pages/EditTherapistProfileClient";
+import EditTherapistProfileClient from "@/components/client-pages/create-edit/EditTherapistProfileClient";
 import type { Tables } from "@/lib/types/database.types";
 import * as nextNav from "next/navigation";
 

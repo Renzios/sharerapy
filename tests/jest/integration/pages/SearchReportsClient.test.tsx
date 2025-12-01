@@ -44,7 +44,7 @@ jest.mock("next/link", () => {
   };
 });
 
-import SearchReportsClient from "@/components/client-pages/SearchReportsClient";
+import SearchReportsClient from "@/components/client-pages/search/SearchReportsClient";
 
 // Minimal test types
 type ReportLike = { id: string; title: string };

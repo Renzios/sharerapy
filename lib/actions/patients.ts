@@ -27,9 +27,8 @@ export async function createPatient(formData: FormData) {
     throw error;
   }
 
-  revalidatePath("");
-  return data;
-  redirect("");
+  revalidatePath("/search/patients");
+  redirect(`/profile/patient/${data.id}?success=true`);
 }
 
 export async function updatePatient(id: string, formData: FormData) {
