@@ -147,13 +147,11 @@ Close Browser Safely
     Run Keyword And Ignore Error    Close Browser
 
 Delete Report
-    # Click the delete icon (SVG)
-    Wait Until Element Is Visible    css=.MuiSvgIcon-root[data-testid="DeleteIcon"]    30s
-    Click Element    css=.MuiSvgIcon-root[data-testid="DeleteIcon"]
+    Wait Until Element Is Visible    id=indiv-report-delete-icon-btn    30s
+    Click Element    id=indiv-report-delete-icon-btn
     Sleep    1s
-    # Wait for the confirm delete button to appear and click it
+
     Wait Until Element Is Visible    id=indiv-report-confirm-delete-btn    30s
     Click Element    id=indiv-report-confirm-delete-btn
     Sleep    2s
-    # Verify the search input appears after deletion
     Wait Until Element Is Visible    id=search-reports-input    30s
