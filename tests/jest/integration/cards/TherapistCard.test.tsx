@@ -58,7 +58,7 @@ describe("Rendering", () => {
     const therapist = makeTherapist();
     render(<TherapistCard therapist={therapist} />);
 
-    const img = screen.getByRole("img", { name: "Dr. AlicePFP" }) as HTMLImageElement;
+    const img = screen.getByRole("img", { name: "Dr. Alice PFP" }) as HTMLImageElement;
     expect(img).toBeInTheDocument();
     expect(img.getAttribute("src")).toBe("https://public/therapist_pictures/alice.png");
 

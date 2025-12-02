@@ -68,12 +68,9 @@ export default function ReportCard({
   );
 
   const isEdited = report.created_at !== report.updated_at;
-  const dateUploaded = formatDistanceToNow(
-    new Date(isEdited ? report.updated_at : report.created_at),
-    {
-      addSuffix: true,
-    }
-  );
+  const dateUploaded = formatDistanceToNow(new Date(report.created_at), {
+    addSuffix: true,
+  });
 
   const therapistName = `${report.therapist.first_name} ${report.therapist.last_name}`;
   const country = report.therapist.clinic.country.country;
@@ -150,14 +147,15 @@ export default function ReportCard({
           ${disabled ? "opacity-60 pointer-events-none" : ""}
         `}
       >
-        {showActions && (
-          <div className="absolute top-4 right-4 dropdown-trigger">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsDropdownOpen((prev) => !prev);
-              }}
-              className="
+        <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+          {showActions && (
+            <div className="relative dropdown-trigger">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsDropdownOpen((prev) => !prev);
+                }}
+                className="
                 p-1.5
                 rounded-full
                 text-darkgray
@@ -166,23 +164,28 @@ export default function ReportCard({
                 transition-all duration-200
                 focus:outline-none
               "
-              aria-label="More options"
-            >
-              <MoreHorizIcon className="text-xl" />
-            </button>
-            <div className="dropdown-menu">
-              <DropdownMenu
-                isOpen={isDropdownOpen}
-                onClose={() => setIsDropdownOpen(false)}
-                items={dropdownItems}
-                className="top-full mt-1 right-0"
-              />
+                aria-label="More options"
+              >
+                <MoreHorizIcon className="text-xl" />
+              </button>
+              <div className="dropdown-menu">
+                <DropdownMenu
+                  isOpen={isDropdownOpen}
+                  onClose={() => setIsDropdownOpen(false)}
+                  items={dropdownItems}
+                  className="top-full mt-1 right-0"
+                />
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Link only wraps the main card content */}
-        <Link href={`/reports/${report.id}`} className="block" id={id}>
+        <Link
+          href={`/reports/${report.id}`}
+          className={`block ${showActions ? "pr-8" : ""}`}
+          id={id}
+        >
           <div className="flex items-center gap-x-2 mb-2">
             <Image
               src={getPublicURL(
@@ -192,9 +195,9 @@ export default function ReportCard({
               alt="Therapist Profile Picture"
               width={100}
               height={100}
-              className="rounded-full object-cover h-8 w-8"
+              className="rounded-full object-cover h-8 w-8 shrink-0"
             />
-            <div className="flex gap-x-2">
+            <div className="flex flex-wrap gap-x-2 items-center">
               <p className="font-Noto-Sans text-sm text-darkgray font-medium">
                 {report.writtenByText || "Written by"} {therapistName}
               </p>
@@ -202,7 +205,7 @@ export default function ReportCard({
                 •
               </p>
               <p className="font-Noto-Sans text-sm text-darkgray font-medium">
-                {isEdited ? report.editedText || "Edited" : ""} {dateUploaded}
+                Created {dateUploaded}
               </p>
             </div>
           </div>
@@ -212,6 +215,9 @@ export default function ReportCard({
               {report.title}
             </h1>
             <div className="flex flex-wrap gap-2">
+              {isEdited && (
+                <Tag text="Edited" fontSize="text-xs" variant="edited" />
+              )}
               <Tag
                 text={therapyType}
                 fontSize="text-xs"
@@ -224,7 +230,7 @@ export default function ReportCard({
           </div>
 
           <div className="mt-3 mb-3">
-            <p className="font-Noto-Sans text-sm text-darkgray line-clamp-2">
+            <p className="font-Noto-Sans text-sm text-darkgray line-clamp-4">
               {report.description}
             </p>
           </div>

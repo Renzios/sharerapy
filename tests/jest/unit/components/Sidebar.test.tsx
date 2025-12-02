@@ -252,12 +252,12 @@ describe("Sidebar Component", () => {
       // Click to open dropdown
       await user.click(dropdownBtn!);
 
-      // Check dropdown menu items appear
-      const viewButton = screen.getByRole("button", { name: /view/i });
-      const logoutButton = screen.getByRole("button", { name: /logout/i });
+      // Check dropdown menu items appear (use getAllByRole since there might be multiple instances)
+      const viewButtons = screen.getAllByRole("button", { name: /view/i });
+      const logoutButtons = screen.getAllByRole("button", { name: /logout/i });
 
-      expect(viewButton).toBeInTheDocument();
-      expect(logoutButton).toBeInTheDocument();
+      expect(viewButtons.length).toBeGreaterThan(0);
+      expect(logoutButtons.length).toBeGreaterThan(0);
     });
 
     it("calls signOut and navigates on logout", async () => {
@@ -268,9 +268,9 @@ describe("Sidebar Component", () => {
       const dropdownBtn = document.querySelector("#sidebar-profile-dropdown-btn");
       await user.click(dropdownBtn!);
 
-      // Click logout
-      const logoutButton = screen.getByRole("button", { name: /logout/i });
-      await user.click(logoutButton);
+      // Click logout (use getAllByRole and select first one)
+      const logoutButtons = screen.getAllByRole("button", { name: /logout/i });
+      await user.click(logoutButtons[0]);
 
       expect(mockSignOut).toHaveBeenCalled();
       expect(mockPush).toHaveBeenCalledWith("/login");

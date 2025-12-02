@@ -50,35 +50,18 @@ Click Create Report
     Sleep    2s
 
 Input Report Details With Data
-    [Arguments]    ${first_name}    ${last_name}    ${birthdate}    ${contact_number}    ${report_title}    ${report_description}    ${report_content}
+    [Arguments]    ${report_title}    ${report_description}    ${report_content}
     # Wait for the form to be fully loaded
     Wait Until Page Contains    Patient Details    30s
     Sleep    3s
-    
-    # Country selection with enhanced waiting
-    Wait Until Element Is Visible    id=react-select-create-edit-report-country-select-input    30s
-    Wait Until Element Is Enabled    id=react-select-create-edit-report-country-select-input    10s
-    Click Element    id=react-select-create-edit-report-country-select-input
-    Sleep    2s
-    Press Keys    id=react-select-create-edit-report-country-select-input    ARROW_DOWN
+
+    # Select patient from dropdown
+    Wait Until Element Is Visible    id=react-select-create-edit-report-patient-select-input    30s
+    Click Element    id=react-select-create-edit-report-patient-select-input
     Sleep    1s
-    Press Keys    id=react-select-create-edit-report-country-select-input    RETURN
+    Press Keys    id=react-select-create-edit-report-patient-select-input    TestFirst TestLast
     Sleep    1s
-    
-    # Input fields with focus and clearing
-    Run Keyword If    '${first_name}' != ''    Input Text With Focus    id=create-edit-report-first-name-input    ${first_name}
-    Run Keyword If    '${last_name}' != ''    Input Text With Focus    id=create-edit-report-last-name-input    ${last_name}
-    Run Keyword If    '${birthdate}' != ''    Input Text With Focus    id=create-edit-report-birthday-input    ${birthdate}
-    Run Keyword If    '${contact_number}' != ''    Input Text With Focus    id=create-edit-report-contact-number-input    ${contact_number}
-    
-    # Sex selection with enhanced waiting
-    Wait Until Element Is Visible    id=react-select-create-edit-report-sex-select-input    30s
-    Wait Until Element Is Enabled    id=react-select-create-edit-report-sex-select-input    10s
-    Click Element    id=react-select-create-edit-report-sex-select-input
-    Sleep    2s
-    Press Keys    id=react-select-create-edit-report-sex-select-input    ARROW_DOWN
-    Sleep    1s
-    Press Keys    id=react-select-create-edit-report-sex-select-input    RETURN
+    Press Keys    id=react-select-create-edit-report-patient-select-input    RETURN
     Sleep    1s
     
     Run Keyword If    '${report_title}' != ''    Input Text With Focus    id=create-edit-report-title-input    ${report_title}
@@ -163,38 +146,12 @@ Verify Report Creation Failed
 Close Browser Safely
     Run Keyword And Ignore Error    Close Browser
 
-Verify Report Created And View It
-    [Arguments]    ${report_title}
-    [Documentation]    Verify report was created and then view it to check title and description are displayed
-    Sleep    3s
-    Reload Page
-    Sleep    2s
-    # Scroll to top of page to ensure reports are visible
-    Execute Javascript    window.scrollTo(0, 0)
+Delete Report
+    Wait Until Element Is Visible    id=indiv-report-delete-icon-btn    30s
+    Click Element    id=indiv-report-delete-icon-btn
     Sleep    1s
-    # First check if any E2E test report exists on the page
-    Wait Until Page Contains    [E2E_TEST]    30s
-    # Look for any report card containing E2E_TEST in the title and click it
-    Wait Until Element Is Visible    xpath=//h1[contains(text(), '[E2E_TEST]')]    30s
-    Click Element    xpath=//h1[contains(text(), '[E2E_TEST]')]/ancestor::a
-    Sleep    3s
-    # Verify we're on the report view page with E2E_TEST title and description
-    Wait Until Page Contains    [E2E_TEST]    30s
-    Wait Until Page Contains    description    30s
 
-Cleanup All E2E Test Data
-    [Documentation]    Run the Node.js cleanup script to remove all E2E test data from Supabase
-    Log    Starting E2E test data cleanup...
-    ${script_path}=    Set Variable    ${CURDIR}${/}..${/}..${/}..${/}scripts${/}cleanup-e2e-test-data.js
-    ${workspace_path}=    Set Variable    ${CURDIR}${/}..${/}..${/}..${/}..
-    
-    # Get environment variables (will be passed from CI environment)
-    ${supabase_url}=    Get Environment Variable    NEXT_PUBLIC_SUPABASE_URL    default_value=
-    ${supabase_key}=    Get Environment Variable    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY    default_value=
-    
-    # Run cleanup script with environment variables
-    &{env_vars}=    Create Dictionary    NEXT_PUBLIC_SUPABASE_URL=${supabase_url}    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${supabase_key}
-    ${result}=    Run Process    node    ${script_path}    cwd=${workspace_path}    env=&{env_vars}    shell=True
-    Log    Cleanup script output: ${result.stdout}
-    Run Keyword If    ${result.rc} != 0    Log    Cleanup script failed with exit code ${result.rc}. Error: ${result.stderr}    WARN
-    Run Keyword If    ${result.rc} != 0    Log    Continuing test execution despite cleanup failure...    WARN
+    Wait Until Element Is Visible    id=indiv-report-confirm-delete-btn    30s
+    Click Element    id=indiv-report-confirm-delete-btn
+    Sleep    2s
+    Wait Until Element Is Visible    id=search-reports-input    30s

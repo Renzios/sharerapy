@@ -20,11 +20,14 @@ export async function readReports({
 
   let query;
 
-  if (search) query = supabase.rpc("search_reports_ranked", { search_term: search });
+  if (search)
+    query = supabase.rpc("search_reports_ranked", { search_term: search });
   else query = supabase.from("reports");
 
-  query = query.select("*, therapist:therapists(*, clinic:clinics(*, country:countries(*))), type:types(*), language:languages(*), patient:patients(*, country:countries(*))", { count: "exact" })
-  
+  query = query.select(
+    "*, therapist:therapists!inner(*, clinic:clinics!inner(*, country:countries(*))), type:types(*), language:languages(*), patient:patients(*, country:countries(*))",
+    { count: "exact" }
+  );
   const sortColumn = column || (search ? undefined : "title");
   if (sortColumn) query.order(sortColumn, { ascending });
 

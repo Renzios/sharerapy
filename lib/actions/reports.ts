@@ -19,14 +19,18 @@ export async function createReport(formData: FormData) {
 
   const supabase = await createClient();
 
-  const { error } = await supabase.from("reports").insert([ReportData]);
+  const { data, error } = await supabase
+    .from("reports")
+    .insert([ReportData])
+    .select()
+    .single();
 
   if (error) {
     throw error;
   }
-  
+
   revalidatePath("/search/reports");
-  redirect("/search/reports?success=true");
+  redirect(`/reports/${data.id}?success=true`);
 }
 
 export async function updateReport(id: string, formData: FormData) {

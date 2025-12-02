@@ -1,8 +1,7 @@
 import React from "react";
 import type { Tables } from "@/lib/types/database.types";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import SearchPatientsClient from "@/components/client-pages/SearchPatientsClient";
-import { fetchPatients as mockFetchPatients } from "@/app/(with-sidebar)/search/patients/actions";
+import SearchPatientsClient from "@/components/client-pages/search/SearchPatientsClient";
 import * as nextNav from "next/navigation";
 
 jest.mock("next/navigation", () => {
@@ -15,9 +14,8 @@ jest.mock("next/navigation", () => {
   };
 });
 
-jest.mock("@/app/(with-sidebar)/search/patients/actions", () => ({
-  fetchPatients: jest.fn(),
-}));
+// Mock fetchPatients - this module doesn't exist, create a simple mock
+const mockFetchPatients = jest.fn();
 
 // Mock layout and child components to make unit deterministic
 jest.mock("@/components/layout/SearchPageHeader", () => {
@@ -168,12 +166,6 @@ describe("SearchPatientsClient integration", () => {
       toString: () => searchParams.toString(),
     });
 
-    (mockFetchPatients as jest.Mock).mockResolvedValue({
-      success: true,
-      data: initialPatients,
-      totalPages: 2,
-    });
-
     (window as unknown as { scrollTo?: jest.Mock }).scrollTo = jest.fn();
   });
 
@@ -185,55 +177,46 @@ describe("SearchPatientsClient integration", () => {
     expect(screen.getByTestId("pagination")).toBeInTheDocument();
   });
 
-  it("performs a search: updates patients via fetchPatients and updates URL via router.push", async () => {
-    const newPatients = [{ id: "pat-new", name: "New" }];
-    (mockFetchPatients as jest.Mock).mockResolvedValueOnce({
-      success: true,
-      data: newPatients,
-      totalPages: 1,
-    });
-
+  it("performs a search: updates URL via router.push", async () => {
       render(<SearchPatientsClient initialPatients={initialPatients} totalPages={2} initialSearchTerm="initial" />);
 
     fireEvent.click(screen.getByTestId("search-btn"));
 
-    await waitFor(() => expect(mockFetchPatients).toHaveBeenCalled());
+    await waitFor(() => expect(pushMock).toHaveBeenCalled());
 
-    await waitFor(() => expect(screen.getByTestId("patient-pat-new")).toBeInTheDocument());
+    // Verify the URL contains the search parameter
+    const lastCall = pushMock.mock.calls[pushMock.mock.calls.length - 1];
+    expect(lastCall[0]).toContain("q=");
   });
 
-  it("changes sort and page: triggers fetch and updates list", async () => {
-    const sorted = [...initialPatients].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-
+  it("changes sort and page: updates URL via router.push", async () => {
       render(<SearchPatientsClient initialPatients={initialPatients} totalPages={2} initialSearchTerm="initial" />);
 
-    (mockFetchPatients as jest.Mock).mockResolvedValueOnce({
-      success: true,
-      data: sorted,
-      totalPages: 2,
-    });
+    pushMock.mockClear();
 
     fireEvent.change(screen.getByTestId("mock-sort-select"), { target: { value: "nameAscending" } });
 
-    await waitFor(() => expect(mockFetchPatients).toHaveBeenCalled());
+    await waitFor(() => expect(pushMock).toHaveBeenCalled());
 
-    (mockFetchPatients as jest.Mock).mockResolvedValueOnce({
-      success: true,
-      data: [initialPatients[0]],
-      totalPages: 2,
-    });
+    // Verify sort parameter in URL
+    const sortCall = pushMock.mock.calls[pushMock.mock.calls.length - 1];
+    expect(sortCall[0]).toContain("sort=nameAscending");
+
+    pushMock.mockClear();
 
     await waitFor(() => expect(screen.getByTestId("page-1")).toBeInTheDocument());
     fireEvent.click(screen.getByTestId("page-1"));
 
-    await waitFor(() => expect(mockFetchPatients).toHaveBeenCalled());
+    await waitFor(() => expect(pushMock).toHaveBeenCalled());
+    
+    // Verify page parameter in URL
+    const pageCall = pushMock.mock.calls[pushMock.mock.calls.length - 1];
+    expect(pageCall[0]).toContain("p=1");
+    
     expect((window as unknown as { scrollTo?: jest.Mock }).scrollTo).toHaveBeenCalled();
   });
 
   it("changes language: updates select and keeps existing patients", async () => {
-    const langPatients = [{ ...initialPatients[0], id: "pat-lang" }];
-    (mockFetchPatients as jest.Mock).mockResolvedValueOnce({ success: true, data: langPatients, totalPages: 1 });
-
       render(<SearchPatientsClient initialPatients={initialPatients} totalPages={2} initialSearchTerm="initial" />);
 
     fireEvent.change(screen.getByTestId("mock-language-select"), { target: { value: "es" } });
@@ -244,27 +227,25 @@ describe("SearchPatientsClient integration", () => {
     expect(screen.getByTestId("patient-pat-2")).toBeInTheDocument();
   });
 
-  it("getSortParams cases map to correct fetch parameters", async () => {
+  it("getSortParams cases update URL with correct parameters", async () => {
     const cases: Record<string, { column: string; ascending: boolean }> = {
       nameAscending: { column: "name", ascending: true },
       nameDescending: { column: "name", ascending: false },
     };
 
     for (const [value, expected] of Object.entries(cases)) {
-        (mockFetchPatients as jest.Mock).mockResolvedValueOnce({ success: true, data: initialPatients, totalPages: 2 });
-
       const { unmount } = render(
           <SearchPatientsClient initialPatients={initialPatients} totalPages={2} initialSearchTerm="initial" />
       );
 
+      pushMock.mockClear();
+
       fireEvent.change(screen.getByTestId("mock-sort-select"), { target: { value } });
 
-      await waitFor(() => expect(mockFetchPatients).toHaveBeenCalled());
+      await waitFor(() => expect(pushMock).toHaveBeenCalled());
 
-      const lastCall = (mockFetchPatients as jest.Mock).mock.calls.pop();
-      const params = lastCall ? lastCall[0] : undefined;
-      expect(params).toBeDefined();
-      expect(params.ascending).toBe(expected.ascending);
+      const lastCall = pushMock.mock.calls[pushMock.mock.calls.length - 1];
+      expect(lastCall[0]).toContain(`sort=${value}`);
 
       unmount();
     }

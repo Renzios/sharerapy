@@ -1,9 +1,14 @@
 "use client";
 
-import React from "react";
-import ReactSelect, { SingleValue } from "react-select";
+import ReactSelect, {
+  SingleValue,
+  MultiValue,
+  ActionMeta,
+  GroupBase,
+  Props as ReactSelectProps,
+} from "react-select";
 
-interface Option {
+export interface Option {
   value: string;
   label: string;
 }
@@ -11,8 +16,11 @@ interface Option {
 interface SelectProps {
   label?: string;
   options: Option[];
-  value: Option | null;
-  onChange: (option: SingleValue<Option>) => void;
+  value: Option | MultiValue<Option> | null;
+  onChange: (
+    newValue: SingleValue<Option> | MultiValue<Option>,
+    actionMeta: ActionMeta<Option>
+  ) => void;
   placeholder?: string;
   required?: boolean;
   instanceId: string;
@@ -21,14 +29,9 @@ interface SelectProps {
   className?: string;
   name?: string;
   id?: string;
+  isMulti?: boolean;
 }
 
-/**
- * A custom Select component wrapping react-select with consistent styling.
- * Features a label above the select and matches the design system.
- *
- * @param props - The select component props
- */
 export default function Select({
   label,
   options,
@@ -41,12 +44,16 @@ export default function Select({
   className = "",
   name,
   id,
+  isMulti = false,
 }: SelectProps) {
-  const selectStyles = {
-    control: (base: object) => ({
+  const selectStyles: ReactSelectProps<
+    Option,
+    boolean,
+    GroupBase<Option>
+  >["styles"] = {
+    control: (base, state) => ({
       ...base,
       minHeight: "2.8125rem",
-      height: "2.8125rem",
       fontFamily: "'Noto Sans', sans-serif",
       fontSize: "0.875rem",
       backgroundColor: disabled ? "#f3f4f6" : "white",
@@ -58,32 +65,37 @@ export default function Select({
         border: "1px solid #e5e7eb",
       },
     }),
-    valueContainer: (base: object) => ({
+    valueContainer: (base) => ({
       ...base,
       padding: "0 16px",
       fontFamily: "'Noto Sans', sans-serif",
     }),
-    input: (base: object) => ({
+    input: (base) => ({
       ...base,
       margin: 0,
       padding: 0,
       fontFamily: "'Noto Sans', sans-serif",
     }),
-    placeholder: (base: object) => ({
+    placeholder: (base) => ({
       ...base,
       color: disabled ? "#9ca3af" : "#6b7280",
     }),
-    singleValue: (base: object) => ({
+    singleValue: (base) => ({
       ...base,
       color: disabled ? "#9ca3af" : "#030712",
     }),
-    menu: (base: object) => ({
+    menu: (base) => ({
       ...base,
       zIndex: 9999,
       fontSize: "0.875rem",
       fontFamily: "'Noto Sans', sans-serif",
       borderRadius: "0.5rem",
       border: "1px solid #e5e7eb",
+    }),
+    multiValue: (base) => ({
+      ...base,
+      backgroundColor: "#e5e7eb",
+      borderRadius: "0.25rem",
     }),
   };
 
@@ -107,14 +119,15 @@ export default function Select({
         placeholder={placeholder}
         classNamePrefix="react-select"
         isDisabled={disabled}
+        isMulti={isMulti}
       />
-      {/* Hidden input for form submission */}
-      {name && (
+      {/* Hidden input for form submission (only works for single value mostly) */}
+      {name && !isMulti && (
         <input
           id={id}
           type="hidden"
           name={name}
-          value={value?.value || ""}
+          value={(value as Option)?.value || ""}
           required={required}
         />
       )}

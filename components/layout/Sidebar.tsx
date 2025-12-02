@@ -19,10 +19,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import PatientIcon from "@mui/icons-material/PersonalInjury";
 import ReportIcon from "@mui/icons-material/Article";
 import TherapistIcon from "@mui/icons-material/People";
+import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 /**
  * Renders the main navigation sidebar with responsive behavior and user profile section.
@@ -44,6 +46,17 @@ export default function Sidebar({
   const { user } = useAuth();
   const { therapist, isLoading } = useTherapistProfile();
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.log("Error Logging Out:", error);
+    }
+  };
+
   // Defined sections for logical grouping
   const navigationSections = [
     {
@@ -62,7 +75,16 @@ export default function Sidebar({
     {
       title: "Workspace",
       items: [
-        { name: "Create Report", href: "/reports/new", icon: <CreateIcon /> },
+        {
+          name: "Create Patient",
+          href: "/profile/patient/new",
+          icon: <AddIcon />,
+        },
+        {
+          name: "Create Report",
+          href: "/reports/new",
+          icon: <CreateIcon />,
+        },
         { name: "AI Mode", href: "/ai-mode", icon: <AutoAwesomeIcon /> },
       ],
     },
@@ -75,19 +97,15 @@ export default function Sidebar({
           icon: <AccountBoxIcon />,
         },
       ],
+      mobileOnly: [
+        {
+          name: "Logout",
+          icon: <LogoutIcon />,
+          onClick: handleLogout,
+        },
+      ],
     },
   ];
-
-  const handleLogout = async () => {
-    try {
-      await signOut();
-
-      router.push("/login");
-      router.refresh();
-    } catch (error) {
-      console.log("Error Logging Out:", error);
-    }
-  };
 
   return (
     <aside
@@ -141,7 +159,7 @@ export default function Sidebar({
               alt="Profile Picture"
               width={150}
               height={150}
-              className="h-17.5 w-17.5 rounded-full"
+              className="h-17.5 w-17.5 rounded-full object-cover"
             />
           )}
 
@@ -209,6 +227,35 @@ export default function Sidebar({
                       </li>
                     );
                   })}
+                  {section.mobileOnly?.map((item) => (
+                    <li key={item.name} className="lg:hidden">
+                      <button
+                        id={`sidebar-${item.name
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}-btn`}
+                        onClick={() => {
+                          item.onClick?.();
+                          setIsOpen(false);
+                        }}
+                        className="
+                          group
+                          flex items-center
+                          h-10 px-4 gap-3
+                          rounded-sm
+                          transition-all duration-200 ease-in-out
+                          hover:bg-bordergray/30
+                          w-full
+                        "
+                      >
+                        <span className="text-lg flex items-center justify-center transition-colors text-darkgray group-hover:text-primary">
+                          {item.icon}
+                        </span>
+                        <span className="font-Noto-Sans font-semibold text-sm flex items-center transition-colors text-darkgray group-hover:text-primary">
+                          {item.name}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
                 </ul>
               </div>
             ))}
@@ -268,7 +315,7 @@ export default function Sidebar({
                   alt="Profile Picture"
                   width={150}
                   height={150}
-                  className="h-17.5 w-17.5 rounded-full"
+                  className="h-17.5 w-17.5 rounded-full object-cover"
                 />
               )}
               <div className="flex-1 text-left">

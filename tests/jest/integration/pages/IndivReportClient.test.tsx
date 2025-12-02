@@ -360,13 +360,9 @@ describe("IndivReportClient", () => {
       />
     );
 
-    // open dropdown
-    const moreBtn = screen.getByLabelText("More options");
-    await userEvent.click(moreBtn);
-
-    // click Delete item in our DropdownMenu mock
-    const deleteBtn = screen.getByText("Delete");
-    await userEvent.click(deleteBtn);
+    // click Delete icon to open modal
+    const deleteIcon = screen.getByTestId("DeleteIcon");
+    await userEvent.click(deleteIcon);
 
     // confirmation modal should render a confirm button
     const confirmBtn = await screen.findByTestId("confirm-delete");
@@ -388,11 +384,11 @@ describe("IndivReportClient", () => {
       />
     );
 
-    // open dropdown and click Delete
-    await userEvent.click(screen.getByLabelText("More options"));
-    await userEvent.click(screen.getByText("Delete"));
+    // click Delete icon to open modal
+    const deleteIcon = screen.getByTestId("DeleteIcon");
+    await userEvent.click(deleteIcon);
 
-    // confirm
+    // confirm deletion
     await userEvent.click(await screen.findByTestId("confirm-delete"));
 
     // toast should show the failure message
@@ -409,9 +405,10 @@ describe("IndivReportClient", () => {
       />
     );
 
-    // open dropdown and click Delete
-    await userEvent.click(screen.getByLabelText("More options"));
-    await userEvent.click(screen.getByText("Delete"));
+    // click Delete icon to open modal
+    const deleteIcon = screen.getByTestId("DeleteIcon");
+    await userEvent.click(deleteIcon);
+
     // confirmation modal should render a cancel button
     const cancelBtn = await screen.findByTestId("cancel-delete");
     await userEvent.click(cancelBtn);
@@ -426,10 +423,8 @@ describe("IndivReportClient", () => {
         languageOptions={mockLanguageOptions}
       />
     );
-    // open dropdown
-    await userEvent.click(screen.getByLabelText("More options"));
-    // click Edit item in our DropdownMenu mock
-    const editBtn = screen.getByText("Edit");
+    // click Edit button
+    const editBtn = screen.getByRole("button", { name: /Edit/i });
     await userEvent.click(editBtn);
     expect(pushMock).toHaveBeenCalledWith(`/reports/${sampleReport.id}/edit`);
   });
@@ -697,8 +692,8 @@ describe("IndivReportClient", () => {
         />
       );
 
-      await userEvent.click(screen.getByLabelText("More options"));
-      await userEvent.click(screen.getByText("Delete"));
+      const deleteIcon = screen.getByTestId("DeleteIcon");
+      await userEvent.click(deleteIcon);
       await userEvent.click(await screen.findByTestId("confirm-delete"));
 
       // Should show error toast
@@ -717,8 +712,8 @@ describe("IndivReportClient", () => {
         />
       );
 
-      await userEvent.click(screen.getByLabelText("More options"));
-      await userEvent.click(screen.getByText("Delete"));
+      const deleteIcon2 = screen.getByTestId("DeleteIcon");
+      await userEvent.click(deleteIcon2);
       
       // Modal should be open
       expect(await screen.findByTestId("confirm-delete")).toBeInTheDocument();
@@ -745,8 +740,8 @@ describe("IndivReportClient", () => {
         />
       );
 
-      await userEvent.click(screen.getByLabelText("More options"));
-      await userEvent.click(screen.getByText("Delete"));
+      const deleteIcon3 = screen.getByTestId("DeleteIcon");
+      await userEvent.click(deleteIcon3);
       
       const confirmBtn = await screen.findByTestId("confirm-delete");
       await userEvent.click(confirmBtn);

@@ -7,15 +7,15 @@ import Link from "next/link";
 
 /* Components */
 import Button from "@/components/general/Button";
-import Select from "@/components/general/Select";
+import Select, { Option } from "@/components/general/Select";
 import Toast from "@/components/general/Toast";
 import ConfirmationModal from "@/components/general/ConfirmationModal";
-import DropdownMenu from "@/components/general/DropdownMenu";
 import Tag from "@/components/general/Tag";
 import PDFViewer from "@/components/blocknote/PDFViewer";
 
 /* Types */
 import { Tables } from "@/lib/types/database.types";
+import { SingleValue, MultiValue } from "react-select";
 
 /* Utilities */
 import { formatDate } from "@/lib/utils/frontendHelpers";
@@ -27,7 +27,7 @@ import { useBackNavigation } from "@/app/hooks/useBackNavigation";
 import { useTherapistProfile } from "@/app/contexts/TherapistProfileContext";
 
 /* Icons */
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 /* Actions */
 import { deleteReport } from "@/lib/actions/reports";
@@ -35,11 +35,6 @@ import { translateText } from "@/lib/actions/translate";
 
 /* Others */
 import { BlockNoteEditor } from "@blocknote/core";
-
-interface SelectOption {
-  value: string;
-  label: string;
-}
 
 type ReportWithRelations = Tables<"reports"> & {
   therapist: Tables<"therapists"> & {
@@ -57,7 +52,7 @@ type ReportWithRelations = Tables<"reports"> & {
 
 interface IndivReportClientProps {
   report: ReportWithRelations;
-  languageOptions: SelectOption[];
+  languageOptions: Option[];
 }
 
 export default function IndivReportClient({
@@ -70,7 +65,6 @@ export default function IndivReportClient({
   const { therapist } = useTherapistProfile();
   const { handleBackClick } = useBackNavigation("/search/reports");
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
@@ -79,7 +73,7 @@ export default function IndivReportClient({
   const [toastType, setToastType] = useState<"success" | "error" | "info">(
     "info"
   );
-  const [selectedLanguage, setSelectedLanguage] = useState<SelectOption | null>(
+  const [selectedLanguage, setSelectedLanguage] = useState<Option | null>(
     () => {
       return (
         languageOptions.find((opt) => opt.value === report.language.code) ||
@@ -106,6 +100,15 @@ export default function IndivReportClient({
   const clinic = report.therapist.clinic.clinic;
   const therapyType = report.type.type;
   const language = report.language.language;
+
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setToastMessage("Report created successfully!");
+      setToastType("success");
+      setToastVisible(true);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (searchParams.get("updated") === "true") {
@@ -140,7 +143,11 @@ export default function IndivReportClient({
     return undefined;
   };
 
-  const handleLanguageChange = async (option: SelectOption | null) => {
+  const handleLanguageChange = async (
+    newValue: SingleValue<Option> | MultiValue<Option>
+  ) => {
+    const option = newValue as Option | null;
+
     setSelectedLanguage(option);
     if (option) {
       /* If option selected is the original Language of the report, don't translate content but still translate UI text */
@@ -264,21 +271,6 @@ export default function IndivReportClient({
     }
   };
 
-  const dropdownItems = [
-    {
-      label: "Edit",
-      onClick: () => router.push(`/reports/${report.id}/edit`),
-      variant: "default" as const,
-      id: "indiv-report-edit-btn",
-    },
-    {
-      label: "Delete",
-      onClick: () => setIsDeleteModalOpen(true),
-      variant: "danger" as const,
-      id: "indiv-report-delete-btn",
-    },
-  ];
-
   return (
     <>
       <div className="flex flex-col gap-y-8">
@@ -288,36 +280,26 @@ export default function IndivReportClient({
             <h1 className="font-Noto-Sans text-xl md:text-3xl text-black font-semibold">
               {translatedTitle || report.title}
             </h1>
-            <div className="ml-auto flex items-center gap-2">
+            {therapist?.id === report.therapist_id && (
+              <button
+                id="indiv-report-delete-icon-btn"
+                aria-label="Delete Report"
+              >
+                <DeleteIcon
+                  className="text-darkgray hover:text-red-600 cursor-pointer"
+                  onClick={() => setIsDeleteModalOpen(true)}
+                />
+              </button>
+            )}
+            <div className="ml-auto mb-auto flex flex-col sm:flex-row items-center gap-2">
               {therapist?.id === report.therapist_id && (
-                <div className="relative">
-                  <button
-                    id="indiv-report-dropdown-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsDropdownOpen((prev) => !prev);
-                    }}
-                    className="
-                      bg-transparent border border-primary text-primary
-                      hover:bg-primary/5 hover:cursor-pointer
-                      active:bg-primary active:text-white
-                      rounded-lg
-                      font-Noto-Sans font-semibold
-                      px-3 lg:px-4 py-2
-                      flex items-center justify-center
-                      transition-colors duration-200
-                    "
-                    aria-label="More options"
-                  >
-                    <MoreHorizIcon className="text-xl" />
-                  </button>
-                  <DropdownMenu
-                    isOpen={isDropdownOpen}
-                    onClose={() => setIsDropdownOpen(false)}
-                    items={dropdownItems}
-                    className="top-full mt-1 right-0"
-                  />
-                </div>
+                <Button
+                  variant="outline"
+                  className="w-12 sm:w-auto text-xs md:text-base md:w-24"
+                  onClick={() => router.push(`/reports/${report.id}/edit`)}
+                >
+                  Edit
+                </Button>
               )}
               <Button
                 id="indiv-report-back-btn"
@@ -330,16 +312,19 @@ export default function IndivReportClient({
               </Button>
             </div>
           </div>
-          <p className="font-Noto-Sans text-[0.6875rem] md:text-sm font-medium text-darkgray ml-0.5">
-            {isEdited
-              ? `${translatedEditedText || "Edited on"} ${formatDate(
-                  report.updated_at
-                )}`
-              : `${translatedCreatedText || "Created on"} ${formatDate(
-                  report.created_at
-                )}`}
-          </p>
+
+          <div className="flex items-center gap-2 mt-1">
+            <p className="font-Noto-Sans text-[0.6875rem] md:text-sm font-medium text-darkgray ml-0.5">
+              {`${translatedCreatedText || "Created on"} ${formatDate(
+                report.created_at
+              )}`}
+            </p>
+          </div>
+
           <div className="flex flex-wrap gap-2 mt-2">
+            {isEdited && (
+              <Tag text="Edited" fontSize="text-xs" variant="edited" />
+            )}
             <Tag
               text={therapyType}
               fontSize="text-xs"
@@ -414,12 +399,21 @@ export default function IndivReportClient({
         </div>
 
         {/* PDF */}
-        <PDFViewer
-          key={translatedContent ? "translated" : "original"}
-          content={translatedContent ? translatedContent : report.content}
-          title={translatedTitle || report.title}
-          therapistName={report.therapist.name}
-        />
+        {isTranslating ? (
+          <div className="w-full h-[600px] flex flex-col items-center justify-center gap-y-4 bg-gray-50/50 border border-bordergray rounded-lg animate-pulse">
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-primary rounded-full animate-spin"></div>
+            <p className="font-Noto-Sans text-darkgray text-sm font-medium">
+              Translating report content...
+            </p>
+          </div>
+        ) : (
+          <PDFViewer
+            key={translatedContent ? "translated" : "original"}
+            content={translatedContent ? translatedContent : report.content}
+            title={translatedTitle || report.title}
+            therapistName={report.therapist.name}
+          />
+        )}
       </div>
 
       {/* Modal rendered outside the page container */}
