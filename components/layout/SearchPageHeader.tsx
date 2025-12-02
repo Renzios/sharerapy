@@ -239,12 +239,13 @@ export default function SearchPageHeader({
           {!advancedFiltersDisabled && (
             <Button
               variant="outline"
+              shape="pill"
               height="1.875rem"
               fontSize="text-[0.6875rem]"
               onClick={onAdvancedFiltersClick}
               disabled={advancedFiltersDisabled}
               className={`
-               w-28 lg:w-32 xl:w-40 2xl:w-47.5 min-w-28 shrink
+               min-w-28 shrink
                border-bordergray
                flex items-center justify-between px-2
                ${advancedFiltersDisabled ? "opacity-50 cursor-not-allowed" : ""}
