@@ -3,7 +3,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import PatientCard from "@/components/cards/PatientCard";
 
-// Mock next/link to render a plain anchor so we can assert href and click behavior
+// Mock next/link to render a plain anchor and prevent navigation
 jest.mock("next/link", () => {
   return function Link({
     href,
@@ -15,7 +15,11 @@ jest.mock("next/link", () => {
     className?: string;
   }) {
     return (
-      <a href={href} className={className}>
+      <a
+        href={href}
+        className={className}
+        onClick={e => e.preventDefault()}
+      >
         {children}
       </a>
     );

@@ -6,6 +6,7 @@ jest.mock("next/image", () => {
   // Simple img shim for tests
   return function MockNextImage(props: { src: string; alt: string; width?: number; height?: number; className?: string }) {
     const { src, alt, width, height, className } = props;
+    // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={alt} width={width} height={height} className={className} />;
   };
 });

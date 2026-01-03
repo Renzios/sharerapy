@@ -123,7 +123,15 @@ describe("SearchReportsClient integration", () => {
   ];
 
   it("renders initial reports and their links", () => {
-  render(<SearchReportsClient initialReports={initialReports} totalPages={1} languageOptions={[]} countryOptions={[]} clinicOptions={[]} typeOptions={[]} therapistOptions={[]} patientOptions={[]} />);
+  render(<SearchReportsClient 
+          initialReports={initialReports} 
+          totalPages={1} 
+          languageOptions={[]} 
+          countryOptions={[]} 
+          clinicOptions={[]} 
+          typeOptions={[]} 
+          therapistOptions={[]} 
+          patientOptions={[]} />);
 
     expect(screen.getByText("Report One")).toBeInTheDocument();
   });

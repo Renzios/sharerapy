@@ -18,21 +18,8 @@ jest.mock("@blocknote/core", () => ({
 }));
 
 // Small helper types to avoid using `any`
-type SelectValue = { value: string; label: string };
-
-type SampleReport = {
-  id: string;
-  title: string;
-  created_at: string;
-  therapist_id: string;
-  therapist: {
-    id: string;
-    name: string;
-    clinic: { clinic: string; country: { country: string } };
-  };
-  language: { language: string };
-  type: { type: string };
-  patient: { id: string; name: string; sex: string; age: string };
+type SelectValue = { value: string; 
+  label: string ;
   description: string;
   content: Uint8Array;
 };
@@ -376,6 +363,7 @@ describe("IndivReportClient", () => {
   it("shows error toast when deleteReport rejects with non-redirect error", async () => {
     // make deleteReport reject with a normal error
     mockDeleteReport.mockRejectedValueOnce(new Error("network failure"));
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
     render(
       <IndivReportClient
@@ -395,6 +383,9 @@ describe("IndivReportClient", () => {
     expect(
       await screen.findByText("Failed to delete report. Please try again.")
     ).toBeInTheDocument();
+
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
   it("deletes confirmation modal when cancelled", async () => {
@@ -467,7 +458,7 @@ describe("IndivReportClient", () => {
       };
 
       // Mock translateText to return translated UI text
-      mockTranslateText.mockImplementation((text: string, lang: string) => {
+      mockTranslateText.mockImplementation((text: string) => {
         if (text === "Edited on") return Promise.resolve("Editado en");
         if (text === "Created on") return Promise.resolve("Creado en");
         return Promise.resolve(`Translated: ${text}`);
@@ -512,6 +503,8 @@ describe("IndivReportClient", () => {
       // Mock translateText to reject
       mockTranslateText.mockRejectedValue(new Error("Translation API error"));
 
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       // Set the mock to select the original language ("en")
       setMockSelectValue({ value: "en", label: "English" });
 
@@ -528,6 +521,10 @@ describe("IndivReportClient", () => {
       // Should handle error gracefully
       await waitFor(() => expect(mockTranslateText).toHaveBeenCalled());
       // Component should still function (not crash)
+      
+
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("translates all content when selecting a different language", async () => {
@@ -599,6 +596,7 @@ describe("IndivReportClient", () => {
 
     it("shows error toast when translation fails", async () => {
       mockTranslateText.mockRejectedValue(new Error("API timeout"));
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
       render(
         <IndivReportClient
@@ -619,6 +617,9 @@ describe("IndivReportClient", () => {
         },
         { timeout: 3000 }
       );
+
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("handles error during markdown conversion", async () => {
@@ -630,6 +631,7 @@ describe("IndivReportClient", () => {
         tryParseMarkdownToBlocks: jest.fn(),
       };
 
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
       jest.spyOn(BlockNoteEditor, "create").mockReturnValue(mockEditor as never);
 
       render(
@@ -651,13 +653,15 @@ describe("IndivReportClient", () => {
         },
         { timeout: 3000 }
       );
+
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("resets all translations when no option is selected (null)", async () => {
       mockTranslateText.mockImplementation((text: string) =>
         Promise.resolve(`Translated: ${text}`)
       );
-
       // Set the mock to return null (no selection)
       setMockSelectValue(null);
 
@@ -677,12 +681,15 @@ describe("IndivReportClient", () => {
       
       // translateText should NOT be called when null is selected
       expect(mockTranslateText).not.toHaveBeenCalled();
+
     });
   });
 
   describe("handleDelete", () => {
     it("shows error toast when deleteReport fails with non-redirect error", async () => {
       // Regular error (not a redirect)
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       mockDeleteReport.mockRejectedValueOnce(new Error("Database error"));
 
       render(
@@ -700,10 +707,14 @@ describe("IndivReportClient", () => {
       expect(
         await screen.findByText("Failed to delete report. Please try again.")
       ).toBeInTheDocument();
+
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("closes delete modal after deletion attempt", async () => {
       mockDeleteReport.mockRejectedValueOnce(new Error("Failed"));
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
       render(
         <IndivReportClient
@@ -724,6 +735,9 @@ describe("IndivReportClient", () => {
       await waitFor(() => {
         expect(screen.queryByTestId("confirm-delete")).not.toBeInTheDocument();
       });
+
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("sets isDeleting state during delete operation", async () => {
