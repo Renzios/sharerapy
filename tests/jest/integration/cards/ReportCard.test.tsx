@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
 jest.mock("next/image", () => {
@@ -12,24 +12,21 @@ jest.mock("next/image", () => {
 });
 
 jest.mock("next/link", () => {
-  type HrefLike = string | { pathname?: string } | URL;
-  type AnchorProps = React.AnchorHTMLAttributes<HTMLAnchorElement>;
-  type MockNextLinkProps = React.PropsWithChildren<{ href: HrefLike } & AnchorProps>;
-
-  const hasPathname = (val: unknown): val is { pathname?: string } =>
-    typeof val === "object" && val !== null && "pathname" in val;
-
-  const resolveHref = (href: HrefLike): string => {
-    if (typeof href === "string") return href;
-    if (href instanceof URL) return href.pathname;
-    if (hasPathname(href)) return href.pathname ?? "/";
-    return "/";
-  };
-
-  return function MockNextLink({ href, children, ...rest }: MockNextLinkProps) {
-    const resolvedHref = resolveHref(href);
+  return function Link({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) {
     return (
-      <a href={resolvedHref} {...rest}>
+      <a
+        href={href}
+        className={className}
+        onClick={e => e.preventDefault()}
+      >
         {children}
       </a>
     );
@@ -281,14 +278,19 @@ describe("ReportCard", () => {
 
     it("renders toast when deletion fails", async () => {
       const error = new Error("Network error");
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+
       deleteReportMock.mockRejectedValue(error);
-      render(<ReportCard report={baseReport} showActions={true} />);
+      await render(<ReportCard report={baseReport} showActions={true} />);
       fireEvent.click(screen.getByLabelText("More options"));
       fireEvent.click(screen.getByText("Delete"));
       const confirmButton = screen.getByRole("button", { name: "Delete" });
       fireEvent.click(confirmButton);
       await screen.findByTestId("toast");
+
       expect(screen.getByText("Failed to delete report. Please try again.")).toBeInTheDocument();
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
   });
 
@@ -345,8 +347,9 @@ describe("ReportCard", () => {
       fireEvent.click(screen.getByText("Delete"));
       const confirmButton = screen.getByRole("button", { name: "Delete" });
       fireEvent.click(confirmButton);
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      expect(deleteReportMock).toHaveBeenCalledWith("abc123");
+      await waitFor(() => {
+        expect(deleteReportMock).toHaveBeenCalledWith("abc123");
+      });
     });
 
     it("closes modal when cancel is clicked", () => {
@@ -362,14 +365,17 @@ describe("ReportCard", () => {
     it("logs error to console when deletion fails", async () => {
       const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       const error = new Error("Database error");
+
       deleteReportMock.mockRejectedValue(error);
       render(<ReportCard report={baseReport} showActions={true} />);
       fireEvent.click(screen.getByLabelText("More options"));
       fireEvent.click(screen.getByText("Delete"));
       const confirmButton = screen.getByRole("button", { name: "Delete" });
       fireEvent.click(confirmButton);
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Error deleting report:", error);
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith("Error deleting report:", error);
+      });
+
       consoleErrorSpy.mockRestore();
     });
   });

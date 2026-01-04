@@ -76,6 +76,8 @@ jest.mock("@/lib/actions/translate", () => ({
 describe("SearchReportsClient integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Mock window.scrollTo since jsdom doesn't implement it
+    window.scrollTo = jest.fn();
   });
 
   const initialReports = [
