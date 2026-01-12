@@ -1,5 +1,4 @@
 import React from "react";
-import type { Tables } from "@/lib/types/database.types";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import SearchPatientsClient from "@/components/client-pages/search/SearchPatientsClient";
 import * as nextNav from "next/navigation";
@@ -13,9 +12,6 @@ jest.mock("next/navigation", () => {
     usePathname: jest.fn(),
   };
 });
-
-// Mock fetchPatients - this module doesn't exist, create a simple mock
-const mockFetchPatients = jest.fn();
 
 // Mock layout and child components to make unit deterministic
 jest.mock("@/components/layout/SearchPageHeader", () => {
@@ -106,12 +102,6 @@ describe("SearchPatientsClient integration", () => {
   const pushMock = jest.fn();
   const pathname = "/search/patients";
   const searchParams = new URLSearchParams("p=2&q=initial");
-
-    interface PatientMinimal {
-      id: string;
-      name?: string;
-      country?: { id: string };
-    }
 
     const initialPatients: Array<{
       id: string;
@@ -233,7 +223,7 @@ describe("SearchPatientsClient integration", () => {
       nameDescending: { column: "name", ascending: false },
     };
 
-    for (const [value, expected] of Object.entries(cases)) {
+    for (const [value] of Object.entries(cases)) {
       const { unmount } = render(
           <SearchPatientsClient initialPatients={initialPatients} totalPages={2} initialSearchTerm="initial" />
       );

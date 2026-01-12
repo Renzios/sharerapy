@@ -388,6 +388,8 @@ describe("CreateNewPatientClient", () => {
   describe("Form Validation", () => {
     it("shows error when first name is missing", async () => {
       const user = userEvent.setup();
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       render(<CreateNewPatientClient countryOptions={defaultCountryOptions} />);
 
       const submitButton = screen.getByTestId("create-patient-submit-btn");
@@ -400,10 +402,13 @@ describe("CreateNewPatientClient", () => {
       });
 
       expect(createPatient).not.toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("shows error when last name is missing", async () => {
       const user = userEvent.setup();
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       render(<CreateNewPatientClient countryOptions={defaultCountryOptions} />);
 
       await user.type(screen.getByTestId("first-name-input"), "John");
@@ -416,10 +421,13 @@ describe("CreateNewPatientClient", () => {
       });
 
       expect(createPatient).not.toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("shows error when country is not selected", async () => {
       const user = userEvent.setup();
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       render(<CreateNewPatientClient countryOptions={defaultCountryOptions} />);
 
       await user.type(screen.getByTestId("first-name-input"), "John");
@@ -433,10 +441,13 @@ describe("CreateNewPatientClient", () => {
       });
 
       expect(createPatient).not.toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("shows error when birthday is missing", async () => {
       const user = userEvent.setup();
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       render(<CreateNewPatientClient countryOptions={defaultCountryOptions} />);
 
       await user.type(screen.getByTestId("first-name-input"), "John");
@@ -451,10 +462,13 @@ describe("CreateNewPatientClient", () => {
       });
 
       expect(createPatient).not.toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("shows error when birthday is in the future", async () => {
       const user = userEvent.setup();
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       render(<CreateNewPatientClient countryOptions={defaultCountryOptions} />);
 
       const futureDate = new Date();
@@ -474,10 +488,13 @@ describe("CreateNewPatientClient", () => {
       });
 
       expect(createPatient).not.toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("shows error when sex is not selected", async () => {
       const user = userEvent.setup();
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       render(<CreateNewPatientClient countryOptions={defaultCountryOptions} />);
 
       await user.type(screen.getByTestId("first-name-input"), "John");
@@ -493,10 +510,13 @@ describe("CreateNewPatientClient", () => {
       });
 
       expect(createPatient).not.toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("shows error when contact number is missing", async () => {
       const user = userEvent.setup();
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       render(<CreateNewPatientClient countryOptions={defaultCountryOptions} />);
 
       await user.type(screen.getByTestId("first-name-input"), "John");
@@ -513,10 +533,13 @@ describe("CreateNewPatientClient", () => {
       });
 
       expect(createPatient).not.toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("shows error when contact number has invalid characters", async () => {
       const user = userEvent.setup();
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       render(<CreateNewPatientClient countryOptions={defaultCountryOptions} />);
 
       await user.type(screen.getByTestId("first-name-input"), "John");
@@ -536,10 +559,13 @@ describe("CreateNewPatientClient", () => {
       });
 
       expect(createPatient).not.toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it("accepts valid contact number with dashes", async () => {
       const user = userEvent.setup();
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       render(<CreateNewPatientClient countryOptions={defaultCountryOptions} />);
 
       await user.type(screen.getByTestId("first-name-input"), "John");
@@ -555,6 +581,7 @@ describe("CreateNewPatientClient", () => {
       await waitFor(() => {
         expect(createPatient).toHaveBeenCalled();
       });
+      consoleErrorSpy.mockRestore();
     });
   });
 
@@ -842,6 +869,7 @@ describe("CreateNewPatientClient", () => {
 
   describe("Error Handling", () => {
     it("shows error toast when createPatient fails", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       const errorMessage = "Network error";
       (createPatient as jest.Mock).mockRejectedValueOnce(new Error(errorMessage));
 
@@ -863,9 +891,12 @@ describe("CreateNewPatientClient", () => {
         expect(toast).toHaveTextContent("Error creating patient");
         expect(toast).toHaveAttribute("data-type", "error");
       });
+
+      consoleErrorSpy.mockRestore();
     });
 
     it("shows error toast when updatePatient fails", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       const errorMessage = "Update failed";
       (updatePatient as jest.Mock).mockRejectedValueOnce(new Error(errorMessage));
 
@@ -896,6 +927,8 @@ describe("CreateNewPatientClient", () => {
         expect(toast).toHaveTextContent("Error updating patient");
         expect(toast).toHaveAttribute("data-type", "error");
       });
+
+      consoleErrorSpy.mockRestore();
     });
   });
 });

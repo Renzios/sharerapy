@@ -76,6 +76,8 @@ jest.mock("@/lib/actions/translate", () => ({
 describe("SearchReportsClient integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Mock window.scrollTo since jsdom doesn't implement it
+    window.scrollTo = jest.fn();
   });
 
   const initialReports = [
@@ -123,7 +125,15 @@ describe("SearchReportsClient integration", () => {
   ];
 
   it("renders initial reports and their links", () => {
-  render(<SearchReportsClient initialReports={initialReports} totalPages={1} languageOptions={[]} countryOptions={[]} clinicOptions={[]} typeOptions={[]} therapistOptions={[]} patientOptions={[]} />);
+  render(<SearchReportsClient 
+          initialReports={initialReports} 
+          totalPages={1} 
+          languageOptions={[]} 
+          countryOptions={[]} 
+          clinicOptions={[]} 
+          typeOptions={[]} 
+          therapistOptions={[]} 
+          patientOptions={[]} />);
 
     expect(screen.getByText("Report One")).toBeInTheDocument();
   });

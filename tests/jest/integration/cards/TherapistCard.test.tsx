@@ -16,7 +16,11 @@ jest.mock("next/link", () => {
     className?: string;
   }) {
     return (
-      <a href={href} className={className}>
+       <a
+        href={href}
+        className={className}
+        onClick={e => e.preventDefault()}
+      >
         {children}
       </a>
     );
@@ -29,6 +33,7 @@ jest.mock("next/image", () => {
     props: React.ImgHTMLAttributes<HTMLImageElement>
   ) {
     // next/image adds decoding="async" by default
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
     return <img decoding="async" {...props} />;
   };
 });

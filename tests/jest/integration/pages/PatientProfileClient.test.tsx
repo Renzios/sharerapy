@@ -1,7 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import PatientProfileClient from "@/components/client-pages/PatientProfileClient";
-import type { Tables } from "@/lib/types/database.types";
 import * as nextNav from "next/navigation";
 
 jest.mock('openai');
@@ -292,13 +291,13 @@ describe("PatientProfileClient integration", () => {
 
 	it("getSortParams cases update URL with correct parameters", async () => {
 		const cases: Record<string, { column: "title" | "created_at"; ascending: boolean }> = {
-			titleAscending: { column: "title", ascending: true },
-			titleDescending: { column: "title", ascending: false },
-			dateAscending: { column: "created_at", ascending: true },
-			dateDescending: { column: "created_at", ascending: false },
-		};
+		titleAscending: { column: "title", ascending: true },
+		titleDescending: { column: "title", ascending: false },
+		dateAscending: { column: "created_at", ascending: true },
+		dateDescending: { column: "created_at", ascending: false },
+	};
 
-		for (const [value, expected] of Object.entries(cases)) {
+	for (const [value] of Object.entries(cases)) {
 			const { unmount } = render(
 				<PatientProfileClient
 					patient={patient}

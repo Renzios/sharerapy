@@ -13,9 +13,6 @@ jest.mock("next/navigation", () => {
   };
 });
 
-// Mock fetchTherapists - this module doesn't exist, create a simple mock
-const mockFetchTherapists = jest.fn();
-
 // Mock layout and child components to make unit deterministic
 jest.mock("@/components/layout/SearchPageHeader", () => {
   const Component = (props: {
@@ -106,11 +103,6 @@ describe("SearchTherapistClient integration", () => {
   const pathname = "/search/therapists";
   const searchParams = new URLSearchParams("p=2&q=initial");
 
-  interface TherapistMinimal {
-    id: string;
-    name?: string;
-    clinic?: { id: string };
-  }
   const initialTherapists: Array<{
     id: string;
     name: string;
@@ -231,7 +223,7 @@ describe("SearchTherapistClient integration", () => {
       nameDescending: { column: "name", ascending: false },
     };
 
-    for (const [value, expected] of Object.entries(cases)) {
+    for (const [value] of Object.entries(cases)) {
       const { unmount } = render(<SearchTherapistsClient initialTherapists={initialTherapists} totalPages={2} initialSearchTerm="initial" />);
 
       pushMock.mockClear();

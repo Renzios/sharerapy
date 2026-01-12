@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Toast from "@/components/general/Toast";
 
@@ -16,7 +16,9 @@ describe('Toast Component', () => {
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
     jest.useFakeTimers();
   });
@@ -206,7 +208,9 @@ describe('Toast Component', () => {
         await user.click(closeButton);
 
         // Wait for the animation delay
-        jest.advanceTimersByTime(300);
+        act(() => {
+          jest.advanceTimersByTime(300);
+        });
         
         expect(mockOnClose).toHaveBeenCalledTimes(1);
       });
@@ -223,7 +227,9 @@ describe('Toast Component', () => {
         );
         
         // Fast-forward past the default duration + animation time
-        jest.advanceTimersByTime(5000 + 300);
+        act(() => {
+          jest.advanceTimersByTime(5000 + 300);
+        });
         
         expect(mockOnClose).toHaveBeenCalledTimes(1);
       });
@@ -238,7 +244,9 @@ describe('Toast Component', () => {
         );
         
         // Fast-forward a long time
-        jest.advanceTimersByTime(10000);
+        act(() => {
+          jest.advanceTimersByTime(10000);
+        });
         
         expect(mockOnClose).not.toHaveBeenCalled();
       });

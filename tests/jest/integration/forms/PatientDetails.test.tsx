@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import PatientDetails from "@/components/forms/PatientDetails";
-import type { Tables } from "@/lib/types/database.types";
 
 type SelectOption = { value: string; label: string };
 

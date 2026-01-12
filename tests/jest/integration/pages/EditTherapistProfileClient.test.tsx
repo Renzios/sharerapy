@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import EditTherapistProfileClient from "@/components/client-pages/create-edit/EditTherapistProfileClient";
 import type { Tables } from "@/lib/types/database.types";
@@ -154,6 +154,7 @@ jest.mock("next/image", () => {
     className?: string;
   }
   const Component = (props: ImageMockProps) => (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       data-testid="therapist-image"
       src={props.src}
@@ -324,6 +325,7 @@ describe("EditTherapistProfileClient integration", () => {
   });
 
   it("shows error toast for file size exceeding 5MB", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
     const user = userEvent.setup();
     render(<EditTherapistProfileClient therapist={mockTherapist} />);
 
@@ -333,6 +335,7 @@ describe("EditTherapistProfileClient integration", () => {
     await user.upload(fileInput, largeFile);
 
     expect(await screen.findByText(/File size is too large.*Maximum size is 5MB/i)).toBeInTheDocument();
+    consoleErrorSpy.mockRestore();
   });
 
   it("validates first name with only whitespace in validateForm", async () => {
@@ -443,7 +446,9 @@ describe("EditTherapistProfileClient integration", () => {
       expect(updateTherapist).toHaveBeenCalled();
     });
 
-    jest.advanceTimersByTime(200);
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
 
     await waitFor(() => {
       expect(refetchMock).toHaveBeenCalled();
@@ -464,7 +469,9 @@ describe("EditTherapistProfileClient integration", () => {
       expect(updateTherapist).toHaveBeenCalled();
     });
 
-    jest.advanceTimersByTime(200);
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
 
     await waitFor(() => {
       expect(refreshMock).toHaveBeenCalled();
@@ -493,8 +500,10 @@ describe("EditTherapistProfileClient integration", () => {
       expect(refreshMock).toHaveBeenCalled();
     });
 
-    jest.advanceTimersByTime(200);
-    jest.runAllTimers();
+    act(() => {
+      jest.advanceTimersByTime(200);
+      jest.runAllTimers();
+    });
 
     await waitFor(() => {
       expect(pushMock).toHaveBeenCalledWith("/profile/therapist/therapist-1");
@@ -504,6 +513,7 @@ describe("EditTherapistProfileClient integration", () => {
   });
 
   it("shows error toast when update fails", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
     const user = userEvent.setup();
     (updateTherapist as jest.Mock).mockRejectedValueOnce(new Error("Update failed"));
 
@@ -513,6 +523,7 @@ describe("EditTherapistProfileClient integration", () => {
     await user.click(updateButton);
 
     expect(await screen.findByText("Failed to update profile. Please try again.")).toBeInTheDocument();
+    consoleErrorSpy.mockRestore();
   });
 
   it("disables form fields and buttons during submission", async () => {
