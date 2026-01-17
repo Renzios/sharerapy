@@ -7,7 +7,8 @@
     "moduleResolution": "bundler",
     "allowJs": true,
     "esModuleInterop": true,
-    "typeRoots": ["../node_modules/@types", "./"]
+    "typeRoots": ["../node_modules/@types", "./"],
+    "jsx": "react-jsx"
   },
   "include": [
     "jest.d.ts",

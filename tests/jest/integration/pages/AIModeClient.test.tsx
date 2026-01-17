@@ -452,6 +452,7 @@ describe("AIModeClient", () => {
 
   describe("Error Handling", () => {
     it("displays error message when generateAnswer fails", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       const user = userEvent.setup();
       (generateAnswer as jest.Mock).mockResolvedValue({
         success: false,
@@ -471,9 +472,12 @@ describe("AIModeClient", () => {
           screen.getByText(/Sorry, I encountered an error while processing your request/i)
         ).toBeInTheDocument();
       });
+
+      consoleErrorSpy.mockRestore();
     });
 
     it("displays error message when output is missing", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       const user = userEvent.setup();
       (generateAnswer as jest.Mock).mockResolvedValue({
         success: true,
@@ -493,6 +497,8 @@ describe("AIModeClient", () => {
           screen.getByText(/Sorry, I encountered an error while processing your request/i)
         ).toBeInTheDocument();
       });
+
+      consoleErrorSpy.mockRestore();
     });
 
     it("displays error message when exception is thrown", async () => {
@@ -520,10 +526,9 @@ describe("AIModeClient", () => {
     });
 
     it("re-enables input after error", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       const user = userEvent.setup();
       (generateAnswer as jest.Mock).mockRejectedValue(new Error("Error"));
-
-      jest.spyOn(console, "error").mockImplementation();
 
       render(<AIModeClient />);
 
@@ -544,6 +549,8 @@ describe("AIModeClient", () => {
       await user.click(searchButton);
 
       expect(generateAnswer).toHaveBeenCalledTimes(2);
+
+      consoleErrorSpy.mockRestore();
     });
   });
 

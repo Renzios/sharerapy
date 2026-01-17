@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 
 declare global {
   // blocks passed to the mock exporter
@@ -40,7 +39,7 @@ jest.mock("@blocknote/xl-pdf-exporter", () => {
     pdfDefaultSchemaMappings: {},
     PDFExporter: class PDFExporter {
       // toReactPDFDocument inspects blocks and will throw if a block has errorTrigger
-    async toReactPDFDocument(blocks: unknown[], _opts: unknown) {
+    async toReactPDFDocument(blocks: unknown[]) {
         // expose the blocks passed to the exporter for assertions in tests
         (globalThis as unknown as { __lastExporterBlocks?: unknown[] }).__lastExporterBlocks = blocks as unknown[];
   const hasError = Array.isArray(blocks) && blocks.some((b) => b && (b as Record<string, unknown>).errorTrigger === true);
@@ -69,8 +68,8 @@ function setMatchMedia(matches: boolean) {
     value: (query: string) => ({
       matches,
       media: query,
-      addEventListener: (_: string, __: EventListener) => {},
-      removeEventListener: (_: string, __: EventListener) => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
     }),
   });
 }

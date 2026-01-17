@@ -77,6 +77,7 @@ jest.mock("next/image", () => ({
   __esModule: true,
   default: (props: ImageProps) => {
     const { src, alt } = props;
+    // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={alt} />;
   },
 }));
@@ -125,7 +126,7 @@ describe("LoginForm", () => {
     try {
       jest.clearAllTimers();
       jest.useRealTimers();
-    } catch (e) {
+    } catch {
       // ignore
     }
   });

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor} from "@testing-library/react";
 import * as nextNav from "next/navigation";
 
 
@@ -378,26 +378,28 @@ describe("TherapistProfileClient integration", () => {
     (window as unknown as { scrollTo?: jest.Mock }).scrollTo = jest.fn();
   });
 
-  it("renders therapist and initial report cards and pagination", () => {
+  it("renders therapist and initial report cards and pagination", async () => {
   
   render(
-      <TestWrapper>
-        <TherapistProfileClient
-          therapist={therapist}
-          initialReports={initialReports}
-          totalPages={2}
-          initialSearchTerm="initial"
-          languageOptions={languageOptions}
-        />
-      </TestWrapper>
-    );
+    <TestWrapper>
+      <TherapistProfileClient
+        therapist={therapist}
+        initialReports={initialReports}
+        totalPages={2}
+        initialSearchTerm="initial"
+        languageOptions={languageOptions}
+      />
+    </TestWrapper>
+  );
 
+  await waitFor(() => {
     expect(screen.getByTestId("therapist-profile")).toHaveTextContent(
       `therapist-${therapist.id}`
     );
-  expect(screen.getByTestId("report-r-alpha")).toBeInTheDocument();
-  expect(screen.getByTestId("report-r-zulu")).toBeInTheDocument();
+    expect(screen.getByTestId("report-r-alpha")).toBeInTheDocument();
+    expect(screen.getByTestId("report-r-zulu")).toBeInTheDocument();
     expect(screen.getByTestId("pagination")).toBeInTheDocument();
+  });
   });
 
   it("performs a search: updates URL via router.push", async () => {
@@ -412,6 +414,10 @@ describe("TherapistProfileClient integration", () => {
         />
       </TestWrapper>
     );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("therapist-profile")).toBeInTheDocument();
+    });
 
     // trigger search via the mocked header
     fireEvent.click(screen.getByTestId("search-btn"));
@@ -436,6 +442,10 @@ describe("TherapistProfileClient integration", () => {
         />
       </TestWrapper>
     );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("therapist-profile")).toBeInTheDocument();
+    });
 
     // change sort via mocked select
     fireEvent.change(screen.getByTestId("mock-sort-select"), {
@@ -475,6 +485,10 @@ describe("TherapistProfileClient integration", () => {
       </TestWrapper>
     ); 
 
+    await waitFor(() => {
+      expect(screen.getByTestId("therapist-profile")).toBeInTheDocument();
+    });
+
     // change language via the mocked select
     fireEvent.change(screen.getByTestId("mock-language-select"), {
       target: { value: "es" },
@@ -510,6 +524,10 @@ describe("TherapistProfileClient integration", () => {
           />
         </TestWrapper>
       );
+
+      await waitFor(() => {
+        expect(screen.getByTestId("therapist-profile")).toBeInTheDocument();
+      });
 
       fireEvent.change(screen.getByTestId("mock-sort-select"), {
         target: { value },

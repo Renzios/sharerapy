@@ -538,6 +538,8 @@ describe("CreateNewReportClient integration", () => {
   });
 
   it("shows toast when editor content is invalid JSON", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
     renderDefault();
     fireEvent.change(screen.getByTestId("select-create-edit-report-patient-select"), { target: { value: "pat-1" } });
     // fill other required fields but leave editor so we can set an invalid value
@@ -554,6 +556,9 @@ describe("CreateNewReportClient integration", () => {
     expect(toast).toHaveTextContent("Please enter report content");
 
     await waitFor(() => expect(createReport).not.toHaveBeenCalled());
+
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
   it("shows invalid format toast when editor JSON is not an array", async () => {
